@@ -1,0 +1,121 @@
+/* Base styles */
+body {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+.button, .Select-control, .input, .label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+/* Container for the input fields and buttons */
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-bottom: 5px;
+}
+
+.input {
+  margin-bottom: 10px;
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+#submit-val {
+  padding: 20px 10px;
+  background-color: #6495ED;
+  color: white;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#submit-val:hover {
+  background-color: #7BA0F0;
+}
+
+/* custom.css */
+#loading-1 .dash-spinner {
+    position: absolute;
+    top: 0; /* Aligns the spinner to the top of the container */
+    left: 50%; /* Centers the spinner horizontally */
+    transform: translateX(-50%);
+}
+
+/* Adjustments for the graphs */
+.graph-container, .above-graph-container {
+  display: grid;
+  width: 100%; /* Ensure the container takes the full width */
+  margin-bottom: 20px;
+}
+
+.above-graph-container {
+  grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
+  gap: 20px;
+}
+
+.graph-container {
+  grid-template-columns: 1fr; /* One column for the time graph */
+  gap: 20px;
+}
+
+/* Responsive settings for graphs */
+.graph-container .graph, .above-graph-container .graph {
+  width: 95%; /* Full width of their container */
+  height: auto; /* Height will scale automatically */
+}
+
+/* Additional styles for the Markdown LaTeX display */
+.markdown-latex-container {
+  margin-top: 20px; /* Space above the markdown */
+  padding: 10px;
+  background-color: #f8f8f8; /* Light grey background */
+  border: 1px solid #ddd; /* Light grey border */
+  overflow-x: auto; /* Allows scrolling if content is too wide */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1400px) { /* Adjust for when the total width of the two graphs exceeds the screen width */
+  .above-graph-container {
+    grid-template-columns: 1fr; /* Stack the graphs on top of each other */
+  }
+
+  .above-graph-container .graph {
+    width: 80vw; /* Adjust the width to a suitable percentage of the viewport width */
+  }
+}
+
+/* Use a media query for small screens to adjust graph layout */
+@media (max-width: 768px) {
+  .above-graph-container {
+    grid-template-columns: 1fr; /* Stack graphs on top of each other */
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr); /* Optional: Adjust based on your design */
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    grid-template-columns: 1fr; /* Stack elements vertically on very small screens */
+  }
+}
