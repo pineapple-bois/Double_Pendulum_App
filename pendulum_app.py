@@ -1,6 +1,6 @@
 import dash
 from dash import html, dcc
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, ClientsideFunction
 from dash import no_update
 from matplotlib import pyplot as plt
 import sympy as sp
@@ -16,6 +16,9 @@ M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=Tru
 # Derivation blurb
 with open('assets/mathematics_section.txt', 'r') as file:
     math_section = file.read()
+
+# Define a maximum time allowed for the simulation (2 minutes)
+MAX_TIME = 120
 
 
 app = dash.Dash(
@@ -84,6 +87,7 @@ app.layout = html.Div([
             ]),
             html.Div(className='container-buttons', children=[
             html.Button('Unity Parameters', id='unity-parameters', n_clicks=0, className='button'),
+            html.Button('Reset', id='reset-button', n_clicks=0, className='button'),
             html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button'),
             ]),
         ]),
@@ -160,6 +164,17 @@ app.layout = html.Div([
 ])
 
 
+# Clientside callback for resetting the page
+app.clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='reset'
+    ),
+    Output('reset-button', 'n_clicks'),  # This output is dummy, as we don't really update anything on the server
+    Input('reset-button', 'n_clicks')
+)
+
+
 # Callback for the unity parameters
 @app.callback(
     [Output('param_l1', 'value'),
@@ -195,8 +210,69 @@ def toggle_math_section(n_clicks, current_class):
         return {'display': 'none'}, 'Show Mathematics', 'button-show'
 
 
-# Define a maximum time allowed for the simulation (2 minutes)
-MAX_TIME = 120
+def validate_inputs(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
+                    time_start, time_end, param_l1, param_l2, param_m1, param_m2,
+                    param_M1, param_M2, param_g):
+    error_list = []
+    # Error checking
+    if any(param is None for param in [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
+                                       time_start, time_end,
+                                       param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g]):
+        error_list.append("Please fill in all required fields.")
+        error_list.append(html.Br())
+
+    # Initial conditions
+    initial_values = {
+        'θ1': init_cond_theta1,
+        'θ2': init_cond_theta2,
+        'ω1': init_cond_omega1,
+        'ω2': init_cond_omega2
+    }
+    for init_name, init_value in initial_values.items():
+        if init_value is None:
+            error_list.append(f"The value: {init_name} requires a numerical value.")
+            error_list.append(html.Br())
+
+    # Time vector
+    times = {
+        'start time': time_start,
+        'end time': time_end,
+    }
+    for time_name, time_value in times.items():
+        if time_value is None:
+            error_list.append(f"Please provide a value for {time_name}")
+            error_list.append(html.Br())
+
+    if time_start >= time_end or time_end <= 0:
+        error_list.append("End time must be greater than start time.")
+        error_list.append(html.Br())
+
+    if time_end - time_start > MAX_TIME:
+        error_list.append(f"Maximum simulation time is {MAX_TIME} seconds.\n")
+        error_list.append(html.Br())
+
+    # Parameters
+    param_values = {
+        'l1 (length of rod 1)': param_l1,
+        'l2 (length of rod 2)': param_l2,
+        'm1 (mass of bob 1)': param_m1,
+        'm2 (mass of bob 2)': param_m2,
+        'M1 (mass of rod 1)': param_M1,
+        'M2 (mass of rod 2)': param_M2,
+        'g (acceleration due to gravity)': param_g,
+    }
+    for param_name, param_value in param_values.items():
+        if param_value is None:
+            error_list.append(f"Please provide a value for {param_name}")
+            error_list.append(html.Br())
+
+    for param_name, param_value in param_values.items():
+        if param_value is not None and param_value <= 0:
+            error_list.append(f"Parameter: {param_name} must be greater than zero.")
+            error_list.append(html.Br())
+
+    # Return the error message or None if there are no errors
+    return html.Div(error_list) if error_list else None
 
 
 # Callback to update the graphs
@@ -228,141 +304,83 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
                   time_start, time_end,
                   param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g,
                   model_type):
-    error_message = ""
     if n_clicks > 0:
-        error_list = []
-        # Error checking
-        if any(param is None for param in [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
-                                           time_start, time_end,
-                                           param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g]):
-            error_list.append("Please fill in all required fields.")
-            error_list.append(html.Br())
+        error_message = validate_inputs(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
+                                        time_start, time_end, param_l1, param_l2, param_m1, param_m2,
+                                        param_M1, param_M2, param_g)
+        if error_message:
+            # If there are errors, return immediately
+            return (no_update, no_update, no_update,
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
+                    error_message)  # TODO: How do we clear the message whilst loading??
 
-        # Initial conditions
-        initial_values = {
-            'θ1': init_cond_theta1,
-            'θ2': init_cond_theta2,
-            'ω1': init_cond_omega1,
-            'ω2': init_cond_omega2
-        }
-        for init_name, init_value in initial_values.items():
-            if init_value is None:
-                error_list.append(f"{init_name} requires a numerical value.")
-                error_list.append(html.Br())
+        initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
+        time_steps = int((time_end - time_start) * 200)
+        time_vector = [time_start, time_end, time_steps]
+        parameters = {l1: param_l1, l2: param_l2,
+                    m1: param_m1, m2: param_m2,
+                    M1: param_M1, M2: param_M2,
+                    g: param_g}
 
-        # Time vector
-        times = {
-            'start time': time_start,
-            'end time': time_end,
-        }
-        for time_name, time_value in times.items():
-            if time_value is None:
-                error_list.append(f"Please provide a value for {time_name}")
-                error_list.append(html.Br())
+        # Create an instance of DoublePendulum
+        pendulum = DoublePendulum(parameters, initial_conditions, time_vector, model=model_type)
 
-        if time_start >= time_end or time_end <= 0:
-            error_list.append("End time must be greater than start time.")
-            error_list.append(html.Br())
+        # Convert the Matplotlib graphs to Plotly graphs
+        matplotlib_time_fig = pendulum.time_graph()
+        # Set the layout to be responsive
+        time_fig = tls.mpl_to_plotly(matplotlib_time_fig)
+        time_fig.update_layout(
+            autosize=True,
+            margin=dict(l=20, r=20, t=20, b=20),
+            width=1400,  # Set the ideal width
+            height=700  # Set the ideal height to maintain a 1:1 aspect ratio
+        )
+        plt.close(matplotlib_time_fig)
 
-        if time_end - time_start > MAX_TIME:
-            error_list.append(f"Maximum simulation time is {MAX_TIME} seconds.\n")
-            error_list.append(html.Br())
+        matplotlib_phase_fig = pendulum.phase_path()
+        # Set the layout with a fixed aspect ratio for the phase-path graph
+        phase_fig = tls.mpl_to_plotly(matplotlib_phase_fig)
+        phase_fig.update_layout(
+            autosize=True,
+            margin=dict(l=20, r=20, t=20, b=20),
+            width=700,  # Set the ideal width
+            height=700  # Set the ideal height to maintain a 1:1 aspect ratio
+        )
+        plt.close(matplotlib_phase_fig)
 
-        # Parameters
-        param_values = {
-            'l1 (length of rod 1)': param_l1,
-            'l2 (length of rod 2)': param_l2,
-            'm1 (mass of bob 1)': param_m1,
-            'm2 (mass of bob 2)': param_m2,
-            'M1 (mass of rod 1)': param_M1,
-            'M2 (mass of rod 2)': param_M2,
-            'g (acceleration due to gravity)': param_g,
-        }
-        for param_name, param_value in param_values.items():
-            if param_value is None:
-                error_list.append(f"Please provide a value for {param_name}")
-                error_list.append(html.Br())
-
-        for param_name, param_value in param_values.items():
-            if param_value is not None and param_value <= 0:
-                error_list.append(f"Parameter: {param_name} must be greater than zero.")
-                error_list.append(html.Br())
-
-        # Check if there is an error message collected, if so, return it and do not update graphs
-        if error_list:  # If there are errors, join them into a single string
-            error_message = html.Div(error_list, style={'color': 'red'})
-
-        else:
-            error_list.append("")       # Make the error list an empty string
-            error_list.append(html.Br())
-
-            initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
-            time_steps = int((time_end - time_start) * 200)
-            time_vector = [time_start, time_end, time_steps]
-            parameters = {l1: param_l1, l2: param_l2,
-                          m1: param_m1, m2: param_m2,
-                          M1: param_M1, M2: param_M2,
-                          g: param_g}
-
-            # Create an instance of DoublePendulum
-            pendulum = DoublePendulum(parameters, initial_conditions, time_vector, model=model_type)
-
-            # Convert the Matplotlib graphs to Plotly graphs
-            matplotlib_time_fig = pendulum.time_graph()
-            # Set the layout to be responsive
-            time_fig = tls.mpl_to_plotly(matplotlib_time_fig)
-            time_fig.update_layout(
-                autosize=True,
-                margin=dict(l=20, r=20, t=20, b=20),
-                width=1400,  # Set the ideal width
-                height=700  # Set the ideal height to maintain a 1:1 aspect ratio
+        # Define the layout for your figures
+        layout = go.Layout(
+            title_font=dict(family='Courier New, monospace', size=16, color='black'),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
+            xaxis=dict(
+                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
+                showgrid=True,
+                gridcolor='lightgrey'
+            ),
+            yaxis=dict(
+                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
+                showgrid=True,
+                gridcolor='lightgrey'
             )
-            plt.close(matplotlib_time_fig)
+        )
 
-            matplotlib_phase_fig = pendulum.phase_path()
-            # Set the layout with a fixed aspect ratio for the phase-path graph
-            phase_fig = tls.mpl_to_plotly(matplotlib_phase_fig)
-            phase_fig.update_layout(
-                autosize=True,
-                margin=dict(l=20, r=20, t=20, b=20),
-                width=700,  # Set the ideal width
-                height=700  # Set the ideal height to maintain a 1:1 aspect ratio
-            )
-            plt.close(matplotlib_phase_fig)
+        # Apply the layout to graphs
+        time_fig.update_layout(layout)
+        phase_fig.update_layout(layout)
 
-            # Define the layout for your figures
-            layout = go.Layout(
-                title_font=dict(family='Courier New, monospace', size=16, color='black'),
-                paper_bgcolor='white',
-                plot_bgcolor='white',
-                xaxis=dict(
-                    titlefont=dict(family='Courier New, monospace', size=14, color='black'),
-                    showgrid=True,
-                    gridcolor='lightgrey'
-                ),
-                yaxis=dict(
-                    titlefont=dict(family='Courier New, monospace', size=14, color='black'),
-                    showgrid=True,
-                    gridcolor='lightgrey'
-                )
-            )
+        # Generate the animation figure
+        pendulum.precompute_positions()  # Make sure positions are precomputed
+        animation_fig = pendulum.animate_pendulum(trace=True)
 
-            # Apply the layout to your graphs
-            time_fig.update_layout(layout)
-            phase_fig.update_layout(layout)
-
-            # Generate the animation figure
-            pendulum.precompute_positions()  # Make sure positions are precomputed
-            animation_fig = pendulum.animate_pendulum(trace=True)
-
-            return (time_fig, phase_fig, animation_fig,                               # graph figures
-                    {'display': 'grid'}, {'display': 'block'}, {'display': 'block'},  # graph styles
-                    "")                                                               # error message
+        return (time_fig, phase_fig, animation_fig,  # graph figures
+                {'display': 'grid'}, {'display': 'block'}, {'display': 'block'},
+                '')
 
     # If the button hasn't been clicked yet, return empty figures and keep everything hidden
     return (go.Figure(), go.Figure(), go.Figure(),
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-            error_message)
+            '')
 
 
 if __name__ == '__main__':
