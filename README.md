@@ -39,8 +39,8 @@ This Dash-based web application extends our previous work on the exploration and
 
 - **Interactive User Interface**: Built using `Dash` and `Plotly`, the interface allows users to input initial conditions (angles, angular velocities) and physical parameters (rod lengths, bob masses, gravity).
 - **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models for exploring varied dynamics.
-- **Simulation Engine**: Utilizes Lagrangian mechanics, implemented via `SymPy` for symbolic derivation.
-- **Visualization**: Real-time visualizations of the pendulum motion are rendered using `Plotly` and `Matplotlib`, including time graphs, phase diagrams, and animations.
+- **Simulation Engine**: Utilises Lagrangian mechanics, implemented via `SymPy`, numerical integration with `SciPy`.
+- **Visualisation**: Motion is rendered using `Plotly` and `Matplotlib`, including time graphs, phase diagrams, and animations.
 - **Error Handling**: Incorporates robust validation for user inputs, ensuring precise simulations.
 - **Educational Content**: Integrates `MathJax` for $\LaTeX$ rendering to present the mathematical underpinnings of the system.
 
