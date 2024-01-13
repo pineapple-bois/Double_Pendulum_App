@@ -1,10 +1,7 @@
 # The Mathematics
 
-The double pendulum is a quintessential example of a complex dynamical system, composed of two pendulums attached end-to-end with frictionless joints.
-
-This model simplifies the system by negating non-conservative forces at the pivot points, allowing a focus on the intricate interplay between kinetic and potential energies.
-
-Characterized by its sensitivity to initial conditions and exhibiting both periodic and chaotic behaviors, the system provides a rich context for exploring non-linear dynamics.
+The double pendulum is an example of a complex dynamical system, composed of two pendulums attached end-to-end by frictionless joints. Non-conservative forces are neglected at the pivot points.
+Characterised by sensitivity to initial conditions and exhibiting both periodic and chaotic behaviors, the system provides a rich context for exploring non-linear dynamics.
 
 The subsequent sections offer a detailed mathematical derivation of its motion.
 
@@ -18,9 +15,9 @@ The system's motion forms [Lissajous curves](https://en.wikipedia.org/wiki/Lissa
 
 #### Chaotic dynamics and Quasi-Periodicity
 
-The double pendulum is a classic example of a chaotic system, particularly when the angles are not small. In such cases, the pendulum exhibits sensitive dependence on initial conditions, meaning that even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
+The pendulum exhibits sensitive dependence on initial conditions, meaning even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
 
-Quasi-periodic motion is complex yet does not repeat exactly, sitting on the boundary between predictable periodic motion and unpredictable chaotic motion. It provides a fascinating window into the transitional behaviors that complex systems like the double pendulum can exhibit.
+Quasi-periodic motion is complex yet does not repeat exactly, sitting on the boundary between predictable periodic motion and unpredictable chaotic motion.
 
 
 ---
@@ -197,7 +194,7 @@ System $(6)$ is a system of uncoupled second-order differential equations.
 
 The equations are rewritten as a first-order system by letting $\omega_i = \frac{\text{d}}{\text{d} t}\theta_i$
 
-So $\omega_i$ for $i=1,2$ represents the angular velocity with $\frac{\text{d}}{\text{d} t}\omega_i \equiv \frac{\text{d}^2}{\text{d}^2 t}\theta_i$
+So $\omega_i$ for $i=1,2$ represents the angular velocity with $\frac{\text{d}}{\text{d} t}\omega_i \equiv \frac{\text{d}^2}{\text{d} t}^2\theta_i$
 
 The system is rewritten,
 $$
@@ -230,17 +227,17 @@ $$
 \begin{matrix}
 \omega_1(t) \\
 \omega_2(t) \\
-\frac{d}{dt} \omega_1(t) \\
-\frac{d}{dt} \omega_2(t)
+\frac{\text{d}}{\text{d} t} \omega_1(t) \\
+\frac{\text{d}}{\text{d} t} \omega_2(t)
 \end{matrix}
 \right]
 =
 \left[
 \begin{matrix}
-\frac{d}{dt} \theta_1(t) \\
-\frac{d}{dt} \theta_2(t) \\
-\frac{gm_1 \sin(\theta_1(t)) + \frac{gm_2 \sin(\theta_1(t) - 2 \theta_2(t))}{2} + \frac{gm_2 \sin(\theta_1(t))}{2} + \frac{l_1 m_2 \sin(2 \theta_1(t) - 2 \theta_2(t)) (\frac{d}{dt} \theta_1(t))^2}{2} + l_2 m_2 \sin(\theta_1(t) - \theta_2(t)) (\frac{d}{dt} \theta_2(t))^2}{l_1 (- m_1 + m_2 \cos^2(\theta_1(t) - \theta_2(t)) - m_2)} \\
-\frac{(m_1 + m_2) (g \sin(\theta_2(t)) - l_1 \sin(\theta_1(t) - \theta_2(t)) (\frac{d}{dt} \theta_1(t))^2) - (gm_1 \sin(\theta_1(t)) + gm_2 \sin(\theta_1(t)) + l_2 m_2 \sin(\theta_1(t) - \theta_2(t)) (\frac{d}{dt} \theta_2(t))^2) \cos(\theta_1(t) - \theta_2(t))}{l_2 (- m_1 + m_2 \cos^2(\theta_1(t) - \theta_2(t)) - m_2)}
+\frac{\text{d}}{\text{d} t} \theta_1(t) \\
+\frac{\text{d}}{\text{d} t} \theta_2(t) \\
+\frac{gm_1 \sin(\theta_1(t)) + \frac{gm_2 \sin(\theta_1(t) - 2 \theta_2(t))}{2} + \frac{gm_2 \sin(\theta_1(t))}{2} + \frac{l_1 m_2 \sin(2 \theta_1(t) - 2 \theta_2(t)) (\frac{\text{d}}{\text{d}t} \theta_1(t))^2}{2} + l_2 m_2 \sin(\theta_1(t) - \theta_2(t)) (\frac{\text{d}}{\text{d}t} \theta_2(t))^2}{l_1 (- m_1 + m_2 \cos^2(\theta_1(t) - \theta_2(t)) - m_2)} \\
+\frac{(m_1 + m_2) (g \sin(\theta_2(t)) - l_1 \sin(\theta_1(t) - \theta_2(t)) (\frac{\text{d}}{\text{d}t} \theta_1(t))^2) - (gm_1 \sin(\theta_1(t)) + gm_2 \sin(\theta_1(t)) + l_2 m_2 \sin(\theta_1(t) - \theta_2(t)) (\frac{\text{d}}{\text{d}t} \theta_2(t))^2) \cos(\theta_1(t) - \theta_2(t))}{l_2 (- m_1 + m_2 \cos^2(\theta_1(t) - \theta_2(t)) - m_2)}
 \end{matrix}
 \right] \tag{7}
 $$
@@ -249,11 +246,9 @@ $$
 
 ### The compound model:
 
-The compound model includes elements such as rotational kinetic energy and the moment of inertia to account for the distribution of mass along the rods.
+The compound model a uniform mass distribution along the length of the rod. The rod is now subject to a rotational kinetic energy and moment of inertia about its centre of mass. By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends.
 
-By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends, offering a more nuanced and accurate representation of the system's behavior.
-
-The derivation follows similar mathematical steps as the simple model but incorporates these additional factors to capture the effects of distributed mass and rotational energy. The resulting equations of motion are more complex but provide a deeper understanding of the pendulum's dynamics.
+The derivation follows similar mathematical steps as the simple model but incorporates these additional factors to capture the effects of distributed mass and rotational energy. The resulting equations of motion are more complex but provide a more realistic understanding of double pendulum dynamics.
 
 
 ##### Equations of motion
@@ -275,7 +270,7 @@ $$
 \frac{42 M_{1} g \sin(\theta_{1}(t)) + 9 M_{2} g \sin(\theta_{1}(t) - 2 \theta_{2}(t)) + 33 M_{2} g \sin(\theta_{1}(t)) + \frac{9 M_{2} l_{1} \sin(2 \theta_{1}(t) - 2 \theta_{2}(t)) (\frac{d}{dt} \theta_{1}(t))^2}{2} + 21 M_{2} l_{2} \sin(\theta_{1}(t) - \theta_{2}(t)) (\frac{d}{dt} \theta_{2}(t))^2}{l_{1} (- 49 M_{1} + 9 M_{2} \cos^2(\theta_{1}(t) - \theta_{2}(t)) - 21 M_{2})} \\
 \frac{3 \left((7 M_{1} + 3 M_{2}) (2 g \sin(\theta_{2}(t)) - l_{1} \sin(\theta_{1}(t) - \theta_{2}(t)) (\frac{d}{dt} \theta_{1}(t))^2) - 3 \cdot (2 M_{1} g \sin(\theta_{1}(t)) + 2 M_{2} g \sin(\theta_{1}(t)) + M_{2} l_{2} \sin(\theta_{1}(t) - \theta_{2}(t)) (\frac{d}{dt} \theta_{2}(t))^2) \cos(\theta_{1}(t) - \theta_{2}(t))\right)}{l_{2} (- 49 M_{1} + 9 M_{2} \cos^2(\theta_{1}(t) - \theta_{2}(t)) - 21 M_{2})}
 \end{matrix}
-\right]
+\right] \tag{8}
 $$
 
 ----
