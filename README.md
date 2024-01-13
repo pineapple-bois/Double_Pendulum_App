@@ -42,7 +42,7 @@ This Dash-based web application extends our previous work on the exploration and
 - **Simulation Engine**: Utilizes Lagrangian mechanics, implemented via `SymPy` for symbolic derivation.
 - **Visualization**: Real-time visualizations of the pendulum motion are rendered using `Plotly` and `Matplotlib`, including time graphs, phase diagrams, and animations.
 - **Error Handling**: Incorporates robust validation for user inputs, ensuring precise simulations.
-- **Educational Content**: Integrates `MathJax` for $\latex$ rendering to present the mathematical underpinnings of the system.
+- **Educational Content**: Integrates `MathJax` for $\LaTeX$ rendering to present the mathematical underpinnings of the system.
 
 The application is [deployed on Heroku](https://double-pendulum-dbd9c9702654.herokuapp.com)
 
