@@ -138,10 +138,10 @@ body {
 /* Use a media query for small screens to adjust graph layout */
 @media (max-width: 768px) {
   .above-graph-container {
-    grid-template-columns: 1fr; /* Stack graphs on top of each other */
-    gap: 20px;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 }
 
