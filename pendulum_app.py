@@ -25,6 +25,8 @@ app = dash.Dash(
         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML'
     ]
 )
+server = app.server
+
 
 app.layout = html.Div([
     html.H1("Double Pendulum Simulation: Lagrangian Formulation",
@@ -294,5 +296,5 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run_server(debug=True)
+
