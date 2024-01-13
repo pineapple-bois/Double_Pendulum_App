@@ -84,7 +84,6 @@ app.layout = html.Div([
             ]),
             html.Div(className='container-buttons', children=[
             html.Button('Unity Parameters', id='unity-parameters', n_clicks=0, className='button'),
-            html.Button('Reset', id='reset-button', n_clicks=0, className='button'),
             html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button'),
             ]),
         ]),
@@ -119,14 +118,6 @@ app.layout = html.Div([
         ]),
     ]),
 
-    # Error message
-    html.Div(id='error-message', style={
-        'color': 'red',
-        'textAlign': 'center',
-        'margin': '20px',
-        'font-size': "20px"
-    }),
-
     # Loading spinner
     dcc.Loading(
         id="loading-1",
@@ -144,6 +135,14 @@ app.layout = html.Div([
         # Position the spinner at the top of the container
         style={'height': '100%', 'position': 'relative'}
     ),
+
+    # Error message
+    html.Div(id='error-message', style={
+        'color': 'red',
+        'textAlign': 'center',
+        'margin': '20px',
+        'font-size': "20px"
+    }),
 
     html.Div(id='math-button-container', className='container-buttons', style={'display': 'none'}, children=[
         html.Button('Show Mathematics', id='show-maths', n_clicks=0, className='button-show'),
@@ -177,23 +176,6 @@ def set_unity_parameters(n_clicks):
         # Return unity values for the parameters, except g which is set to 9.81
         return 1, 1, 1, 1, 1, 1, 9.81
     return dash.no_update  # Prevents updating before button click
-
-
-# Callback for the reset button
-@app.callback(
-    [Output('init_cond_theta1', 'value'),
-     Output('init_cond_theta2', 'value'),
-     Output('init_cond_omega1', 'value'),
-     Output('init_cond_omega2', 'value'),
-     Output('time_start', 'value'),
-     Output('time_end', 'value')],
-    [Input('reset-button', 'n_clicks')]
-)
-def reset_values(n_clicks):
-    if n_clicks > 0:
-        # Reset all values to default or initial state
-        return '', '', '', '', 0, 20
-    return dash.no_update
 
 
 # Callback to toggle the mathematics section and button appearance
@@ -265,7 +247,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
         }
         for init_name, init_value in initial_values.items():
             if init_value is None:
-                error_list.append(f"The value: {init_name} requires a numerical value.")
+                error_list.append(f"{init_name} requires a numerical value.")
                 error_list.append(html.Br())
 
         # Time vector
