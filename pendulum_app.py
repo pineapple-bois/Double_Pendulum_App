@@ -58,6 +58,8 @@ app.layout = html.Div([
             - There are two models available: 
                 - `Simple` (the default) models a massless rod.
                 - `Compound` models a rod with uniform mass distribution along its length. 
+                
+            - The default time interval is 20 seconds. The maximum is 120 seconds. 
 
             - Use the `Run Simulation` button to start the simulation.
             ''', mathjax=True)
@@ -230,7 +232,7 @@ def validate_inputs(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_c
     }
     for init_name, init_value in initial_values.items():
         if init_value is None:
-            error_list.append(f"The value: {init_name} requires a numerical value.")
+            error_list.append(f"{init_name} requires a numerical value.")
             error_list.append(html.Br())
 
     # Time vector
@@ -245,6 +247,10 @@ def validate_inputs(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_c
 
     if time_start >= time_end or time_end <= 0:
         error_list.append("End time must be greater than start time.")
+        error_list.append(html.Br())
+
+    if time_start < 0:
+        error_list.append("Time interval must begin at zero")
         error_list.append(html.Br())
 
     if time_end - time_start > MAX_TIME:
@@ -262,8 +268,8 @@ def validate_inputs(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_c
         'g (acceleration due to gravity)': param_g,
     }
     for param_name, param_value in param_values.items():
-        if param_value is None:
-            error_list.append(f"Please provide a value for {param_name}")
+        if param_value is None or not isinstance(param_value, (int, float)):
+            error_list.append(f"Please provide a numerical value for {param_name}")
             error_list.append(html.Br())
 
     for param_name, param_value in param_values.items():
