@@ -221,8 +221,6 @@ $$
 
 Which leads to a first-order system of equations
 
-### The simple model
-
 $$
 \left[
 \begin{matrix}
@@ -245,7 +243,7 @@ $$
 
 ----
 
-### The compound model:
+## The compound model
 
 The `compound model` models a uniform mass distribution along the length of the rod. The rod is now subject to a rotational kinetic energy and moment of inertia about its centre of mass. By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends.
 
