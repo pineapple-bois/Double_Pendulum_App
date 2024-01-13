@@ -4,7 +4,7 @@ body {
   font-size: 14px;
 }
 
-.button, .Select-control, .input, .label {
+.button, .Select-control, .input, .label, .button-show, .button-hide {
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
 }
@@ -30,13 +30,14 @@ body {
   margin-bottom: 10px;
 }
 
-.button {
+.button, .button-show {
   width: 100%;
   padding: 10px;
   margin-top: 10px;
+  margin-bottom: 0;
 }
 
-#submit-val {
+#submit-val  {
   padding: 20px 10px;
   background-color: #6495ED;
   color: white;
@@ -46,8 +47,38 @@ body {
   transition: background-color 0.3s ease;
 }
 
-#submit-val:hover {
+#submit-val :hover {
   background-color: #7BA0F0;
+}
+
+/* Button styles when showing mathematics */
+.button-show {
+  padding: 20px 10px;
+  background-color: #6495ED; /* Blue */
+  color: white;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-show:hover {
+  background-color: #7BA0F0; /* Lighter blue */
+}
+
+/* Button styles when hiding mathematics */
+.button-hide {
+  padding: 20px 10px;
+  background-color: #5172A0; /* Darker blue */
+  color: white;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-hide:hover {
+  background-color: #5E82AB; /* Lighter shade of darker blue */
 }
 
 /* custom.css */
@@ -83,11 +114,12 @@ body {
 
 /* Additional styles for the Markdown LaTeX display */
 .markdown-latex-container {
-  margin-top: 20px; /* Space above the markdown */
+  margin-top: 0; /* Space above the markdown */
   padding: 10px;
   background-color: #f8f8f8; /* Light grey background */
   border: 1px solid #ddd; /* Light grey border */
   overflow-x: auto; /* Allows scrolling if content is too wide */
+  overflow-y: hidden; /* Hides vertical scrollbar */
 }
 
 /* Responsive adjustments for smaller screens */
