@@ -7,6 +7,7 @@ import sympy as sp
 import plotly.tools as tls
 import plotly.graph_objs as go
 import plotly.io as pio
+import os
 from Class_OOP import DoublePendulum
 
 # Sympy variables for parameters
