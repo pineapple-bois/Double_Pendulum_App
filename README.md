@@ -37,12 +37,17 @@ This Dash-based web application extends our previous work on the exploration and
 
 ### Key Features:
 
-- **Interactive User Interface**: Built using `Dash` and `Plotly`, the interface allows users to input initial conditions (angles, angular velocities) and physical parameters (rod lengths, bob masses, gravity).
-- **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models for exploring varied dynamics.
-- **Simulation Engine**: Utilises Lagrangian mechanics, implemented via `SymPy`, numerical integration with `SciPy`.
+- **Derivation**: The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions](Functions.py). A simple conditional logic structure controls which model is derived.
+- **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models.
+- **DoublePendulum Class**: 
+    - Instantiating a [DoublePendulum](DoublePendulum.py) object (`Run Simulation`) derives the symbolic equations.
+    - The equations of motion are cached to reduce runtime for further simulations of the same model
+    - The equations are numerically integrated using `SciPy`'s [solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html) function. Integrator arguments are available in the class structure but this functionality is yet to be added to the UI.
+- **Interactive User Interface**: Built using `Dash` and `Plotly`, the interface allows users to input initial conditions (angles, angular velocities) and physical parameters (lengths, masses & acceleration due to gravity).
+
 - **Visualisation**: Motion is rendered using `Plotly` and `Matplotlib`, including time graphs, phase diagrams, and animations.
-- **Error Handling**: Incorporates robust validation for user inputs, ensuring precise simulations.
-- **Educational Content**: Integrates `MathJax` for $\LaTeX$ rendering to present the mathematical underpinnings of the system.
+- **Error Handling**: Features robust validation for user inputs, ensuring precise simulations.
+- **Educational Content**: Utilises `MathJax` for $\LaTeX$ rendering.
 
 The application is [deployed on Heroku](https://double-pendulum-dbd9c9702654.herokuapp.com)
 
