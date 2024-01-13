@@ -126,6 +126,8 @@ body {
 @media (max-width: 1400px) { /* Adjust for when the total width of the two graphs exceeds the screen width */
   .above-graph-container {
     grid-template-columns: 1fr; /* Stack the graphs on top of each other */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
   }
 
   .above-graph-container .graph {
@@ -137,6 +139,9 @@ body {
 @media (max-width: 768px) {
   .above-graph-container {
     grid-template-columns: 1fr; /* Stack graphs on top of each other */
+    gap: 20px;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
   }
 }
 
