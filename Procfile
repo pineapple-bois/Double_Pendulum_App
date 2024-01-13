@@ -1,1 +1,1 @@
-web: gunicorn double-pendulum:server
+web: gunicorn pendulum_app:server
