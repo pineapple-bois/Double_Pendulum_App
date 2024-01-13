@@ -1,21 +1,22 @@
 # The Mathematics
 
-The double pendulum is an example of a complex dynamical system, composed of two pendulums attached end-to-end by frictionless joints. Non-conservative forces are neglected at the pivot points.
+The double pendulum is an example of a complex dynamical system. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in this Lagrangian derivation.
+
 Characterised by sensitivity to initial conditions and exhibiting both periodic and chaotic behaviors, the system provides a rich context for exploring non-linear dynamics.
 
-The subsequent sections offer a detailed mathematical derivation of its motion.
+The subsequent sections offer a detailed mathematical derivation of the equations of motion.
 
 
 #### Behavior at Small Angles
 
-When the angles of oscillation are small, the double pendulum exhibits behavior that can be approximated using sine and cosine functions.
+When the angles of oscillation are small, the behavior that can be approximated using sine and cosine functions.
 
-The system's motion forms [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
+The phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
 
 
 #### Chaotic dynamics and Quasi-Periodicity
 
-The pendulum exhibits sensitive dependence on initial conditions, meaning even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
+The pendulums exhibit sensitive dependence on initial conditions, meaning even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
 
 Quasi-periodic motion is complex yet does not repeat exactly, sitting on the boundary between predictable periodic motion and unpredictable chaotic motion.
 
@@ -194,7 +195,7 @@ System $(6)$ is a system of uncoupled second-order differential equations.
 
 The equations are rewritten as a first-order system by letting $\omega_i = \frac{\text{d}}{\text{d} t}\theta_i$
 
-So $\omega_i$ for $i=1,2$ represents the angular velocity with $\frac{\text{d}}{\text{d} t}\omega_i \equiv \frac{\text{d}^2}{\text{d} t}^2\theta_i$
+So $\omega_i$ for $i=1,2$ represents the angular velocity with $\frac{\text{d}}{\text{d} t}\omega_i \equiv \frac{\text{d}^2}{\text{d} t^2}\theta_i$
 
 The system is rewritten,
 $$
@@ -246,12 +247,10 @@ $$
 
 ### The compound model:
 
-The compound model a uniform mass distribution along the length of the rod. The rod is now subject to a rotational kinetic energy and moment of inertia about its centre of mass. By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends.
+The `compound model` models a uniform mass distribution along the length of the rod. The rod is now subject to a rotational kinetic energy and moment of inertia about its centre of mass. By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends.
 
-The derivation follows similar mathematical steps as the simple model but incorporates these additional factors to capture the effects of distributed mass and rotational energy. The resulting equations of motion are more complex but provide a more realistic understanding of double pendulum dynamics.
+The derivation follows similar mathematical steps as the `simple model` but incorporates these additional factors to capture the effects of distributed mass and rotational energy. The resulting equations of motion are more complex but provide a more realistic understanding of double pendulum dynamics.
 
-
-##### Equations of motion
 
 $$
 \left[
