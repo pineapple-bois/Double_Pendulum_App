@@ -33,8 +33,20 @@ So $\omega_i$ for $i=1,2$ represents the angular velocity with $\frac{\text{d}}{
 
 ## The Application
 
+This Dash-based web application extends our previous work on the exploration and derivation of the system's dynamics
 
+### Key Features:
 
+- **Interactive User Interface**: Built using `Dash` and `Plotly`, the interface allows users to input initial conditions (angles, angular velocities) and physical parameters (rod lengths, bob masses, gravity).
+- **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models for exploring varied dynamics.
+- **Simulation Engine**: Utilizes Lagrangian mechanics, implemented via `SymPy` for symbolic derivation.
+- **Visualization**: Real-time visualizations of the pendulum motion are rendered using `Plotly` and `Matplotlib`, including time graphs, phase diagrams, and animations.
+- **Error Handling**: Incorporates robust validation for user inputs, ensuring precise simulations.
+- **Educational Content**: Integrates `MathJax` for $\latex$ rendering to present the mathematical underpinnings of the system.
+
+The application is [deployed on Heroku](https://double-pendulum-dbd9c9702654.herokuapp.com)
+
+For a full list of dependencies, refer to the `requirements.txt` file.
 
 ----
 
