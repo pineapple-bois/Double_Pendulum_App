@@ -42,7 +42,7 @@ def before_request():
 
 
 app.title = 'Double Pendulum: Lagrangian formulation - pineapple-bois'
-app.index_string = open('custom-header.html', 'r').read()
+app.index_string = open('assets/custom-header.html', 'r').read()
 app.layout = html.Div([
     # Flex container for the title and GitHub logo
     html.Div([
