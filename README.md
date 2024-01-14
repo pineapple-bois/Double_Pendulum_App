@@ -37,10 +37,10 @@ This Dash-based web application extends our previous work on the exploration and
 
 ### Key Features:
 
-- **Derivation**: The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions]([Functions.py](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/Functions.py)). A simple conditional logic structure controls which model is derived.
+- **Derivation**: The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions]([Functions.py](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/Functions.py). A simple conditional logic structure controls which model is derived.
 - **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models.
 - **DoublePendulum Class**: 
-    - Instantiating a [DoublePendulum]([DoublePendulum.py](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/DoublePendulum.py)) object (`Run Simulation`) derives the symbolic equations.
+    - Instantiating a [DoublePendulum]([DoublePendulum.py](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/DoublePendulum.py) object; *Run Simulation button*, derives the symbolic equations.
     - The equations of motion are cached to reduce runtime for further simulations of the same model
     - The equations are numerically integrated using `SciPy`'s [solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html) function. Integrator arguments are available in the class structure but this functionality is yet to be added to the UI.
 - **Interactive User Interface**: Built using `Dash` and `Plotly`, the interface allows users to input initial conditions (angles, angular velocities) and physical parameters (lengths, masses & acceleration due to gravity).
