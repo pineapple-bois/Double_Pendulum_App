@@ -32,11 +32,23 @@ server = app.server
 
 
 app.layout = html.Div([
-    html.H1("Double Pendulum Simulation: Lagrangian Formulation",
-            style={'textAlign': 'center', 'color': 'black'}),
-    dcc.Markdown('''The system has two degrees of freedom and is uniquely determined by the values
-     of $\\theta_1$ and $\\theta_2$''', mathjax=True,
-           style={'textAlign': 'center', 'color': 'black', 'font-size': "18px"}),
+    # Flex container for the title and GitHub logo
+    html.Div([
+        # Title
+        html.Div([
+            html.H1("Double Pendulum Simulation: Lagrangian Formulation",
+                    style={'text-align': 'center', 'color': 'black'})
+        ], style={'flex': 1}),  # Title container taking up the full width
+
+        # GitHub logo as a link
+        html.A([
+            html.Img(src='assets/github-mark.png',
+                     style={'height': '50px', 'width': '50px'})
+        ], href='https://github.com/pineapple-bois/Double_Pendulum_App',
+            target='_blank',
+            style={'align-self': 'center'}),
+    ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'}),
+
     # Container to establish a flexbox layout with two columns, instructions and image
     html.Div([
         # Column for instructions (Markdown)
