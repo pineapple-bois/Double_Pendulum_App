@@ -29,7 +29,8 @@ app = dash.Dash(
     external_scripts=[
         # ... (other scripts if any)
         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js'
-    ]
+    ],
+    server=server
 )
 
 
