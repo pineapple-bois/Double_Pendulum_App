@@ -8,7 +8,7 @@ import plotly.tools as tls
 import plotly.graph_objs as go
 import plotly.io as pio
 import os
-from Class_OOP import DoublePendulum
+from DoublePendulum import DoublePendulum
 
 # Sympy variables for parameters
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)
