@@ -1,6 +1,6 @@
 # The Mathematics
 
-The double pendulum is an example of a complex dynamical system. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in this Lagrangian derivation.
+The double pendulum is an example of a complex dynamical system with two degrees of freedom. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in this Lagrangian derivation.
 
 Characterised by sensitivity to initial conditions and exhibiting both periodic and chaotic behaviors, the system provides a rich context for exploring non-linear dynamics.
 
