@@ -3,7 +3,7 @@
 This project extends the [Double Pendulum Repo](https://github.com/pineapple-bois/Double_Pendulum), a Lagrangian formulation of the equations of motion of a double pendulum system. 
 
 Available at:
-[www.double-pendulum.net](www.double-pendulum.net)
+[www.double-pendulum.net](http://www.double-pendulum.net)
 
 ----
 
@@ -52,7 +52,7 @@ This Dash-based web application extends our previous work on the exploration and
 - **Error Handling**: Features robust validation for user inputs, ensuring precise simulations.
 - **Educational Content**: Utilises `MathJax` for $\LaTeX$ rendering.
 
-The application is available at [double-pendulum.net](www.double-pendulum.net)
+The application is available at [double-pendulum.net](http://www.double-pendulum.net)
 
 For a full list of dependencies, refer to the `requirements.txt` file.
 
