@@ -112,6 +112,10 @@ body {
   height: auto; /* Height will scale automatically */
 }
 
+.above-graph-container .graph {
+    width: 80vw; /* Adjust the width to a suitable percentage of the viewport width */
+}
+
 /* Additional styles for the Markdown LaTeX display */
 .markdown-latex-container {
   margin-top: 0; /* Space above the markdown */
@@ -123,15 +127,12 @@ body {
 }
 
 /* Responsive adjustments for smaller screens */
-@media (max-width: 1400px) { /* Adjust for when the total width of the two graphs exceeds the screen width */
+@media (max-width: 1400px) {
+  /* Adjust for when the total width of the two graphs exceeds the screen width */
   .above-graph-container {
     grid-template-columns: 1fr; /* Stack the graphs on top of each other */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
-  }
-
-  .above-graph-container .graph {
-    width: 80vw; /* Adjust the width to a suitable percentage of the viewport width */
   }
 }
 
