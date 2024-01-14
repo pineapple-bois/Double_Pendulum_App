@@ -59,7 +59,8 @@ class DoublePendulum:
             phase_path: Plots the phase path (theta1 vs. theta2) of the double pendulum.
             precompute_positions: Precomputes and stores the positions of both pendulum bobs for each time step.
     """
-    _cache = {}     # Class variable for caching
+    # Class variable for caching
+    _cache = {}
 
     # Declare variables & constants
     t = sp.Symbol("t")
@@ -152,14 +153,8 @@ class DoublePendulum:
 
         return x_1, y_1, x_2, y_2
 
-    # In your DoublePendulum class or wherever you define time_graph and phase_path methods:
-
     def time_graph(self):
         plt.style.use('default')  # Reset to the default style
-        fig, ax = plt.subplots()
-        # The dpi (dots per inch) is typically 100 for screen display.
-        #dpi = 100
-        #fig_size = 700 / dpi  # Convert pixels to inches figsize=(2*fig_size, fig_size)
         fig, ax = plt.subplots()
         # Plot settings to match the animation's appearance
         ax.plot(self.time, np.rad2deg(self.sol[:, 0]), color='darkorange', label="θ1", linewidth=2)
@@ -176,9 +171,6 @@ class DoublePendulum:
 
     def phase_path(self):
         plt.style.use('default')  # Reset to the default style
-        # The dpi (dots per inch) is typically 100 for screen display.
-        #dpi = 100
-        #fig_size = 700 / dpi  # Convert pixels to inches figsize=(fig_size, fig_size)
         fig, ax = plt.subplots()
 
         # Plot settings to match the animation's appearance
@@ -298,17 +290,15 @@ class DoublePendulum:
 
         # Update figure layout to create a square plot with padded axis range
         fig.update_layout(
-            # Set the plot background color
             plot_bgcolor=background_color,
-            # Set the paper (surrounding area) background color
             paper_bgcolor=background_color,
             xaxis=dict(
                 showgrid=True, gridwidth=1, gridcolor=grid_color,
                 range=axis_range_with_padding,
                 autorange=False,
                 zeroline=False,
-                tickcolor=text_color,  # Set the tick color to the text color
-                tickfont=dict(size=12, color=text_color),  # Adjust the font size and color of the ticks
+                tickcolor=text_color,
+                tickfont=dict(size=12, color=text_color),
             ),
             yaxis=dict(
                 showgrid=True, gridwidth=1, gridcolor=grid_color,
@@ -317,11 +307,11 @@ class DoublePendulum:
                 zeroline=False,
                 scaleanchor='x',
                 scaleratio=1,
-                tickcolor=text_color,  # Set the tick color to the text color
-                tickfont=dict(size=12, color=text_color),  # Adjust the font size and color of the ticks
+                tickcolor=text_color,
+                tickfont=dict(size=12, color=text_color),
             ),
             autosize=False,
-            width=700,  # Use the same size for width and height
+            width=700,
             height=700,
 
             updatemenus=[{
@@ -333,8 +323,8 @@ class DoublePendulum:
                         args=[None, {"frame": {"duration": 33, "redraw": True}, "fromcurrent": True,
                                      "mode": "immediate",
                                      'label': 'Play',
-                                     'font': {'size': 14, 'color': 'black'},  # Adjust font size and color
-                                     'bgcolor': 'lightblue'  # Background color of the button
+                                     'font': {'size': 14, 'color': 'black'},
+                                     'bgcolor': 'lightblue'
                         }],
                     )
                 ],
@@ -343,11 +333,11 @@ class DoublePendulum:
                 'showactive': False,
                 'type': 'buttons',
                 'x': 0.05,  # Position for x
-                'y': 0.95,  # Position for y, at the top of the figure
-                'xanchor': "left",  # Anchor the button to the left
-                'yanchor': "top"  # Anchor the button to the top
+                'y': 0.95,  # Position for y,(the top of the figure)
+                'xanchor': "left",
+                'yanchor': "top"
             }],
-        margin=dict(l=20, r=20, t=20, b=20),  # Adjust margins to fit layout
+        margin=dict(l=20, r=20, t=20, b=20),
         )
 
         return fig
