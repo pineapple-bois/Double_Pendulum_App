@@ -2,6 +2,8 @@ import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output, State, ClientsideFunction
 from dash import no_update
+from flask import Flask, redirect, request
+from dash import Dash
 from matplotlib import pyplot as plt
 import sympy as sp
 import plotly.tools as tls
@@ -21,6 +23,7 @@ with open('assets/mathematics_section.txt', 'r') as file:
 MAX_TIME = 120
 
 
+server = Flask(__name__)
 app = dash.Dash(
     __name__,
     external_scripts=[
@@ -28,7 +31,13 @@ app = dash.Dash(
         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js'
     ]
 )
-server = app.server
+
+
+@server.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
 
 
 app.layout = html.Div([
