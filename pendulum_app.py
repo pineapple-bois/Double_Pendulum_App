@@ -41,6 +41,8 @@ def before_request():
         return redirect(url, code=301)
 
 
+app.title = 'Double Pendulum: Lagrangian formulation - pineapple-bois'
+app.index_string = open('custom-header.html', 'r').read()
 app.layout = html.Div([
     # Flex container for the title and GitHub logo
     html.Div([
