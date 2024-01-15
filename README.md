@@ -34,25 +34,32 @@ So $\omega_i$ for $i=1,2$ represents the angular velocity with $\frac{\text{d}}{
 
 ----
 
-## The Application
+## Chaos Branch
 
-This Dash-based web application extends our previous work on the exploration and derivation of the system's dynamics
+Update 15/01/2024
 
-### Key Features:
+`chaos` branch introduces significant architectural changes to the `Double_Pendulum` application, with a focus on exploring chaotic dynamics and enhancing the modularity and maintainability of the codebase.
 
-- **Derivation**: The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/Functions.py). A simple conditional logic structure controls which model is derived.
-- **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models.
-- **DoublePendulum Class**: 
-    - Instantiating a [DoublePendulum](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/DoublePendulum.py) object; *clicking the 'Run Simulation' button*, derives the symbolic equations.
-    - The equations of motion are cached to reduce runtime for further simulations of the same model
-    - The equations are numerically integrated using `SciPy`'s [solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html) function. Integrator arguments are available in the class structure but this functionality is yet to be added to the UI.
-- **Interactive User Interface**: Built using `Dash` and `Plotly`, the interface allows users to input initial conditions (angles, angular velocities) and physical parameters (lengths, masses & acceleration due to gravity).
+- **Chaotic Dynamics Exploration Page**: A new page dedicated to the exploration of chaotic dynamics has been set up, allowing for a more in-depth investigation of chaos theory within the context of the double pendulum system.
 
-- **Visualisation**: Motion is rendered using `Plotly` and `Matplotlib`, including time graphs, phase diagrams, and animations.
-- **Error Handling**: Features robust validation for user inputs, ensuring precise simulations.
-- **Educational Content**: Utilises `MathJax` for $\LaTeX$ rendering.
+- **Architectural Enhancements**: 
+    - **Page-Specific Callbacks**: To accommodate the new multi-page setup; 
+      - callbacks have been restructured to be layout or page-specific. This ensures a more organized codebase where each page's logic is contained within its respective module, improving readability and ease of maintenance.
+    - **Layout Abstraction**: The application's layout has been abstracted away from the main `app.py` file to support better scalability and code organization. This includes:
+      - A `main` page that serves as the entry point and primary interface for the standard double pendulum simulation. (existing `main` branch)
+      - A `chaos` page designed to explore chaotic behaviors and patterns that emerge under various conditions.
+- **Error Handling**: Error handling has been improved with the separation of validation logic. 
+  - The `validate_inputs()` function has been refined to accept a list of initial conditions, allowing for more flexible input checks.
 
-The application is available at [double-pendulum.net](http://www.double-pendulum.net)
+
+This branch in development will significantly extend the functionality of the application.
+
+----
+
+Screenshot - `chaos` page allows instantiation of three separate systems
+![img](assets/chaos_page.png)
+
+`main` branch application @ [double-pendulum.net](http://www.double-pendulum.net)
 
 For a full list of dependencies, refer to the `requirements.txt` file.
 
