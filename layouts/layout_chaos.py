@@ -63,27 +63,19 @@ def get_chaos_layout():
             # Column for instructions (Markdown)
             html.Div([
                 dcc.Markdown('''
-                ## Instructions
-
-                - Please experiment with different initial conditions. The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. 
-
-
-                - A negative angle gives clockwise rotation.
-
-
-                - The angular velocities; $\omega_1$ & $\omega_2$ can be specified in degrees per second. *Interesting dynamics can be discovered simply releasing the pendulums from rest;* $(\\omega_i=0)$.  
-
+                ## Chaotic Dynamics
+                
+                The aim of this section is to compare 2 or 3 pendulums side by side with different initial conditions.
+                
+                ### Instructions
+                
+                - `Pendulums to compare`: Choose either two or three (default is two)
 
                 - `Unity Parameters` sets pendulum arms to $1 \\text{m}$ & masses to $1 \\text{kg}$, with $g = 9.81\\text{m s}^{-2}$.
 
-
                 - Ensure all initial conditions and parameters are filled.
 
-
                 - The default time interval is 20 seconds. The maximum is 120 seconds. 
-
-
-                - Use the `Run Simulation` button to start the simulation.
 
                 [Return to Simulation](\home) (Opens new page)
                 ''', mathjax=True)
@@ -206,12 +198,25 @@ def get_chaos_layout():
             id="loading-1",
             type="default",  # or "circle", "dot", or "cube" for different spinner types
             children=[  # new ID for multi pendulums
-                html.Div(id='animation-container', className='multi-graph-container', style={'display': 'none'},
-                         children=[
-                             dcc.Graph(id='pendulum-a-animation'),
-                             dcc.Graph(id='pendulum-b-animation'),
-                             dcc.Graph(id='pendulum-c-animation'),
-                         ]),
+                # Container for animations with headers
+                html.Div(id='animation-container', className='multi-graph-container', children=[
+                    html.Div([
+                        html.H4("Pendulum A"),
+                        dcc.Graph(id='pendulum-a-animation'),
+                        dcc.Graph(id='pendulum-a-phase')
+                    ]),
+                    html.Div([
+                        html.H4("Pendulum B"),
+                        dcc.Graph(id='pendulum-b-animation'),
+                        dcc.Graph(id='pendulum-b-phase')
+                    ]),
+                    html.Div([
+                        html.H4("Pendulum C"),
+                        dcc.Graph(id='pendulum-c-animation'),
+                        dcc.Graph(id='pendulum-c-phase')
+                    ]),
+                    # Add more graphs above as needed
+                ], style={'display': 'grid'})
             ],
             # Position the spinner at the top of the container
             style={'height': '100%', 'position': 'relative'}
