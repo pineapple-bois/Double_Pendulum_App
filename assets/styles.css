@@ -20,6 +20,7 @@ body {
 .input-group {
   display: flex;
   flex-direction: column;
+  margin-top: 10px
 }
 
 .label {
@@ -96,6 +97,15 @@ body {
   margin-bottom: 20px;
 }
 
+/* Adjustments for the multi-graph container */
+.multi-graph-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns */
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
 .above-graph-container {
   grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
   gap: 20px;
@@ -107,7 +117,7 @@ body {
 }
 
 /* Responsive settings for graphs */
-.graph-container .graph, .above-graph-container .graph {
+.graph-container .graph, .above-graph-container .multi-graph-container {
   width: 95%; /* Full width of their container */
   height: auto; /* Height will scale automatically */
 }
