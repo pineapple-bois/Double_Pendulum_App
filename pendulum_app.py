@@ -11,6 +11,7 @@ import sympy as sp
 import os
 from layouts.layout_main import get_main_layout
 from layouts.layout_chaos import get_chaos_layout
+from layouts.layout_matplotlib import mpl_layout
 from Errors import validate_inputs
 from DoublePendulum import DoublePendulum
 
@@ -222,26 +223,9 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
         )
         plt.close(matplotlib_phase_fig)
 
-        # Define the layout for your figures
-        layout = go.Layout(
-            title_font=dict(family='Courier New, monospace', size=16, color='black'),
-            paper_bgcolor='white',
-            plot_bgcolor='white',
-            xaxis=dict(
-                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
-                showgrid=True,
-                gridcolor='lightgrey'
-            ),
-            yaxis=dict(
-                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
-                showgrid=True,
-                gridcolor='lightgrey'
-            )
-        )
-
         # Apply the layout to graphs
-        time_fig.update_layout(layout)
-        phase_fig.update_layout(layout)
+        time_fig.update_layout(mpl_layout)
+        phase_fig.update_layout(mpl_layout)
 
         # Generate the animation figure
         pendulum.precompute_positions()  # Make sure positions are precomputed
@@ -392,27 +376,10 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
         )
         plt.close(matplotlib_phase_fig_c)
 
-        # Define Matplotlib layout
-        layout = go.Layout(
-            title_font=dict(family='Courier New, monospace', size=16, color='black'),
-            paper_bgcolor='white',
-            plot_bgcolor='white',
-            xaxis=dict(
-                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
-                showgrid=True,
-                gridcolor='lightgrey'
-            ),
-            yaxis=dict(
-                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
-                showgrid=True,
-                gridcolor='lightgrey'
-            )
-        )
-
         # Apply layout to the figures
-        phase_fig_a.update_layout(layout)
-        phase_fig_b.update_layout(layout)
-        phase_fig_c.update_layout(layout)
+        phase_fig_a.update_layout(mpl_layout)
+        phase_fig_b.update_layout(mpl_layout)
+        phase_fig_c.update_layout(mpl_layout)
 
         # Based on the pendulum_count, return appropriate figures
         if pendulum_count == 'two_pendulums':
