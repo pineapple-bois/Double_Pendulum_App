@@ -103,13 +103,14 @@ body {
   margin-bottom: 20px;
 }
 
-/* Adjustments for the multi-graph container */
+/* Adjustments for the multi-graph container to include headers */
 .multi-graph-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Three columns */
+  grid-template-columns: repeat(3, minmax(500px, 1fr)); /* Default 3 columns */
   gap: 20px;
   width: 100%;
   margin-bottom: 20px;
+  text-align: left; /* Centers the headers */
 }
 
 .above-graph-container {
@@ -200,5 +201,29 @@ body {
 @media (max-width: 480px) {
   .container {
     grid-template-columns: 1fr; /* Stack elements vertically on very small screens */
+  }
+}
+
+/* Two columns layout with transposed content */
+@media (max-width: 1250px) {
+  .multi-graph-container {
+    grid-template-columns: repeat(2, minmax(500px, 1fr)); /* Two columns */
+    /* We need to ensure that the animations and phase portraits pair up */
+  }
+  /* Specific styles to transpose content */
+  .graph-container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Single column layout for very small screens */
+@media (max-width: 768px) {
+  .multi-graph-container {
+    grid-template-columns: 1fr; /* One column */
+  }
+  /* Styles to stack the content as regular rows */
+  .graph-container {
+    flex-direction: column-reverse; /* Stacks phase portrait above the animation */
   }
 }
