@@ -197,7 +197,7 @@ class DoublePendulum:
         """
         self.precomputed_positions = np.array(self._calculate_positions())
 
-    def animate_pendulum(self, trace=False, appearance='light'):
+    def animate_pendulum(self, fig_width=700, fig_height=700, trace=False, appearance='light'):
         """
         Generates an animation for the double pendulum using precomputed positions.
 
@@ -311,8 +311,8 @@ class DoublePendulum:
                 tickfont=dict(size=12, color=text_color),
             ),
             autosize=False,
-            width=700,
-            height=700,
+            width=fig_width,
+            height=fig_height,
 
             updatemenus=[{
                 'type': 'buttons',
