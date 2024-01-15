@@ -245,7 +245,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
         # Generate the animation figure
         pendulum.precompute_positions()  # Make sure positions are precomputed
-        animation_fig = pendulum.animate_pendulum(trace=True)
+        animation_fig = pendulum.animate_pendulum(trace=True, fig_width=700, fig_height=700)
 
         return (time_fig, phase_fig, animation_fig,  # graph figures
                 {'display': 'grid'}, {'display': 'block'}, {'display': 'block'},
@@ -263,9 +263,15 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
     [Output('pendulum-a-animation', 'figure'),
      Output('pendulum-b-animation', 'figure'),
      Output('pendulum-c-animation', 'figure'),
-     Output('pendulum-a-animation', 'style'),  # Style for Pendulum A
-     Output('pendulum-b-animation', 'style'),  # Style for Pendulum B
-     Output('pendulum-c-animation', 'style'),  # Style for Pendulum C
+     Output('pendulum-a-phase', 'figure'),
+     Output('pendulum-b-phase', 'figure'),      # FIGURES - 6 objects
+     Output('pendulum-c-phase', 'figure'),
+     Output('pendulum-a-animation', 'style'),
+     Output('pendulum-b-animation', 'style'),
+     Output('pendulum-c-animation', 'style'),
+     Output('pendulum-a-phase', 'style'),
+     Output('pendulum-b-phase', 'style'),       # STYLES - 6 objects
+     Output('pendulum-c-phase', 'style'),
      Output('animation-container', 'style'),
      Output('math-button-container-chaos', 'style'),
      Output('error-message-chaos', 'children')],
@@ -319,44 +325,123 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                                         param_M1, param_M2, param_g)
         if error_message:
             # If there are errors, return immediately
-            return (no_update, no_update, no_update, {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-                    {'display': 'none'}, {'display': 'none'}, error_message)  # TODO: How do we clear the message whilst loading??
+            return (no_update, no_update, no_update,    # animation
+                    no_update, no_update, no_update,    # phase
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},  # animation
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},  # phase
+                    {'display': 'none'}, {'display': 'none'}, error_message)
+            # TODO: How do we clear the message whilst loading??
 
         # Create instances of DoublePendulum
         pendulum_a = DoublePendulum(parameters, initial_conditions_a, time_vector, model=model_type)
         pendulum_b = DoublePendulum(parameters, initial_conditions_b, time_vector, model=model_type)
         pendulum_c = DoublePendulum(parameters, initial_conditions_c, time_vector, model=model_type)
 
+        # Set the animation figure size
+        if pendulum_count == 'two_pendulums':
+            fig_width = 600
+            fig_height = 600
+        elif pendulum_count == 'three_pendulums':
+            fig_width = 500
+            fig_height = 500
+        else:
+            fig_width = 700
+            fig_height = 700
+
         # Generate the animation figures
         pendulum_a.precompute_positions()
-        animation_a = pendulum_a.animate_pendulum(trace=True)
+        animation_a = pendulum_a.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
 
         pendulum_b.precompute_positions()
-        animation_b = pendulum_b.animate_pendulum(trace=True)
+        animation_b = pendulum_b.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
 
         pendulum_c.precompute_positions()
-        animation_c = pendulum_c.animate_pendulum(trace=True)
+        animation_c = pendulum_c.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
+
+        # Generate phase portraits
+        # Pendulum A
+        matplotlib_phase_fig_a = pendulum_a.phase_path()
+        phase_fig_a = tls.mpl_to_plotly(matplotlib_phase_fig_a)
+        phase_fig_a.update_layout(
+            autosize=True,
+            margin=dict(l=20, r=20, t=20, b=20),
+            width=fig_width,
+            height=fig_height
+        )
+        plt.close(matplotlib_phase_fig_a)
+
+        # Pendulum B
+        matplotlib_phase_fig_b = pendulum_b.phase_path()
+        phase_fig_b = tls.mpl_to_plotly(matplotlib_phase_fig_b)
+        phase_fig_b.update_layout(
+            autosize=True,
+            margin=dict(l=20, r=20, t=20, b=20),
+            width=fig_width,
+            height=fig_height
+        )
+        plt.close(matplotlib_phase_fig_a)
+
+        # Pendulum C
+        matplotlib_phase_fig_c = pendulum_c.phase_path()
+        phase_fig_c = tls.mpl_to_plotly(matplotlib_phase_fig_c)
+        phase_fig_c.update_layout(
+            autosize=True,
+            margin=dict(l=20, r=20, t=20, b=20),
+            width=fig_width,
+            height=fig_height
+        )
+        plt.close(matplotlib_phase_fig_c)
+
+        # Define Matplotlib layout
+        layout = go.Layout(
+            title_font=dict(family='Courier New, monospace', size=16, color='black'),
+            paper_bgcolor='white',
+            plot_bgcolor='white',
+            xaxis=dict(
+                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
+                showgrid=True,
+                gridcolor='lightgrey'
+            ),
+            yaxis=dict(
+                titlefont=dict(family='Courier New, monospace', size=14, color='black'),
+                showgrid=True,
+                gridcolor='lightgrey'
+            )
+        )
+
+        # Apply layout to the figures
+        phase_fig_a.update_layout(layout)
+        phase_fig_b.update_layout(layout)
+        phase_fig_c.update_layout(layout)
 
         # Based on the pendulum_count, return appropriate figures
         if pendulum_count == 'two_pendulums':
-            # Return figures for only two pendulums
-            return (animation_a, animation_b, go.Figure(),                            # graph figures
-                    {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # graph styles
+            # Return figures for two pendulums
+            return (animation_a, animation_b, go.Figure(),                            # animation figures
+                    phase_fig_a, phase_fig_b, go.Figure(),                            # phase figures
+                    {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # animation styles
+                    {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # phase styles
                     {'display': 'grid'}, {'display': 'block'}, '')
         elif pendulum_count == 'three_pendulums':
             # Return figures for three pendulums
-            return (animation_a, animation_b, animation_c,                             # graph figures
-                    {'display': 'block'}, {'display': 'block'}, {'display': 'block'},  # graph styles
+            return (animation_a, animation_b, animation_c,
+                    phase_fig_a, phase_fig_b, phase_fig_c,
+                    {'display': 'block'}, {'display': 'block'}, {'display': 'block'},
+                    {'display': 'block'}, {'display': 'block'}, {'display': 'block'},
                     {'display': 'grid'}, {'display': 'block'}, '')
         else:
             # Default case, can be adjusted as needed
-            return (go.Figure(), go.Figure(), go.Figure(),                             # graph figures
-                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},     # graph styles
-                   {'display': 'grid'}, {'display': 'block'}, '')
+            return (go.Figure(), go.Figure(), go.Figure(),
+                    go.Figure(), go.Figure(), go.Figure(),
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
+                    {'display': 'grid'}, {'display': 'block'}, '')
 
     # If the button hasn't been clicked yet, return empty figures and keep everything hidden
-    return (go.Figure(), go.Figure(), go.Figure(),                             # graph figures
-            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},     # graph styles
+    return (go.Figure(), go.Figure(), go.Figure(),
+            go.Figure(), go.Figure(), go.Figure(),
+            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
+            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
             {'display': 'none'}, {'display': 'none'}, '')
 
 
