@@ -10,22 +10,54 @@ with open('assets/mathematics_section.txt', 'r') as file:
 def get_main_layout():
     # This function returns the layout of the main page
     return html.Div([
-        # Flex container for the title and GitHub logo
+        # Flex container for the title, chaos page link, and GitHub logo
         html.Div([
-            # Title
+            # Link to the chaos page with text on two lines, allow it to shrink on small screens
             html.Div([
-                html.H1("Double Pendulum Simulation: Lagrangian Formulation",
-                        style={'text-align': 'center', 'color': 'black'})
-            ], style={'flex': 1}),  # Title container taking up the full width
+                html.A(["Chaotic", html.Br(), "Dynamics"],
+                       className="title-link",
+                       href="/chaos",
+                       style={'fontSize': '20px', 'padding': '10px'}),
+            ], style={'flex': '0 1 auto', 'alignSelf': 'center'}),
 
-            # GitHub logo as a link
-            html.A([
-                html.Img(src='assets/github-mark.png',
-                         style={'height': '50px', 'width': '50px'})
-            ], href='https://github.com/pineapple-bois/Double_Pendulum_App',
-                target='_blank',
-                style={'align-self': 'center'}),
-        ], style={'display': 'flex', 'justify-content': 'space-between', 'align-items': 'center'}),
+            # Title, which should stay centered with auto margins
+            html.Div([
+                html.H1([
+                    html.Div("Double Pendulum Simulation:", style={'white-space': 'nowrap'}),
+                    html.Div("Lagrangian Formulation", style={'white-space': 'nowrap'})
+                ], style={'textAlign': 'center', 'color': 'black', 'margin': 'auto'})
+            ], style={'flex': '1 0 auto', 'minWidth': '0', 'textAlign': 'center'}),
+            # minWidth: 0 ensures shrinkage if necessary
+
+            # GitHub logo as a link, allow it to shrink on small screens
+            html.Div([
+                html.A([
+                    html.Img(src='assets/github-mark.png', style={'height': '50px', 'width': '50px'})
+                ], className='title-link', href='https://github.com/pineapple-bois/Double_Pendulum_App',
+                    target='_blank')
+            ], style={'flex': '0 1 auto', 'alignSelf': 'center'}),
+        ], style={'display': 'flex', 'justifyContent': 'space-between', 'alignItems': 'center', 'height': '100px'}),
+
+        # Container for description of system
+        html.Div([
+            html.Div([
+                dcc.Markdown('''
+                ### The below figure shows a simple pendulum $OP_1$ suspended from another simple pendulum $P_{1}P_{2}$ by a frictionless hinge.
+                ''', mathjax=True),
+            ], style={'text-align': 'center', 'margin-top': '20px'}),  # Center-align the content and add margin,
+            html.Div([
+                dcc.Markdown('''
+                `Simple` model: Rigid, massless, and inextensible rods are connected to bobs; $m_1$ and $m_2$.
+                
+                `Compound` model: The rods are modeled as 'uniform thin rods' with evenly distributed masses; $M_1$ and $M_2$.
+                ''', mathjax=True),
+            ], style={'text-align': 'left', 'margin': '0 auto', 'max-width': '900px'}),
+            html.Div([
+                dcc.Markdown('''
+                Both pendulums move in the $(x,y)$-plane. The system has two degrees of freedom, uniquely determined by the values of $\\theta_1$ & $\\theta_2$.
+                ''', mathjax=True),
+            ], style={'text-align': 'center', 'margin-top': '20px'}),  # Center-align the content and add margin,
+        ]),
 
         # Container to establish a flexbox layout with two columns, instructions and image
         html.Div([
@@ -34,34 +66,35 @@ def get_main_layout():
                 dcc.Markdown('''
                 ## Instructions
 
-                - Please experiment with different initial conditions. 
-                - The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. 
+                - Please experiment with different initial conditions. The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. 
+                  
+                   
                 - A negative angle gives clockwise rotation.
-
-                - The angular velocities; $\omega_1$ & $\omega_2$ can be specified in degrees per second
-                    - *Interesting dynamics can be discovered simply releasing the pendulums from rest;* $(\\omega_i=0)$.  
-
+                
+                
+                - The angular velocities; $\omega_1$ & $\omega_2$ can be specified in degrees per second. *Interesting dynamics can be discovered simply releasing the pendulums from rest;* $(\\omega_i=0)$.  
+                    
+                    
                 - `Unity Parameters` sets pendulum arms to $1 \\text{m}$ & masses to $1 \\text{kg}$, with $g = 9.81\\text{m s}^{-2}$.
-
+                
+                
                 - Ensure all initial conditions and parameters are filled.
-
-                - There are two models available: 
-                    - `Simple` (the default) models a massless rod.
-                    - `Compound` models a rod with uniform mass distribution along its length. 
-
+                
+                
                 - The default time interval is 20 seconds. The maximum is 120 seconds. 
-
+                
+                
                 - Use the `Run Simulation` button to start the simulation.
-
-                ## [Explore Chaotic Dynamics](/chaos) (Opens a new page)
+                
+                [Quantifying Chaotic Dynamics](\chaos) (Opens new page)
                 ''', mathjax=True)
-            ], style={'flex': 1, 'margin': '20px', 'font-size': "14px"}),
+            ], style={'flex': '1', 'margin': '20px', 'font-size': "14px"}, className='instructions-column'),
 
             # Column for image
             html.Div([
                 html.Img(src='assets/Double_Pendulum.png', style={'max-width': '100%', 'height': 'auto'})
-            ], style={'flex': 1}),  # Same flex value to take equal space as the instructions column
-        ], style={'display': 'flex'}),  # This creates a flex container with row direction by default
+            ], style={'flex': '1'}, className='image-column'),
+        ], style={'display': 'flex'}, className='instructions-image-container'),
 
         # Container for inputs and buttons
         html.Div(className='container', children=[
