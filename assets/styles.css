@@ -9,6 +9,12 @@ body {
   font-size: 14px;
 }
 
+/* Base styles for the links in the header container */
+.title-link {
+  font-size: 20px;
+  padding: 10px;
+}
+
 /* Container for the input fields and buttons */
 .container {
   display: grid;
@@ -143,6 +149,35 @@ body {
     grid-template-columns: 1fr; /* Stack the graphs on top of each other */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
+  }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .title-link {
+    font-size: 16px; /* Smaller font size for smaller screens */
+    padding: 5px; /* Smaller padding for smaller screens */
+  }
+}
+
+/* Additional responsive adjustment for very small screens */
+@media (max-width: 480px) {
+  .title-link {
+    font-size: 14px; /* Even smaller font size for very small screens */
+    padding: 2px; /* Even smaller padding for very small screens */
+  }
+}
+
+/* Adjusts layout for smaller screens */
+@media (max-width: 768px) {
+  .instructions-image-container {
+    flex-direction: column;
+  }
+
+  .instructions-column, .image-column {
+    flex: none; /* This will allow them to take up full width */
+    max-width: 100%; /* This ensures they don't overflow the parent container */
+    margin: 0 auto; /* This centers them in the container */
   }
 }
 
