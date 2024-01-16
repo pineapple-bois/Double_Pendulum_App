@@ -330,7 +330,7 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                      for conditions in condition_list]
 
         # Set the animation figure size
-        fig_width, fig_height = (600, 600) if pendulum_count == 'two_pendulums' else (500, 500)
+        fig_width, fig_height = 500, 500
 
         # Create figures
         animations, phase_figs = zip(
