@@ -12,7 +12,7 @@ import os
 from layouts.layout_main import get_main_layout
 from layouts.layout_chaos import get_chaos_layout
 from layouts.layout_matplotlib import mpl_layout
-from Errors import validate_inputs
+from AppFunctions import validate_inputs, generate_pendulum_figures, set_display_styles
 from DoublePendulum import DoublePendulum
 
 # Sympy variables for parameters
@@ -304,8 +304,13 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                       M1: param_M1, M2: param_M2,
                       g: param_g}
 
+        if pendulum_count == 'two_pendulums':
+            condition_list = initial_conditions_a, initial_conditions_b
+        else:
+            condition_list = initial_conditions_a, initial_conditions_b, initial_conditions_c
+
         # Validate inputs
-        error_message = validate_inputs([initial_conditions_a, initial_conditions_b, initial_conditions_c],
+        error_message = validate_inputs(condition_list,
                                         time_start, time_end, param_l1, param_l2, param_m1, param_m2,
                                         param_M1, param_M2, param_g)
         if error_message:
@@ -320,104 +325,53 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                     error_message)
             # TODO: How do we clear the message whilst loading??
 
-        # Create instances of DoublePendulum
-        pendulum_a = DoublePendulum(parameters, initial_conditions_a, time_vector, model=model_type)
-        pendulum_b = DoublePendulum(parameters, initial_conditions_b, time_vector, model=model_type)
-        pendulum_c = DoublePendulum(parameters, initial_conditions_c, time_vector, model=model_type)
+        # Create DoublePendulum instances
+        pendulums = [DoublePendulum(parameters, conditions, time_vector, model=model_type)
+                     for conditions in condition_list]
 
         # Set the animation figure size
+        fig_width, fig_height = (600, 600) if pendulum_count == 'two_pendulums' else (500, 500)
+
+        # Create figures
+        animations, phase_figs = zip(
+            *[generate_pendulum_figures(pendulum, fig_width, fig_height) for pendulum in pendulums])
+
+        # Apply layout to phase figures
+        for phase_fig in phase_figs:
+            phase_fig.update_layout(mpl_layout)
+
+        # Determine display styles
+        styles = set_display_styles(pendulum_count)
+
+        # Prepare output based on pendulum count
         if pendulum_count == 'two_pendulums':
-            fig_width = 600
-            fig_height = 600
+            return (animations[0], animations[1], go.Figure(),  # Animation figures
+                    phase_figs[0], phase_figs[1], go.Figure(),  # Phase figures
+                    *styles,                                    # Animation styles
+                    *styles,                                    # Phase styles
+                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'}, '')  # Other styles and message
+
         elif pendulum_count == 'three_pendulums':
-            fig_width = 500
-            fig_height = 500
+            return (*animations,  # Animation figures
+                    *phase_figs,  # Phase figures
+                    *styles,     # Animation styles
+                    *styles,     # Phase styles
+                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'}, '')  # Other styles and message
         else:
-            fig_width = 700
-            fig_height = 700
+            empty_figure = go.Figure()
+            default_style = {'display': 'none'}
+            return (empty_figure, empty_figure, empty_figure,
+                    empty_figure, empty_figure, empty_figure,
+                    default_style, default_style, default_style,
+                    default_style, default_style, default_style,
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
 
-        # Generate the animation figures
-        pendulum_a.precompute_positions()
-        animation_a = pendulum_a.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
-
-        pendulum_b.precompute_positions()
-        animation_b = pendulum_b.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
-
-        pendulum_c.precompute_positions()
-        animation_c = pendulum_c.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
-
-        # Generate phase portraits
-        # Pendulum A
-        matplotlib_phase_fig_a = pendulum_a.phase_path()
-        phase_fig_a = tls.mpl_to_plotly(matplotlib_phase_fig_a)
-        phase_fig_a.update_layout(
-            autosize=True,
-            margin=dict(l=20, r=20, t=20, b=20),
-            width=fig_width,
-            height=fig_height
-        )
-        plt.close(matplotlib_phase_fig_a)
-
-        # Pendulum B
-        matplotlib_phase_fig_b = pendulum_b.phase_path()
-        phase_fig_b = tls.mpl_to_plotly(matplotlib_phase_fig_b)
-        phase_fig_b.update_layout(
-            autosize=True,
-            margin=dict(l=20, r=20, t=20, b=20),
-            width=fig_width,
-            height=fig_height
-        )
-        plt.close(matplotlib_phase_fig_a)
-
-        # Pendulum C
-        matplotlib_phase_fig_c = pendulum_c.phase_path()
-        phase_fig_c = tls.mpl_to_plotly(matplotlib_phase_fig_c)
-        phase_fig_c.update_layout(
-            autosize=True,
-            margin=dict(l=20, r=20, t=20, b=20),
-            width=fig_width,
-            height=fig_height
-        )
-        plt.close(matplotlib_phase_fig_c)
-
-        # Apply layout to the figures
-        phase_fig_a.update_layout(mpl_layout)
-        phase_fig_b.update_layout(mpl_layout)
-        phase_fig_c.update_layout(mpl_layout)
-
-        # Based on the pendulum_count, return appropriate figures
-        if pendulum_count == 'two_pendulums':
-            # Return figures for two pendulums
-            return (animation_a, animation_b, go.Figure(),                            # animation figures
-                    phase_fig_a, phase_fig_b, go.Figure(),                            # phase figures
-                    {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # animation styles
-                    {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # phase styles
-                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'},   # toggle button/container/math button
-                    '')
-        elif pendulum_count == 'three_pendulums':
-            # Return figures for three pendulums
-            return (animation_a, animation_b, animation_c,
-                    phase_fig_a, phase_fig_b, phase_fig_c,
-                    {'display': 'block'}, {'display': 'block'}, {'display': 'block'},
-                    {'display': 'block'}, {'display': 'block'}, {'display': 'block'},
-                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'},
-                    '')
-        else:
-            # Default case, can be adjusted as needed
-            return (go.Figure(), go.Figure(), go.Figure(),
-                    go.Figure(), go.Figure(), go.Figure(),
-                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'},
-                    '')
-
-    # If the button hasn't been clicked yet, return empty figures and keep everything hidden
+    # Default return for no button clicks
     return (go.Figure(), go.Figure(), go.Figure(),
             go.Figure(), go.Figure(), go.Figure(),
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-            '')
+            {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
 
 
 # Callback to play all animations from 'multi_animation'
