@@ -208,9 +208,9 @@ def get_chaos_layout():
                                         n_clicks=0,
                                         className='play-button-show'),
                         ]),
+                        # Hidden div for storing the current animation state
+                        html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
                     ]),
-                    # Hidden div for storing the current animation state
-                    html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
                 ]),
                 html.Div(className='container', children=[
                     # Container for animations with headers
