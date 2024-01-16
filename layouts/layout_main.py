@@ -47,9 +47,9 @@ def get_main_layout():
             ], style={'text-align': 'center', 'margin-top': '20px'}),  # Center-align the content and add margin,
             html.Div([
                 dcc.Markdown('''
-                `Simple` model: Rigid, massless, and inextensible rods are connected to bobs; $m_1$ and $m_2$.
+                `Simple` model: Rigid, massless, and inextensible rods are connected to point masses; $m_1$ & $m_2$.
                 
-                `Compound` model: The rods are modeled as 'uniform thin rods' with evenly distributed masses; $M_1$ and $M_2$.
+                `Compound` model: The rods are modeled as [uniform thin rods](https://phys.libretexts.org/Courses/Joliet_Junior_College/Physics_201_-_Fall_2019v2/Book%3A_Custom_Physics_textbook_for_JJC/11%3A_Rotational_Kinematics_Angular_Momentum_and_Energy/11.06%3A_Calculating_Moments_of_Inertia) of evenly distributed masses; $M_1$ & $M_2$.
                 ''', mathjax=True),
             ], style={'text-align': 'left', 'margin': '0 auto', 'max-width': '900px'}),
             html.Div([
