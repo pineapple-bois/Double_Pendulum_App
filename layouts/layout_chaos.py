@@ -198,37 +198,41 @@ def get_chaos_layout():
             id="loading-1",
             type="default",  # or "circle", "dot", or "cube" for different spinner types
             children=[  # new ID for multi pendulums
-                # Container for the "Play All" toggle button
-                html.Div(id='toggle-animation-container', style={'display': 'none'}, children=[
-                    html.Div(className='container-buttons', children=[
-                        html.Button('Play All',
-                                    id='global-toggle-button',
-                                    style={'width': 'auto', 'display': 'flex', 'margin-top': '20px', 'padding': '10px'},
-                                    n_clicks=0,
-                                    className='play-button-show'),
+                html.Div(className='container', children=[
+                    # Container for the "Play All" toggle button
+                    html.Div(id='toggle-animation-container', style={'display': 'none'}, children=[
+                        html.Div(className='container-buttons', children=[
+                            html.Button('Play All',
+                                        id='global-toggle-button',
+                                        style={'width': 'auto', 'display': 'flex', 'margin-top': '20px', 'padding': '10px'},
+                                        n_clicks=0,
+                                        className='play-button-show'),
+                        ]),
                     ]),
+                    # Hidden div for storing the current animation state
+                    html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
                 ]),
-                # Hidden div for storing the current animation state
-                html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
-                # Container for animations with headers
-                html.Div(id='animation-container', className='multi-graph-container', children=[
-                    html.Div([
-                        html.H4("Pendulum A"),
-                        dcc.Graph(id='pendulum-a-animation'),
-                        dcc.Graph(id='pendulum-a-phase')
-                    ]),
-                    html.Div([
-                        html.H4("Pendulum B"),
-                        dcc.Graph(id='pendulum-b-animation'),
-                        dcc.Graph(id='pendulum-b-phase')
-                    ]),
-                    html.Div([
-                        html.H4("Pendulum C"),
-                        dcc.Graph(id='pendulum-c-animation'),
-                        dcc.Graph(id='pendulum-c-phase')
-                    ]),
-                    # Add more graphs above as needed
-                ], style={'display': 'grid'})
+                html.Div(className='container', children=[
+                    # Container for animations with headers
+                    html.Div(id='animation-container', className='multi-graph-container', children=[
+                        html.Div([
+                            html.H4("Pendulum A"),
+                            dcc.Graph(id='pendulum-a-animation'),
+                            dcc.Graph(id='pendulum-a-phase')
+                        ]),
+                        html.Div([
+                            html.H4("Pendulum B"),
+                            dcc.Graph(id='pendulum-b-animation'),
+                            dcc.Graph(id='pendulum-b-phase')
+                        ]),
+                        html.Div([
+                            html.H4("Pendulum C"),
+                            dcc.Graph(id='pendulum-c-animation'),
+                            dcc.Graph(id='pendulum-c-phase')
+                        ]),
+                        # Add more graphs above as needed
+                    ], style={'display': 'grid'})
+                ]),
             ],
             # Position the spinner at the top of the container
             style={'height': '100%', 'position': 'relative'}
