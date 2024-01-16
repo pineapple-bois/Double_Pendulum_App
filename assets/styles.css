@@ -58,7 +58,7 @@ body {
   background-color: #7BA0F0;
 }
 
-/* Button styles when showing mathematics */
+/* Button styles mathematics/play animation */
 .button-show {
   padding: 20px 10px;
   background-color: #6495ED; /* Blue */
@@ -73,7 +73,7 @@ body {
   background-color: #7BA0F0; /* Lighter blue */
 }
 
-/* Button styles when hiding mathematics */
+/* Button styles mathematics/play animation */
 .button-hide {
   padding: 20px 10px;
   background-color: #5172A0; /* Darker blue */
@@ -88,12 +88,12 @@ body {
   background-color: #5E82AB; /* Lighter shade of darker blue */
 }
 
-/* custom.css */
+/* Spinner and Loading */
 #loading-1 .dash-spinner {
     position: absolute;
     top: 0; /* Aligns the spinner to the top of the container */
     left: 50%; /* Centers the spinner horizontally */
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
 }
 
 /* Adjustments for the graphs */

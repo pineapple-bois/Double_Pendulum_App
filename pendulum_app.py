@@ -254,8 +254,9 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
      Output('pendulum-b-animation', 'style'),
      Output('pendulum-c-animation', 'style'),
      Output('pendulum-a-phase', 'style'),
-     Output('pendulum-b-phase', 'style'),       # STYLES - 6 objects
+     Output('pendulum-b-phase', 'style'),       # STYLES - 7 objects
      Output('pendulum-c-phase', 'style'),
+     Output('toggle-animation-container', 'style'),
      Output('animation-container', 'style'),
      Output('math-button-container-chaos', 'style'),
      Output('error-message-chaos', 'children')],
@@ -308,12 +309,15 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                                         time_start, time_end, param_l1, param_l2, param_m1, param_m2,
                                         param_M1, param_M2, param_g)
         if error_message:
-            # If there are errors, return immediately
-            return (no_update, no_update, no_update,    # animation
-                    no_update, no_update, no_update,    # phase
-                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},  # animation
-                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'},  # phase
-                    {'display': 'none'}, {'display': 'none'}, error_message)
+            # If there are errors, return immediately with default or empty values
+            empty_figure = go.Figure()
+            default_style = {'display': 'none'}
+            return (empty_figure, empty_figure, empty_figure,  # animation figures
+                    empty_figure, empty_figure, empty_figure,  # phase figures
+                    default_style, default_style, default_style,  # animation styles
+                    default_style, default_style, default_style,  # phase styles
+                    default_style, default_style, default_style,
+                    error_message)
             # TODO: How do we clear the message whilst loading??
 
         # Create instances of DoublePendulum
@@ -388,28 +392,61 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                     phase_fig_a, phase_fig_b, go.Figure(),                            # phase figures
                     {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # animation styles
                     {'display': 'block'}, {'display': 'block'}, {'display': 'none'},  # phase styles
-                    {'display': 'grid'}, {'display': 'block'}, '')
+                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'},   # toggle button/container/math button
+                    '')
         elif pendulum_count == 'three_pendulums':
             # Return figures for three pendulums
             return (animation_a, animation_b, animation_c,
                     phase_fig_a, phase_fig_b, phase_fig_c,
                     {'display': 'block'}, {'display': 'block'}, {'display': 'block'},
                     {'display': 'block'}, {'display': 'block'}, {'display': 'block'},
-                    {'display': 'grid'}, {'display': 'block'}, '')
+                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'},
+                    '')
         else:
             # Default case, can be adjusted as needed
             return (go.Figure(), go.Figure(), go.Figure(),
                     go.Figure(), go.Figure(), go.Figure(),
                     {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
                     {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-                    {'display': 'grid'}, {'display': 'block'}, '')
+                    {'display': 'block'}, {'display': 'grid'}, {'display': 'block'},
+                    '')
 
     # If the button hasn't been clicked yet, return empty figures and keep everything hidden
     return (go.Figure(), go.Figure(), go.Figure(),
             go.Figure(), go.Figure(), go.Figure(),
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-            {'display': 'none'}, {'display': 'none'}, '')
+            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
+            '')
+
+
+# Callback to play all animations from 'multi_animation'
+@app.callback(
+    [Output('global-toggle-button', 'children'),  # Update the button text
+     Output('global-toggle-button', 'className'),        # Update the button's className
+     Output('global-animation-toggle', 'children')],     # Toggle animation state
+    [Input('global-toggle-button', 'n_clicks')],
+    [State('global-animation-toggle', 'children')]
+)
+def toggle_global_animation(n_clicks, toggle_state):
+    if n_clicks is None:
+        # Prevents the callback from firing before the section has loaded
+        raise PreventUpdate
+
+    if n_clicks == 0:
+        # Since n_clicks is 0, the page has just loaded. We ensure the initial state is 'Play'.
+        return 'Play All', 'button-show', 'Play'
+
+    # Only toggle the state if the button has been clicked at least once
+    if n_clicks > 0:
+        if toggle_state == 'Play':
+            # Change the button to show "Pause All" and change className to 'button-hide'
+            # Also update the toggle_state to 'Pause All'
+            return 'Pause All', 'button-hide', 'Pause'
+        else:
+            # Change the button to show "Play All" and change className to 'button-show'
+            # Also update the toggle_state to 'Play All'
+            return 'Play All', 'button-show', 'Play'
 
 
 if __name__ == '__main__':

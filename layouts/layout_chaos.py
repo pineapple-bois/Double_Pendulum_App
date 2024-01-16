@@ -198,6 +198,18 @@ def get_chaos_layout():
             id="loading-1",
             type="default",  # or "circle", "dot", or "cube" for different spinner types
             children=[  # new ID for multi pendulums
+                # Container for the "Play All" toggle button
+                html.Div(id='toggle-animation-container', style={'display': 'none'}, children=[
+                    html.Div(className='container-buttons', children=[
+                        html.Button('Play All',
+                                    id='global-toggle-button',
+                                    style={'width': 'auto', 'display': 'flex', 'margin-top': '20px', 'padding': '10px'},
+                                    n_clicks=0,
+                                    className='play-button-show'),
+                    ]),
+                ]),
+                # Hidden div for storing the current animation state
+                html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
                 # Container for animations with headers
                 html.Div(id='animation-container', className='multi-graph-container', children=[
                     html.Div([
