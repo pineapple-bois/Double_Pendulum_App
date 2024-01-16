@@ -73,7 +73,7 @@ body {
   background-color: #7BA0F0; /* Lighter blue */
 }
 
-/* Button styles mathematics/play animation */
+/* Button styles when mathematics/play animation */
 .button-hide {
   padding: 20px 10px;
   background-color: #5172A0; /* Darker blue */
@@ -152,78 +152,54 @@ body {
     align-items: center; /* Center vertically */
   }
 }
+/* Base styles and other non-media query styles... */
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-  .title-link {
-    font-size: 16px; /* Smaller font size for smaller screens */
-    padding: 5px; /* Smaller padding for smaller screens */
+/* Media Queries */
+
+
+/* TODO: Fix multi-graph-container @media */
+
+
+/* Medium screens - Two columns layout */
+@media (max-width: 1550px) {
+  .multi-graph-container {
+    grid-template-columns: repeat(2, minmax(500px, 1fr));
+  }
+  .graph-container {
+    display: flex;
+    flex-direction: column;
   }
 }
 
-/* Additional responsive adjustment for very small screens */
-@media (max-width: 480px) {
-  .title-link {
-    font-size: 14px; /* Even smaller font size for very small screens */
-    padding: 2px; /* Even smaller padding for very small screens */
-  }
-}
-
-/* Adjusts layout for smaller screens */
+/* Small screens - Single column layout */
 @media (max-width: 768px) {
+  .multi-graph-container, .above-graph-container {
+    grid-template-columns: 1fr;
+  }
+  .graph-container {
+    flex-direction: column-reverse;
+  }
+  .title-link {
+    font-size: 16px;
+    padding: 5px;
+  }
   .instructions-image-container {
     flex-direction: column;
   }
-
   .instructions-column, .image-column {
-    flex: none; /* This will allow them to take up full width */
-    max-width: 100%; /* This ensures they don't overflow the parent container */
-    margin: 0 auto; /* This centers them in the container */
+    flex: none;
+    max-width: 100%;
+    margin: 0 auto;
   }
-}
-
-/* Use a media query for small screens to adjust graph layout */
-@media (max-width: 768px) {
-  .above-graph-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 768px) {
   .container {
-    grid-template-columns: repeat(2, 1fr); /* Optional: Adjust based on your design */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* Very small screens */
 @media (max-width: 480px) {
-  .container {
-    grid-template-columns: 1fr; /* Stack elements vertically on very small screens */
-  }
-}
-
-/* Two columns layout with transposed content */
-@media (max-width: 1250px) {
-  .multi-graph-container {
-    grid-template-columns: repeat(2, minmax(500px, 1fr)); /* Two columns */
-    /* We need to ensure that the animations and phase portraits pair up */
-  }
-  /* Specific styles to transpose content */
-  .graph-container {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-/* Single column layout for very small screens */
-@media (max-width: 768px) {
-  .multi-graph-container {
-    grid-template-columns: 1fr; /* One column */
-  }
-  /* Styles to stack the content as regular rows */
-  .graph-container {
-    flex-direction: column-reverse; /* Stacks phase portrait above the animation */
+  .title-link {
+    font-size: 14px;
+    padding: 2px;
   }
 }
