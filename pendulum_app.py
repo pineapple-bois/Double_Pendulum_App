@@ -181,13 +181,6 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
                   model_type):
     if n_clicks > 0:
         initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
-        time_steps = int((time_end - time_start) * 200)
-        time_vector = [time_start, time_end, time_steps]
-        parameters = {l1: param_l1, l2: param_l2,
-                     m1: param_m1, m2: param_m2,
-                     M1: param_M1, M2: param_M2,
-                     g: param_g}
-
         # Validate inputs
         error_message = validate_inputs([initial_conditions],
                                         time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
@@ -196,7 +189,14 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
             # If there are errors, return immediately
             return (no_update, no_update, no_update,
                     {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-                    error_message)  # TODO: How do we clear the message whilst loading??
+                    error_message)  #
+
+        time_steps = int((time_end - time_start) * 200)
+        time_vector = [time_start, time_end, time_steps]
+        parameters = {l1: param_l1, l2: param_l2,
+                     m1: param_m1, m2: param_m2,
+                     M1: param_M1, M2: param_M2,
+                     g: param_g}
 
         # Create an instance of DoublePendulum
         pendulum = DoublePendulum(parameters, initial_conditions, time_vector, model=model_type)
@@ -249,7 +249,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
      Output('pendulum-b-animation', 'figure'),
      Output('pendulum-c-animation', 'figure'),
      Output('pendulum-a-phase', 'figure'),
-     Output('pendulum-b-phase', 'figure'),      # FIGURES - 6 objects
+     Output('pendulum-b-phase', 'figure'),
      Output('pendulum-c-phase', 'figure'),
      Output('pendulum-a-div', 'style'),
      Output('pendulum-b-div', 'style'),
@@ -295,13 +295,6 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
         initial_conditions_b = [pend_two_theta1, pend_two_theta2, pend_two_omega1, pend_two_omega2]
         initial_conditions_c = [pend_three_theta1, pend_three_theta2, pend_three_omega1, pend_three_omega2]
 
-        time_steps = int((time_end - time_start) * 200)
-        time_vector = [time_start, time_end, time_steps]
-        parameters = {l1: param_l1, l2: param_l2,
-                      m1: param_m1, m2: param_m2,
-                      M1: param_M1, M2: param_M2,
-                      g: param_g}
-
         if pendulum_count == 'two_pendulums':
             condition_list = initial_conditions_a, initial_conditions_b
         else:
@@ -320,6 +313,13 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                     default_style, default_style, default_style,  # pendulum div styles
                     default_style, default_style, default_style,  # misc styles
                     error_message)
+
+        time_steps = int((time_end - time_start) * 200)
+        time_vector = [time_start, time_end, time_steps]
+        parameters = {l1: param_l1, l2: param_l2,
+                      m1: param_m1, m2: param_m2,
+                      M1: param_M1, M2: param_M2,
+                      g: param_g}
 
         # Create DoublePendulum instances
         pendulums = [DoublePendulum(parameters, conditions, time_vector, model=model_type)
