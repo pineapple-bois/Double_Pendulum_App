@@ -84,7 +84,10 @@ def get_main_layout():
                 - The default time interval is 20 seconds. The maximum is 120 seconds. 
                 
                 
-                - Use the `Run Simulation` button to start the simulation.
+                - `Acceleration due to gravity, m/s²` offers a dropdown to simulate the pendulum's behavior on [celestial bodies in our Solar System](https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html). This parameter significantly affects the pendulum's motion, as gravity is the restoring force that influences the oscillation period and stability.
+                
+                
+                Use the `Run Simulation` button to start the simulation.
                 
                 [Quantifying Chaotic Dynamics](\chaos) (Opens new page)
                 ''', mathjax=True)
@@ -138,7 +141,7 @@ def get_main_layout():
             # Column for Parameters
             html.Div(className='column', children=[
                 html.Div(className='input-group', children=[
-                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s',
+                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s²',
                                id='parameters-label', className='label'),
                     dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input'),
                     dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input'),
@@ -151,8 +154,24 @@ def get_main_layout():
                               className='input', style={'display': 'none'}),
                     dcc.Input(id='param_M2', type='number', placeholder='M2 (mass of rod 2)',
                               className='input', style={'display': 'none'}),
-                    dcc.Input(id='param_g', type='number', placeholder='g (acceleration due to gravity)',
-                              className='input'),
+                    dcc.Dropdown(
+                        id='param_g',
+                        options=[
+                            {'label': 'Mercury: 3.7 m/s²', 'value': 3.7},
+                            {'label': 'Venus: 8.87 m/s²', 'value': 8.87},
+                            {'label': 'Earth: 9.81 m/s²', 'value': 9.81},
+                            {'label': 'Moon: 1.62 m/s²', 'value': 1.62},
+                            {'label': 'Mars: 3.71 m/s²', 'value': 3.71},
+                            {'label': 'Jupiter: 23.15 m/s²', 'value': 23.15},
+                            {'label': 'Saturn: 10.44 m/s²', 'value': 10.44},
+                            {'label': 'Uranus: 8.69 m/s²', 'value': 8.69},
+                            {'label': 'Neptune: 11.15 m/s²', 'value': 11.15},
+                            {'label': 'Pluto: 0.696 m/s²', 'value': 0.696},
+                        ],
+                        value=None,  # No default value selected
+                        placeholder='Acceleration due to gravity, m/s²',  # Placeholder text
+                        clearable=False,
+                        searchable=False,)  # If you have a long list, you might want to make it searchable
                 ]),
             ]),
         ]),

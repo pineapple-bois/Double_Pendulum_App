@@ -10,8 +10,8 @@ MAX_LENGTH = 10      # meters
 MIN_LENGTH = 0.1     # meters
 MAX_MASS = 1000      # kilograms
 MIN_MASS = 0.1       # kilograms
-MAX_GRAVITY = 24.79  # m/s^2, g on Jupiter (2.528 * g_earth)
-MIN_GRAVITY = 1.623  # m/s^2, g on the Moon (0.1654 * g_earth)
+MAX_GRAVITY = 23.15  # m/s^2, g on Jupiter (2.36 * g_earth)
+MIN_GRAVITY = 0.696  # m/s^2, g on Pluto (0.071 * g_earth)
 
 # Max initial conditions (theta_i is hardcoded to be \in [-360, 360]
 MAX_ANGULAR_VELOCITY = 1000
@@ -83,7 +83,7 @@ def validate_inputs(initial_conditions_list, time_start, time_end, model_type,
                 error_list.append(html.Br())
                 if param_name == 'g (acceleration due to gravity)':
                     error_list.append(
-                        f"Note: Moon's gravity = {MIN_GRAVITY} m/s^2, Jupiter's gravity = {MAX_GRAVITY} m/s^2")
+                        f"Note: Pluto's gravity = {MIN_GRAVITY} m/s^2, Jupiter's gravity = {MAX_GRAVITY} m/s^2")
                     error_list.append(html.Br())
 
     # Validate initial conditions
