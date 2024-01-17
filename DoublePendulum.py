@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
-from Functions import *
+from MathFunctions import *
 
 omega1 = sp.Function('omega1')(t)
 omega2 = sp.Function('omega2')(t)
