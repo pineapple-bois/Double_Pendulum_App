@@ -160,7 +160,7 @@ def get_chaos_layout():
                             {'label': 'Earth: 9.81 m/s²', 'value': 9.81},
                             {'label': 'Moon: 1.62 m/s²', 'value': 1.62},
                             {'label': 'Mars: 3.71 m/s²', 'value': 3.71},
-                            {'label': 'Jupiter: 24.79 m/s²', 'value': 24.79},
+                            {'label': 'Jupiter: 23.15 m/s²', 'value': 23.15},
                             {'label': 'Saturn: 10.44 m/s²', 'value': 10.44},
                             {'label': 'Uranus: 8.69 m/s²', 'value': 8.69},
                             {'label': 'Neptune: 11.15 m/s²', 'value': 11.15},
