@@ -204,17 +204,17 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 must be between -360 and 360 degrees.", messages)
+        self.assertIn("Pendulum A: θ1 must be between -180 and 180 degrees.", messages)
 
         # Test for θ being too high
         errors_div = validate_inputs([[361, 0, 0, 0]],
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 must be between -360 and 360 degrees.", messages)
+        self.assertIn("Pendulum A: θ1 must be between -180 and 180 degrees.", messages)
 
         # Test for valid θ value
-        errors_div = validate_inputs([[360, 0, 0, 0]],
+        errors_div = validate_inputs([[180, 0, 0, 0]],
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
