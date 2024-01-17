@@ -103,16 +103,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Adjustments for the multi-graph container to include headers */
-.multi-graph-container {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(500px, 1fr)); /* Default 3 columns */
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 20px;
-  text-align: left; /* Centers the headers */
-}
-
 .above-graph-container {
   grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
   gap: 20px;
@@ -141,6 +131,21 @@ body {
   border: 1px solid #ddd; /* Light grey border */
   overflow-x: auto; /* Allows scrolling if content is too wide */
   overflow-y: hidden; /* Hides vertical scrollbar */
+}
+
+/* Chaos elements */
+/* Adjustments for the multi-graph container to include headers */
+.multi-graph-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(500px, 1fr)); /* Default 3 columns */
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: left; /* Centers the headers */
+}
+
+.multi-graph-container h4 {
+  text-align: center; /* This will align the text of all <h4> elements to the left within elements that have the class .multi-graph-container */
 }
 
 /* Responsive adjustments for smaller screens */
