@@ -98,8 +98,8 @@ def validate_inputs(initial_conditions_list, time_start, time_end, model_type,
                 error_list.append(f"{pendulum_label}: {name} requires a numerical value.")
                 error_list.append(html.Br())
             else:
-                if name in ['θ1', 'θ2'] and (value < -360 or value > 360):
-                    error_list.append(f"{pendulum_label}: {name} must be between -360 and 360 degrees.")
+                if name in ['θ1', 'θ2'] and (value < -180 or value > 180):
+                    error_list.append(f"{pendulum_label}: {name} must be between -180 and 180 degrees.")
                     error_list.append(html.Br())
                 elif name in ['ω1', 'ω2']:
                     if abs(value) > MAX_ANGULAR_VELOCITY:
