@@ -10,8 +10,8 @@ MAX_LENGTH = 10      # meters
 MIN_LENGTH = 0.1     # meters
 MAX_MASS = 1000      # kilograms
 MIN_MASS = 0.1       # kilograms
-MAX_GRAVITY = 24.79  # m/s^2, g on Jupiter (2.528 * g_earth)
-MIN_GRAVITY = 1.623  # m/s^2, g on the Moon (0.1654 * g_earth)
+MAX_GRAVITY = 23.15  # m/s^2, g on Jupiter (2.36 * g_earth)
+MIN_GRAVITY = 0.696  # m/s^2, g on Pluto (0.071 * g_earth)
 
 
 class TestValidateInputs(unittest.TestCase):
@@ -120,14 +120,14 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 0)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("g (acceleration due to gravity) must be between 1.623 and 24.79.", messages)
+        self.assertIn("g (acceleration due to gravity) must be between 0.696 and 23.15.", messages)
 
         # Example for g being too high
         errors_div = validate_inputs([[0, 120, 0, 0]],
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 30)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("g (acceleration due to gravity) must be between 1.623 and 24.79.", messages)
+        self.assertIn("g (acceleration due to gravity) must be between 0.696 and 23.15.", messages)
 
         # Example for g being None
         errors_div = validate_inputs([[0, 120, 0, 0]],
