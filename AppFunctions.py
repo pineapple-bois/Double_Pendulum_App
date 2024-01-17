@@ -118,7 +118,7 @@ def validate_inputs(initial_conditions_list, time_start, time_end, model_type,
 # Helper function to generate animation and phase figures for a pendulum
 def generate_pendulum_figures(pendulum, fig_width, fig_height):
     pendulum.precompute_positions()
-    animation = pendulum.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height)
+    animation = pendulum.animate_pendulum(trace=True, fig_width=fig_width, fig_height=fig_height, static=True)
     matplotlib_phase_fig = pendulum.phase_path()
     phase_fig = tls.mpl_to_plotly(matplotlib_phase_fig)
     phase_fig.update_layout(
