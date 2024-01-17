@@ -7,14 +7,9 @@ MAX_TIME = 120
 
 
 # Error checking of parameters and initial conditions
-def validate_inputs(initial_conditions_list, time_start, time_end,
+def validate_inputs(initial_conditions_list, time_start, time_end, model_type,
                     param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g):
     error_list = []
-    # Check if time and parameter inputs are None
-    time_and_param_inputs = [time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g]
-    if any(param is None for param in time_and_param_inputs):
-        error_list.append("Please fill in all required fields.")
-        error_list.append(html.Br())
 
     # Time vector
     times = {
@@ -39,15 +34,22 @@ def validate_inputs(initial_conditions_list, time_start, time_end,
         error_list.append(html.Br())
 
     # Parameters
-    param_values = {
+    simple_params = {
         'l1 (length of rod 1)': param_l1,
         'l2 (length of rod 2)': param_l2,
         'm1 (mass of bob 1)': param_m1,
         'm2 (mass of bob 2)': param_m2,
+        'g (acceleration due to gravity)': param_g,
+    }
+    compound_params = {
+        'l1 (length of rod 1)': param_l1,
+        'l2 (length of rod 2)': param_l2,
         'M1 (mass of rod 1)': param_M1,
         'M2 (mass of rod 2)': param_M2,
         'g (acceleration due to gravity)': param_g,
     }
+
+    param_values = simple_params if model_type == 'simple' else compound_params
     for param_name, param_value in param_values.items():
         if param_value is None or not isinstance(param_value, (int, float)):
             error_list.append(f"Please provide a numerical value for {param_name}")
@@ -59,11 +61,16 @@ def validate_inputs(initial_conditions_list, time_start, time_end,
             error_list.append(html.Br())
 
     # Validate each pendulum's initial conditions
+
+    # Define a mapping from index to label
+    index_to_label = {1: 'Pendulum A', 2: 'Pendulum B', 3: 'Pendulum C'}
+
     for i, conditions in enumerate(initial_conditions_list, start=1):
         condition_names = ['θ1', 'θ2', 'ω1', 'ω2']
+        pendulum_label = index_to_label.get(i, f"{i}")
         for name, value in zip(condition_names, conditions):
             if value is None:
-                error_list.append(f"Pendulum {i}: {name} requires a numerical value.")
+                error_list.append(f"{pendulum_label}: {name} requires a numerical value.")
                 error_list.append(html.Br())
 
     # Return the error message or None if there are no errors

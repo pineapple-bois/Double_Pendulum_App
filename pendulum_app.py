@@ -32,11 +32,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-@server.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
+#@server.before_request
+#def before_request():
+    #if not request.is_secure:
+        #url = request.url.replace('http://', 'https://', 1)
+        #return redirect(url, code=301)
 
 
 # App set up
@@ -190,7 +190,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
         # Validate inputs
         error_message = validate_inputs([initial_conditions],
-                                        time_start, time_end, param_l1, param_l2, param_m1, param_m2,
+                                        time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
                                         param_M1, param_M2, param_g)
         if error_message:
             # If there are errors, return immediately
@@ -312,7 +312,7 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
 
         # Validate inputs
         error_message = validate_inputs(condition_list,
-                                        time_start, time_end, param_l1, param_l2, param_m1, param_m2,
+                                        time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
                                         param_M1, param_M2, param_g)
         if error_message:
             # If there are errors, return immediately with default or empty values
