@@ -32,11 +32,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-@server.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
+#@server.before_request
+#def before_request():
+    #if not request.is_secure:
+        #url = request.url.replace('http://', 'https://', 1)
+        #return redirect(url, code=301)
 
 
 # App set up
@@ -251,12 +251,8 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
      Output('pendulum-a-phase', 'figure'),
      Output('pendulum-b-phase', 'figure'),      # FIGURES - 6 objects
      Output('pendulum-c-phase', 'figure'),
-     Output('pendulum-a-animation', 'style'),
-     Output('pendulum-b-animation', 'style'),
-     Output('pendulum-c-animation', 'style'),
-     Output('pendulum-a-phase', 'style'),
-     Output('pendulum-b-phase', 'style'),       # FIGURE STYLES - 7 objects
-     Output('pendulum-c-phase', 'style'),
+     Output('pendulum-a-div', 'style'),
+     Output('pendulum-b-div', 'style'),
      Output('pendulum-c-div', 'style'),
      Output('toggle-animation-container', 'style'),
      Output('animation-container', 'style'),
@@ -321,9 +317,7 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
             default_style = {'display': 'none'}
             return (empty_figure, empty_figure, empty_figure,     # animation figures
                     empty_figure, empty_figure, empty_figure,     # phase figures
-                    default_style, default_style, default_style,  # animation styles
-                    default_style, default_style, default_style,  # phase styles
-                    default_style,                                # pendulum C div
+                    default_style, default_style, default_style,  # pendulum div styles
                     default_style, default_style, default_style,  # misc styles
                     error_message)
 
@@ -349,17 +343,13 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
         if pendulum_count == 'two_pendulums':
             return (animations[0], animations[1], go.Figure(),  # Animation figures
                     phase_figs[0], phase_figs[1], go.Figure(),  # Phase figures
-                    *styles,                                    # Animation styles
-                    *styles,                                    # Phase styles
-                    {'display': 'none'},                        # pendulum C div
+                    *styles,                                    # Column styles
                     {'display': 'block'}, {'display': 'grid'}, {'display': 'block'}, '')  # Other styles and message
 
         elif pendulum_count == 'three_pendulums':
             return (*animations,          # Animation figures
                     *phase_figs,          # Phase figures
-                    *styles,              # Animation styles
-                    *styles,              # Phase styles
-                    {'display': 'none'},  # pendulum C div
+                    *styles,              # Column styles
                     {'display': 'block'}, {'display': 'grid'}, {'display': 'block'}, '')  # Other styles and message
         else:
             empty_figure = go.Figure()
@@ -367,16 +357,12 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
             return (empty_figure, empty_figure, empty_figure,
                     empty_figure, empty_figure, empty_figure,
                     default_style, default_style, default_style,
-                    default_style, default_style, default_style,
-                    {'display': 'none'},  # pendulum C div
-                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
+                    default_style, default_style, default_style, '')
 
     # Default return for no button clicks
     return (go.Figure(), go.Figure(), go.Figure(),
             go.Figure(), go.Figure(), go.Figure(),
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-            {'display': 'none'},  # pendulum C div
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
 
 
@@ -410,5 +396,5 @@ def toggle_global_animation(n_clicks, toggle_state):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 

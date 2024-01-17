@@ -215,12 +215,12 @@ def get_chaos_layout():
                 html.Div(className='container', children=[
                     # Container for animations with headers
                     html.Div(id='animation-container', className='multi-graph-container', children=[
-                        html.Div([
+                        html.Div(id='pendulum-a-div', children=[
                             html.H4("Pendulum A"),
                             dcc.Graph(id='pendulum-a-animation'),
                             dcc.Graph(id='pendulum-a-phase')
                         ]),
-                        html.Div([
+                        html.Div(id='pendulum-b-div', children=[
                             html.H4("Pendulum B"),
                             dcc.Graph(id='pendulum-b-animation'),
                             dcc.Graph(id='pendulum-b-phase')
