@@ -225,7 +225,7 @@ def get_chaos_layout():
                             dcc.Graph(id='pendulum-b-animation'),
                             dcc.Graph(id='pendulum-b-phase')
                         ]),
-                        html.Div([
+                        html.Div(id='pendulum-c-div', children=[
                             html.H4("Pendulum C"),
                             dcc.Graph(id='pendulum-c-animation'),
                             dcc.Graph(id='pendulum-c-phase')

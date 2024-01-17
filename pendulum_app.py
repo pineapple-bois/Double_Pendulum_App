@@ -257,6 +257,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
      Output('pendulum-a-phase', 'style'),
      Output('pendulum-b-phase', 'style'),       # STYLES - 7 objects
      Output('pendulum-c-phase', 'style'),
+     Output('pendulum-c-div', 'style'),
      Output('toggle-animation-container', 'style'),
      Output('animation-container', 'style'),
      Output('math-button-container-chaos', 'style'),
@@ -318,13 +319,13 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
             # If there are errors, return immediately with default or empty values
             empty_figure = go.Figure()
             default_style = {'display': 'none'}
-            return (empty_figure, empty_figure, empty_figure,  # animation figures
-                    empty_figure, empty_figure, empty_figure,  # phase figures
+            return (empty_figure, empty_figure, empty_figure,     # animation figures
+                    empty_figure, empty_figure, empty_figure,     # phase figures
                     default_style, default_style, default_style,  # animation styles
                     default_style, default_style, default_style,  # phase styles
-                    default_style, default_style, default_style,
+                    default_style,                                # pendulum C div
+                    default_style, default_style, default_style,  # misc styles
                     error_message)
-            # TODO: How do we clear the message whilst loading??
 
         # Create DoublePendulum instances
         pendulums = [DoublePendulum(parameters, conditions, time_vector, model=model_type)
@@ -350,13 +351,15 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                     phase_figs[0], phase_figs[1], go.Figure(),  # Phase figures
                     *styles,                                    # Animation styles
                     *styles,                                    # Phase styles
+                    {'display': 'none'},                        # pendulum C div
                     {'display': 'block'}, {'display': 'grid'}, {'display': 'block'}, '')  # Other styles and message
 
         elif pendulum_count == 'three_pendulums':
-            return (*animations,  # Animation figures
-                    *phase_figs,  # Phase figures
-                    *styles,     # Animation styles
-                    *styles,     # Phase styles
+            return (*animations,          # Animation figures
+                    *phase_figs,          # Phase figures
+                    *styles,              # Animation styles
+                    *styles,              # Phase styles
+                    {'display': 'none'},  # pendulum C div
                     {'display': 'block'}, {'display': 'grid'}, {'display': 'block'}, '')  # Other styles and message
         else:
             empty_figure = go.Figure()
@@ -365,6 +368,7 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
                     empty_figure, empty_figure, empty_figure,
                     default_style, default_style, default_style,
                     default_style, default_style, default_style,
+                    {'display': 'none'},  # pendulum C div
                     {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
 
     # Default return for no button clicks
@@ -372,6 +376,7 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
             go.Figure(), go.Figure(), go.Figure(),
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
+            {'display': 'none'},  # pendulum C div
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
 
 
