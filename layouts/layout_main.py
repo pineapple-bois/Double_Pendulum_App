@@ -145,7 +145,7 @@ def get_main_layout():
             # Column for Parameters
             html.Div(className='column', children=[
                 html.Div(className='input-group', children=[
-                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s^2',
+                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)',
                                id='parameters-label', className='label'),
                     dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input'),
                     dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input'),
