@@ -143,7 +143,7 @@ def get_chaos_layout():
             # Column for Parameters
             html.Div(className='column', children=[
                 html.Div(className='input-group', children=[
-                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s^2',
+                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)',
                                id='parameters-label', className='label'),
                     dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input'),
                     dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input'),
@@ -216,6 +216,17 @@ def get_chaos_layout():
                     html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button'),
                 ]),
             ]),
+            html.Div(id='toggle-animation-container', style={'display': 'none'}, children=[
+                html.Div(className='container-buttons', children=[
+                    html.Button('Play All',
+                                id='global-toggle-button',
+                                style={'width': 'auto', 'display': 'flex', 'margin-top': '20px', 'padding': '10px'},
+                                n_clicks=0,
+                                className='play-button-show'),
+                ]),
+                # Hidden div for storing the current animation state
+                html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
+            ]),
         ]),
         # Loading spinner
         dcc.Loading(
@@ -223,22 +234,10 @@ def get_chaos_layout():
             type="default",  # or "circle", "dot", or "cube" for different spinner types
             children=[  # new ID for multi pendulums
                 html.Div(className='container', children=[
-                    # Container for the "Play All" toggle button
-                    html.Div(id='toggle-animation-container', style={'display': 'none'}, children=[
-                        html.Div(className='container-buttons', children=[
-                            html.Button('Play All',
-                                        id='global-toggle-button',
-                                        style={'width': 'auto', 'display': 'flex', 'margin-top': '20px', 'padding': '10px'},
-                                        n_clicks=0,
-                                        className='play-button-show'),
-                        ]),
-                        # Hidden div for storing the current animation state
-                        html.Div(id='global-animation-toggle', style={'display': 'none'}, children='Play'),
-                    ]),
-                ]),
-                html.Div(className='container', children=[
                     # Container for animations with headers
-                    html.Div(id='animation-container', className='multi-graph-container', children=[
+                    html.Div(id='animation-container', className='multi-graph-container',
+                             style={'display': 'grid'},
+                             children=[
                         html.Div(id='pendulum-a-div', children=[
                             html.H4("Pendulum A"),
                             dcc.Graph(id='pendulum-a-animation', config=config),
@@ -254,8 +253,7 @@ def get_chaos_layout():
                             dcc.Graph(id='pendulum-c-animation', config=config),
                             dcc.Graph(id='pendulum-c-phase', config=config)
                         ]),
-                        # Add more graphs above as needed
-                    ], style={'display': 'grid'})
+                    ]),
                 ]),
             ],
             # Position the spinner at the top of the container
