@@ -6,6 +6,10 @@ from dash import dcc
 with open('assets/mathematics_section.txt', 'r') as file:
     math_section = file.read()
 
+# Plotly figure configuration
+# 'displayModeBar': False - removes everything
+config = {'displaylogo': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d']}
+
 
 def get_chaos_layout():
     # This function returns the layout of the main page
@@ -139,7 +143,7 @@ def get_chaos_layout():
             # Column for Parameters
             html.Div(className='column', children=[
                 html.Div(className='input-group', children=[
-                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s',
+                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s^2',
                                id='parameters-label', className='label'),
                     dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input'),
                     dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input'),
@@ -237,18 +241,18 @@ def get_chaos_layout():
                     html.Div(id='animation-container', className='multi-graph-container', children=[
                         html.Div(id='pendulum-a-div', children=[
                             html.H4("Pendulum A"),
-                            dcc.Graph(id='pendulum-a-animation'),
-                            dcc.Graph(id='pendulum-a-phase')
+                            dcc.Graph(id='pendulum-a-animation', config=config),
+                            dcc.Graph(id='pendulum-a-phase', config=config)
                         ]),
                         html.Div(id='pendulum-b-div', children=[
                             html.H4("Pendulum B"),
-                            dcc.Graph(id='pendulum-b-animation'),
-                            dcc.Graph(id='pendulum-b-phase')
+                            dcc.Graph(id='pendulum-b-animation', config=config),
+                            dcc.Graph(id='pendulum-b-phase', config=config)
                         ]),
                         html.Div(id='pendulum-c-div', children=[
                             html.H4("Pendulum C"),
-                            dcc.Graph(id='pendulum-c-animation'),
-                            dcc.Graph(id='pendulum-c-phase')
+                            dcc.Graph(id='pendulum-c-animation', config=config),
+                            dcc.Graph(id='pendulum-c-phase', config=config)
                         ]),
                         # Add more graphs above as needed
                     ], style={'display': 'grid'})

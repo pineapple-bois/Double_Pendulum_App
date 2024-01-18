@@ -8,11 +8,15 @@ mpl_layout = go.Layout(
     xaxis=dict(
         titlefont=dict(family='Courier New, monospace', size=14, color='black'),
         showgrid=True,
-        gridcolor='lightgrey'
+        gridcolor='lightgrey',
+        fixedrange=True  # disables horizontal zoom/pan
     ),
     yaxis=dict(
         titlefont=dict(family='Courier New, monospace', size=14, color='black'),
         showgrid=True,
-        gridcolor='lightgrey'
-    )
+        gridcolor='lightgrey',
+        fixedrange=True  # disables vertical zoom/pan
+    ),
+    dragmode=False,  # Disables dragging
+    showlegend=False  # Hides legend
 )
