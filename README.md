@@ -56,9 +56,9 @@ The application is available at [double-pendulum.net](http://www.double-pendulum
 
 ----
 
-## Performance Branch
+## Performance/Chaos Branch
 
-This branch focuses on optimizing the performance of the Double Pendulum simulation. Below are some proposed enhancements and methodologies we're exploring to improve the computational efficiency and user experience of the application.
+This branch focuses on optimising the performance of the Double Pendulum simulation. Below are some proposed enhancements and methodologies we're exploring to improve the computational efficiency and user experience of the application.
 
 ### DoublePendulum Class Optimization Strategies
 
