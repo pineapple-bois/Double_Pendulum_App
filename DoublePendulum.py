@@ -120,7 +120,7 @@ class DoublePendulum:
         Solve the system of ODEs using the specified integrator.
 
         Parameters:
-        - integrator: The integrator function to use. Default is scipy's odeint.
+        - integrator: The integrator function to use. Default is scipy's solve_ivp.
         - system: The system function defining the ODEs.
         - **integrator_args: Additional arguments specific to the chosen integrator.
         """
@@ -351,3 +351,63 @@ class DoublePendulum:
             fig.update_layout(**base_layout)
 
         return fig
+
+
+class DoublePendulumExplorer(DoublePendulum):
+    def __init__(self, parameters, time_vector, theta_range, omega_range,  model='simple', integrator=solve_ivp, **integrator_args):
+        """
+        Extend the DoublePendulum class to explore a range of initial conditions.
+
+        Parameters:
+        - theta_range: Tuple of (min, max) for theta1 and theta2.
+        - omega_range: Tuple of (min, max) for omega1 and omega2.
+        """
+        default_initial_conditions = [0, 0, 0, 0]  # Starting from rest
+        super().__init__(parameters, default_initial_conditions, time_vector, model, integrator, **integrator_args)
+        self.theta_range = np.deg2rad(theta_range)
+        self.omega_range = np.deg2rad(omega_range)
+        # Prepare for dynamic initial condition generation and simulations
+        self.initial_conditions_list = self._generate_initial_conditions()
+
+    def time_graph(self):
+        raise NotImplementedError("This method is not applicable for DoublePendulumExplorer.")
+
+    def phase_path(self):
+        raise NotImplementedError("This method is not applicable for DoublePendulumExplorer.")
+
+    def animate_pendulum(self, fig_width=700, fig_height=700, trace=False, static=False, appearance='light'):
+        raise NotImplementedError("This method is not applicable for DoublePendulumExplorer.")
+
+    def _generate_initial_conditions(self, step_size=0.5):
+        # Convert step size to radians
+        step_size_rad = np.deg2rad(step_size)
+        # Generate ranges based on step size
+        theta1_vals = np.arange(*np.deg2rad(self.theta_range), step_size_rad)
+        omega1_vals = np.arange(*np.deg2rad(self.omega_range), step_size_rad)
+        # Assuming theta2 and omega2 have the same ranges for simplicity
+        initial_conditions = [(th1, th2, om1, om2)
+                              for th1 in theta1_vals for th2 in theta1_vals
+                              for om1 in omega1_vals for om2 in omega1_vals]
+        return initial_conditions
+
+    def run_simulations(self):
+        """Run batch simulations for all generated initial conditions."""
+        results = {}
+        for conditions in self.initial_conditions_list:
+            # Ensure conditions are passed as initial_conditions correctly
+            self.initial_conditions = conditions  # Set the current conditions
+            trajectory = self.sol
+            results[conditions] = trajectory
+        return results
+
+    def visualize_phase_space(self, select_ic_index=None):
+        """
+        Visualize the phase space for a selected set of initial conditions or all.
+        """
+        if select_ic_index is not None:
+            selected_results = [self.results[select_ic_index]]
+        else:
+            selected_results = self.results
+
+        # Visualization code here: Plot phase space trajectories using Matplotlib or Plotly
+
