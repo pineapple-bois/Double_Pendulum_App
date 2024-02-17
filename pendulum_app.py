@@ -108,11 +108,11 @@ def adjust_parameters_visibility(model_type):
     if model_type == 'simple':
         # Hide M1 and M2 for the simple model
         return ({'display': 'block'}, {'display': 'block'}, {'display': 'none'}, {'display': 'none'},
-                'Parameters (l1, l2, m1, m2, g): m, kg, m/s')
+                'Parameters (l1, l2, m1, m2, g)')
     elif model_type == 'compound':
         # Show M1 and M2 for the compound model
         return ({'display': 'none'}, {'display': 'none'}, {'display': 'block'}, {'display': 'block'},
-                'Parameters (l1, l2, M1, M2, g): m, kg, m/s')
+                'Parameters (l1, l2, M1, M2, g)')
 
 
 # If Chaos, (if multi pendulums selected), display initial condition inputs
