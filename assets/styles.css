@@ -140,12 +140,17 @@ body {
   grid-template-columns: repeat(3, minmax(500px, 1fr)); /* Default 3 columns */
   gap: 20px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   text-align: left; /* Centers the headers */
 }
 
 .multi-graph-container h4 {
   text-align: center; /* This will align the text of all <h4> elements to the left within elements that have the class .multi-graph-container */
+}
+
+/* Target the second dcc.Graph in each pendulum div and add margin to its top */
+.multi-graph-container > div > :nth-child(3) {
+  margin-top: 20px; /* Adjust the value as needed */
 }
 
 /* Responsive adjustments for smaller screens */
@@ -166,7 +171,7 @@ body {
 
 
 /* Medium screens - Two columns layout */
-@media (max-width: 1550px) {
+@media (max-width: 1100px) {
   .multi-graph-container {
     grid-template-columns: repeat(2, minmax(500px, 1fr));
   }

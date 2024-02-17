@@ -197,12 +197,15 @@ class DoublePendulum:
         """
         self.precomputed_positions = np.array(self._calculate_positions())
 
-    def animate_pendulum(self, fig_width=700, fig_height=700, trace=False, appearance='light'):
+    def animate_pendulum(self, fig_width=700, fig_height=700, trace=False, static=False, appearance='light'):
         """
         Generates an animation for the double pendulum using precomputed positions.
 
         Parameters:
+            fig_width (int): Default is 700 px
+            fig_height (int): Default is 700 px
             trace (bool): If True, show the trace of the pendulum.
+            static (bool): disables extra interactivity
             appearance (str): 'dark' for dark mode (default), 'light' for light mode.
 
         Raises:
@@ -288,25 +291,21 @@ class DoublePendulum:
                   for k in range(0, len(x_1), step)]  # Use a step to reduce the number of frames
         fig.frames = frames
 
-        # Update figure layout to create a square plot with padded axis range
-        fig.update_layout(
+        # Define the base layout configuration
+        base_layout = dict(
             plot_bgcolor=background_color,
             paper_bgcolor=background_color,
             xaxis=dict(
                 showgrid=True, gridwidth=1, gridcolor=grid_color,
                 range=axis_range_with_padding,
-                autorange=False,
-                zeroline=False,
-                tickcolor=text_color,
+                autorange=False, zeroline=False, tickcolor=text_color,
                 tickfont=dict(size=12, color=text_color),
             ),
             yaxis=dict(
                 showgrid=True, gridwidth=1, gridcolor=grid_color,
                 range=axis_range_with_padding,
-                autorange=False,
-                zeroline=False,
-                scaleanchor='x',
-                scaleratio=1,
+                autorange=False, zeroline=False,
+                scaleanchor='x', scaleratio=1,
                 tickcolor=text_color,
                 tickfont=dict(size=12, color=text_color),
             ),
@@ -314,30 +313,41 @@ class DoublePendulum:
             width=fig_width,
             height=fig_height,
 
-            updatemenus=[{
-                'type': 'buttons',
-                'buttons': [
-                    dict(
-                        label="Play",
-                        method="animate",
-                        args=[None, {"frame": {"duration": 33, "redraw": True}, "fromcurrent": True,
-                                     "mode": "immediate",
-                                     'label': 'Play',
-                                     'font': {'size': 14, 'color': 'black'},
-                                     'bgcolor': 'lightblue'
-                        }],
-                    )
-                ],
-                'direction': "left",
-                'pad': {"r": 10, "t": 10},  # Adjust padding if needed
-                'showactive': False,
-                'type': 'buttons',
-                'x': 0.05,  # Position for x
-                'y': 0.95,  # Position for y,(the top of the figure)
-                'xanchor': "left",
-                'yanchor': "top"
-            }],
+        updatemenus=[{
+            'type': 'buttons',
+            'buttons': [
+                dict(
+                    label="Play",
+                    method="animate",
+                    args=[None, {"frame": {"duration": 33, "redraw": True}, "fromcurrent": True,
+                                "mode": "immediate",
+                                'label': 'Play',
+                                'font': {'size': 14, 'color': 'black'},
+                                'bgcolor': 'lightblue'
+                    }],
+                )
+            ],
+            'direction': "left",
+            'pad': {"r": 10, "t": 10},  # Adjust padding if needed
+            'showactive': False,
+            'type': 'buttons',
+            'x': 0.05,  # Position for x
+            'y': 0.95,  # Position for y,(the top of the figure)
+            'xanchor': "left",
+            'yanchor': "top"
+        }],
         margin=dict(l=20, r=20, t=20, b=20),
         )
+        # Update the layout based on the 'static' argument
+        if static:
+            static_updates = dict(
+                xaxis_fixedrange=True,  # Disables horizontal zoom/pan
+                yaxis_fixedrange=True,  # Disables vertical zoom/pan
+                dragmode=False,         # Disables dragging
+                showlegend=False        # Hides legend
+            )
+            fig.update_layout(**base_layout, **static_updates)
+        else:
+            fig.update_layout(**base_layout)
 
         return fig

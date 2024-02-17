@@ -32,11 +32,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-@server.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
+#@server.before_request
+#def before_request():
+    #if not request.is_secure:
+        #url = request.url.replace('http://', 'https://', 1)
+        #return redirect(url, code=301)
 
 
 # App set up
@@ -189,7 +189,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
             # If there are errors, return immediately
             return (no_update, no_update, no_update,
                     {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
-                    error_message)  #
+                    error_message)
 
         time_steps = int((time_end - time_start) * 200)
         time_vector = [time_start, time_end, time_steps]
@@ -230,7 +230,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
         # Generate the animation figure
         pendulum.precompute_positions()  # Make sure positions are precomputed
-        animation_fig = pendulum.animate_pendulum(trace=True, fig_width=700, fig_height=700)
+        animation_fig = pendulum.animate_pendulum(trace=True, fig_width=700, fig_height=700, static=True)
 
         return (time_fig, phase_fig, animation_fig,  # graph figures
                 {'display': 'grid'}, {'display': 'block'}, {'display': 'block'},
@@ -396,5 +396,5 @@ def toggle_global_animation(n_clicks, toggle_state):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 

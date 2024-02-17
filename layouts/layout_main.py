@@ -6,6 +6,10 @@ from dash import dcc
 with open('assets/mathematics_section.txt', 'r') as file:
     math_section = file.read()
 
+# Plotly figure configuration
+# 'displayModeBar': False - removes everything
+config = {'displaylogo': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d']}
+
 
 def get_main_layout():
     # This function returns the layout of the main page
@@ -141,7 +145,7 @@ def get_main_layout():
             # Column for Parameters
             html.Div(className='column', children=[
                 html.Div(className='input-group', children=[
-                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g): m, kg, m/s²',
+                    html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)',
                                id='parameters-label', className='label'),
                     dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input'),
                     dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input'),
@@ -183,8 +187,10 @@ def get_main_layout():
             children=[
                 html.Div(id='animation-phase-container', className='above-graph-container', style={'display': 'none'},
                          children=[
-                             dcc.Graph(id='pendulum-animation'),
-                             dcc.Graph(id='phase-graph'),
+                             dcc.Graph(id='pendulum-animation',
+                                       config=config),
+                             dcc.Graph(id='phase-graph',
+                                       config=config),
                          ]),
                 html.Div(id='time-graph-container', className='graph-container', style={'display': 'none'}, children=[
                     dcc.Graph(id='time-graph', responsive=True),
