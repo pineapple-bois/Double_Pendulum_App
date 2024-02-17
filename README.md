@@ -56,25 +56,51 @@ The application is available at [double-pendulum.net](http://www.double-pendulum
 
 ----
 
-## Chaos Section
+## Performance/Chaos Branch
 
-Update 15/01/2024. 
+This branch focuses on optimising the performance of the Double Pendulum simulation. Below are some proposed enhancements and methodologies we're exploring to improve the computational efficiency and user experience of the application.
 
-Introduces significant architectural changes to the `Double_Pendulum` application, with a focus on exploring chaotic dynamics and enhancing the modularity and maintainability of the codebase.
+### DoublePendulum Class Optimization Strategies
 
-- **Chaotic Dynamics Exploration Page**: Allows for a more in-depth investigation of chaos theory within the context of the double pendulum system.
+#### Precomputation
+- Implement precomputation strategies to calculate pendulum positions efficiently before starting animations.
 
-- **Architectural Enhancements**: 
+#### Vectorization
+- Utilize Numpy's vectorized operations to reduce the need for explicit loops in calculations, providing significant performance gains.
 
-    - **Page-Specific Callbacks**: To accommodate the new multi-page setup; 
-      - callbacks have been restructured to be layout or page-specific. This ensures a more organized codebase where each page's logic is contained within its respective module, improving readability and ease of maintenance.
-    - **Layout Abstraction**: The application's layout has been abstracted away from the main `app.py` file to support better scalability and code organization. This includes:
-      - A `main` page that serves as the entry point and primary interface for the standard double pendulum simulation. (existing `main` branch)
-      - A `chaos` page designed to explore chaotic behaviors and patterns that emerge under various conditions.
-      
-- **Error Handling**: Error handling has been improved with the separation of validation logic. 
-  - The `validate_inputs()` function has been refined to accept a list of initial conditions, allowing for more flexible input checks.
+#### Animation Overhead Reduction
+- Optimize animation performance by increasing the step size in `go.Frames`, reducing the number of frames needed and interpolating intermediate positions for smoother animations.
 
+#### Parallel Processing
+- Investigate parallel processing options to handle each pendulum's computation separately, while considering the constraints of GUI and animation threads.
+
+#### ODE Solver Efficiency
+- Evaluate different ODE solvers available in `solve_ivp` to ensure the most efficient algorithm is used, whether for general, stiff, or high-precision requirements.
+
+#### Memory Management
+- Enhance memory usage by choosing appropriate data types and clearing large, unnecessary variables from memory after their use.
+
+#### Browser Performance Considerations
+- Tailor the complexity of animations to align with varying client machine capabilities, ensuring a smooth experience across different browsers.
+
+#### Server-Side Rendering
+- Explore server-side pre-rendering of animations to be sent to the client as video or image sequences, minimizing the performance load on the client's end.
+
+----
+
+### Dash Application Performance
+
+#### Callback Optimization
+- Write callbacks to trigger multi-threaded operations where possible, balancing responsiveness with computation load.
+
+#### Client-Side Caching
+- Implement caching mechanisms client-side to store pre-computed values, reducing server load and improving response times.
+
+----
+
+## Contributing to Performance Optimization
+
+Your insights and contributions are invaluable to enhancing the Double Pendulum simulation. If you have suggestions or code improvements, please feel free to fork this branch, commit your updates, and submit a pull request.
 
 ----
 
