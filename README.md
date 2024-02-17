@@ -7,7 +7,7 @@ Available at:
 
 ----
 
-![img](assets/Double_Pendulum.png)
+![img](assets/JointPendulums_White.png)
 
 #### The above figure shows simple pendulum suspended from another simple pendulum by a frictionless hinge. 
 - Both pendulums move in the same plane. 

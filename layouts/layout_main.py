@@ -95,7 +95,7 @@ def get_main_layout():
 
             # Column for image
             html.Div([
-                html.Img(src='assets/Double_Pendulum.png', style={'max-width': '100%', 'height': 'auto'})
+                html.Img(src='assets/JointPendulums_White.png', style={'max-width': '100%', 'height': 'auto'})
             ], style={'flex': '1'}, className='image-column'),
         ], style={'display': 'flex'}, className='instructions-image-container'),
 
