@@ -519,6 +519,7 @@ class DoublePendulumExplorer(DoublePendulum):
                 theta2, omega2 = zip(*poincare_points)
                 plt.scatter(theta2, omega2, s=0.001, color=colors[i])
 
+        plt.xlim(-np.pi/2, np.pi/2)
         plt.xlabel(r'$\theta_2$ (radians)')
         plt.ylabel(r'$\omega_2$')
         plt.title(f'Poincaré Section at $y={{{self.y_fixed}}}$')
