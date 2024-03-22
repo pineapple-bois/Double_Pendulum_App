@@ -170,7 +170,7 @@ def get_chaos_layout():
                             {'label': 'Neptune: 11.15 m/s²', 'value': 11.15},
                             {'label': 'Pluto: 0.696 m/s²', 'value': 0.696},
                         ],
-                        value=None,  # No default value selected
+                        value=9.81,
                         placeholder='Acceleration due to gravity, m/s²',  # Placeholder text
                         clearable=False,
                         searchable=False,)  # If you have a long list, you might want to make it searchable
