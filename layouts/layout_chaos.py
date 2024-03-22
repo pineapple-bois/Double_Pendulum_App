@@ -91,7 +91,7 @@ def get_chaos_layout():
 
             # Column for image
             html.Div([
-                html.Img(src='assets/Double_Pendulum.png', style={'max-width': '100%', 'height': 'auto'})
+                html.Img(src='assets/Models_Joint_White.png', style={'max-width': '100%', 'height': 'auto'})
             ], style={'flex': '1'}, className='image-column'),
         ], style={'display': 'flex'}, className='instructions-image-container'),
 
@@ -170,7 +170,7 @@ def get_chaos_layout():
                             {'label': 'Neptune: 11.15 m/s²', 'value': 11.15},
                             {'label': 'Pluto: 0.696 m/s²', 'value': 0.696},
                         ],
-                        value=None,  # No default value selected
+                        value=9.81,
                         placeholder='Acceleration due to gravity, m/s²',  # Placeholder text
                         clearable=False,
                         searchable=False,)  # If you have a long list, you might want to make it searchable
