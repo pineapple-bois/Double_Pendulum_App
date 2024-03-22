@@ -40,7 +40,7 @@ This Dash-based web application extends our previous work on the exploration and
 
 ### Key Features
 
-- **Derivation**: The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/Functions.py). A simple conditional logic structure controls which model is derived.
+- **Derivation**: The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/MathFunctions.py). A simple conditional logic structure controls which model is derived.
 - **Model Selection**: Offers a choice between 'Simple' and 'Compound' pendulum models.
 - **DoublePendulum Class**: 
     - Instantiating a [DoublePendulum](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/DoublePendulum.py) object; *clicking the 'Run Simulation' button*, derives the symbolic equations.
