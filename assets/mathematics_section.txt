@@ -207,6 +207,8 @@ $$
 \end{pmatrix}
 =
 \begin{pmatrix}
+\omega_1 \\
+\omega_2 \\
 g_1(\theta_1, \theta_2, \omega_1, \omega_2) \\
 g_2(\theta_1, \theta_2, \omega_1, \omega_2)
 \end{pmatrix}
