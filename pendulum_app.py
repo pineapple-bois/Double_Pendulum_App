@@ -31,7 +31,7 @@ app = dash.Dash(
 )
 
 
-# Comment out to launch locally (development)
+#Comment out to launch locally (development)
 @server.before_request
 def before_request():
     if not request.is_secure:
@@ -193,10 +193,15 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
         time_steps = int((time_end - time_start) * 200)
         time_vector = [time_start, time_end, time_steps]
-        parameters = {l1: param_l1, l2: param_l2,
-                     m1: param_m1, m2: param_m2,
-                     M1: param_M1, M2: param_M2,
-                     g: param_g}
+
+        # Conditional parameter assignment based on model type
+        if model_type == 'simple':
+            weights = {m1: param_m1, m2: param_m2}
+        else:
+            weights = {M1: param_M1, M2: param_M2}
+
+        # Combine all parameters
+        parameters = {l1: param_l1, l2: param_l2, g: param_g, **weights}
 
         # Create an instance of DoublePendulum
         pendulum = DoublePendulum(parameters, initial_conditions, time_vector, model=model_type)
@@ -316,10 +321,15 @@ def multi_animation(n_clicks, pendulum_count, pend_one_theta1, pend_one_theta2, 
 
         time_steps = int((time_end - time_start) * 200)
         time_vector = [time_start, time_end, time_steps]
-        parameters = {l1: param_l1, l2: param_l2,
-                      m1: param_m1, m2: param_m2,
-                      M1: param_M1, M2: param_M2,
-                      g: param_g}
+
+        # Conditional parameter assignment based on model type
+        if model_type == 'simple':
+            weights = {m1: param_m1, m2: param_m2}
+        else:
+            weights = {M1: param_M1, M2: param_M2}
+
+        # Combine all parameters
+        parameters = {l1: param_l1, l2: param_l2, g: param_g, **weights}
 
         # Create DoublePendulum instances
         pendulums = [DoublePendulum(parameters, conditions, time_vector, model=model_type)
