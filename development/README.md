@@ -4,14 +4,14 @@ This development section aims to extend the DoublePendulum App by deriving the H
 
 ----
 
-### 1. Derive the Hamiltonian of the system and prepare equations of motion for numerical integration.
-### 2. Abstract the derivation as a series of dependent functions to lambdify and substitute parameters.
-### 3. Extend the `DoublePendulum` class to `DoublePendulumExplorer` capable of integrating a range of initial conditions. 
+1. ### Derive the Hamiltonian of the system and prepare equations of motion for numerical integration.
+2. ### Abstract the derivation as a series of dependent functions to lambdify and substitute parameters.
+3. ### Extend the `DoublePendulum` class to `DoublePendulumExplorer` capable of integrating a range of initial conditions. 
 - Specifically; $\theta_2 \in [-\pi, \pi], \text{step}=0.5^{\circ}$ and $t \in [0, 120]\text{s}$
-### 4. Write a data dictionary in JSON format of all angles, velocities and positions 
+4. ### Write a data dictionary in JSON format of all angles, velocities and positions 
 - Currently these use the Lagrangian and are 2 x 9Gb!
-### 5. Host this data as a PostgreSQL DB on a cloud server (aiming for v.cheap/free)
-### 6. Iterate over and slice the DB to plot Poincaré sections and Lyapunov exponents
+5. ### Host this data as a PostgreSQL DB on a cloud server (aiming for v.cheap/free)
+6. ### Iterate over and slice the DB to plot Poincaré sections and Lyapunov exponents
 
 ----
 
@@ -58,40 +58,32 @@ I'm happy with what I have derived but not yet sure how to integrate them. Maybe
      - **Poincaré Sections**: Calculate and visualize Poincaré sections to gain insights into the system's phase space structure and identify periodic or chaotic behavior.
      - **Simulations and Data Structures**: Run multiple simulations and organise the results in a structured format for easy analysis and visualisation.
 
-   &nbsp;
    
    #### Class Methods
-   &nbsp;
 
    `_generate_initial_conditions(step_size=0.5)`
    - Generate a list of initial conditions for the pendulum by varying $\theta_2$ within the specified range.
-   
-   &nbsp;
+
    
    `_run_simulations(integrator)`
-   - Run multiple simulations of the double pendulum, each with a different initial \(\theta_2\) value.
+   - Run multiple simulations of the double pendulum, each with a different initial $\theta_2$ value.
 
-   &nbsp;
 
    `_calculate_and_store_positions()`
    - Calculate the (x, y) positions of both pendulum bobs for each simulation and store them in separate arrays.
 
-   &nbsp;
 
    `_create_data_structure()`
    - Create a dictionary to store simulation data, including angular displacements, velocities, and positions.
 
-   &nbsp;
 
    `get_simulation_data(integrator)`
    - Public method to access the simulation data dictionary. Runs the full simulation and analysis if not already done.
 
-   &nbsp;
 
    `find_poincare_section(y_fixed, time_interval, angle_interval)`
    - Find the Poincaré section by identifying points where the second pendulum bob crosses a fixed vertical position within a specified time and angle interval.
 
-   &nbsp;
 
    `plot_poincare_map()`
    - Plot the Poincaré map, showing the points where the pendulum crosses the specified vertical position. Each trajectory is plotted with a different color.
