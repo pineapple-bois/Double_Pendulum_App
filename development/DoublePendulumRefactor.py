@@ -7,12 +7,36 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from MathFunctions import *
+from HamiltonianFunctions import *
 
 omega1 = sp.Function('omega1')(t)
 omega2 = sp.Function('omega2')(t)
 
 
-def add_equations(model='simple'):
+def hamiltonian_system(model='simple'):
+    # Form Lagrangian
+    L = form_lagrangian(model=model)
+
+    # Derive canonical momenta - for later substitution
+    p_theta1, p_theta2 = derive_canonical_momenta(L, theta1, theta2, t)
+
+    # compute generalised velocities in terms of symbolic momenta (defined in HamiltonianFunctions.py)
+    omega1_solved, omega2_solved, B = compute_generalized_velocities(theta1, theta2, l1, l2, m1, m2)
+
+    # Compute Hamiltonian
+    H = compute_hamiltonian(B, theta1, theta2, l1, l2, m1, m2, g)
+
+    # Compute Hamilton's equations
+    Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H, theta1, theta2)
+
+    # Build matrix equation
+    MAT_EQ, eq1_rhs, eq2_rhs, eq3_rhs, eq4_rhs = hamiltonian_first_order_system(
+                                                    p_theta1, p_theta2, Heq1, Heq2, Heq3, Heq4)
+
+    return MAT_EQ, eq1_rhs, eq2_rhs, eq3_rhs, eq4_rhs
+
+
+def lagrangian_system(model='simple'):
     # Form Lagrangian
     L = form_lagrangian(model=model)
 
@@ -77,7 +101,7 @@ class DoublePendulum:
     @classmethod
     def _compute_and_cache_equations(cls, model):
         if model not in cls._cache:
-            cls._cache[model] = add_equations(model)
+            cls._cache[model] = lagrangian_system(model)
         return cls._cache[model]
 
     def __init__(self, parameters, initial_conditions, time_vector,
