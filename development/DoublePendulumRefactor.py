@@ -13,7 +13,7 @@ omega1 = sp.Function('omega1')(t)
 omega2 = sp.Function('omega2')(t)
 
 
-# TODO: THIS DEFINITION IS BASED ON HamiltonianFunctions.py
+# TODO: THIS DEFINITION IS BASED ON HamiltonianFunctions.py, commented out
 """
 def hamiltonian_system(model='simple'):
     # Form Lagrangian
@@ -56,7 +56,7 @@ def hamiltonian_system(model='simple'):
     Heq1, Heq2, Heq3, Heq4 = derive_hamiltons_equations(H)
 
     # Build matrix equation
-    MAT_EQ = first_order_system(Heq1, Heq2, Heq3, Heq4)
+    MAT_EQ = hamiltonian_system(Heq1, Heq2, Heq3, Heq4)
     return MAT_EQ
 
 

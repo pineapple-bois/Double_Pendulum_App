@@ -152,7 +152,7 @@ def derive_hamiltons_equations(H):
     return Heq1, Heq2, Heq3, Heq4
 
 
-def first_order_system(Heq1, Heq2, Heq3, Heq4):
+def hamiltonian_system(Heq1, Heq2, Heq3, Heq4):
     eq1 = Heq1.rhs
     eq2 = Heq2.rhs
     eq3 = Heq3.rhs
