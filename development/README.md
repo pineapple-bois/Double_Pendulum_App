@@ -32,38 +32,23 @@ Aim to derive the Hamiltonian symbolically from first principles using similar m
 - [Diego Assencio](https://dassencio.org/46)
 - [lehman.edu](https://www.lehman.edu/faculty/dgaranin/Mechanics/ProblemSet-Fall-2006-4-Solution.pdf)
 
-#### Derived Equations
-
-$$
-\left[\begin{matrix}
-\frac{d}{d t} \theta_{1}{\left(t \right)}\\
-\frac{d}{d t} \theta_{2}{\left(t \right)}\\
-\frac{d}{d t} \operatorname{p_{\theta 1}}{\left(t \right)}\\
-\frac{d}{d t} \operatorname{p_{\theta 2}}{\left(t \right)}
-\end{matrix}\right] = \left[\begin{matrix}
-\frac{- l_{1} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2} \operatorname{p_{\theta 1}}{\left(t \right)}}{l_{1}^{2} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)}\\
-\frac{l_{1} m_{1} \operatorname{p_{\theta 2}}{\left(t \right)} + l_{1} m_{2} \operatorname{p_{\theta 2}}{\left(t \right)} - l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1} l_{2}^{2} m_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)}\\
-\frac{- g l_{1}^{3} l_{2}^{2} \left(m_{1} + m_{2}\right) \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2} \sin{\left(\theta_{1}{\left(t \right)} \right)} - l_{1} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right) \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + \left(l_{1}^{2} m_{1} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} + l_{1}^{2} m_{2} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} - 2 l_{1} l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2}^{2} m_{2} \operatorname{p_{\theta 1}}^{2}{\left(t \right)}\right) \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1}^{2} l_{2}^{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2}}\\
-\frac{- g l_{1}^{2} l_{2}^{3} m_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \ right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2} \sin{\left(\theta_{2}{\left(t \right)} \right)} + l_{1} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \ right)} \right)}\right) \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \ right)} \sin{\left(\theta_{1}{\left(t \ right)} - \theta_{2}{\left(t \ right)} \ right)} - \left(l_{1}^{2} m_{1} \operatorname{p_{\theta 2}}^{2}{\left(t \ right)} + l_{1}^{2} m_{2} \operatorname{p_{\theta 2}}^{2}{\left(t \ right)} - 2 l_{1} l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \ right)} \operatorname{p_{\theta 2}}{\left(t \ right)} \cos{\left(\theta_{1}{\left(t \ right)} - \theta_{2}{\left(t \ right)} \ right)} + l_{2}^{2} m_{2} \operatorname{p_{\theta 1}}^{2}{\left(t \ right)}\right) \sin{\left(\theta_{1}{\left(t \ right)} - \theta_{2}{\left(t \ right)} \ right)} \cos{\left(\theta_{1}{\left(t \ right)} - \theta_{2}{\left(t \ right)} \ right)}}{l_{1}^{2} l_{2}^{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \ right)} - \theta_{2}{\left(t \ right)} \ right)}\right)^{2}}
-\end{matrix}\right]
-$$
 
 ----
 
 2.
-   - ### [`HamiltonianFunctions.py`](HamiltonianFunctions.py)
-   - ### [`HamiltonianFunctions2.py`](HamiltonianFunctions2.py) 
+   ### [`HamiltonianFunctions.py`](HamiltonianFunctions.py)
+   ### [`HamiltonianFunctions2.py`](HamiltonianFunctions2.py) 
      - Ongoing works in progress for deriving integrable equations.
-   - ### [`TestingHamiltonian.ipynb`](TestingHamiltonian.ipynb)
+   ### [`TestingHamiltonian.ipynb`](TestingHamiltonian.ipynb)
      - A notebook for testing the Hamiltonian functions and their integration to the DoublePendulum class.
 
 ----
 
-3. - ### [`DoublePendulumRefactor.py`](DoublePendulumRefactor.py)
-4. - ### [`DevelopmentNewClass.ipynb`](DevelopmentNewClass.ipynb)
+3. ### [`DoublePendulumRefactor.py`](DoublePendulumRefactor.py)
+4. ### [`DevelopmentNewClass.ipynb`](DevelopmentNewClass.ipynb)
 
     
-- ### [JSONTest.ipynb]()
+5.### [`JSONTest.ipynb`](JSONTest.ipynb)
 Reading in the JSON data using Pandas (Will maybe swap for Polars once DB launched)
 
 
