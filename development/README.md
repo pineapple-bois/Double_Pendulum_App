@@ -92,6 +92,7 @@ I'm happy with what I have derived but not yet sure how to integrate them. Maybe
 
 4. ### [`DevelopmentNewClass.ipynb`](DevelopmentNewClass.ipynb)
    - Have started writing the base methods for the subclass. Really, I need a working Hamiltonian model to go any further.
+   - The data dictionaries appear to be quite good!
    - The Poincaré sections are really not what we are looking for...
 
 ----
