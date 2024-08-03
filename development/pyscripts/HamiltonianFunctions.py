@@ -102,10 +102,11 @@ def form_lagrangian(model='simple'):
         T = sp.trigsimp(T1_trans + T1_rot + T2_trans + T2_rot)
         V = sp.simplify(V1 + V2)
         L = T - V
+
     return L
 
 
-def derive_canonical_momenta(L):
+def derive_canonical_momenta(model='simple'):
     """
     Compute the canonical momenta from the Lagrangian.
 
@@ -117,24 +118,29 @@ def derive_canonical_momenta(L):
     tuple
         Canonical momenta (p_theta1, p_theta2).
     """
+    L = form_lagrangian(model)
     p_theta1 = sp.diff(L, omega1)
     p_theta2 = sp.diff(L, omega2)
 
     return p_theta1, p_theta2
 
 
-def compute_hamiltonian():
-    """
-    Compute the Hamiltonian of the double pendulum system.
+def compute_hamiltonian(model='simple'):
+    if model == 'simple':
+        B = sp.Matrix([
+            [(m1 + m2) * l1**2, m2 * l1 * l2 * sp.cos(theta1 - theta2)],
+            [m2 * l1 * l2 * sp.cos(theta1 - theta2), m2 * l2**2]
+        ])
+        V = -(m1 + m2) * g * l1 * sp.cos(theta1) - m2 * g * l2 * sp.cos(theta2)
+    elif model == 'compound':
+        B = sp.Matrix([
+            [sp.Rational(7,12)*M1*l1**2 + sp.Rational(1,4)*M2*l1**2, sp.Rational(1,4)*M2*l1*l2*sp.cos(theta1 - theta2)],
+            [sp.Rational(1,4)*M2*l1*l2*sp.cos(theta1 - theta2), sp.Rational(7,12)*M2*l2**2]
+        ])
+        V = -sp.Rational(1, 2) * g * (M1 * l1 * sp.cos(theta1) + M2 * l1 * sp.cos(theta1) + M2 * l2 * sp.cos(theta2))
+    else:
+        raise AttributeError("Invalid model type. Please choose 'simple' or 'compound'.")
 
-    Returns:
-    sympy.Expr
-        Hamiltonian of the system.
-    """
-    B = sp.Matrix([
-        [(m1 + m2) * l1**2, m2 * l1 * l2 * sp.cos(theta1 - theta2)],
-        [m2 * l1 * l2 * sp.cos(theta1 - theta2), m2 * l2**2]
-    ])
     B_inv = B.inv()
     p = sp.Matrix([p_theta_1, p_theta_2])
 
@@ -142,7 +148,6 @@ def compute_hamiltonian():
     T_target = T[0].subs(sp.cos(theta1 - theta2) ** 2, 1 - sp.sin(theta1 - theta2) ** 2)
     T_simp = sp.simplify(T_target)
 
-    V = -(m1 + m2) * g * l1 * sp.cos(theta1) - m2 * g * l2 * sp.cos(theta2)
     H = T_simp + V
 
     return H
@@ -185,11 +190,9 @@ def hamiltonian_system(model='simple'):
     tuple
         Hamilton's equations of motion (Heq1, Heq2, Heq3, Heq4).
     """
-    if model == 'simple':
-        H = compute_hamiltonian()
-        Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H)
-
-        return Heq1, Heq2, Heq3, Heq4
+    H = compute_hamiltonian(model)
+    Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H)
+    return Heq1, Heq2, Heq3, Heq4
 
 """
 - The `compute_hamiltons_equations` function is designed to take a Hamiltonian and compute the Hamiltonian equations.
