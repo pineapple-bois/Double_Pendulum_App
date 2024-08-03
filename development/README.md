@@ -119,7 +119,7 @@ The DoublePendulum class [`DoublePendulumHamiltonian.py`](pyscripts/DoublePendul
 - The Lagrangian formalism is particularly useful when dealing with generalised coordinates and constraints.
 
 **Hamiltonian Mechanics:**
-- The Hamiltonian \( H \) is defined as the total energy of the system $H = T + V$ (for conservative systems {which this is!}).
+- The Hamiltonian $\mathcal{H}$ is defined as the total energy of the system $\mathcal{H} = T + V$ (for conservative systems {which this is!}).
 - The equations of motion are derived using Hamilton's equations, which describe the time evolution of the generalised coordinates and momenta.
 - The Hamiltonian formalism is advantageous in systems with conserved quantities and is deeply connected to the principles of modern physics, such as quantum mechanics.
 
@@ -131,7 +131,7 @@ The DoublePendulum class [`DoublePendulumHamiltonian.py`](pyscripts/DoublePendul
    - Trajectories in phase space can reveal fixed points, periodic orbits, and chaotic regions.
 
 2. **Energy Conservation:**
-   - In conservative systems, the Hamiltonian is a conserved quantity (total energy). This allows you to restrict your analysis to constant energy surfaces, simplifying the study of dynamics.
+   - In conservative systems, the Hamiltonian is a conserved quantity (total energy). This restriction of analysis to constant energy surfaces, simplifying the study of dynamics.
 
 3. **Symplectic Structure:**
    - The Hamiltonian framework preserves the symplectic structure, which is important in the study of dynamical systems and chaos theory.
