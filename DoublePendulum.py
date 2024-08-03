@@ -120,7 +120,7 @@ class DoublePendulum:
         Solve the system of ODEs using the specified integrator.
 
         Parameters:
-        - integrator: The integrator function to use. Default is scipy's odeint.
+        - integrator: The integrator function to use. Default is scipy's solve_ivp.
         - system: The system function defining the ODEs.
         - **integrator_args: Additional arguments specific to the chosen integrator.
         """
