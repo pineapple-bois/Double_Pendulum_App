@@ -20,18 +20,23 @@ This development section aims to extend the DoublePendulum App by deriving the H
 ## Development Directory Structure
 
 ```
-├── DevelopmentHamiltonian.ipynb
-├── DevelopmentNewClass.ipynb
-├── DoublePendulumRefactor.py
-├── HamiltonianFunctions.py
-├── HamiltonianFunctions2.py
-├── JSONTest.ipynb
-└── TestingHamiltonian.ipynb
+development/
+├── JSONdata/
+├── Notebooks/
+│   ├── DevelopmentHamiltonian.ipynb
+│   ├── DevelopmentSubClass.ipynb
+│   ├── JSONTest.ipynb
+│   └── TestingHamiltonian.ipynb
+├── pyscripts/
+│   ├── DoublePendulumHamiltonian.py
+│   ├── DoublePendulumSubclass.py
+│   └── HamiltonianFunctions.py
+└── README.md
 ```
 
 ----
 
-1. ### [`DevelopmentHamiltonian.ipynb`](DevelopmentHamiltonian.ipynb)
+1. ### [`DevelopmentHamiltonian.ipynb`](Notebooks/DevelopmentHamiltonian.ipynb)
 
 The notebook aims to derive the Hamiltonian symbolically from first principles using similar methods to:
 - [Diego Assencio](https://dassencio.org/46)
@@ -39,20 +44,20 @@ The notebook aims to derive the Hamiltonian symbolically from first principles u
 
 I'm happy with what I have derived but not yet sure how to integrate them. Maybe I need to substitute for $p_{\theta_i}$
 
-Now aiming to refactor the DoublePendulum class in [`DoublePendulumHamiltonian.py`](DoublePendulumHamiltonian.py) to handle only the Hamiltonian system
+Now aiming to refactor the DoublePendulum class in [`DoublePendulumHamiltonian.py`](pyscripts/DoublePendulumHamiltonian.py) to handle only the Hamiltonian system
 
 ----
 
 2.
-   ### [`HamiltonianFunctions.py`](HamiltonianFunctions.py)
+   ### [`HamiltonianFunctions.py`](pyscripts/HamiltonianFunctions.py)
      - Ongoing work in progress for deriving integrable equations.
-   ### [`TestingHamiltonian.ipynb`](TestingHamiltonian.ipynb)
+   ### [`TestingHamiltonian.ipynb`](Notebooks/TestingHamiltonian.ipynb)
      - A notebook for testing the Hamiltonian functions and their integration to the DoublePendulum class.
 
 ----
 
-3. ### [`DoublePendulumSubclass.py`](DoublePendulumSubclass.py)
-   The `DoublePendulumExplorer` subclass extends the functionality of the `DoublePendulum` class to explore a range of initial conditions for a double pendulum system. It focuses on how varying the initial angle \(\theta_2\) affects the system's dynamics, and it provides tools for visualizing Poincaré sections and other dynamic behaviors.
+3. ### [`DoublePendulumSubclass.py`](pyscripts/DoublePendulumSubclass.py)
+   The `DoublePendulumExplorer` subclass extends the functionality of the `DoublePendulum` class to explore a range of initial conditions for a double pendulum system. It focuses on how varying the initial angle $\theta_2$ affects the system's dynamics, and it provides tools for visualizing Poincaré sections and other dynamic behaviors.
 
    &nbsp;
      - **Exploration of Initial Conditions**: Vary $\theta_2$ while keeping other initial conditions fixed to see how different initial angles affect the dynamics.
@@ -91,14 +96,14 @@ Now aiming to refactor the DoublePendulum class in [`DoublePendulumHamiltonian.p
 
 ---
 
-4. ### [`DevelopmentSubClass.ipynb`](DevelopmentSubClass.ipynb)
+4. ### [`DevelopmentSubClass.ipynb`](Notebooks/DevelopmentSubClass.ipynb)
    - Have started writing the base methods for the subclass. Really, I need a working Hamiltonian model to go any further.
    - The data dictionaries appear to be quite good!
    - The Poincaré sections are really not what we are looking for...
 
 ----
 
-5. ### [`JSONTest.ipynb`](JSONTest.ipynb)
+5. ### [`JSONTest.ipynb`](Notebooks/JSONTest.ipynb)
    - Reading in the JSON data using Pandas (Will maybe swap for Polars once DB launched)
 
 ----
