@@ -43,8 +43,7 @@ I'm happy with what I have derived but not yet sure how to integrate them. Maybe
 
 2.
    ### [`HamiltonianFunctions.py`](HamiltonianFunctions.py)
-   ### [`HamiltonianFunctions2.py`](HamiltonianFunctions2.py) 
-     - Ongoing works in progress for deriving integrable equations.
+     - Ongoing work in progress for deriving integrable equations.
    ### [`TestingHamiltonian.ipynb`](TestingHamiltonian.ipynb)
      - A notebook for testing the Hamiltonian functions and their integration to the DoublePendulum class.
 
