@@ -7,57 +7,21 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from MathFunctions import *
-from HamiltonianFunctions2 import *
+from HamiltonianFunctions import *
 
 omega1 = sp.Function('omega1')(t)
 omega2 = sp.Function('omega2')(t)
 
 
-# TODO: THIS DEFINITION IS BASED ON HamiltonianFunctions.py, commented out
-"""
-def hamiltonian_system(model='simple'):
-    # Form Lagrangian
-    L = form_lagrangian(model=model)
+def hamiltonian_first_order_system():
+    Heq1, Heq2, Heq3, Heq4 = hamiltonian_system()
 
-    # Derive canonical momenta - for later substitution
-    p_theta1, p_theta2 = derive_canonical_momenta(L, theta1, theta2, t)
+    LHS_FIRST = sp.Matrix([[Heq1.lhs], [Heq2.lhs], [Heq3.lhs], [Heq4.lhs]])
+    RHS_FIRST = sp.Matrix([[Heq1.rhs], [Heq2.rhs], [Heq3.rhs], [Heq4.rhs]])
 
-    # compute generalised velocities in terms of symbolic momenta (defined in HamiltonianFunctions.py)
-    omega1_solved, omega2_solved, B = compute_generalized_velocities(theta1, theta2, l1, l2, m1, m2)
+    MAT_EQ = sp.Eq(LHS_FIRST, RHS_FIRST)
 
-    # Compute Hamiltonian
-    H = compute_hamiltonian(B, theta1, theta2, l1, l2, m1, m2, g)
-
-    # Compute Hamilton's equations
-    Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H, theta1, theta2)
-
-    # Build matrix equation
-    MAT_EQ, eq1_rhs, eq2_rhs, eq3_rhs, eq4_rhs = hamiltonian_first_order_system(
-                                                    p_theta1, p_theta2, Heq1, Heq2, Heq3, Heq4)
-
-    return MAT_EQ, eq1_rhs, eq2_rhs, eq3_rhs, eq4_rhs 
-"""
-
-
-def hamiltonian_system(model='simple'):
-    # Form Lagrangian
-    L = form_lagrangian(model=model)
-
-    # Derive canonical momenta - for later substitution
-    p_theta1, p_theta2 = derive_canonical_momenta(L)
-
-    # compute generalised velocities in terms of symbolic momenta (defined in HamiltonianFunctions.py)
-    omega1_solved, omega2_solved = express_generalized_velocities(p_theta1, p_theta2)
-
-    # Compute Hamiltonian
-    H = compute_hamiltonian(omega1_solved, omega2_solved)
-
-    # Compute Hamilton's equations
-    Heq1, Heq2, Heq3, Heq4 = derive_hamiltons_equations(H)
-
-    # Build matrix equation
-    MAT_EQ = hamiltonian_system(Heq1, Heq2, Heq3, Heq4)
-    return MAT_EQ
+    return MAT_EQ, Heq1, Heq2, Heq3, Heq4
 
 
 def lagrangian_system(model='simple'):
