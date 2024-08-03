@@ -106,38 +106,35 @@ def form_lagrangian(model='simple'):
 
 
 def derive_canonical_momenta(L):
+    """
+    Compute the canonical momenta from the Lagrangian.
+
+    Parameters:
+    L : sympy.Expr
+        Lagrangian of the system.
+
+    Returns:
+    tuple
+        Canonical momenta (p_theta1, p_theta2).
+    """
     p_theta1 = sp.diff(L, omega1)
     p_theta2 = sp.diff(L, omega2)
 
     return p_theta1, p_theta2
 
 
-def compute_generalized_velocities():
+def compute_hamiltonian():
+    """
+    Compute the Hamiltonian of the double pendulum system.
+
+    Returns:
+    sympy.Expr
+        Hamiltonian of the system.
+    """
     B = sp.Matrix([
         [(m1 + m2) * l1**2, m2 * l1 * l2 * sp.cos(theta1 - theta2)],
         [m2 * l1 * l2 * sp.cos(theta1 - theta2), m2 * l2**2]
     ])
-
-    B_inv = B.inv()
-    p = sp.Matrix([p_theta_1, p_theta_2])
-
-    omega = B_inv * p
-    omega1_solved = omega[0]
-    omega2_solved = omega[1]
-
-    # Simplify omega_sol's with substitution for trigonometric identity
-    omega1_sol = sp.simplify(omega1_solved.subs(sp.cos(theta1 - theta2) ** 2, 1 - sp.sin(theta1 - theta2) ** 2))
-    omega2_sol_simplified = sp.simplify(omega2_solved.subs(sp.cos(theta1 - theta2) ** 2, 1 - sp.sin(theta1 - theta2) ** 2))
-
-    # Explicitly substitute m2 - m2*cos^2(theta1 - theta2) with m2*sin^2(theta1 - theta2)
-    omega2_sol_targeted = omega2_sol_simplified.subs(m2 - m2 * sp.cos(theta1 - theta2) ** 2,
-                                                     m2 * sp.sin(theta1 - theta2) ** 2)
-    omega2_sol = sp.simplify(omega2_sol_targeted)
-
-    return omega1_sol, omega2_sol, B
-
-
-def compute_hamiltonian(B):
     B_inv = B.inv()
     p = sp.Matrix([p_theta_1, p_theta_2])
 
@@ -152,13 +149,22 @@ def compute_hamiltonian(B):
 
 
 def compute_hamiltons_equations(H):
-    # Partially differentiate H with respect to p_theta_1 and p_theta_2 (The symbolic conjugate momenta)
+    """
+    Compute Hamilton's equations of motion from the Hamiltonian.
+
+    Parameters:
+    H : sympy.Expr
+        Hamiltonian of the system.
+
+    Returns:
+    tuple
+        Hamilton's equations of motion (Heq1, Heq2, Heq3, Heq4).
+    """
     H_theta1 = sp.diff(H, p_theta_1)
     H_theta2 = sp.diff(H, p_theta_2)
     H_p_theta1 = -sp.diff(H, theta1)
     H_p_theta2 = -sp.diff(H, theta2)
 
-    # Declare all as SymPy equations
     Heq1 = sp.Eq(omega1, H_theta1)
     Heq2 = sp.Eq(omega2, H_theta2)
     Heq3 = sp.Eq(sp.diff(p_theta_1, t), H_p_theta1)
@@ -167,9 +173,26 @@ def compute_hamiltons_equations(H):
     return Heq1, Heq2, Heq3, Heq4
 
 
-def hamiltonian_system():
-    omega1_solved, omega2_solved, B = compute_generalized_velocities()
-    H = compute_hamiltonian(B)
-    Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H)
+def hamiltonian_system(model='simple'):
+    """
+    Compute the Hamiltonian system of equations.
 
-    return Heq1, Heq2, Heq3, Heq4
+    Parameters:
+    model : str, optional
+        Model type, 'simple' or 'compound'. Default is 'simple'.
+
+    Returns:
+    tuple
+        Hamilton's equations of motion (Heq1, Heq2, Heq3, Heq4).
+    """
+    if model == 'simple':
+        H = compute_hamiltonian()
+        Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H)
+
+        return Heq1, Heq2, Heq3, Heq4
+
+"""
+- The `compute_hamiltons_equations` function is designed to take a Hamiltonian and compute the Hamiltonian equations.
+- The `hamiltonian_system` function generates the Hamiltonian and then computes the Hamiltonian equations, making use of `compute_hamiltons_equations` internally.
+- Both functions are used together to ensure modularity, separation of concerns, and to provide a higher-level interface for specific tasks.
+"""

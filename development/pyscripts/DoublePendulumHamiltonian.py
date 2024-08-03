@@ -7,47 +7,24 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from MathFunctions import *
-from HamiltonianFunctions import *
+from development.pyscripts.HamiltonianFunctions import *
 
-omega1 = sp.Function('omega1')(t)
-omega2 = sp.Function('omega2')(t)
+p_theta_1 = sp.Function('p_theta_1')(t)
+p_theta_2 = sp.Function('p_theta_2')(t)
 
 
-def hamiltonian_first_order_system():
-    Heq1, Heq2, Heq3, Heq4 = hamiltonian_system()
+def hamiltonian_first_order_system(model='simple'):
+    Heq1, Heq2, Heq3, Heq4 = hamiltonian_system(model)
 
     LHS_FIRST = sp.Matrix([[Heq1.lhs], [Heq2.lhs], [Heq3.lhs], [Heq4.lhs]])
     RHS_FIRST = sp.Matrix([[Heq1.rhs], [Heq2.rhs], [Heq3.rhs], [Heq4.rhs]])
 
     MAT_EQ = sp.Eq(LHS_FIRST, RHS_FIRST)
 
-    return MAT_EQ, Heq1, Heq2, Heq3, Heq4
+    return MAT_EQ, Heq1.rhs, Heq2.rhs, Heq3.rhs, Heq4.rhs
 
 
 class DoublePendulum:
-    """
-    A class representing a double pendulum system, used for simulating and analyzing its dynamics.
-
-    This class models the complex motion of a double pendulum, where two pendulums are attached end to end.
-    It uses symbolic and numerical methods to solve the equations of motion and provides functionalities
-    for visualizing the time evolution and phase paths of the system.
-
-        Attributes:
-            initial_conditions (numpy.ndarray): The initial conditions of the system.
-                Format: [theta1, theta2, omega1, omega2].
-            time (numpy.ndarray): Discrete time points at which the system's state is evaluated.
-            parameters (dict): Parameters of the pendulum system such as lengths and masses of the rods/bobs
-            model (str): The model type used for the pendulum ('simple' or 'compound').
-
-        Methods:
-            _compute_and_cache_equations: Computes and caches the symbolic equations for the specified pendulum model.
-            _system: Defines the system of differential equations for the ODE solver.
-            _solve_ode: Solves the system's differential equations using a specified numerical integrator.
-            _calculate_positions: Calculates the (x, y) positions of both pendulum bobs at each time step.
-            time_graph: Plots the angular displacement of the pendulums versus time.
-            phase_path: Plots the phase path (theta1 vs. theta2) of the double pendulum.
-            precompute_positions: Precomputes and stores the positions of both pendulum bobs for each time step.
-    """
     # Class variable for caching
     _cache = {}
 
@@ -58,13 +35,13 @@ class DoublePendulum:
     # Declare functions
     theta1 = sp.Function('theta1')(t)
     theta2 = sp.Function('theta2')(t)
-    omega1 = sp.Function('omega1')(t)
-    omega2 = sp.Function('omega2')(t)
+    p_theta_1 = sp.Function('p_theta_1')(t)
+    p_theta_2 = sp.Function('p_theta_2')(t)
 
     @classmethod
     def _compute_and_cache_equations(cls, model):
         if model not in cls._cache:
-            cls._cache[model] = hamiltonian_first_order_system()
+            cls._cache[model] = hamiltonian_first_order_system(model)
         return cls._cache[model]
 
     def __init__(self, parameters, initial_conditions, time_vector,
@@ -73,6 +50,12 @@ class DoublePendulum:
         self.time = np.linspace(time_vector[0], time_vector[1], time_vector[2])
         self.parameters = parameters
         self.model = model
+
+        print("Initial Conditions: ", self.initial_conditions)
+        print("Time Vector: ", self.time)
+        print("Parameters: ", self.parameters)
+        print("Model: ", self.model)
+        print("\nSubstituting parameters:\n")
 
         # Get equations for the specified model
         MAT_EQ, eqn1, eqn2, eqn3, eqn4 = self._compute_and_cache_equations(model)
@@ -84,22 +67,35 @@ class DoublePendulum:
         eq3_subst = eqn3.subs(parameters)
         eq4_subst = eqn4.subs(parameters)
 
+        print("Substituted eq1: ", eq1_subst)
+        print("Substituted eq2: ", eq2_subst)
+        print("Substituted eq3: ", eq3_subst)
+        print("Substituted eq4: ", eq4_subst)
+        print("\nPreparing to Lambdify:\n")
+
         # Lambdify the equations after substitution
-        self.eqn1_func = sp.lambdify((theta1, theta2, omega1, omega2, t), eq1_subst, 'numpy')
-        self.eqn2_func = sp.lambdify((theta1, theta2, omega1, omega2, t), eq2_subst, 'numpy')
-        self.eqn3_func = sp.lambdify((theta1, theta2, omega1, omega2, t), eq3_subst, 'numpy')
-        self.eqn4_func = sp.lambdify((theta1, theta2, omega1, omega2, t), eq4_subst, 'numpy')
+        self.eqn1_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq1_subst, 'numpy')
+        self.eqn2_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq2_subst, 'numpy')
+        self.eqn3_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq3_subst, 'numpy')
+        self.eqn4_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq4_subst, 'numpy')
+
+        print("Lambdified eqn1_func: ", self.eqn1_func)
+        print("Lambdified eqn2_func: ", self.eqn2_func)
+        print("Lambdified eqn3_func: ", self.eqn3_func)
+        print("Lambdified eqn4_func: ", self.eqn4_func)
 
         # Run the solver
         self.sol = self._solve_ode(integrator, **integrator_args)
 
+        print("Solution: ", self.sol)
+
     def _system(self, y, t):
-        th1, th2, w1, w2 = y
+        th1, th2, p_th1, p_th2 = y
         system = [
-            self.eqn1_func(th1, th2, w1, w2, t),
-            self.eqn2_func(th1, th2, w1, w2, t),
-            self.eqn3_func(th1, th2, w1, w2, t),
-            self.eqn4_func(th1, th2, w1, w2, t)
+            self.eqn1_func(th1, th2, p_th1, p_th2, t),
+            self.eqn2_func(th1, th2, p_th1, p_th2, t),
+            self.eqn3_func(th1, th2, p_th1, p_th2, t),
+            self.eqn4_func(th1, th2, p_th1, p_th2, t)
         ]
         return system
 
