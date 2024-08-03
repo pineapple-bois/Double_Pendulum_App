@@ -51,12 +51,6 @@ class DoublePendulum:
         self.parameters = parameters
         self.model = model
 
-        print("Initial Conditions: ", self.initial_conditions)
-        print("Time Vector: ", self.time)
-        print("Parameters: ", self.parameters)
-        print("Model: ", self.model)
-        print("\nSubstituting parameters:\n")
-
         # Get equations for the specified model
         MAT_EQ, eqn1, eqn2, eqn3, eqn4 = self._compute_and_cache_equations(model)
         self.matrix = MAT_EQ
@@ -67,27 +61,14 @@ class DoublePendulum:
         eq3_subst = eqn3.subs(parameters)
         eq4_subst = eqn4.subs(parameters)
 
-        print("Substituted eq1: ", eq1_subst)
-        print("Substituted eq2: ", eq2_subst)
-        print("Substituted eq3: ", eq3_subst)
-        print("Substituted eq4: ", eq4_subst)
-        print("\nPreparing to Lambdify:\n")
-
         # Lambdify the equations after substitution
         self.eqn1_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq1_subst, 'numpy')
         self.eqn2_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq2_subst, 'numpy')
         self.eqn3_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq3_subst, 'numpy')
         self.eqn4_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq4_subst, 'numpy')
 
-        print("Lambdified eqn1_func: ", self.eqn1_func)
-        print("Lambdified eqn2_func: ", self.eqn2_func)
-        print("Lambdified eqn3_func: ", self.eqn3_func)
-        print("Lambdified eqn4_func: ", self.eqn4_func)
-
         # Run the solver
         self.sol = self._solve_ode(integrator, **integrator_args)
-
-        print("Solution: ", self.sol)
 
     def _system(self, y, t):
         th1, th2, p_th1, p_th2 = y
