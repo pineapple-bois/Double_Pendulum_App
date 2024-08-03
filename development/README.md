@@ -39,6 +39,8 @@ The notebook aims to derive the Hamiltonian symbolically from first principles u
 
 I'm happy with what I have derived but not yet sure how to integrate them. Maybe I need to substitute for $p_{\theta_i}$
 
+Now aiming to refactor the DoublePendulum class in [`DoublePendulumHamiltonian.py`](DoublePendulumHamiltonian.py) to handle only the Hamiltonian system
+
 ----
 
 2.
@@ -49,7 +51,7 @@ I'm happy with what I have derived but not yet sure how to integrate them. Maybe
 
 ----
 
-3. ### [`DoublePendulumRefactor.py`](DoublePendulumRefactor.py)
+3. ### [`DoublePendulumSubclass.py`](DoublePendulumSubclass.py)
    The `DoublePendulumExplorer` subclass extends the functionality of the `DoublePendulum` class to explore a range of initial conditions for a double pendulum system. It focuses on how varying the initial angle \(\theta_2\) affects the system's dynamics, and it provides tools for visualizing Poincaré sections and other dynamic behaviors.
 
    &nbsp;
@@ -89,7 +91,7 @@ I'm happy with what I have derived but not yet sure how to integrate them. Maybe
 
 ---
 
-4. ### [`DevelopmentNewClass.ipynb`](DevelopmentNewClass.ipynb)
+4. ### [`DevelopmentSubClass.ipynb`](DevelopmentSubClass.ipynb)
    - Have started writing the base methods for the subclass. Really, I need a working Hamiltonian model to go any further.
    - The data dictionaries appear to be quite good!
    - The Poincaré sections are really not what we are looking for...
