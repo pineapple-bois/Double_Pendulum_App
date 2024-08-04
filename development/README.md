@@ -143,9 +143,7 @@ The DoublePendulum class [`DoublePendulumHamiltonian.py`](pyscripts/DoublePendul
 
 2. **Compute Hamilton's Equations:**
    - Use Hamilton's equations to obtain the equations of motion:
-     $$
-     \dot{q}_i = \frac{\partial H}{\partial p_i}, \quad \dot{p}_i = -\frac{\partial H}{\partial q_i}
-     $$
+     $\dot{q}_i = \frac{\partial H}{\partial p_i}$, $\dot{p}_i = -\frac{\partial H}{\partial q_i}$ where $\mathbf{q}=(\theta_1, \theta_2)$
    - These equations describe how the coordinates $q_i$ and momenta $p_i$ evolve over time.
 
 3. **Phase Space Trajectories:**
