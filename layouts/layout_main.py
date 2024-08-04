@@ -27,8 +27,7 @@ def get_main_layout():
             # Title, which should stay centered with auto margins
             html.Div([
                 html.H1([
-                    html.Div("Double Pendulum Simulation:", style={'white-space': 'nowrap'}),
-                    html.Div("Lagrangian Formulation", style={'white-space': 'nowrap'})
+                    html.Div("Double Pendulum Simulation", style={'white-space': 'nowrap'}),
                 ], style={'textAlign': 'center', 'color': 'black', 'margin': 'auto'})
             ], style={'flex': '1 0 auto', 'minWidth': '0', 'textAlign': 'center'}),
             # minWidth: 0 ensures shrinkage if necessary
@@ -119,8 +118,19 @@ def get_main_layout():
                         clearable=False
                     ),
                 ]),
+                html.Div(className='input-group', children=[
+                    html.Label('System Type:', className='label'),
+                    dcc.Dropdown(
+                        id='system-type',
+                        options=[
+                            {'label': 'Lagrangian', 'value': 'lagrangian'},
+                            {'label': 'Hamiltonian', 'value': 'hamiltonian'}
+                        ],
+                        value='lagrangian',
+                        clearable=False
+                    ),
+                ]),
                 html.Div(className='container-buttons', children=[
-                    html.Button('Unity Parameters', id='unity-parameters', n_clicks=0, className='button'),
                     html.Button('Reset', id='reset-button', n_clicks=0, className='button'),
                     html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button'),
                 ]),
@@ -144,6 +154,9 @@ def get_main_layout():
             ]),
             # Column for Parameters
             html.Div(className='column', children=[
+                html.Div(className='container-buttons', children=[
+                    html.Button('Set Unity Parameters', id='unity-parameters', n_clicks=0, className='button'),
+                ]),
                 html.Div(className='input-group', children=[
                     html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)',
                                id='parameters-label', className='label'),
