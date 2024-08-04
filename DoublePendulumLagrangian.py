@@ -35,7 +35,7 @@ def add_equations(model='simple'):
     return MAT_EQ, eqn1, eqn2, eqn3, eqn4
 
 
-class DoublePendulum:
+class DoublePendulumLagrangian:
     """
     A class representing a double pendulum system, used for simulating and analyzing its dynamics.
 
