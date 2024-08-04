@@ -13,7 +13,8 @@ from layouts.layout_main import get_main_layout
 from layouts.layout_chaos import get_chaos_layout
 from layouts.layout_matplotlib import mpl_layout
 from AppFunctions import validate_inputs, generate_pendulum_figures, set_display_styles
-from DoublePendulum import DoublePendulum
+from DoublePendulumLagrangian import DoublePendulumLagrangian
+from DoublePendulumHamiltonian import DoublePendulumHamiltonian
 
 # Sympy variables for parameters
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)
@@ -32,11 +33,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-# @server.before_request
-# def before_request():
-#     if not request.is_secure:
-#         url = request.url.replace('http://', 'https://', 1)
-#         return redirect(url, code=301)
+@server.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
 
 
 # App set up
@@ -173,12 +174,13 @@ def toggle_math_section(n_clicks, current_class):
      State('param_M1', 'value'),
      State('param_M2', 'value'),
      State('param_g', 'value'),
-     State('model-type', 'value')]
+     State('model-type', 'value'),
+     State('system-type', 'value')]
 )
 def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
                   time_start, time_end,
                   param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g,
-                  model_type):
+                  model_type, system_type):
     if n_clicks > 0:
         initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
         # Validate inputs
@@ -204,7 +206,10 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
         parameters = {l1: param_l1, l2: param_l2, g: param_g, **weights}
 
         # Create an instance of DoublePendulum
-        pendulum = DoublePendulum(parameters, initial_conditions, time_vector, model=model_type)
+        if system_type == 'lagrangian':
+            pendulum = DoublePendulumLagrangian(parameters, initial_conditions, time_vector, model=model_type)
+        else:
+            pendulum = DoublePendulumHamiltonian(parameters, initial_conditions, time_vector, model=model_type)
 
         # Convert the Matplotlib graphs to Plotly graphs
         matplotlib_time_fig = pendulum.time_graph()
