@@ -7,7 +7,6 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from MathFunctions import *
-from development.pyscripts.HamiltonianFunctions import *
 
 p_theta_1 = sp.Function('p_theta_1')(t)
 p_theta_2 = sp.Function('p_theta_2')(t)
