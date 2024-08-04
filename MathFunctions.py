@@ -392,3 +392,96 @@ def first_order_system(RHS_1, RHS_2):
     eqn4 = eq4.rhs.subs(derivative_subs)
 
     return MAT_EQ, eqn1, eqn2, eqn3, eqn4
+
+
+# -------------------------------------------
+# Hamiltonian functions
+
+
+def derive_canonical_momenta(model='simple'):
+    """
+    Compute the canonical momenta from the Lagrangian.
+
+    Parameters:
+    L : sympy.Expr
+        Lagrangian of the system.
+
+    Returns:
+    tuple
+        Canonical momenta (p_theta1, p_theta2).
+    """
+    L = form_lagrangian(model)
+    p_theta1 = sp.diff(L, omega1)
+    p_theta2 = sp.diff(L, omega2)
+
+    return p_theta1, p_theta2
+
+
+def compute_hamiltonian(model='simple'):
+    if model == 'simple':
+        B = sp.Matrix([
+            [(m1 + m2) * l1**2, m2 * l1 * l2 * sp.cos(theta1 - theta2)],
+            [m2 * l1 * l2 * sp.cos(theta1 - theta2), m2 * l2**2]
+        ])
+        V = -(m1 + m2) * g * l1 * sp.cos(theta1) - m2 * g * l2 * sp.cos(theta2)
+    elif model == 'compound':
+        B = sp.Matrix([
+            [sp.Rational(7,12)*M1*l1**2 + sp.Rational(1,4)*M2*l1**2, sp.Rational(1,4)*M2*l1*l2*sp.cos(theta1 - theta2)],
+            [sp.Rational(1,4)*M2*l1*l2*sp.cos(theta1 - theta2), sp.Rational(7,12)*M2*l2**2]
+        ])
+        V = -sp.Rational(1, 2) * g * (M1 * l1 * sp.cos(theta1) + M2 * l1 * sp.cos(theta1) + M2 * l2 * sp.cos(theta2))
+    else:
+        raise AttributeError("Invalid model type. Please choose 'simple' or 'compound'.")
+
+    B_inv = B.inv()
+    p = sp.Matrix([p_theta_1, p_theta_2])
+
+    T = sp.Rational(1, 2) * p.T * B_inv * p
+    T_target = T[0].subs(sp.cos(theta1 - theta2) ** 2, 1 - sp.sin(theta1 - theta2) ** 2)
+    T_simp = sp.simplify(T_target)
+
+    H = T_simp + V
+
+    return H
+
+
+def compute_hamiltons_equations(H):
+    """
+    Compute Hamilton's equations of motion from the Hamiltonian.
+
+    Parameters:
+    H : sympy.Expr
+        Hamiltonian of the system.
+
+    Returns:
+    tuple
+        Hamilton's equations of motion (Heq1, Heq2, Heq3, Heq4).
+    """
+    H_theta1 = sp.diff(H, p_theta_1)
+    H_theta2 = sp.diff(H, p_theta_2)
+    H_p_theta1 = -sp.diff(H, theta1)
+    H_p_theta2 = -sp.diff(H, theta2)
+
+    Heq1 = sp.Eq(omega1, H_theta1)
+    Heq2 = sp.Eq(omega2, H_theta2)
+    Heq3 = sp.Eq(sp.diff(p_theta_1, t), H_p_theta1)
+    Heq4 = sp.Eq(sp.diff(p_theta_2, t), H_p_theta2)
+
+    return Heq1, Heq2, Heq3, Heq4
+
+
+def hamiltonian_system(model='simple'):
+    """
+    Compute the Hamiltonian system of equations.
+
+    Parameters:
+    model : str, optional
+        Model type, 'simple' or 'compound'. Default is 'simple'.
+
+    Returns:
+    tuple
+        Hamilton's equations of motion (Heq1, Heq2, Heq3, Heq4).
+    """
+    H = compute_hamiltonian(model)
+    Heq1, Heq2, Heq3, Heq4 = compute_hamiltons_equations(H)
+    return Heq1, Heq2, Heq3, Heq4
