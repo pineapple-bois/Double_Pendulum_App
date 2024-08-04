@@ -10,6 +10,8 @@ theta1_dot = sp.Function('theta1_dot')(t)
 theta2_dot = sp.Function('theta2_dot')(t)
 omega1 = sp.diff(theta1, t)
 omega2 = sp.diff(theta2, t)
+p_theta_1 = sp.Function('p_theta_1')(t)
+p_theta_2 = sp.Function('p_theta_2')(t)
 
 
 def trans_kinetic_energy(m, dx, dy, dz):
