@@ -23,7 +23,6 @@ This development section aims to extend the DoublePendulum App by deriving the H
 development/
 ├── JSONdata/
 ├── Notebooks/
-│   ├── DevelopmentHamiltonian.ipynb
 │   ├── DevelopmentSubClass.ipynb
 │   ├── JSONTest.ipynb
 │   └── TestingHamiltonian.ipynb
@@ -38,13 +37,13 @@ development/
 
 ----
 
-1. ### [`DevelopmentHamiltonian.ipynb`](Notebooks/DevelopmentHamiltonian.ipynb)
+1. ### [`DevelopmentHamiltonian.ipynb`](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DevelopmentHamiltonian.ipynb)
 
-The notebook derives the Hamiltonian symbolically from first principles using similar methods to:
+The notebook (moved to [Double_Pendulum Repo](https://github.com/pineapple-bois/Double_Pendulum/tree/master)) derives the Hamiltonian symbolically from first principles using similar methods to:
 - [Diego Assencio](https://dassencio.org/46)
 - [lehman.edu](https://www.lehman.edu/faculty/dgaranin/Mechanics/ProblemSet-Fall-2006-4-Solution.pdf)
 
-The DoublePendulum class [`DoublePendulumHamiltonian.py`](pyscripts/DoublePendulumHamiltonian.py) has been refactored to handle only the Hamiltonian system
+The DoublePendulum class [`DoublePendulumHamiltonian.py`](../DoublePendulumHamiltonian.py) has been refactored to handle only the Hamiltonian system
 
 ----
 
