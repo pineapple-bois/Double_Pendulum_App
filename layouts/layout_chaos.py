@@ -3,7 +3,7 @@ from dash import html
 from dash import dcc
 
 # Derivation blurb
-with open('assets/mathematics_section.txt', 'r') as file:
+with open('assets/mathematics_lagrangian.txt', 'r') as file:
     math_section = file.read()
 
 # Plotly figure configuration
