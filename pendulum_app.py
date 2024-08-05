@@ -19,6 +19,12 @@ from DoublePendulumHamiltonian import DoublePendulumHamiltonian
 # Sympy variables for parameters
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)
 
+# Math derivations
+with open('assets/mathematics_lagrangian.txt', 'r') as file:
+    lagrangian_section = file.read()
+
+with open('assets/mathematics_hamiltonian.txt', 'r') as file:
+    hamiltonian_section = file.read()
 
 server = Flask(__name__)
 app = dash.Dash(
@@ -149,6 +155,16 @@ def toggle_math_section(n_clicks, current_class):
     else:
         # If even number of clicks, hide the math section and change button to "Show Mathematics"
         return {'display': 'none'}, 'Show Mathematics', 'button-show'
+
+@app.callback(
+    Output('math-content', 'children'),
+    Input('system-type', 'value')
+)
+def update_math_section(system_type):
+    if system_type == 'hamiltonian':
+        return dcc.Markdown(hamiltonian_section, mathjax=True)
+    else:
+        return dcc.Markdown(lagrangian_section, mathjax=True)
 
 
 # Callback to update the graphs - main page
