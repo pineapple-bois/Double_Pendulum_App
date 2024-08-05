@@ -51,14 +51,12 @@ The DoublePendulum class [`DoublePendulumHamiltonian.py`](../DoublePendulumHamil
    ### [`HamiltonianFunctions.py`](pyscripts/HamiltonianFunctions.py)
      - Maybe a few of the functions could be optimised, particularly in relation to logic gates. 
      - Ultimately, this was much easier to derive than the Lagrangian
-   ### [`TestingHamiltonian.ipynb`](Notebooks/TestingHamiltonian.ipynb)
-     - Tests DoublePendulumHamiltonian instantiation for both `simple` and `compound` models
 
 ----
 
 3. ### [`DoublePendulumSubclass.py`](pyscripts/DoublePendulumSubclass.py)
 
-   #### This needs to be incorporated with `DoublePendulumHamiltonian.pu` after unit testing
+   #### This needs to be incorporated with `DoublePendulumHamiltonian.py` after unit testing
    The `DoublePendulumExplorer` subclass extends the functionality of the `DoublePendulum` class to explore a range of initial conditions for a double pendulum system. It focuses on how varying the initial angle $\theta_2$ affects the system's dynamics, and it provides tools for visualizing Poincaré sections and other dynamic behaviors.
 
    &nbsp;
