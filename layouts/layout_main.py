@@ -2,10 +2,6 @@
 from dash import html
 from dash import dcc
 
-# Derivation blurb
-with open('assets/mathematics_section.txt', 'r') as file:
-    math_section = file.read()
-
 # Plotly figure configuration
 # 'displayModeBar': False - removes everything
 config = {'displaylogo': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d']}
@@ -230,8 +226,7 @@ def get_main_layout():
                                                   'margin-top': '20px',
                                                   'max-height': 'calc(100vh - 200px)'},
                  children=[
-                     html.Div([
-                         dcc.Markdown(math_section, mathjax=True)
-                     ], className='markdown-latex-container', style={'flex': 1}),
+                     html.Div(id='math-content',
+                     className='markdown-latex-container', style={'flex': 1}),
                  ]),
     ])
