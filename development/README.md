@@ -24,13 +24,10 @@ development/
 ├── JSONdata/
 ├── Notebooks/
 │   ├── DevelopmentSubClass.ipynb
-│   ├── JSONTest.ipynb
-│   └── TestingHamiltonian.ipynb
+│   └── JSONTest.ipynb
 ├── pyscripts/
 │   ├── __init__.py
-│   ├── DoublePendulumHamiltonian.py
-│   ├── DoublePendulumSubclass.py
-│   └── HamiltonianFunctions.py
+│   └── DoublePendulumSubclass.py
 ├── __init__.py
 └── README.md
 ```
@@ -43,14 +40,12 @@ The notebook (moved to [Double_Pendulum Repo](https://github.com/pineapple-bois/
 - [Diego Assencio](https://dassencio.org/46)
 - [lehman.edu](https://www.lehman.edu/faculty/dgaranin/Mechanics/ProblemSet-Fall-2006-4-Solution.pdf)
 
-The DoublePendulum class [`DoublePendulumHamiltonian.py`](../DoublePendulumHamiltonian.py) has been refactored to handle only the Hamiltonian system
-
 ----
 
 2.
-   ### [`HamiltonianFunctions.py`](pyscripts/HamiltonianFunctions.py)
-     - Maybe a few of the functions could be optimised, particularly in relation to logic gates. 
-     - Ultimately, this was much easier to derive than the Lagrangian
+   ### [`DoublePendulumHamiltonian.py`](../DoublePendulumHamiltonian.py)
+     - Math functions related to the Hamiltonian have been added to [`MathFunctions.py`](../MathFunctions.py)
+     - The Hamiltonian system has been incorporated into the app
 
 ----
 
