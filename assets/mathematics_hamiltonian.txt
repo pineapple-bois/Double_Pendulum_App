@@ -9,9 +9,7 @@ The subsequent sections offer a detailed mathematical derivation of the equation
 
 #### Behaviour at Small Angles
 
-When the angles of oscillation are small, the behaviour that can be approximated using sine and cosine functions.
-
-The phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
+When the angles of oscillation are small, the behaviour can be approximated using sine and cosine functions and the phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
 
 
 #### Chaotic dynamics and Quasi-Periodicity
@@ -88,7 +86,7 @@ $$
 \mathcal{H} = \sum_{i=1}^2  \dot{\theta_i} p_{\theta_i} - \mathcal{L} \quad \tag{2}
 $$
 
-From the Hamiltonian, we aim to derive a set of equations of motion equivalent to the Euler-Lagrange equations:
+From the Hamiltonian, we aim to derive a set of equations of motion equivalent to the uncoupled Euler-Lagrange equations:
 
 $$
 \dot{\theta}_i=\frac{\partial \mathcal{H}}{\partial p_{\theta_i}} \quad \tag{3}
@@ -98,13 +96,15 @@ $$
 \dot{p}_{\theta_i}=-\frac{\partial \mathcal{H}}{\partial \theta_i} \quad \tag{4}
 $$
 
-If the Lagrangian $\mathcal{L}=\mathcal{L}(\theta_i, \dot{\theta}_i)$ does not explicitly on time $t$ then the quantity,
+If the Lagrangian $\mathcal{L}=\mathcal{L}(\theta_i, \dot{\theta}_i)$ does not explicitly depend on time $t$ then the quantity,
 
 $$
 \sum_{k=1}^n \dot{q}_k \frac{\partial \mathcal{L}}{\partial \dot{q}_k} - \mathcal{L} = E \tag{5}
 $$
 
-Is an integral of the motion where, $E=T+V$ represents the total mechanic energy of the system. Here we have assumed the system is not subject to dissipative forces such as friction or air resistance. In other words, the system is closed.
+Is an integral of the motion where, $E=T+V$ represents the total mechanical energy of the system.
+
+Here we have assumed the system is not subject to dissipative forces such as friction or air resistance. In other words, the system is closed.
 
 ----
 
@@ -309,7 +309,7 @@ $\mathbf{B}$ is again symmetric such that $\mathbf{B}^{T}=\mathbf{B}$
 Following similar steps as above, we derive the Hamiltonian,
 
 $$
-\frac{6 \cdot \left[7 M_{1} l_{1}^{2} \operatorname{p_{\theta 2}}^{2} + 3 M_{2} l_{1}^{2} \operatorname{p_{\theta 2}}^{2} - 6 M_{2} l_{1} l_{2} \operatorname{p_{\theta 1}} \operatorname{p_{\theta 2}} \cos{\left(\theta_{1} - \theta_{2} \right)} + 7 M_{2} l_{2}^{2} \operatorname{p_{\theta 1}}^{2}\right]}{M_{2} l_{1}^{2} l_{2}^{2} \cdot \left(49 M_{1} + 9 M_{2} \sin^{2}{\left(\theta_{1} - \theta_{2} \right)} + 12 M_{2}\right)} -\frac{g}{2} \left[M_{1} l_{1} \cos{\left(\theta_{1}{\left(t \right)} \right)} + M_{2} l_{1} \cos{\left(\theta_{1} \right)} + M_{2} l_{2} \cos{\left(\theta_{2} \right)}\right] \tag{4b}
+\mathcal{H}=\frac{6 \cdot \left[7 M_{1} l_{1}^{2} \operatorname{p_{\theta 2}}^{2} + 3 M_{2} l_{1}^{2} \operatorname{p_{\theta 2}}^{2} - 6 M_{2} l_{1} l_{2} \operatorname{p_{\theta 1}} \operatorname{p_{\theta 2}} \cos{\left(\theta_{1} - \theta_{2} \right)} + 7 M_{2} l_{2}^{2} \operatorname{p_{\theta 1}}^{2}\right]}{M_{2} l_{1}^{2} l_{2}^{2} \cdot \left(49 M_{1} + 9 M_{2} \sin^{2}{\left(\theta_{1} - \theta_{2} \right)} + 12 M_{2}\right)} -\frac{g}{2} \left[M_{1} l_{1} \cos{\left(\theta_{1}{\left(t \right)} \right)} + M_{2} l_{1} \cos{\left(\theta_{1} \right)} + M_{2} l_{2} \cos{\left(\theta_{2} \right)}\right] \tag{4b}
 $$
 
 ----
