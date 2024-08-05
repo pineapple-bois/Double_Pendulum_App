@@ -4,12 +4,12 @@ The double pendulum is an example of a complex dynamical system with two degrees
 
 Characterised by sensitivity to initial conditions and exhibiting both periodic and chaotic behaviors, the system provides a rich context for exploring non-linear dynamics.
 
-The subsequent sections offer a detailed mathematical derivation of the equations of motion. Also see the [Python derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/Derivation.ipynb) on which the below extends.
+The subsequent sections offer a detailed mathematical derivation of the equations of motion. Also see the [Python derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DerivationLagrangian.ipynb) on which the below extends.
 
 
-#### Behavior at Small Angles
+#### Behaviour at Small Angles
 
-When the angles of oscillation are small, the behavior that can be approximated using sine and cosine functions.
+When the angles of oscillation are small, the behaviour that can be approximated using sine and cosine functions.
 
 The phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
 
