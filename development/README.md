@@ -56,8 +56,7 @@ The DoublePendulum class [`DoublePendulumHamiltonian.py`](../DoublePendulumHamil
 
 3. ### [`DoublePendulumSubclass.py`](pyscripts/DoublePendulumSubclass.py)
 
-   #### This needs to be incorporated with `DoublePendulumHamiltonian.py` after unit testing
-   The `DoublePendulumExplorer` subclass extends the functionality of the `DoublePendulum` class to explore a range of initial conditions for a double pendulum system. It focuses on how varying the initial angle $\theta_2$ affects the system's dynamics, and it provides tools for visualizing Poincaré sections and other dynamic behaviors.
+   The `DoublePendulumExplorer` subclass extends the functionality of the `DoublePendulum` class to explore a range of initial conditions for a double pendulum system. It focuses on how varying the initial angle $\theta_2$ affects the system's dynamics, and it provides tools for visualising Poincaré sections and other dynamic behaviors.
 
    &nbsp;
      - **Exploration of Initial Conditions**: Vary $\theta_2$ while keeping other initial conditions fixed to see how different initial angles affect the dynamics.
