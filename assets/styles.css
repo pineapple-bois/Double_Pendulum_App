@@ -1,3 +1,5 @@
+/* Layout refactor */
+
 /* Base styles */
 body {
   font-family: 'Courier New', Courier, monospace;
@@ -8,6 +10,176 @@ body {
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
 }
+
+/*  -------------------
+    Navigation bar */
+
+.navbar {
+    background-color: #333;
+    padding: 8px 0; /* Reduce vertical height */
+    display: flex;
+    justify-content: center; /* Center the links */
+    align-items: center;
+    position: relative; /* To position the button correctly */
+    margin: 0; /* Ensure no margins around navbar */
+}
+
+.nav-button-container {
+    position: absolute;
+    left: 16px; /* Use pixels for consistent margin */
+}
+
+.nav-links-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    font-size: 18px; /* Increase font size */
+}
+
+.nav-link:hover {
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-button {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    font-size: 18px; /* Match font size */
+    font-family: 'Courier New', Courier, monospace; /* Match font */
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color: #777;
+}
+
+/*  -------------------
+    Title Section */
+
+.title-section {
+    background: #f8f9fa;
+    text-align: left; /* Ensure text alignment to the left */
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    margin-top: 10px;
+}
+
+.title-text {
+    color: black;
+    font-family: 'Courier New', Courier, monospace; /* Customize font */
+    font-size: 36px; /* Customize font size */
+    font-weight: bold; /* Customize font style */
+    margin: 0; /* Ensure no bottom margin */
+    text-align: left;
+}
+
+.subtitle-text {
+    color: black;
+    font-family: 'Courier New', Courier, monospace; /* Match font */
+    font-size: 20px;
+    text-align: left; /* Ensure subtext alignment to the left */
+    margin-top: 0; /* Use pixels for margin */
+    margin-bottom: 0; /* Ensure no bottom margin */
+}
+
+/*  -------------------
+    Instructions and Images Section */
+
+.description-images-section {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8f9fa; /* Same background color as other sections */
+    padding: 16px;
+    margin-top: 10px;
+    gap: 20px; /* Space between columns */
+}
+
+.description, .simple-model, .compound-model {
+    background-color: white;/* White background for visibility */
+}
+
+/* Reset default margins and paddings for elements inside instructions, simple-model, and compound-model */
+.description * , .simple-model * , .compound-model * {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.description {
+    flex: 1;
+}
+
+.simple-model, .compound-model {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* Center-align the text */
+}
+
+.model-title, .description-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px; /* Space below the title */
+}
+
+.model-description {
+    font-size: 16px;
+    margin-bottom: 30px; /* Space below the description */
+}
+
+.model-image {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    max-width: 100%; /* Ensure it doesn't exceed its container */
+    margin-bottom: 10px; /* Space below the image */
+}
+
+/*  -------------------
+    Footer Section */
+
+.info-container {
+    background-color: white; /* #EAECEE */
+    margin-top: 10px; /* Adds space between the map and the new div */
+    display: flex; /* Use flexbox to align children horizontally */
+    align-items: center; /* Vertically centers the children */
+    justify-content: flex-start; /* Aligns children to the left */
+    padding: 8px; /* Use pixels for padding */
+}
+
+.info-image {
+    margin-right: 8px; /* Space between image and text */
+}
+
+.info-link {
+    text-decoration: none; /* Optional: removes the underline from the link */
+    color: #007bff; /* Bootstrap default link color */
+    font-size: 12px;
+}
+
+.info-link:hover {
+    text-decoration: underline; /* Underline on hover for clarity */
+}
+
+.info-footer {
+    font-size: 9px;
+    color: #555; /* A grey that is less prominent than the main text color */
+    opacity: 0.7; /* make the text slightly transparent to be less prominent */
+}
+
+.info-text {
+    font-size: 12px;
+}
+
+/*  -------------------
+    Older styles */
 
 /* Base styles for the links in the header container */
 .title-link {

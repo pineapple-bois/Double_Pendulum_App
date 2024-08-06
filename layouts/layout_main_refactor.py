@@ -1,0 +1,142 @@
+# Main page layout
+from dash import html
+from dash import dcc
+
+# Plotly figure configuration
+# 'displayModeBar': False - removes everything
+config = {'displaylogo': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d']}
+
+
+def get_navbar():
+    return html.Div(
+        className="navbar",
+        children=[
+            html.Div(
+                html.Button("Toggle Dark Mode", id="theme-toggle-button", className="nav-button"),
+                className="nav-button-container"
+            ),
+            html.Div(
+                children=[
+                    dcc.Link("Home", href="/", className="nav-link"),
+                    dcc.Link("Mathematics", href="/mathematics", className="nav-link"),
+                    dcc.Link("Chaos", href="/chaos", className="nav-link")
+                ],
+                className="nav-links-container"
+            )
+        ]
+    )
+
+
+def get_title_section():
+    return html.Div(
+        className="title-section",
+        children=[
+            html.H1("Double Pendulum Simulation", className="title-text"),
+            html.P([
+                dcc.Markdown('''
+                    Both pendulums move in the $(x,y)$-plane. The system has two degrees of freedom, 
+                    uniquely determined by the values of $\\theta_1$ & $\\theta_2$
+                    ''', mathjax=True, className="subtitle-text"),
+            ], className="title-description")
+        ]
+    )
+
+
+def get_description_images_section():
+    return html.Div(
+        className="description-images-section",
+        children=[
+            html.Div(
+                className="description",
+                children=[
+                    html.H3("Simulation Description", className="description-title"),
+                    dcc.Markdown('''
+                    ## Instructions
+
+                    - Please experiment with different initial conditions. The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees.
+                    - A negative angle gives clockwise rotation.
+                    - The angular velocities; $\omega_1$ & $\omega_2$ can be specified in degrees per second. *Interesting dynamics can be discovered simply releasing the pendulums from rest;* $(\\omega_i=0)$.
+                    - `Unity Parameters` sets pendulum arms to $1 \\text{m}$ & masses to $1 \\text{kg}$, with $g = 9.81\\text{m s}^{-2}$.
+                    - Ensure all initial conditions and parameters are filled.
+                    - The default time interval is 20 seconds. The maximum is 120 seconds.
+                    - `Acceleration due to gravity, m/s²` offers a dropdown to simulate the pendulum's behavior on [celestial bodies in our Solar System](https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html). This parameter significantly affects the pendulum's motion, as gravity is the restoring force that influences the oscillation period and stability.
+                    - Use the `Run Simulation` button to start the simulation.
+                    ''', mathjax=True)
+                ]
+            ),
+            html.Div(
+                className="simple-model",
+                children=[
+                    html.H3("Simple Model", className="model-title"),
+                    dcc.Markdown('''
+                        Rigid, massless, and inextensible rods $OP_1$ and $P_{1}P_{2}$ are connected by a frictionless hinge to point masses; $m_1$ & $m_2$.
+                    ''', mathjax=True, className="model-description"),
+                    html.Img(src='/assets/Model_Simple_Transparent_NoText.png', className="model-image")
+                ]
+            ),
+            html.Div(
+                className="compound-model",
+                children=[
+                    html.H3("Compound Model", className="model-title"),
+                    dcc.Markdown('''
+                        The rods are modeled as [uniform thin rods](https://phys.libretexts.org/Courses/Joliet_Junior_College/Physics_201_-_Fall_2019v2/Book%3A_Custom_Physics_textbook_for_JJC/11%3A_Rotational_Kinematics_Angular_Momentum_and_Energy/11.06%3A_Calculating_Moments_of_Inertia) of evenly distributed masses; $M_1$ & $M_2$.
+                    ''', mathjax=True, className="model-description"),
+                    html.Img(src='/assets/Model_Compound_Transparent_NoText.png', className="model-image")
+                ]
+            )
+        ]
+    )
+
+
+def get_main_content_section():
+    return html.Div(
+        className="main-content-section",
+        children=[
+            html.Div(
+                className="inputs",
+                children=[
+                    # Inputs and buttons go here, similar to the current structure
+                ],
+                style={'flex': '1', 'padding': '2rem'}
+            ),
+            html.Div(
+                className="main-content",
+                children=[
+                    # Main content (figures generated by the app) goes here
+                ],
+                style={'flex': '2', 'padding': '2rem'}
+            )
+        ],
+        style={'display': 'flex', 'justify-content': 'space-between', 'padding': '2rem 0'}
+    )
+
+
+def get_footer_section():
+    return html.Div(
+        children=[
+            html.Img(src="assets/github-mark.png", className='info-image', style={'width': '30px'}),
+            html.Div(
+                children=[
+                    html.Span("The Double Pendulum application was built from this ", className='info-text'),
+                    dcc.Link("GitHub Repository", href="https://github.com/pineapple-bois/Double_Pendulum_App", target="_blank", className='info-link'),
+                    html.Div("© pineapple-bois 2024", className='info-footer')
+                ],
+                style={'flexDirection': 'column'}
+            )
+        ],
+        className='info-container',
+        style={'display': 'flex', 'alignItems': 'center', 'justifyContent': 'flex-start', 'padding': '1rem', 'background': '#f8f9fa'}
+    )
+
+
+def get_main_layout():
+    return html.Div(
+        className='main-layout',
+        children=[
+            get_navbar(),
+            get_title_section(),
+            get_description_images_section(),
+            #get_main_content_section(),
+            get_footer_section()
+        ]
+    )
