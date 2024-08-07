@@ -18,7 +18,8 @@ def get_navbar():
             html.Div(
                 children=[
                     dcc.Link("Home", href="/", className="nav-link"),
-                    dcc.Link("Mathematics", href="/mathematics", className="nav-link"),
+                    dcc.Link("Lagrangian", href="/lagrangian", className="nav-link"),
+                    dcc.Link("Hamiltonian", href="/hamiltonian", className="nav-link"),
                     dcc.Link("Chaos", href="/chaos", className="nav-link")
                 ],
                 className="nav-links-container"
@@ -53,9 +54,11 @@ def get_description_images_section():
                     html.P("The double pendulum is an archetypal non-linear system in classical mechanics that has been studied since the 18th century.", className="description-text"),
                     html.P(
                         [
-                            "We model two types of double pendulum; simple and compound. Coupled, ordinary differential equations of motion are derived in accordance with both Lagrangian and Hamiltonian formalism. Detailed descriptions of the derivations can be found on the ",
-                            html.A("mathematics", href="/mathematics", className="description-link"),
-                            " page."
+                            "We model two types of double pendulum; simple and compound. Coupled, ordinary differential equations of motion are derived in accordance with both ",
+                            html.A("Lagrangian", href="/lagrangian", className="description-link", target="_blank"),
+                            " and ",
+                            html.A("Hamiltonian", href="/hamiltonian", className="description-link", target="_blank"),
+                            " formalism."
                         ],
                         className="description-text"
                     ),
@@ -64,7 +67,7 @@ def get_description_images_section():
                     html.P(
                         [
                             "The acceleration due to gravity is the restoring force that influences the oscillation period and stability of the motion. This model allows simulation of the pendulum's behaviour on different ",
-                            html.A("celestial bodies in our Solar System", href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html", className="description-link"),
+                            html.A("celestial bodies in our Solar System", href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html", className="description-link", target="_blank"),
                             "."
                         ],
                         className="description-text"
@@ -75,21 +78,38 @@ def get_description_images_section():
             html.Div(
                 className="simple-model",
                 children=[
-                    html.H3("Simple Model", className="model-title"),
-                    dcc.Markdown('''
-                        Rigid, massless, and inextensible rods $OP_1$ and $P_{1}P_{2}$ are connected by a frictionless hinge to point masses; $m_1$ & $m_2$.
-                    ''', mathjax=True, className="model-description"),
-                    html.Img(src='/assets/Model_Simple_Transparent_NoText.png', className="model-image")
+                    html.Div(
+                        className="image-description",
+                        children=[
+                            html.H3("Simple Model", className="model-title"),
+                            dcc.Markdown('''
+                                Rigid, massless, and inextensible rods $OP_1$ and $P_{1}P_{2}$ are connected by a frictionless hinge to point masses; $m_1$ & $m_2$.
+                            ''', mathjax=True, className="model-description")
+                        ],
+                    ),
+                    html.Div(
+                        className="image-container",
+                        children=[
+                            html.Img(src='/assets/Images/Model_Simple_Transparent_NoText.png', className="model-image")
+                        ]
+                    )
                 ]
             ),
             html.Div(
                 className="compound-model",
                 children=[
-                    html.H3("Compound Model", className="model-title"),
-                    dcc.Markdown('''
-                        The rods are modeled as [uniform thin rods](https://phys.libretexts.org/Courses/Joliet_Junior_College/Physics_201_-_Fall_2019v2/Book%3A_Custom_Physics_textbook_for_JJC/11%3A_Rotational_Kinematics_Angular_Momentum_and_Energy/11.06%3A_Calculating_Moments_of_Inertia) of evenly distributed masses; $M_1$ & $M_2$.
-                    ''', mathjax=True, className="model-description"),
-                    html.Img(src='/assets/Model_Compound_Transparent_NoText.png', className="model-image")
+                    html.Div(
+                        className="image-description",
+                        children=[
+                            html.H3("Compound Model", className="model-title"),
+                            dcc.Markdown('''
+                                The rods are modeled as [uniform thin rods](https://phys.libretexts.org/Courses/Joliet_Junior_College/Physics_201_-_Fall_2019v2/Book%3A_Custom_Physics_textbook_for_JJC/11%3A_Rotational_Kinematics_Angular_Momentum_and_Energy/11.06%3A_Calculating_Moments_of_Inertia) of evenly distributed masses $M_1$ & $M_2$ with friction neglected at the hinge.
+                            ''', mathjax=True, className="model-description")],
+                    ),
+                    html.Div(
+                        className="image-container",
+                        children=[html.Img(src='/assets/Images/Model_Compound_Transparent_NoText.png', className="model-image")]
+                    ),
                 ]
             )
         ]
@@ -127,11 +147,12 @@ def get_main_content_section():
                             className='dropdown system-type-dropdown'
                         ),
                     ]),
-                    html.Div(className='container-buttons unity-parameters-group', children=[
-                        html.Label('Set masses to 1kg and lengths to 1m:', className='label model-type-label'),
-                        html.Button('Set Unity Parameters', id='unity-parameters', n_clicks=0, className='button unity-parameters-button'),
-                    ]),
                     html.Div(className='input-group parameters-group', children=[
+                        dcc.Markdown(
+                            '''Unity Parameters sets masses to $1 \ \\text{kg}$ and lengths to $1 \ \\text{m}$:''',
+                            mathjax=True, className="parameter-text"),
+                        html.Button('Set Unity Parameters', id='unity-parameters', n_clicks=0,
+                                    className='button unity-parameters-button'),
                         html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)', id='parameters-label', className='label parameters-label'),
                         dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input parameters-input'),
                         dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input parameters-input'),
@@ -158,9 +179,12 @@ def get_main_content_section():
                             clearable=False,
                             searchable=False,
                             className='dropdown parameters-dropdown'
-                        )
+                        ),
                     ]),
                     html.Div(className='input-group initial-conditions-group', children=[
+                        dcc.Markdown(
+                            '''The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. A negative angle gives clockwise rotation.''',
+                            mathjax=True, className="init-condition-text"),
                         html.Label('Initial Conditions (θ1, θ2, ω1, ω2): degrees', className='label initial-conditions-label'),
                         dcc.Input(id='init_cond_theta1', type='number', placeholder='Angle 1', className='input initial-conditions-input'),
                         dcc.Input(id='init_cond_theta2', type='number', placeholder='Angle 2', className='input initial-conditions-input'),
@@ -168,12 +192,18 @@ def get_main_content_section():
                         dcc.Input(id='init_cond_omega2', type='number', placeholder='Angular velocity 2', className='input initial-conditions-input'),
                     ]),
                     html.Div(className='input-group time-vector-group', children=[
+                        dcc.Markdown(
+                            '''The default time interval is $20$ seconds. The maximum is $120$ seconds.''',
+                            mathjax=True, className="time-vector-text"),
                         html.Label('Time Vector (start, stop): seconds', className='label time-vector-label'),
                         dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0, className='input time-vector-input'),
                         dcc.Input(id='time_end', type='number', placeholder='End Time', value=20, className='input time-vector-input'),
                     ]),
-                    html.Div(className='container-buttons run-simulation-group', children=[
-                        html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button run-simulation-button'),
+                    html.Div(
+                        className='container-buttons run-simulation-group',
+                        # style={'marginTop': 'auto'},  # This pushes the button to the bottom
+                        children=[
+                            html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button run-simulation-button'),
                     ]),
                 ]
             ),
@@ -184,29 +214,17 @@ def get_main_content_section():
                         id="loading-1",
                         type="default",  # or "circle", "dot", or "cube" for different spinner types
                         children=[
-                            html.Div(
-                                id='animation-phase-container',
-                                className='graph-row',
-                                style={'display': 'none'},
-                                children=[
-                                    html.Div(
-                                        dcc.Graph(id='pendulum-animation', config=config, className='responsive-graph'),
-                                        className='graph-column'
-                                    ),
-                                    html.Div(
-                                        dcc.Graph(id='phase-graph', config=config, className='responsive-graph'),
-                                        className='graph-column'
-                                    )
-                                ]
-                            ),
-                            html.Div(
-                                id='time-graph-container',
-                                className='graph-container',
-                                style={'display': 'none'},
-                                children=[
-                                    dcc.Graph(id='time-graph', responsive=True, className='responsive-graph')
-                                ]
-                            )
+                            html.Div(id='animation-phase-container', className='above-graph-container',
+                                     style={'display': 'none'},
+                                     children=[
+                                         dcc.Graph(id='pendulum-animation', config=config,
+                                                   className='responsive-graph'),
+                                         dcc.Graph(id='phase-graph', config=config, className='responsive-graph')
+                                     ]),
+                            html.Div(id='time-graph-container', className='graph-container', style={'display': 'none'},
+                                     children=[
+                                         dcc.Graph(id='time-graph', className='responsive-graph', responsive=True)
+                                     ])
                         ],
                         style={'height': '100%', 'position': 'relative'}
                     ),
@@ -220,7 +238,7 @@ def get_main_content_section():
 def get_footer_section():
     return html.Div(
         children=[
-            html.Img(src="assets/github-mark.png", className='info-image', style={'width': '30px'}),
+            html.Img(src="assets/Images/github-mark.png", className='info-image', style={'width': '30px'}),
             html.Div(
                 children=[
                     html.Span("The Double Pendulum application was built from this ", className='info-text'),
