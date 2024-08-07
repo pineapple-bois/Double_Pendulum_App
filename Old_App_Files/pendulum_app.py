@@ -1,16 +1,14 @@
 import dash
-from dash import html, dcc, no_update, Dash
+from dash import html, dcc, no_update
 from dash.dependencies import Input, Output, State, ClientsideFunction
 from dash.exceptions import PreventUpdate
-from flask import Flask, redirect, request
+from flask import Flask
 import plotly.tools as tls
 import plotly.graph_objs as go
-import plotly.io as pio
 import matplotlib.pyplot as plt
 import sympy as sp
-import os
-from layouts.layout_main import get_main_layout
-from layouts.layout_chaos import get_chaos_layout
+from Old_App_Files.layout_main import get_main_layout
+from Old_App_Files.layout_chaos import get_chaos_layout
 from layouts.layout_matplotlib import mpl_layout
 from AppFunctions import validate_inputs, generate_pendulum_figures, set_display_styles
 from DoublePendulumLagrangian import DoublePendulumLagrangian
@@ -20,10 +18,10 @@ from DoublePendulumHamiltonian import DoublePendulumHamiltonian
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)
 
 # Math derivations
-with open('assets/mathematics_lagrangian.txt', 'r') as file:
+with open('../assets/mathematics_lagrangian.txt', 'r') as file:
     lagrangian_section = file.read()
 
-with open('assets/mathematics_hamiltonian.txt', 'r') as file:
+with open('../assets/mathematics_hamiltonian.txt', 'r') as file:
     hamiltonian_section = file.read()
 
 server = Flask(__name__)
@@ -39,16 +37,16 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-@server.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
+# @server.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         return redirect(url, code=301)
 
 
 # App set up
 app.title = 'Double Pendulum: Lagrangian formulation - pineapple-bois'
-app.index_string = open('assets/custom-header.html', 'r').read()
+app.index_string = open('../assets/custom-header.html', 'r').read()
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),  # Tracks the url
     html.Div(id='page-content', children=get_main_layout())  # Set initial content
