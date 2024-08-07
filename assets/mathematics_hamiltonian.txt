@@ -1,4 +1,6 @@
-# The Mathematics
+# Hamiltonian Derivation
+
+### The Mathematics
 
 The double pendulum is an example of a complex dynamical system with two degrees of freedom. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in deriving the Lagrangian.
 
@@ -7,12 +9,12 @@ Characterised by sensitivity to initial conditions and exhibiting both periodic 
 The subsequent sections offer a detailed mathematical derivation of the equations of motion. Also see the [Python derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DevelopmentHamiltonian.ipynb) on which the below extends.
 
 
-#### Behaviour at Small Angles
+### Behaviour at Small Angles
 
 When the angles of oscillation are small, the behaviour can be approximated using sine and cosine functions and the phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
 
 
-#### Chaotic dynamics and Quasi-Periodicity
+### Chaotic dynamics and Quasi-Periodicity
 
 The pendulums exhibit sensitive dependence on initial conditions, meaning even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
 
@@ -21,7 +23,7 @@ Quasi-periodic motion is complex yet does not repeat exactly, sitting on the bou
 
 ---
 
-## Simple Model Derivation,
+## Simple Model
 
 The rods $OP_1$ and $P_1P_2$ are rigid, massless and inextensible.
 The system has two degrees of freedom.
@@ -133,7 +135,7 @@ p_{\theta_2}
 \dot{\theta_1} \\
 \dot{\theta_2}
 \end{bmatrix}
-\quad \tag{7}
+\quad \tag{8}
 $$
 
 
@@ -154,7 +156,7 @@ A matrix is invertible if and only if its determinant is non-zero.
 
 Given that $m_1, m_2, l_1, l_1$ are strictly positive and $1 - \cos^2(x) \equiv \sin^2(x)$ which is bounded between $0$ and $1$ for all $x \in \mathbb{R}$, $\mathbf{B}$ is always invertible.
 
-From equation $(7)$, we can obtain the generalised angular velocities $\dot{\theta_i}$ in terms of the canonical momenta $p_{\theta_i}$ and the release angles $\theta_i$
+From equation $(8)$, we can obtain the generalised angular velocities $\dot{\theta_i}$ in terms of the canonical momenta $p_{\theta_i}$ and the release angles $\theta_i$
 
 $$
 \begin{bmatrix}
@@ -167,12 +169,12 @@ $$
 p_{\theta_1} \\
 p_{\theta_2}
 \end{bmatrix}
-\quad \tag{8}
+\quad \tag{9}
 $$
 
 We notice that the coefficient matrix $\mathbf{B}$ is equal to its transpose such that $\mathbf{B}^{T}=\mathbf{B}$
 
-Also, where the Lagrangian is given $\mathcal{L}=T-V$ in eqn $(1)$, by eqn $(7)$ we can write the kinetic energy in terms of $\mathbf{B}$ as;
+Also, where the Lagrangian is given $\mathcal{L}=T-V$ in eqn $(1)$, by eqn $(8)$ we can write the kinetic energy in terms of $\mathbf{B}$ as;
 
 $$
 T = \frac{1}{2}
@@ -193,10 +195,10 @@ p_{\theta_1} \\
 p_{\theta_2}
 \end{bmatrix}
 = \frac{1}{2} \left[\dot{\theta_1} p_{\theta_1} + \dot{\theta_2} p_{\theta_2}\right]
-\quad \tag{9}
+\quad \tag{10}
 $$
 
-Starting from eqn $(8)$ using above the transpose relation;
+Starting from eqn $(9)$ using above the transpose relation;
 
 $$
 \begin{bmatrix}
@@ -211,7 +213,7 @@ p_{\theta_1} & p_{\theta_2}
 \end{bmatrix} \mathbf{B}^{-1},
 $$
 
-By eqn $(9)$ we can write the kinetic energy, in the form
+By eqn $(10)$ we can write the kinetic energy, in the form
 
 $$
 T = \frac{1}{2}
@@ -253,7 +255,7 @@ $$
 Partially differentiating the Hamiltonian $\mathcal{H}$ with respect to $p_{\theta_i}$ and $\theta_i$ returns equations $(3)$ and $(4)$ which can be written in matrix form as,
 
 $$
-\left[\begin{matrix}\frac{d}{d t} \theta_{1}{\left(t \right)}\\\frac{d}{d t} \theta_{2}{\left(t \right)}\\\frac{d}{d t} \operatorname{p_{\theta 1}}{\left(t \right)}\\\frac{d}{d t} \operatorname{p_{\theta 2}}{\left(t \right)}\end{matrix}\right] = \left[\begin{matrix}\frac{- l_{1} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2} \operatorname{p_{\theta 1}}{\left(t \right)}}{l_{1}^{2} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)}\\\frac{l_{1} m_{1} \operatorname{p_{\theta 2}}{\left(t \right)} + l_{1} m_{2} \operatorname{p_{\theta 2}}{\left(t \right)} - l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1} l_{2}^{2} m_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)}\\\frac{- g l_{1}^{3} l_{2}^{2} \left(m_{1} + m_{2}\right) \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2} \sin{\left(\theta_{1}{\left(t \right)} \right)} - l_{1} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right) \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + \left(l_{1}^{2} m_{1} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} + l_{1}^{2} m_{2} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} - 2 l_{1} l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2}^{2} m_{2} \operatorname{p_{\theta 1}}^{2}{\left(t \right)}\right) \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1}^{2} l_{2}^{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2}}\\\frac{- g l_{1}^{2} l_{2}^{3} m_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2} \sin{\left(\theta_{2}{\left(t \right)} \right)} + l_{1} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right) \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} - \left(l_{1}^{2} m_{1} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} + l_{1}^{2} m_{2} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} - 2 l_{1} l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2}^{2} m_{2} \operatorname{p_{\theta 1}}^{2}{\left(t \right)}\right) \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1}^{2} l_{2}^{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2}}\end{matrix}\right] \tag{10}
+\left[\begin{matrix}\frac{d}{d t} \theta_{1}{\left(t \right)}\\\frac{d}{d t} \theta_{2}{\left(t \right)}\\\frac{d}{d t} \operatorname{p_{\theta 1}}{\left(t \right)}\\\frac{d}{d t} \operatorname{p_{\theta 2}}{\left(t \right)}\end{matrix}\right] = \left[\begin{matrix}\frac{- l_{1} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2} \operatorname{p_{\theta 1}}{\left(t \right)}}{l_{1}^{2} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)}\\\frac{l_{1} m_{1} \operatorname{p_{\theta 2}}{\left(t \right)} + l_{1} m_{2} \operatorname{p_{\theta 2}}{\left(t \right)} - l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1} l_{2}^{2} m_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)}\\\frac{- g l_{1}^{3} l_{2}^{2} \left(m_{1} + m_{2}\right) \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2} \sin{\left(\theta_{1}{\left(t \right)} \right)} - l_{1} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right) \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + \left(l_{1}^{2} m_{1} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} + l_{1}^{2} m_{2} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} - 2 l_{1} l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2}^{2} m_{2} \operatorname{p_{\theta 1}}^{2}{\left(t \right)}\right) \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1}^{2} l_{2}^{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2}}\\\frac{- g l_{1}^{2} l_{2}^{3} m_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2} \sin{\left(\theta_{2}{\left(t \right)} \right)} + l_{1} l_{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right) \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} - \left(l_{1}^{2} m_{1} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} + l_{1}^{2} m_{2} \operatorname{p_{\theta 2}}^{2}{\left(t \right)} - 2 l_{1} l_{2} m_{2} \operatorname{p_{\theta 1}}{\left(t \right)} \operatorname{p_{\theta 2}}{\left(t \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} + l_{2}^{2} m_{2} \operatorname{p_{\theta 1}}^{2}{\left(t \right)}\right) \sin{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)} \cos{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}}{l_{1}^{2} l_{2}^{2} \left(m_{1} + m_{2} \sin^{2}{\left(\theta_{1}{\left(t \right)} - \theta_{2}{\left(t \right)} \right)}\right)^{2}}\end{matrix}\right] \tag{11}
 $$
 
 -----
