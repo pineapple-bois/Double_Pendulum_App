@@ -31,7 +31,7 @@ def get_main_layout():
             # GitHub logo as a link, allow it to shrink on small screens
             html.Div([
                 html.A([
-                    html.Img(src='assets/github-mark.png', style={'height': '50px', 'width': '50px'})
+                    html.Img(src='assets/Images/github-mark.png', style={'height': '50px', 'width': '50px'})
                 ], className='title-link', href='https://github.com/pineapple-bois/Double_Pendulum_App',
                     target='_blank')
             ], style={'flex': '0 1 auto', 'alignSelf': 'center'}),
@@ -94,7 +94,7 @@ def get_main_layout():
 
             # Column for image
             html.Div([
-                html.Img(src='assets/Models_Joint_White.png', style={'max-width': '100%', 'height': 'auto'})
+                html.Img(src='assets/Images/Models_Joint_White.png', style={'max-width': '100%', 'height': 'auto'})
             ], style={'flex': '1'}, className='image-column'),
         ], style={'display': 'flex'}, className='instructions-image-container'),
 
