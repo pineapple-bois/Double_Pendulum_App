@@ -114,6 +114,30 @@ body {
 
 .description {
     flex: 1;
+    max-width: 500px;
+}
+
+.description-text {
+    font-size: 16px;
+    margin-bottom: 30px; /* Space below the text */
+    line-height: 1.2;
+    text-align: left;
+}
+
+.description-instruction {
+    font-size: 16px;
+    margin-bottom: 30px; /* Space below the text */
+    line-height: 1.2;
+    text-align: left;
+}
+
+.description-link, .model-link {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Remove underline */
+}
+
+.description-link:hover, .model-link:hover {
+    text-decoration: underline; /* Underline on hover */
 }
 
 .simple-model, .compound-model {
@@ -122,6 +146,11 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center; /* Center-align the text */
+}
+
+.image-description {
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    max-width: 90%;
 }
 
 .model-title, .description-title {
@@ -135,11 +164,168 @@ body {
     margin-bottom: 30px; /* Space below the description */
 }
 
+.image-container {
+    max-width: 60%; /* Maximum width of the container */
+    max-height: 80vh; /* Maximum height of the container */
+    overflow: hidden; /* Prevent overflow */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    margin-bottom: 10px;
+}
+
 .model-image {
-    width: 100%;
+    width: 100%; /* Ensure the image takes up the full width of the container */
     height: auto; /* Maintain aspect ratio */
-    max-width: 100%; /* Ensure it doesn't exceed its container */
-    margin-bottom: 10px; /* Space below the image */
+}
+
+/*  -------------------
+    Main Content Section */
+
+.main-content-section {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8f9fa; /* Same background color as other sections */
+    padding: 16px;
+    margin-top: 10px;
+    gap: 20px; /* Space between columns */
+}
+
+/* Reset default margins and paddings for elements inside main-content-section */
+.main-content-section * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Input fields */
+
+.inputs {
+    flex: 1;
+    background-color: white; /* White background for visibility */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Global gap between input groups */
+    max-width: 25%; /* Take 25% of the space */
+}
+
+/* Background colors for debugging */
+.model-system-group {
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+}
+
+.parameters-group {
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+}
+
+.unity-parameters-button {
+    margin-bottom: 20px; !important;
+}
+
+.parameter-text {
+    margin-bottom: 20px;
+}
+
+.initial-conditions-group {
+    background-color: rgba(0, 0, 255, 0.1); /* Light blue background for debugging */
+}
+
+.init-condition-text {
+    margin-bottom: 20px;
+}
+
+.time-vector-group {
+    background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
+}
+
+.time-vector-text {
+    margin-bottom: 20px;
+}
+
+.model-system-dropdown {
+    margin-bottom: 10px;
+}
+
+.input-group {
+    margin-bottom: 50px; /* Global margin-bottom for each input group */
+}
+
+.label {
+  margin-bottom: 10px;
+  padding-left: 10px; /* Add left padding for input label */
+}
+
+.input {
+  margin-bottom: 10px;
+  padding-left: 10px; /* Add left padding for input text */
+}
+
+.button, .button-show {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#submit-val  {
+  padding: 20px 10px;
+  background-color: #6495ED;
+  color: white;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 10px; /* Add rounded edges to the button */
+}
+
+#submit-val:hover {
+    background-color: #7BA0F0;
+}
+
+/* Graphs */
+
+.main-content {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    background-color: white; /* White background for visibility */
+    gap: 10px; /* Space between sections */
+    max-width: 75%;
+    overflow-x: auto;
+}
+
+#loading-1 {
+    height: 50%;
+    position: relative;
+}
+
+.above-graph-container {
+    display: flex;
+    flex-direction: row; /* Arrange children side by side */
+    margin-bottom: 20px;
+    gap: 20px;
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    padding: 5px;
+}
+
+.graph-container {
+    display: block;
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    padding: 5px;
+}
+
+.responsive-graph {
+    width: 100%;
+    height: auto;
+    background-color: rgba(0, 0, 255, 0.1); /* Light blue background for debugging */
+    padding: 5px;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    margin: 60px;
+    font-size: 20px;
 }
 
 /*  -------------------
@@ -179,166 +365,117 @@ body {
 }
 
 /*  -------------------
-    Older styles */
+   Math Page */
 
-/* Base styles for the links in the header container */
-.title-link {
-  font-size: 20px;
-  padding: 10px;
-}
-
-/* Container for the input fields and buttons */
-.container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 20px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px
-}
-
-.label {
-  margin-bottom: 5px;
-}
-
-.input {
-  margin-bottom: 10px;
-}
-
-.button, .button-show {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  margin-bottom: 0;
-}
-
-#submit-val  {
-  padding: 20px 10px;
-  background-color: #6495ED;
-  color: white;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#submit-val :hover {
-  background-color: #7BA0F0;
-}
-
-/* Button styles mathematics/play animation */
-.button-show {
-  padding: 20px 10px;
-  background-color: #6495ED; /* Blue */
-  color: white;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button-show:hover {
-  background-color: #7BA0F0; /* Lighter blue */
-}
-
-/* Button styles when mathematics/play animation */
-.button-hide {
-  padding: 20px 10px;
-  background-color: #5172A0; /* Darker blue */
-  color: white;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.button-hide:hover {
-  background-color: #5E82AB; /* Lighter shade of darker blue */
-}
-
-/* Spinner and Loading */
-#loading-1 .dash-spinner {
-    position: absolute;
-    top: 0; /* Aligns the spinner to the top of the container */
-    left: 50%; /* Centers the spinner horizontally */
-    transform: translate(-50%, -50%);
-}
-
-/* Adjustments for the graphs */
-.graph-container, .above-graph-container {
-  display: grid;
-  width: 100%; /* Ensure the container takes the full width */
-  margin-bottom: 20px;
-}
-
-.above-graph-container {
-  grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
-  gap: 20px;
-}
-
-.graph-container {
-  grid-template-columns: 1fr; /* One column for the time graph */
-  gap: 20px;
-}
-
-/* Responsive settings for graphs */
-.graph-container .graph, .above-graph-container .multi-graph-container {
-  width: 95%; /* Full width of their container */
-  height: auto; /* Height will scale automatically */
-}
-
-.above-graph-container .graph {
-    width: 80vw; /* Adjust the width to a suitable percentage of the viewport width */
-}
-
-/* Additional styles for the Markdown LaTeX display */
 .markdown-latex-container {
-  margin-top: 0; /* Space above the markdown */
-  padding: 10px;
   background-color: #f8f8f8; /* Light grey background */
   border: 1px solid #ddd; /* Light grey border */
   overflow-x: auto; /* Allows scrolling if content is too wide */
   overflow-y: hidden; /* Hides vertical scrollbar */
+  width: 90%; /* Takes up 90% of the width */
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 16px;
 }
 
-/* Chaos elements */
-/* Adjustments for the multi-graph container to include headers */
-.multi-graph-container {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(500px, 1fr)); /* Default 3 columns */
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 10px;
-  text-align: left; /* Centers the headers */
+/*  -------------------
+  Chaos Page */
+
+.chaos-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #f8f9fa; /* Consistent background color */
 }
 
-.multi-graph-container h4 {
-  text-align: center; /* This will align the text of all <h4> elements to the left within elements that have the class .multi-graph-container */
+.navbar, .footer-section {
+  flex-shrink: 0; /* Do not allow these elements to shrink */
 }
 
-/* Target the second dcc.Graph in each pendulum div and add margin to its top */
-.multi-graph-container > div > :nth-child(3) {
-  margin-top: 20px; /* Adjust the value as needed */
+.chaos-content-container {
+  flex-grow: 1; /* Take up remaining space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px; /* Ensure padding is consistent */
+  background-color: #f8f9fa;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 1400px) {
-  /* Adjust for when the total width of the two graphs exceeds the screen width */
-  .above-graph-container {
-    grid-template-columns: 1fr; /* Stack the graphs on top of each other */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
+.custom-text {
+  color: #2c3e50; /* Custom text color */
+  font-family: 'Courier New', Courier, monospace; /* Custom font */
+}
+
+/*  -------------------
+  404 Page */
+
+.not-found-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #f8f9fa; /* Consistent background color */
+}
+
+.navbar, .footer-section {
+  flex-shrink: 0; /* Do not allow these elements to shrink */
+  margin-bottom: 10px; /* Add margin below each section */
+}
+
+.not-found-content-container {
+  flex-grow: 1; /* Take up remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px; /* Ensure padding is consistent */
+  background-color: #f8f8f8; /* Light grey background */
+  margin: 10px 0; /* Add top and bottom margin */
+}
+
+.custom-text {
+  color: #2c3e50; /* Custom text color */
+  font-family: 'Courier New', Courier, monospace; /* Custom font */
+}
+
+/*  -------------------
+   NEW Media Queries */
+
+/* Responsive spacing of description and image section */
+
+@media (max-width: 1800px) {
+  .image-container {
+    max-width: 80%; /* Adjust max-width for medium viewports */
   }
 }
-/* Base styles and other non-media query styles... */
 
-/* Media Queries */
+@media (max-width: 1400px) {
+  .image-container {
+    max-width: 100%; /* Adjust max-width for smaller viewports */
+  }
+}
 
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .description-images-section {
+        flex-direction: column; /* Stack columns vertically on smaller screens */
+        padding: 10px;
+    }
 
+    .description, .simple-model, .compound-model .image-container {
+        max-width: 100%; /* Remove fixed width on smaller screens */
+    }
+
+    .description-text, .description-instruction {
+        font-size: 14px; /* Smaller font size on smaller screens */
+        margin-bottom: 15px; /* Adjust spacing */
+    }
+}
+
+/* OLD Media Queries */
 /* TODO: Fix multi-graph-container @media */
 
 
