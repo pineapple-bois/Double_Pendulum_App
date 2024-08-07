@@ -161,7 +161,7 @@ class DoublePendulumHamiltonian:
         """
         self.precomputed_positions = np.array(self._calculate_positions())
 
-    def animate_pendulum(self, fig_width=700, fig_height=700, trace=False, static=False, appearance='light'):
+    def animate_pendulum(self, fig_width=600, fig_height=600, trace=False, static=False, appearance='light'):
         """
         Generates an animation for the double pendulum using precomputed positions.
 
@@ -276,31 +276,30 @@ class DoublePendulumHamiltonian:
             autosize=False,
             width=fig_width,
             height=fig_height,
-
-        updatemenus=[{
-            'type': 'buttons',
-            'buttons': [
-                dict(
-                    label="Play",
-                    method="animate",
-                    args=[None, {"frame": {"duration": 33, "redraw": True}, "fromcurrent": True,
-                                "mode": "immediate",
-                                'label': 'Play',
-                                'font': {'size': 14, 'color': 'black'},
-                                'bgcolor': 'lightblue'
-                    }],
-                )
-            ],
-            'direction': "left",
-            'pad': {"r": 10, "t": 10},  # Adjust padding if needed
-            'showactive': False,
-            'type': 'buttons',
-            'x': 0.05,  # Position for x
-            'y': 0.95,  # Position for y,(the top of the figure)
-            'xanchor': "left",
-            'yanchor': "top"
-        }],
-        margin=dict(l=20, r=20, t=20, b=20),
+            updatemenus=[{
+                'type': 'buttons',
+                'buttons': [
+                    dict(
+                        label="Play",
+                        method="animate",
+                        args=[None, {"frame": {"duration": 33, "redraw": True}, "fromcurrent": True,
+                                    "mode": "immediate",
+                                    'label': 'Play',
+                                    'font': {'size': 14, 'color': 'black'},
+                                    'bgcolor': 'lightblue'
+                        }],
+                    )
+                ],
+                'direction': "left",
+                'pad': {"r": 10, "t": 10},  # Adjust padding if needed
+                'showactive': False,
+                'type': 'buttons',
+                'x': 0.05,  # Position for x
+                'y': 0.95,  # Position for y,(the top of the figure)
+                'xanchor': "left",
+                'yanchor': "top"
+            }],
+            margin=dict(l=20, r=20, t=20, b=20),
         )
         # Update the layout based on the 'static' argument
         if static:
