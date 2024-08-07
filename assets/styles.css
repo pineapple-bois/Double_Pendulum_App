@@ -220,11 +220,11 @@ body {
 }
 
 .unity-parameters-button {
-    margin-bottom: 20px; !important;
+    margin-bottom: 20px;
 }
 
 .parameter-text {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .initial-conditions-group {
@@ -248,15 +248,18 @@ body {
 }
 
 .input-group {
-    margin-bottom: 50px; /* Global margin-bottom for each input group */
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 50px; /* Global margin-bottom for each input group */
 }
 
 .label {
   margin-bottom: 10px;
-  padding-left: 10px; /* Add left padding for input label */
+  /*padding-left: 10px; !* Add left padding for input label *!*/
 }
 
 .input {
+  width: 100%;
   margin-bottom: 10px;
   padding-left: 10px; /* Add left padding for input text */
 }
@@ -291,12 +294,24 @@ body {
     background-color: white; /* White background for visibility */
     gap: 10px; /* Space between sections */
     max-width: 75%;
-    overflow-x: auto;
 }
 
+/* Spinner Styles */
 #loading-1 {
-    height: 50%;
-    position: relative;
+    width: 200px; /* Set desired width */
+    height: 200px; /* Set desired height */
+}
+
+/* Ensure the spinner is centered within its container */
+.loading-container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    height: 100%; /* Full height of the parent container */
+    width: 100%; /* Full width of the parent container */
+    position: relative; /* Ensure it stays within the container bounds */
+    overflow-x: auto;
+    background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
 }
 
 .above-graph-container {
@@ -324,7 +339,6 @@ body {
 .error-message {
     color: red;
     text-align: center;
-    margin: 60px;
     font-size: 20px;
 }
 
