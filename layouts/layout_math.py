@@ -1,7 +1,7 @@
 # Math page layout
 from dash import html
 from dash import dcc
-from layouts.layout_main_refactor import get_navbar, get_title_section, get_footer_section
+from layouts.layout_main import get_navbar, get_title_section, get_footer_section
 
 # Math derivations
 with open('assets/mathematics_lagrangian.txt', 'r') as file:

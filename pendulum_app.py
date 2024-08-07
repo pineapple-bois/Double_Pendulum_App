@@ -9,9 +9,9 @@ import plotly.io as pio
 import matplotlib.pyplot as plt
 import sympy as sp
 import os
-from layouts.layout_main_refactor import get_main_layout
+from layouts.layout_main import get_main_layout
 from layouts.layout_math import get_lagrangian_layout, get_hamiltonian_layout
-from layouts.layout_chaos_refactor import get_chaos_layout
+from layouts.layout_chaos import get_chaos_layout
 from layouts.layout_404 import get_404_layout
 from layouts.layout_matplotlib import mpl_layout
 from AppFunctions import validate_inputs, generate_pendulum_figures, set_display_styles

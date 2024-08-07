@@ -1,5 +1,5 @@
 from dash import html
-from layouts.layout_main_refactor import get_navbar, get_title_section, get_footer_section
+from layouts.layout_main import get_navbar, get_title_section, get_footer_section
 
 
 def get_chaos_layout():

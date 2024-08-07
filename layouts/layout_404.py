@@ -1,6 +1,6 @@
 from dash import html
 from dash import dcc
-from layouts.layout_main_refactor import get_navbar, get_footer_section
+from layouts.layout_main import get_navbar, get_footer_section
 
 
 def get_404_layout():
