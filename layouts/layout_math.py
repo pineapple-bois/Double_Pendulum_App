@@ -1,7 +1,7 @@
 # Math page layout
 from dash import html
 from dash import dcc
-from layouts.layout_main import get_navbar, get_title_section, get_footer_section
+from layouts.layout_main import get_navbar, get_footer_section
 
 # Math derivations
 with open('assets/mathematics_lagrangian.txt', 'r') as file:
@@ -15,15 +15,29 @@ def get_lagrangian_layout():
     return html.Div(
         className='math-layout',
         children=[
-            get_navbar(),
-            get_title_section(),
             html.Div(
-                className='markdown-latex-container',
+                className='header',
                 children=[
-                    dcc.Markdown(children=lagrangian_section, mathjax=True)
+                    get_navbar(),
                 ]
             ),
-            get_footer_section()
+            html.Div(
+                className='body',
+                children=[
+                    html.Div(
+                        className='markdown-latex-container',
+                        children=[
+                            dcc.Markdown(children=lagrangian_section, mathjax=True)
+                        ]
+                    ),
+                ]
+            ),
+            html.Div(
+                className='footer',
+                children=[
+                    get_footer_section()
+                ]
+            ),
         ]
     )
 
@@ -32,15 +46,28 @@ def get_hamiltonian_layout():
     return html.Div(
         className='math-layout',
         children=[
-            get_navbar(),
-            get_title_section(),
             html.Div(
-                className='markdown-latex-container',
+                className='header',
                 children=[
-                    dcc.Markdown(children=hamiltonian_section, mathjax=True)
+                    get_navbar(),
                 ]
             ),
-            get_footer_section()
+            html.Div(
+                className='body',
+                children=[
+                    html.Div(
+                        className='markdown-latex-container',
+                        children=[
+                            dcc.Markdown(children=hamiltonian_section, mathjax=True)
+                        ]
+                    ),
+                ]
+            ),
+            html.Div(
+                className='footer',
+                children=[
+                    get_footer_section()
+                ]
+            ),
         ]
     )
-
