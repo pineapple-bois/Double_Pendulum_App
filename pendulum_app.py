@@ -68,6 +68,34 @@ def display_page(pathname):
         return get_404_layout() if pathname != '/' else get_main_layout()
 
 
+@app.callback(
+    [Output("info-popup", "style"),
+     Output("info-button", "children"),
+     Output("info-button", "n_clicks")],
+    [Input("info-button", "n_clicks"),
+     Input("close-info-button", "n_clicks")],
+    [State("info-popup", "style"),
+     State("info-button", "n_clicks")]
+)
+def toggle_info(info_n_clicks, close_n_clicks, current_style, current_info_n_clicks):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        button_id = 'No clicks yet'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == "info-button":
+        if info_n_clicks % 2 == 1:
+            return {"display": "block"}, "Close Information", info_n_clicks
+        else:
+            return {"display": "none"}, "What do I even choose?", info_n_clicks
+    elif button_id == "close-info-button":
+        return {"display": "none"}, "What do I even choose?", current_info_n_clicks + 1
+
+    return current_style, "What do I even choose?", info_n_clicks
+
+
 # Callback for the unity parameters
 @app.callback(
     [Output('param_l1', 'value'),
