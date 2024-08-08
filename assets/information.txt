@@ -23,7 +23,7 @@ Nice quasi-periodic motions are; $(45, 45, 0, 0)$ and $(0, 120, 0, 0)$.
 
 ***
 
-Try setting a `Simple` model with:
+Try setting a `Simple`, `Lagrangian` model with:
 
 - `Parameters`: $l_1 = 1, l_2 = 1.5, m_1 = 3, m_2 = 1$
 - `Initial conditions`: $(90, 0, 572.95, -458.37)$ (This is $\omega_1=10 \ \text{rad} \ \text{s}^{-1}$ and $\omega_2=-8 \ \text{rad} \ \text{s}^{-1}$)
