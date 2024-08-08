@@ -11,6 +11,36 @@ body {
   font-size: 14px;
 }
 
+/* Main Layout */
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Math Layout */
+.math-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.header {
+    flex: none;
+}
+
+/* Body */
+.body {
+    flex: auto;
+    overflow-y: auto;
+}
+
+/* Footer */
+.footer {
+    flex: none;
+}
+
 /*  -------------------
     Navigation bar */
 
@@ -199,7 +229,51 @@ body {
     box-sizing: border-box;
 }
 
-/* Input fields */
+/*  -------------------
+    Information Pop-Up */
+
+.get-info-button {
+    margin-bottom: 10px;
+}
+
+.information-content h2, .information-content p, .information-content ul, .information-content li, .information-content hr {
+    margin-bottom: 16px; /* Adjust the value as needed */
+}
+
+/* Info Popup Style */
+.information-content {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 0 0 5px 5px;
+    z-index: 10; /* Ensure it floats on top */
+}
+
+/* Container for Info Popup */
+.information-container {
+    position: absolute; /* Position it on top of other content */
+    top: 60px; /* Adjust as needed */
+    left: 25%; /* Adjust as needed */
+    width: 400px; /* Adjust as needed */
+    margin-left: 10px;
+    z-index: 10; /* Ensure it floats on top */
+}
+
+/* Close Button Specific Style */
+.close-info-button {
+    background-color: #ff4d4d; /* Custom background color */
+    color: white; /* Custom text color */
+    border: none;
+    margin-bottom: 0;
+    border-radius: 5px 5px 0 0;
+}
+
+.close-info-button:hover {
+    background-color: #ff3333; /* Darker shade on hover */
+}
+
+/*  -------------------
+    Input Side Bar */
 
 .inputs {
     flex: 1;
@@ -210,7 +284,6 @@ body {
     max-width: 25%; /* Take 25% of the space */
 }
 
-/* Background colors for debugging */
 .model-system-group {
     background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
 }
@@ -250,7 +323,7 @@ body {
 .input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 50px; /* Global margin-bottom for each input group */
+  margin-bottom: 40px; /* Global margin-bottom for each input group */
 }
 
 .label {
@@ -285,7 +358,8 @@ body {
     background-color: #7BA0F0;
 }
 
-/* Graphs */
+/*  -------------------
+    Graphs */
 
 .main-content {
     flex: 3;
@@ -387,7 +461,6 @@ body {
   overflow-x: auto; /* Allows scrolling if content is too wide */
   overflow-y: hidden; /* Hides vertical scrollbar */
   width: 90%; /* Takes up 90% of the width */
-  margin-top: 10px;
   margin-left: auto;
   margin-right: auto;
   padding: 8px 16px;
