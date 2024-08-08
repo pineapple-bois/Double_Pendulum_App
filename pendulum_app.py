@@ -47,6 +47,7 @@ app.title = 'Double Pendulum Simulation - pineapple-bois'
 app.index_string = open('assets/custom-header.html', 'r').read()
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),  # Tracks the url
+    dcc.Store(id='update-state', data={'clear': False, 'update': False}),
     html.Div(id='page-content', children=get_main_layout())  # Set initial content
 ])
 
@@ -132,6 +133,35 @@ def adjust_parameters_visibility(model_type):
         # Show M1 and M2 for the compound model
         return ({'display': 'none'}, {'display': 'none'}, {'display': 'block'}, {'display': 'block'},
                 'Parameters (l1, l2, M1, M2, g)')
+
+
+@app.callback(
+    [Output('time-graph', 'figure', allow_duplicate=True),
+     Output('phase-graph', 'figure', allow_duplicate=True),
+     Output('pendulum-animation', 'figure', allow_duplicate=True),
+     Output('animation-phase-container', 'style', allow_duplicate=True),
+     Output('time-graph-container', 'style', allow_duplicate=True)],
+    [Input('init_cond_theta1', 'value'),
+     Input('init_cond_theta2', 'value'),
+     Input('init_cond_omega1', 'value'),
+     Input('init_cond_omega2', 'value'),
+     Input('time_start', 'value'),
+     Input('time_end', 'value'),
+     Input('param_l1', 'value'),
+     Input('param_l2', 'value'),
+     Input('param_m1', 'value'),
+     Input('param_m2', 'value'),
+     Input('param_M1', 'value'),
+     Input('param_M2', 'value'),
+     Input('param_g', 'value'),
+     Input('model-type', 'value'),
+     Input('system-type', 'value')],
+    prevent_initial_call=True
+)
+def clear_graphs_on_input_change(*args):
+    # Return empty figures to clear the graphs
+    empty_figure = go.Figure()
+    return empty_figure, empty_figure, empty_figure, {'display': 'none'}, {'display': 'none'}
 
 
 # Callback to update the graphs - main page
