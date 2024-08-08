@@ -419,37 +419,46 @@ body {
 /*  -------------------
     Footer Section */
 
-.info-container {
-    background-color: white; /* #EAECEE */
-    margin-top: 10px; /* Adds space between the map and the new div */
-    display: flex; /* Use flexbox to align children horizontally */
-    align-items: center; /* Vertically centers the children */
-    justify-content: flex-start; /* Aligns children to the left */
-    padding: 8px; /* Use pixels for padding */
+.footer-bar {
+    background: #333; !important
+    text-align: left;
+    padding: 1rem;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
 }
 
 .info-image {
-    margin-right: 8px; /* Space between image and text */
+    margin-right: 8px;
+    width: 30px;
+    filter: brightness(0) invert(1);
 }
 
-.info-link {
-    text-decoration: none; /* Optional: removes the underline from the link */
-    color: #007bff; /* Bootstrap default link color */
-    font-size: 12px;
-}
-
-.info-link:hover {
-    text-decoration: underline; /* Underline on hover for clarity */
-}
-
-.info-footer {
-    font-size: 9px;
-    color: #555; /* A grey that is less prominent than the main text color */
-    opacity: 0.7; /* make the text slightly transparent to be less prominent */
+.info-text, .info-link, .info-footer {
+    color: white; /* Match text color with navbar */
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .info-text {
     font-size: 12px;
+    margin-right: 8px;
+}
+
+.info-link {
+    text-decoration: none;
+    color: #AFEEEE;
+    font-size: 12px;
+}
+
+.info-link:hover {
+    text-decoration: underline;
+}
+
+.info-footer {
+    font-size: 9px;
+    opacity: 0.7;
 }
 
 /*  -------------------

@@ -10,6 +10,14 @@ with open('assets/information.txt', 'r') as file:
     information_text = file.read()
 
 
+# GitHub logo
+def github_logo():
+    return html.Img(src="assets/Images/github-mark.png",
+                    className='info-image',
+                    style={'width': '30px'}
+                    )
+
+
 def get_navbar():
     return html.Div(
         className="navbar",
@@ -260,19 +268,18 @@ def get_main_content_section():
 
 def get_footer_section():
     return html.Div(
+        className='footer-bar',
         children=[
-            html.Img(src="assets/Images/github-mark.png", className='info-image', style={'width': '30px'}),
+            github_logo(),
             html.Div(
                 children=[
-                    html.Span("The Double Pendulum application was built from this ", className='info-text'),
+                    html.Span("The Double Pendulum application was built from this", className='info-text'),
                     dcc.Link("GitHub Repository", href="https://github.com/pineapple-bois/Double_Pendulum_App", target="_blank", className='info-link'),
                     html.Div("© pineapple-bois 2024", className='info-footer')
                 ],
                 style={'flexDirection': 'column'}
             )
         ],
-        className='info-container',
-        style={'display': 'flex', 'alignItems': 'center', 'justifyContent': 'flex-start', 'padding': '1rem', 'background': '#f8f9fa'}
     )
 
 
