@@ -358,33 +358,46 @@ body {
     background-color: #7BA0F0;
 }
 
-/*  -------------------
-    Graphs */
-
 .main-content {
     flex: 3;
     display: flex;
-    flex-direction: column;
+    /*flex-direction: column;*/
     background-color: white; /* White background for visibility */
     gap: 10px; /* Space between sections */
     max-width: 75%;
 }
 
-/* Spinner Styles */
-#loading-1 {
-    width: 200px; /* Set desired width */
-    height: 200px; /* Set desired height */
+/*  -------------------
+    Loading */
+
+/* Define animation keyframes for delaying the spinner visibility */
+@keyframes delayedVisibility {
+  0% {
+    visibility: hidden;
+  }
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+/* Apply the delayed visibility to the spinner */
+.delayed-spinner {
+    animation: delayedVisibility 0.25s forwards; /* Change delay duration (waits a 1/4 second) */
 }
 
 /* Ensure the spinner is centered within its container */
 .loading-container {
     display: flex;
     justify-content: center; /* Centers horizontally */
+    flex-direction: column;
     align-items: center; /* Centers vertically */
     height: 100%; /* Full height of the parent container */
     width: 100%; /* Full width of the parent container */
     position: relative; /* Ensure it stays within the container bounds */
-    overflow-x: auto;
+    /*overflow-x: auto;*/
     background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
 }
 
