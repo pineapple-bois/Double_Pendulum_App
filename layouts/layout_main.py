@@ -231,14 +231,14 @@ def get_main_content_section():
                 ]
             ),
             html.Div(
-                className="main-content",  # TODO: Investigate whether the styles of "loading-container" are overwriting this
+                className="main-content",
                 children=[
                     html.Div(
                         className="loading-container",
                         children=[
                             dcc.Loading(
                                 id="loading-1",
-                                type="default",  # or "circle", "dot", or "cube" for different spinner types
+                                type="cube",  # "default", "circle", "dot", or "cube" for different spinner types
                                 children=[
                                     html.Div(id='animation-phase-container', className='above-graph-container',
                                              style={'display': 'none'},
@@ -255,7 +255,8 @@ def get_main_content_section():
                                                            responsive=True)
                                              ]),
                                     html.Div(id='error-message', className='error-message')
-                                ]
+                                ],
+                                className="delayed-spinner"
                             )
                         ],
                         style={'height': '100%', 'position': 'relative'}
