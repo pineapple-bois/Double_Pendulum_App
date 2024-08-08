@@ -10,6 +10,34 @@ with open('assets/mathematics_lagrangian.txt', 'r') as file:
 with open('assets/mathematics_hamiltonian.txt', 'r') as file:
     hamiltonian_section = file.read()
 
+# References
+lagrangian_references = [
+    {'text': 'Massachusetts Institute of Technology: myPhysicsLab Double Pendulum',
+     'href': 'https://web.mit.edu/jorloff/www/chaosTalk/double-pendulum/double-pendulum-en.html'},
+    {'text': 'Double pendulum: Lagrangian formulation - Diego Assencio', 'href': 'https://dassencio.org/33'},
+    {'text': 'Lagrangian Mechanics - Wikipedia', 'href': 'https://en.wikipedia.org/wiki/Lagrangian_mechanics'}
+]
+
+hamiltonian_references = [
+    {'text': 'Massachusetts Institute of Technology: myPhysicsLab Double Pendulum',
+     'href': 'https://web.mit.edu/jorloff/www/chaosTalk/double-pendulum/double-pendulum-en.html'},
+    {'text': 'Double pendulum: Hamiltonian formulation - Diego Assencio', 'href': 'https://dassencio.org/46'},
+    {'text': 'Prof. D. Garanin, City University of New York Graduate Centre: Exercises in Classical Mechanics 1, Hamiltonian formalism',
+     'href': 'https://www.lehman.edu/faculty/dgaranin/Mechanics/ProblemSet-Fall-2006-4-Solution.pdf'},
+    {'text': 'Hamiltonian Mechanics - Wikipedia', 'href': 'https://en.wikipedia.org/wiki/Hamiltonian_mechanics'}
+]
+
+
+def get_references_section(references):
+    reference_links = [html.A(href=ref['href'], children=ref['text'], target='_blank') for ref in references]
+    return html.Div(
+        className='references-section',
+        children=[
+            html.H2('References'),
+            html.Ul([html.Li(link) for link in reference_links])
+        ]
+    )
+
 
 def get_lagrangian_layout():
     return html.Div(
@@ -30,6 +58,7 @@ def get_lagrangian_layout():
                             dcc.Markdown(children=lagrangian_section, mathjax=True)
                         ]
                     ),
+                    get_references_section(lagrangian_references)
                 ]
             ),
             html.Div(
@@ -61,6 +90,7 @@ def get_hamiltonian_layout():
                             dcc.Markdown(children=hamiltonian_section, mathjax=True)
                         ]
                     ),
+                    get_references_section(hamiltonian_references)
                 ]
             ),
             html.Div(

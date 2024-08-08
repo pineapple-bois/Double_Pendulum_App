@@ -475,6 +475,39 @@ body {
   padding: 8px 16px;
 }
 
+/* References Section */
+.references-section {
+    background: #f8f9fa;
+    text-align: left; /* Ensure text alignment to the left */
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    margin-top: 10px;
+}
+
+.references-section h2 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    color: black;
+}
+
+.references-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.references-section li {
+    margin-bottom: 10px;
+}
+
+.references-section a {
+    color: #1a73e8; /* Link color */
+    text-decoration: none;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.references-section a:hover {
+    text-decoration: underline;
+}
+
 /*  -------------------
   Chaos Page */
 
