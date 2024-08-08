@@ -6,6 +6,9 @@ from dash import dcc
 # 'displayModeBar': False - removes everything
 config = {'displaylogo': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d']}
 
+with open('assets/information.txt', 'r') as file:
+    information_text = file.read()
+
 
 def get_navbar():
     return html.Div(
@@ -72,7 +75,7 @@ def get_description_images_section():
                         ],
                         className="description-text"
                     ),
-                    html.P("Select the type of pendulum system to model and derivation formalism below.", className="description-instruction")
+                    html.P("Select the type of pendulum system to model and derivation formalism below.", className="description-instruction"),
                 ]
             ),
             html.Div(
@@ -123,7 +126,19 @@ def get_main_content_section():
             html.Div(
                 className="inputs",
                 children=[
+                    html.Div(
+                        id="info-popup",
+                        children=[
+                            html.Button("Close Information", id="close-info-button", n_clicks=0,
+                                        className="button close-info-button"),
+                            dcc.Markdown(information_text, mathjax=True, className="information-content"),
+                        ],
+                        className="information-container",
+                        style={'display': 'none'}
+                    ),
                     html.Div(className='input-group model-system-group', children=[
+                        html.Label("Additional Information:", className='label model-type-label'),
+                        html.Button("What do I even choose?", id="info-button", n_clicks=0, className="button get-info-button"),
                         html.Label('Model Type:', className='label model-type-label'),
                         dcc.Dropdown(
                             id='model-type',
@@ -208,27 +223,35 @@ def get_main_content_section():
                 ]
             ),
             html.Div(
-                className="main-content",
+                className="main-content",  # TODO: Investigate whether the styles of "loading-container" are overwriting this
                 children=[
-                    dcc.Loading(
-                        id="loading-1",
-                        type="default",  # or "circle", "dot", or "cube" for different spinner types
+                    html.Div(
+                        className="loading-container",
                         children=[
-                            html.Div(id='animation-phase-container', className='above-graph-container',
-                                     style={'display': 'none'},
-                                     children=[
-                                         dcc.Graph(id='pendulum-animation', config=config,
-                                                   className='responsive-graph'),
-                                         dcc.Graph(id='phase-graph', config=config, className='responsive-graph')
-                                     ]),
-                            html.Div(id='time-graph-container', className='graph-container', style={'display': 'none'},
-                                     children=[
-                                         dcc.Graph(id='time-graph', className='responsive-graph', responsive=True)
-                                     ])
+                            dcc.Loading(
+                                id="loading-1",
+                                type="default",  # or "circle", "dot", or "cube" for different spinner types
+                                children=[
+                                    html.Div(id='animation-phase-container', className='above-graph-container',
+                                             style={'display': 'none'},
+                                             children=[
+                                                 dcc.Graph(id='pendulum-animation', config=config,
+                                                           className='responsive-graph'),
+                                                 dcc.Graph(id='phase-graph', config=config,
+                                                           className='responsive-graph')
+                                             ]),
+                                    html.Div(id='time-graph-container', className='graph-container',
+                                             style={'display': 'none'},
+                                             children=[
+                                                 dcc.Graph(id='time-graph', className='responsive-graph',
+                                                           responsive=True)
+                                             ]),
+                                    html.Div(id='error-message', className='error-message')
+                                ]
+                            )
                         ],
                         style={'height': '100%', 'position': 'relative'}
                     ),
-                    html.Div(id='error-message', className='error-message')
                 ]
             )
         ]
@@ -257,10 +280,25 @@ def get_main_layout():
     return html.Div(
         className='main-layout',
         children=[
-            get_navbar(),
-            get_title_section(),
-            get_description_images_section(),
-            get_main_content_section(),
-            get_footer_section()
+            html.Div(
+                className='header',
+                children=[
+                    get_navbar(),
+                ]
+            ),
+            html.Div(
+                className='body',
+                children=[
+                    get_title_section(),
+                    get_description_images_section(),
+                    get_main_content_section(),
+                ]
+            ),
+            html.Div(
+                className='footer',
+                children=[
+                    get_footer_section()
+                ]
+            ),
         ]
     )
