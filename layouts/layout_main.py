@@ -39,17 +39,11 @@ def get_navbar():
     )
 
 
-def get_title_section():
+def get_title_section(text):
     return html.Div(
         className="title-section",
         children=[
-            html.H1("Double Pendulum Simulation", className="title-text"),
-            html.P([
-                dcc.Markdown('''
-                    Both pendulums move in the $(x,y)$-plane. The system has two degrees of freedom, 
-                    uniquely determined by the values of $\\theta_1$ & $\\theta_2$
-                    ''', mathjax=True, className="subtitle-text"),
-            ], className="title-description")
+            html.H1(text, className="title-text"),
         ]
     )
 
@@ -62,28 +56,47 @@ def get_description_images_section():
                 className="description",
                 children=[
                     html.H3("Description", className="description-title"),
-                    html.P("The double pendulum is an archetypal non-linear system in classical mechanics that has been studied since the 18th century.", className="description-text"),
-                    html.P(
-                        [
-                            "We model two types of double pendulum; simple and compound. Coupled, ordinary differential equations of motion are derived in accordance with both ",
-                            html.A("Lagrangian", href="/lagrangian", className="description-link", target="_blank"),
-                            " and ",
-                            html.A("Hamiltonian", href="/hamiltonian", className="description-link", target="_blank"),
-                            " formalism."
-                        ],
-                        className="description-text"
-                    ),
-                    html.P("Motion of a double pendulum system is characterised by extreme sensitivity to initial conditions, exhibiting both periodic and chaotic behaviour. This simulation provides a rich context for exploring these non-linear dynamics.", className="description-text"),
-                    html.P("We generate a time graph, phase portrait, and animation based on the selected model parameters including release angle and angular velocity. Interesting dynamics can be discovered by simply releasing the pendulums from rest.", className="description-text"),
-                    html.P(
-                        [
-                            "The acceleration due to gravity is the restoring force that influences the oscillation period and stability of the motion. This model allows simulation of the pendulum's behaviour on different ",
-                            html.A("celestial bodies in our Solar System", href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html", className="description-link", target="_blank"),
-                            "."
-                        ],
-                        className="description-text"
-                    ),
-                    html.P("Select the type of pendulum and the system to model below.", className="description-instruction"),
+                    html.P([
+                               "The double pendulum is an archetypal non-linear system in classical mechanics that has "
+                               "been studied since the 18th century. ",
+                               "In this simulation, we model two types of double pendulum; simple and compound. ",
+                               dcc.Markdown('''
+                                Both pendulums move in the $(x,y)$-plane. The system has two degrees of freedom, 
+                                uniquely determined by the values of $\\theta_1$ & $\\theta_2$.
+                                ''', mathjax=True, style={'display': 'inline'}),
+                               ],
+                           className="description-text"),
+                    html.P([
+                               "Motion of a double pendulum system is characterised by extreme sensitivity to initial "
+                               "conditions, resulting in both periodic and chaotic behaviour. ",
+                               dcc.Markdown('''
+                               No closed-form solutions for $\\theta_1$ and $\\theta_2$ as 
+                               functions of time are known. Therefore, the system must be solved numerically. 
+                               ''', mathjax=True, style={'display': 'inline'}),
+                               "The system's equations of motion are derived using both ",
+                               html.A("Lagrangian", href="/lagrangian", className="description-link",
+                                      target="_blank"),
+                               " and ",
+                               html.A("Hamiltonian", href="/hamiltonian", className="description-link",
+                                      target="_blank"),
+                               " formalisms."
+                               ],
+                           className="description-text"),
+                    html.P([
+                               "This simulation provides a rich context for exploring non-linear dynamics. "
+                               "We generate a time graph, phase portrait, and animation based on the selected model "
+                               "parameters including; mass, length, release angle, and angular velocity. "
+                               "Fascinating dynamics can be discovered by simply releasing the pendulums from rest. "
+                               "The acceleration due to gravity acts as the restoring force, influencing the oscillation "
+                               "period and stability of the motion. This model allows for the simulation of pendulum "
+                               "behaviour on different ",
+                               html.A("celestial bodies in our Solar System",
+                                      href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+                                      className="description-link", target="_blank"),
+                               "."
+                               ],
+                           className="description-text"
+                           )
                 ]
             ),
             html.Div(
@@ -119,7 +132,8 @@ def get_description_images_section():
                     ),
                     html.Div(
                         className="image-container",
-                        children=[html.Img(src='/assets/Images/Model_Compound_Transparent_NoText.png', className="model-image")]
+                        children=[html.Img(src='/assets/Images/Model_Compound_Transparent_NoText.png',
+                                           className="model-image")]
                     ),
                 ]
             )
@@ -129,6 +143,7 @@ def get_description_images_section():
 
 def get_main_content_section():
     return html.Div(
+        id="scroll-target",
         className="main-content-section",
         children=[
             html.Div(
@@ -145,8 +160,9 @@ def get_main_content_section():
                         style={'display': 'none'}
                     ),
                     html.Div(className='input-group model-system-group', children=[
-                        html.Label("Additional Information:", className='label model-type-label'),
-                        html.Button("What do I even choose?", id="info-button", n_clicks=0, className="button get-info-button"),
+                        html.H4("Model and System Selection", className='inputs-title'),
+                        html.Button("What do I even choose?", id="info-button", n_clicks=0,
+                                    className="button get-info-button"),
                         html.Label('Model Type:', className='label model-type-label'),
                         dcc.Dropdown(
                             id='model-type',
@@ -171,18 +187,26 @@ def get_main_content_section():
                         ),
                     ]),
                     html.Div(className='input-group parameters-group', children=[
+                        html.H4("Parameter Selection", className='inputs-title'),
                         dcc.Markdown(
                             '''Unity Parameters sets masses to $1 \ \\text{kg}$ and lengths to $1 \ \\text{m}$:''',
                             mathjax=True, className="parameter-text"),
                         html.Button('Set Unity Parameters', id='unity-parameters', n_clicks=0,
                                     className='button unity-parameters-button'),
-                        html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)', id='parameters-label', className='label parameters-label'),
-                        dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)', className='input parameters-input'),
-                        dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)', className='input parameters-input'),
-                        dcc.Input(id='param_m1', type='number', placeholder='m1 (mass of bob 1)', className='input parameters-input'),
-                        dcc.Input(id='param_m2', type='number', placeholder='m2 (mass of bob 2)', className='input parameters-input'),
-                        dcc.Input(id='param_M1', type='number', placeholder='M1 (mass of rod 1)', className='input parameters-input', style={'display': 'none'}),
-                        dcc.Input(id='param_M2', type='number', placeholder='M2 (mass of rod 2)', className='input parameters-input', style={'display': 'none'}),
+                        html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)', id='parameters-label',
+                                   className='label parameters-label'),
+                        dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)',
+                                  className='input parameters-input'),
+                        dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)',
+                                  className='input parameters-input'),
+                        dcc.Input(id='param_m1', type='number', placeholder='m1 (mass of bob 1)',
+                                  className='input parameters-input'),
+                        dcc.Input(id='param_m2', type='number', placeholder='m2 (mass of bob 2)',
+                                  className='input parameters-input'),
+                        dcc.Input(id='param_M1', type='number', placeholder='M1 (mass of rod 1)',
+                                  className='input parameters-input', style={'display': 'none'}),
+                        dcc.Input(id='param_M2', type='number', placeholder='M2 (mass of rod 2)',
+                                  className='input parameters-input', style={'display': 'none'}),
                         dcc.Dropdown(
                             id='param_g',
                             options=[
@@ -205,22 +229,31 @@ def get_main_content_section():
                         ),
                     ]),
                     html.Div(className='input-group initial-conditions-group', children=[
+                        html.H4("Initial Conditions", className='inputs-title'),
                         dcc.Markdown(
                             '''The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. A negative angle gives clockwise rotation.''',
                             mathjax=True, className="init-condition-text"),
-                        html.Label('Initial Conditions (θ1, θ2, ω1, ω2): degrees', className='label initial-conditions-label'),
-                        dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)', className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_theta2', type='number', placeholder='θ2 (Angle 2)', className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_omega1', type='number', placeholder='ω1 (Angular velocity 1)', className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_omega2', type='number', placeholder='ω2 (Angular velocity 2)', className='input initial-conditions-input'),
+                        html.Label('Initial Conditions (θ1, θ2, ω1, ω2): degrees',
+                                   className='label initial-conditions-label'),
+                        dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)',
+                                  className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_theta2', type='number', placeholder='θ2 (Angle 2)',
+                                  className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_omega1', type='number', placeholder='ω1 (Angular velocity 1)',
+                                  className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_omega2', type='number', placeholder='ω2 (Angular velocity 2)',
+                                  className='input initial-conditions-input'),
                     ]),
                     html.Div(className='input-group time-vector-group', children=[
+                        html.H4("Time Settings", className='inputs-title'),
                         dcc.Markdown(
                             '''The default time interval is $20$ seconds. The maximum is $120$ seconds.''',
                             mathjax=True, className="time-vector-text"),
                         html.Label('Time Vector (start, stop): seconds', className='label time-vector-label'),
-                        dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0, className='input time-vector-input'),
-                        dcc.Input(id='time_end', type='number', placeholder='End Time', value=20, className='input time-vector-input'),
+                        dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0,
+                                  className='input time-vector-input'),
+                        dcc.Input(id='time_end', type='number', placeholder='End Time', value=20,
+                                  className='input time-vector-input'),
                     ]),
                 ]
             ),
@@ -276,7 +309,7 @@ def get_common_footer(include_button=False, page_type="main"):
             )
         )
 
-    # Add the GitHub logo and text section
+    # Add the Repo section
     children.append(
         html.Div(
             className='footer-text-box',
@@ -324,7 +357,7 @@ def get_main_layout():
             html.Div(
                 className='body',
                 children=[
-                    get_title_section(),
+                    get_title_section("Double Pendulum Simulation"),
                     get_description_images_section(),
                     get_main_content_section(),
                 ]
