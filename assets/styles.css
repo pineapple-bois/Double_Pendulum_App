@@ -4,6 +4,7 @@
 body {
   font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
+  margin: 0;
 }
 
 .button, .Select-control, .input, .label, .button-show, .button-hide {
@@ -98,8 +99,7 @@ body {
 .title-section {
     background: #f8f9fa;
     text-align: left; /* Ensure text alignment to the left */
-    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
-    margin-top: 10px;
+    padding: 24px 16px; /* 24 pixels padding top/bottom, 16px left/right */
 }
 
 .title-text {
@@ -109,15 +109,6 @@ body {
     font-weight: bold; /* Customize font style */
     margin: 0; /* Ensure no bottom margin */
     text-align: left;
-}
-
-.subtitle-text {
-    color: black;
-    font-family: 'Courier New', Courier, monospace; /* Match font */
-    font-size: 20px;
-    text-align: left; /* Ensure subtext alignment to the left */
-    margin-top: 0; /* Use pixels for margin */
-    margin-bottom: 0; /* Ensure no bottom margin */
 }
 
 /*  -------------------
@@ -219,7 +210,6 @@ body {
     background-color: #f8f9fa; /* Same background color as other sections */
     padding: 16px;
     margin-top: 10px;
-    gap: 20px; /* Space between columns */
 }
 
 /* Reset default margins and paddings for elements inside main-content-section */
@@ -275,6 +265,13 @@ body {
 /*  -------------------
     Input Side Bar */
 
+.inputs-title {
+    font-size: 16px;  /* Set the font size for the title */
+    font-weight: bold;  /* Make the title bold */
+    margin-bottom: 10px !important;  /* Add some space below the title */
+    color: #333;  /* Set a color for the title text */
+}
+
 .inputs {
     flex: 1;
     background-color: white; /* White background for visibility */
@@ -310,6 +307,7 @@ body {
 
 .time-vector-group {
     background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
+    margin-bottom: 10px !important; /* Global margin-bottom for each input group */
 }
 
 .time-vector-text {
@@ -323,7 +321,6 @@ body {
 .input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px; /* Global margin-bottom for each input group */
 }
 
 .label {
@@ -346,7 +343,6 @@ body {
 .main-content {
     flex: 3;
     display: flex;
-    /*flex-direction: column;*/
     background-color: white; /* White background for visibility */
     gap: 10px; /* Space between sections */
     max-width: 75%;
@@ -408,6 +404,7 @@ body {
     padding: 5px;
 }
 
+/* Style for the error message */
 .error-message {
     color: red;
     text-align: center;
@@ -455,9 +452,9 @@ body {
     background-color: #6495ED;
     color: white;
     font-size: 22px;
-    border: none;
+    border: none !important;
     cursor: pointer;
-    border-radius: 0;
+    border-radius: 0 !important;
     transition: background-color 0.3s ease;
 }
 
