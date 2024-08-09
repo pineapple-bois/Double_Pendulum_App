@@ -1,19 +1,20 @@
 ## Information
 
+The default `Type` and `System` is "Simple", "Lagrangian" and is a good place to start.
 
-`Set Unity Parameters` for initial simulations to get a feel for it.
+`Set Unity Parameters` for initial simulations to get a feel for the simulator.
 
-
-Try setting `Initial conditions` to $\theta_1 = \omega_1 = \omega_2 = 0$ and then vary $\theta_2$.
-
-
-- Let $\theta_2$ take one of the "special" angles: $30^{\circ}, 60^{\circ}, 90^{\circ}, 120^{\circ}$ or $150^{\circ}$.
-
-The longer the simulations run, the more likely the motion will be chaotic.
+Try setting `Initial conditions` to $\theta_1 = 0$, $\omega_1 = 0$, $\omega_2 = 0$ and then vary $\theta_2 \in [-\pi, \pi]$.
 
 ***
 
-Do you notice discrepancies between the `Lagrangian` and `Hamiltonian` derivations?
+- Let $\theta_2$ take one of the [special angles](https://en.wikipedia.org/wiki/Special_right_triangle): $30^{\circ}$, $45^{\circ}$, $60^{\circ}$, $90^{\circ}$, $120^{\circ}$, $150^{\circ}$ etc...
+
+**The longer the simulations run, the more likely the motion will be chaotic.**
+
+***
+
+Do you notice any discrepancies between the `Lagrangian` and `Hamiltonian` derivations?
 - I found one at $(0, 60, 0, 0)$.
 
 ***
@@ -29,5 +30,11 @@ Try setting a `Simple`, `Lagrangian` model with:
 - `Initial conditions`: $(90, 0, 572.95, -458.37)$ (This is $\omega_1=10 \ \text{rad} \ \text{s}^{-1}$ and $\omega_2=-8 \ \text{rad} \ \text{s}^{-1}$)
 
 It forms a hypotrochoid! (think spirograph)
+
+***
+
+The animation has a `Play` function in the top left hand corner and shows how the pendulum moves in the $(x,y)$-plane.
+
+All rendered figures have a `download as png` function in the top right-hand corner which does exactly what it says on the tin.
 
 ***
