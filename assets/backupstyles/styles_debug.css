@@ -1,0 +1,666 @@
+/* Layout refactor */
+
+/* Base styles */
+body {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+.button, .Select-control, .input, .label, .button-show, .button-hide {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Math Layout */
+.math-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.header {
+    flex: none;
+}
+
+/* Body */
+.body {
+    flex: auto;
+    overflow-y: auto;
+}
+
+/* Footer */
+.footer {
+    flex: none;
+}
+
+/*  -------------------
+    Navigation bar */
+
+.navbar {
+    background-color: #333;
+    padding: 8px 0; /* Reduce vertical height */
+    display: flex;
+    justify-content: center; /* Center the links */
+    align-items: center;
+    position: relative; /* To position the button correctly */
+    margin: 0; /* Ensure no margins around navbar */
+}
+
+.nav-button-container {
+    position: absolute;
+    left: 16px; /* Use pixels for consistent margin */
+}
+
+.nav-links-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    font-size: 18px; /* Increase font size */
+}
+
+.nav-link:hover {
+    background-color: #555;
+    color: white;
+    text-decoration: none;
+}
+
+.nav-button {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    font-size: 18px; /* Match font size */
+    font-family: 'Courier New', Courier, monospace; /* Match font */
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color: #777;
+}
+
+/*  -------------------
+    Title Section */
+
+.title-section {
+    background: #f8f9fa;
+    text-align: left; /* Ensure text alignment to the left */
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    margin-top: 10px;
+}
+
+.title-text {
+    color: black;
+    font-family: 'Courier New', Courier, monospace; /* Customize font */
+    font-size: 36px; /* Customize font size */
+    font-weight: bold; /* Customize font style */
+    margin: 0; /* Ensure no bottom margin */
+    text-align: left;
+}
+
+.subtitle-text {
+    color: black;
+    font-family: 'Courier New', Courier, monospace; /* Match font */
+    font-size: 20px;
+    text-align: left; /* Ensure subtext alignment to the left */
+    margin-top: 0; /* Use pixels for margin */
+    margin-bottom: 0; /* Ensure no bottom margin */
+}
+
+/*  -------------------
+    Instructions and Images Section */
+
+.description-images-section {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8f9fa; /* Same background color as other sections */
+    padding: 16px;
+    margin-top: 10px;
+    gap: 20px; /* Space between columns */
+}
+
+.description, .simple-model, .compound-model {
+    background-color: white;/* White background for visibility */
+}
+
+/* Reset default margins and paddings for elements inside instructions, simple-model, and compound-model */
+.description * , .simple-model * , .compound-model * {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.description {
+    flex: 1;
+    max-width: 500px;
+}
+
+.description-text {
+    font-size: 16px;
+    margin-bottom: 30px; /* Space below the text */
+    line-height: 1.2;
+    text-align: left;
+}
+
+.description-instruction {
+    font-size: 16px;
+    margin-bottom: 30px; /* Space below the text */
+    line-height: 1.2;
+    text-align: left;
+}
+
+.description-link, .model-link {
+    color: #007bff; /* Link color */
+    text-decoration: none; /* Remove underline */
+}
+
+.description-link:hover, .model-link:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+.simple-model, .compound-model {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* Center-align the text */
+}
+
+.image-description {
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    max-width: 90%;
+}
+
+.model-title, .description-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px; /* Space below the title */
+}
+
+.model-description {
+    font-size: 16px;
+    margin-bottom: 30px; /* Space below the description */
+}
+
+.image-container {
+    max-width: 60%; /* Maximum width of the container */
+    max-height: 80vh; /* Maximum height of the container */
+    overflow: hidden; /* Prevent overflow */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    margin-bottom: 10px;
+}
+
+.model-image {
+    width: 100%; /* Ensure the image takes up the full width of the container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/*  -------------------
+    Main Content Section */
+
+.main-content-section {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f8f9fa; /* Same background color as other sections */
+    padding: 16px;
+    margin-top: 10px;
+    gap: 20px; /* Space between columns */
+}
+
+/* Reset default margins and paddings for elements inside main-content-section */
+.main-content-section * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*  -------------------
+    Information Pop-Up */
+
+.get-info-button {
+    margin-bottom: 10px;
+}
+
+.information-content h2, .information-content p, .information-content ul, .information-content li, .information-content hr {
+    margin-bottom: 16px; /* Adjust the value as needed */
+}
+
+/* Info Popup Style */
+.information-content {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 0 0 5px 5px;
+    z-index: 10; /* Ensure it floats on top */
+}
+
+/* Container for Info Popup */
+.information-container {
+    position: absolute; /* Position it on top of other content */
+    top: 60px; /* Adjust as needed */
+    left: 25%; /* Adjust as needed */
+    width: 400px; /* Adjust as needed */
+    margin-left: 10px;
+    z-index: 10; /* Ensure it floats on top */
+}
+
+/* Close Button Specific Style */
+.close-info-button {
+    background-color: #ff4d4d; /* Custom background color */
+    color: white; /* Custom text color */
+    border: none;
+    margin-bottom: 0;
+    border-radius: 5px 5px 0 0;
+}
+
+.close-info-button:hover {
+    background-color: #ff3333; /* Darker shade on hover */
+}
+
+/*  -------------------
+    Input Side Bar */
+
+.inputs {
+    flex: 1;
+    background-color: white; /* White background for visibility */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Global gap between input groups */
+    max-width: 25%; /* Take 25% of the space */
+}
+
+.model-system-group {
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+}
+
+.parameters-group {
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+}
+
+.unity-parameters-button {
+    margin-bottom: 20px;
+}
+
+.parameter-text {
+    margin-bottom: 10px;
+}
+
+.initial-conditions-group {
+    background-color: rgba(0, 0, 255, 0.1); /* Light blue background for debugging */
+}
+
+.init-condition-text {
+    margin-bottom: 20px;
+}
+
+.time-vector-group {
+    background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
+}
+
+.time-vector-text {
+    margin-bottom: 20px;
+}
+
+.model-system-dropdown {
+    margin-bottom: 10px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px; /* Global margin-bottom for each input group */
+}
+
+.label {
+  margin-bottom: 10px;
+  /*padding-left: 10px; !* Add left padding for input label *!*/
+}
+
+.input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding-left: 10px; /* Add left padding for input text */
+}
+
+.button, .button-show {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#submit-val  {
+  padding: 20px 10px;
+  background-color: #6495ED;
+  color: white;
+  font-size: 24px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 10px; /* Add rounded edges to the button */
+}
+
+#submit-val:hover {
+    background-color: #7BA0F0;
+}
+
+.main-content {
+    flex: 3;
+    display: flex;
+    /*flex-direction: column;*/
+    background-color: white; /* White background for visibility */
+    gap: 10px; /* Space between sections */
+    max-width: 75%;
+}
+
+/*  -------------------
+    Loading */
+
+/* Define animation keyframes for delaying the spinner visibility */
+@keyframes delayedVisibility {
+  0% {
+    visibility: hidden;
+  }
+  99% {
+    visibility: hidden;
+  }
+  100% {
+    visibility: visible;
+  }
+}
+
+/* Apply the delayed visibility to the spinner */
+.delayed-spinner {
+    animation: delayedVisibility 0.25s forwards; /* Change delay duration (waits a 1/4 second) */
+}
+
+/* Ensure the spinner is centered within its container */
+.loading-container {
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    flex-direction: column;
+    align-items: center; /* Centers vertically */
+    height: 100%; /* Full height of the parent container */
+    width: 100%; /* Full width of the parent container */
+    position: relative; /* Ensure it stays within the container bounds */
+    /*overflow-x: auto;*/
+    background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
+}
+
+.above-graph-container {
+    display: flex;
+    flex-direction: row; /* Arrange children side by side */
+    margin-bottom: 20px;
+    gap: 20px;
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    padding: 5px;
+}
+
+.graph-container {
+    display: block;
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    padding: 5px;
+}
+
+.responsive-graph {
+    width: 100%;
+    height: auto;
+    background-color: rgba(0, 0, 255, 0.1); /* Light blue background for debugging */
+    padding: 5px;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    font-size: 20px;
+}
+
+/*  -------------------
+    Footer Section */
+
+.footer-bar {
+    background: #333; !important
+    text-align: left;
+    padding: 1rem;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+
+.info-image {
+    margin-right: 8px;
+    width: 30px;
+    filter: brightness(0) invert(1);
+}
+
+.info-text, .info-link, .info-footer {
+    color: white; /* Match text color with navbar */
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.info-text {
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+.info-link {
+    text-decoration: none;
+    color: #AFEEEE;
+    font-size: 12px;
+}
+
+.info-link:hover {
+    text-decoration: underline;
+}
+
+.info-footer {
+    font-size: 9px;
+    opacity: 0.7;
+}
+
+/*  -------------------
+   Math Page */
+
+.markdown-latex-container {
+  background-color: #f8f8f8; /* Light grey background */
+  border: 1px solid #ddd; /* Light grey border */
+  overflow-x: auto; /* Allows scrolling if content is too wide */
+  overflow-y: hidden; /* Hides vertical scrollbar */
+  width: 90%; /* Takes up 90% of the width */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 16px;
+}
+
+/* References Section */
+.references-section {
+    background: #f8f9fa;
+    text-align: left; /* Ensure text alignment to the left */
+    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
+    margin-top: 10px;
+}
+
+.references-section h2 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    color: black;
+}
+
+.references-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.references-section li {
+    margin-bottom: 10px;
+}
+
+.references-section a {
+    color: #1a73e8; /* Link color */
+    text-decoration: none;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.references-section a:hover {
+    text-decoration: underline;
+}
+
+/*  -------------------
+  Chaos Page */
+
+.chaos-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #f8f9fa; /* Consistent background color */
+}
+
+.navbar, .footer-section {
+  flex-shrink: 0; /* Do not allow these elements to shrink */
+}
+
+.chaos-content-container {
+  flex-grow: 1; /* Take up remaining space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px; /* Ensure padding is consistent */
+  background-color: #f8f9fa;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-text {
+  color: #2c3e50; /* Custom text color */
+  font-family: 'Courier New', Courier, monospace; /* Custom font */
+}
+
+/*  -------------------
+  404 Page */
+
+.not-found-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #f8f9fa; /* Consistent background color */
+}
+
+.navbar, .footer-section {
+  flex-shrink: 0; /* Do not allow these elements to shrink */
+  margin-bottom: 10px; /* Add margin below each section */
+}
+
+.not-found-content-container {
+  flex-grow: 1; /* Take up remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px; /* Ensure padding is consistent */
+  background-color: #f8f8f8; /* Light grey background */
+  margin: 10px 0; /* Add top and bottom margin */
+}
+
+.custom-text {
+  color: #2c3e50; /* Custom text color */
+  font-family: 'Courier New', Courier, monospace; /* Custom font */
+}
+
+/*  -------------------
+   NEW Media Queries */
+
+/* Responsive spacing of description and image section */
+
+@media (max-width: 1800px) {
+  .image-container {
+    max-width: 80%; /* Adjust max-width for medium viewports */
+  }
+}
+
+@media (max-width: 1400px) {
+  .image-container {
+    max-width: 100%; /* Adjust max-width for smaller viewports */
+  }
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .description-images-section {
+        flex-direction: column; /* Stack columns vertically on smaller screens */
+        padding: 10px;
+    }
+
+    .description, .simple-model, .compound-model .image-container {
+        max-width: 100%; /* Remove fixed width on smaller screens */
+    }
+
+    .description-text, .description-instruction {
+        font-size: 14px; /* Smaller font size on smaller screens */
+        margin-bottom: 15px; /* Adjust spacing */
+    }
+}
+
+/* OLD Media Queries */
+/* TODO: Fix multi-graph-container @media */
+
+
+/* Medium screens - Two columns layout */
+@media (max-width: 1100px) {
+  .multi-graph-container {
+    grid-template-columns: repeat(2, minmax(500px, 1fr));
+  }
+  .graph-container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Small screens - Single column layout */
+@media (max-width: 768px) {
+  .multi-graph-container, .above-graph-container {
+    grid-template-columns: 1fr;
+  }
+  .graph-container {
+    flex-direction: column-reverse;
+  }
+  .title-link {
+    font-size: 16px;
+    padding: 5px;
+  }
+  .instructions-image-container {
+    flex-direction: column;
+  }
+  .instructions-column, .image-column {
+    flex: none;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .title-link {
+    font-size: 14px;
+    padding: 2px;
+  }
+}
