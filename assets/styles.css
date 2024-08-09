@@ -237,6 +237,7 @@ body {
     padding: 15px;
     border-radius: 0 0 5px 5px;
     z-index: 10; /* Ensure it floats on top */
+    max-height: 100%; /* Set a max-height based on viewport height */
 }
 
 /* Container for Info Popup */
@@ -244,9 +245,11 @@ body {
     position: absolute; /* Position it on top of other content */
     top: 60px; /* Adjust as needed */
     left: 25%; /* Adjust as needed */
-    width: 400px; /* Adjust as needed */
+    width: 25% !important; /* Adjust as needed (matches input fields) */
     margin-left: 10px;
     z-index: 10; /* Ensure it floats on top */
+    max-height: calc(100vh - 122px); /* Set a max-height based on viewport height (This was trial and error)*/
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 /* Close Button Specific Style */
