@@ -1,6 +1,4 @@
-# Hamiltonian Derivation
-
-### The Mathematics
+## The Mathematics
 
 The double pendulum is an example of a complex dynamical system with two degrees of freedom. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in deriving the Lagrangian.
 
