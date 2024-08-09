@@ -1,7 +1,7 @@
 # Math page layout
 from dash import html
 from dash import dcc
-from layouts.layout_main import get_navbar, get_footer_section
+from layouts.layout_main import get_navbar, get_title_section, get_footer_section
 
 # Math derivations
 with open('assets/mathematics_lagrangian.txt', 'r') as file:
@@ -50,8 +50,10 @@ def get_lagrangian_layout():
                 ]
             ),
             html.Div(
+
                 className='body',
                 children=[
+                    get_title_section("Lagrangian Derivation"),
                     html.Div(
                         className='markdown-latex-container',
                         children=[
@@ -84,6 +86,7 @@ def get_hamiltonian_layout():
             html.Div(
                 className='body',
                 children=[
+                    get_title_section("Hamiltonian Derivation"),
                     html.Div(
                         className='markdown-latex-container',
                         children=[
@@ -92,6 +95,7 @@ def get_hamiltonian_layout():
                     ),
                     get_references_section(hamiltonian_references)
                 ]
+
             ),
             html.Div(
                 className='footer',
