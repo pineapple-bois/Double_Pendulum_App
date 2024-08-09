@@ -195,7 +195,7 @@ def get_main_content_section():
                         html.H4("Parameter Selection", className='inputs-title'),
                         dcc.Markdown(
                             '''Unity Parameters sets masses to $1 \ \\text{kg}$ and lengths to $1 \ \\text{m}$:''',
-                            mathjax=True, className="parameter-text"),
+                            mathjax=True, className="input-subtext parameter-text"),
                         html.Button('Set Unity Parameters', id='unity-parameters', n_clicks=0,
                                     className='button unity-parameters-button'),
                         html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)', id='parameters-label',
@@ -237,7 +237,7 @@ def get_main_content_section():
                         html.H4("Initial Conditions", className='inputs-title'),
                         dcc.Markdown(
                             '''The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. A negative angle gives clockwise rotation.''',
-                            mathjax=True, className="init-condition-text"),
+                            mathjax=True, className="input-subtext init-condition-text"),
                         html.Label('Initial Conditions (θ1, θ2, ω1, ω2): degrees',
                                    className='label initial-conditions-label'),
                         dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)',
@@ -253,7 +253,7 @@ def get_main_content_section():
                         html.H4("Time Settings", className='inputs-title'),
                         dcc.Markdown(
                             '''The default time interval is $20$ seconds. The maximum is $120$ seconds.''',
-                            mathjax=True, className="time-vector-text"),
+                            mathjax=True, className="input-subtext time-vector-text"),
                         html.Label('Time Vector (start, stop): seconds', className='label time-vector-label'),
                         dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0,
                                   className='input time-vector-input'),
