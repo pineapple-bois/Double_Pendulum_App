@@ -83,7 +83,7 @@ def get_description_images_section():
                         ],
                         className="description-text"
                     ),
-                    html.P("Select the type of pendulum system to model and derivation formalism below.", className="description-instruction"),
+                    html.P("Select the type of pendulum and the system to model below.", className="description-instruction"),
                 ]
             ),
             html.Div(
@@ -209,10 +209,10 @@ def get_main_content_section():
                             '''The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. A negative angle gives clockwise rotation.''',
                             mathjax=True, className="init-condition-text"),
                         html.Label('Initial Conditions (θ1, θ2, ω1, ω2): degrees', className='label initial-conditions-label'),
-                        dcc.Input(id='init_cond_theta1', type='number', placeholder='Angle 1', className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_theta2', type='number', placeholder='Angle 2', className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_omega1', type='number', placeholder='Angular velocity 1', className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_omega2', type='number', placeholder='Angular velocity 2', className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)', className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_theta2', type='number', placeholder='θ2 (Angle 2)', className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_omega1', type='number', placeholder='ω1 (Angular velocity 1)', className='input initial-conditions-input'),
+                        dcc.Input(id='init_cond_omega2', type='number', placeholder='ω2 (Angular velocity 2)', className='input initial-conditions-input'),
                     ]),
                     html.Div(className='input-group time-vector-group', children=[
                         dcc.Markdown(
@@ -221,12 +221,6 @@ def get_main_content_section():
                         html.Label('Time Vector (start, stop): seconds', className='label time-vector-label'),
                         dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0, className='input time-vector-input'),
                         dcc.Input(id='time_end', type='number', placeholder='End Time', value=20, className='input time-vector-input'),
-                    ]),
-                    html.Div(
-                        className='container-buttons run-simulation-group',
-                        # style={'marginTop': 'auto'},  # This pushes the button to the bottom
-                        children=[
-                            html.Button('Run Simulation', id='submit-val', n_clicks=0, className='button run-simulation-button'),
                     ]),
                 ]
             ),
@@ -267,21 +261,54 @@ def get_main_content_section():
     )
 
 
-def get_footer_section():
-    return html.Div(
-        className='footer-bar',
-        children=[
-            github_logo(),
+def get_common_footer(include_button=False, page_type="main"):
+    children = []
+
+    # Optionally add the Run Simulation button
+    if include_button:
+        children.append(
             html.Div(
+                className='container-buttons run-simulation-group',
                 children=[
-                    html.Span("The Double Pendulum application was built from this", className='info-text'),
-                    dcc.Link("GitHub Repository", href="https://github.com/pineapple-bois/Double_Pendulum_App", target="_blank", className='info-link'),
-                    html.Div("© pineapple-bois 2024", className='info-footer')
-                ],
-                style={'flexDirection': 'column'}
+                    html.Button('Run Simulation', id='submit-val', n_clicks=0,
+                                className='button run-simulation-button'),
+                ]
             )
-        ],
+        )
+
+    # Add the GitHub logo and text section
+    children.append(
+        html.Div(
+            className='footer-text-box',
+            children=[
+                github_logo(),
+                html.Div(
+                    children=[
+                        html.Span("The Double Pendulum application was built from this", className='info-text'),
+                        dcc.Link("GitHub Repository", href="https://github.com/pineapple-bois/Double_Pendulum_App",
+                                 target="_blank", className='info-link'),
+                        html.Div("© pineapple-bois 2024", className='info-footer')
+                    ],
+                )
+            ]
+        )
     )
+
+    # Assign a specific class based on the page type
+    footer_class = f'footer-bar {page_type}-page'
+
+    return html.Div(
+        className=footer_class,
+        children=children
+    )
+
+
+def get_footer_section_main():
+    return get_common_footer(include_button=True, page_type="main")
+
+
+def get_footer_section():
+    return get_common_footer(include_button=False, page_type="other")
 
 
 def get_main_layout():
@@ -305,7 +332,7 @@ def get_main_layout():
             html.Div(
                 className='footer',
                 children=[
-                    get_footer_section()
+                    get_footer_section_main()
                 ]
             ),
         ]

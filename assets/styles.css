@@ -343,21 +343,6 @@ body {
   cursor: pointer;
 }
 
-#submit-val  {
-  padding: 20px 10px;
-  background-color: #6495ED;
-  color: white;
-  font-size: 24px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-radius: 10px; /* Add rounded edges to the button */
-}
-
-#submit-val:hover {
-    background-color: #7BA0F0;
-}
-
 .main-content {
     flex: 3;
     display: flex;
@@ -433,14 +418,51 @@ body {
     Footer Section */
 
 .footer-bar {
-    background: #333; !important
+    background: #333;
     text-align: left;
-    padding: 1rem;
-    margin-top: 10px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: flex-start;
     flex-direction: row;
+    padding: 0 16px 0 0 !important;
+}
+
+.run-simulation-group {
+    max-width: calc(25% + 16px); /* Take 25% of the space */
+    flex-grow: 1; /* Allow it to grow if needed */
+    height: 100%; /* Ensure the div takes full height of the footer */
+    display: flex; /* Use flexbox to align the button */
+}
+
+.footer-text-box {
+    display: flex;
+    align-items: center; /* Align items horizontally */
+    justify-content: flex-end; /* Align the whole box to the right */
+    flex-grow: 1;
+}
+
+/* For the other pages where the button is not present */
+.footer-bar.other-page {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+}
+
+.run-simulation-button {
+    width: 100%;
+    height: 100%;
+    padding: 16px 0 !important;
+    margin: 0;
+    background-color: #6495ED;
+    color: white;
+    font-size: 22px;
+    border: none;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background-color 0.3s ease;
+}
+
+.run-simulation-button:hover {
+    background-color: #7BA0F0;
 }
 
 .info-image {
