@@ -136,32 +136,68 @@ def adjust_parameters_visibility(model_type):
 
 
 @app.callback(
-    [Output('time-graph', 'figure', allow_duplicate=True),
-     Output('phase-graph', 'figure', allow_duplicate=True),
-     Output('pendulum-animation', 'figure', allow_duplicate=True),
-     Output('animation-phase-container', 'style', allow_duplicate=True),
-     Output('time-graph-container', 'style', allow_duplicate=True)],
-    [Input('init_cond_theta1', 'value'),
-     Input('init_cond_theta2', 'value'),
-     Input('init_cond_omega1', 'value'),
-     Input('init_cond_omega2', 'value'),
-     Input('time_start', 'value'),
-     Input('time_end', 'value'),
-     Input('param_l1', 'value'),
-     Input('param_l2', 'value'),
-     Input('param_m1', 'value'),
-     Input('param_m2', 'value'),
-     Input('param_M1', 'value'),
-     Input('param_M2', 'value'),
-     Input('param_g', 'value'),
-     Input('model-type', 'value'),
-     Input('system-type', 'value')],
+    [
+        Output('time-graph', 'figure', allow_duplicate=True),
+        Output('phase-graph', 'figure', allow_duplicate=True),
+        Output('pendulum-animation', 'figure', allow_duplicate=True),
+        Output('animation-phase-container', 'style', allow_duplicate=True),
+        Output('time-graph-container', 'style', allow_duplicate=True),
+        Output('error-message', 'children', allow_duplicate=True)
+    ],
+    [
+        Input('init_cond_theta1', 'value'),
+        Input('init_cond_theta2', 'value'),
+        Input('init_cond_omega1', 'value'),
+        Input('init_cond_omega2', 'value'),
+        Input('time_start', 'value'),
+        Input('time_end', 'value'),
+        Input('param_l1', 'value'),
+        Input('param_l2', 'value'),
+        Input('param_m1', 'value'),
+        Input('param_m2', 'value'),
+        Input('param_M1', 'value'),
+        Input('param_M2', 'value'),
+        Input('param_g', 'value'),
+        Input('model-type', 'value'),
+        Input('system-type', 'value')
+    ],
+    [State('error-message', 'children')],
     prevent_initial_call=True
 )
-def clear_graphs_on_input_change(*args):
-    # Return empty figures to clear the graphs
-    empty_figure = go.Figure()
-    return empty_figure, empty_figure, empty_figure, {'display': 'none'}, {'display': 'none'}
+def clear_graphs_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
+    time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g,
+    model_type, system_type, current_error_message):
+
+    # Step 1: Validate inputs
+    initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
+    new_error_message = validate_inputs([initial_conditions],
+                                    time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
+                                    param_M1, param_M2, param_g)
+
+    # If the error message hasn't changed, prevent updating to avoid flickering
+    if new_error_message == current_error_message:
+        raise PreventUpdate
+
+    # Step 2: If there's an error, return empty graphs and hide graph containers
+    if new_error_message:
+        empty_figure = go.Figure()
+        return (
+            empty_figure, empty_figure, empty_figure,
+            {'display': 'none'}, {'display': 'none'},
+            new_error_message
+        )
+
+    # Step 3: If no error, update graphs and show graph containers
+    # (Your logic to generate the figures goes here. For now, returning empty for example)
+    time_figure = go.Figure()  # Replace with actual figure generation logic
+    phase_figure = go.Figure()  # Replace with actual figure generation logic
+    animation_figure = go.Figure()  # Replace with actual figure generation logic
+
+    return (
+        time_figure, phase_figure, animation_figure,
+        {'display': 'none'}, {'display': 'none'},
+        new_error_message  # Should be an empty string or None if no error
+    )
 
 
 # Callback to update the graphs - main page
