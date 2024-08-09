@@ -97,13 +97,14 @@ body {
     Title Section */
 
 .title-section {
-    background: #f8f9fa;
+    /*background: linear-gradient(to top, #DBE9DE, #B9C4BB) !important;*/
+    background: #DBE9DE !important;
     text-align: left; /* Ensure text alignment to the left */
-    padding: 24px 16px; /* 24 pixels padding top/bottom, 16px left/right */
+    padding: 48px 32px !important; /* 24 pixels padding top/bottom, 16px left/right */
 }
 
 .title-text {
-    color: black;
+    color: #4410AD !important;
     font-family: 'Courier New', Courier, monospace; /* Customize font */
     font-size: 36px; /* Customize font size */
     font-weight: bold; /* Customize font style */
@@ -118,24 +119,24 @@ body {
     display: flex;
     justify-content: space-between;
     background-color: #f8f9fa; /* Same background color as other sections */
-    padding: 16px;
-    margin-top: 10px;
-    gap: 20px; /* Space between columns */
-}
-
-.description, .simple-model, .compound-model {
-    background-color: white;/* White background for visibility */
-}
-
-/* Reset default margins and paddings for elements inside instructions, simple-model, and compound-model */
-.description * , .simple-model * , .compound-model * {
-    margin: 0;
-    box-sizing: border-box;
+    padding: 0 !important;
+    width: 100%;
+    gap: 0 !important;
 }
 
 .description {
     flex: 1;
-    max-width: 500px;
+    padding: 16px 16px 16px 32px;
+    box-sizing: border-box; /* Ensure padding is included in the element’s width */
+    background-color: #DBE9DE !important; /* "Gin" */
+    display: flex;
+    flex-direction: column;
+    margin: 0; /* Remove any margin that might limit width */
+    max-width: 25% !important;
+}
+
+.description-title {
+    color: #4410AD !important; /* "Blue Gem" */
 }
 
 .description-text {
@@ -143,13 +144,7 @@ body {
     margin-bottom: 30px; /* Space below the text */
     line-height: 1.2;
     text-align: left;
-}
-
-.description-instruction {
-    font-size: 16px;
-    margin-bottom: 30px; /* Space below the text */
-    line-height: 1.2;
-    text-align: left;
+    color: #4410AD !important; /* "Blue Gem" */
 }
 
 .description-link, .model-link {
@@ -161,17 +156,37 @@ body {
     text-decoration: underline; /* Underline on hover */
 }
 
-.simple-model, .compound-model {
-    flex: 1;
+.models-container {
     display: flex;
+    flex: 1;
+    max-width: 75%;
+    gap: 10px; /* Adjust gap between models */
+    background-color: #f8f9fa !important; /* Same background color as other sections */
+}
+
+.simple-model {
+    flex: 1;
+    padding: 16px;
+    box-sizing: border-box;
+    margin: 0;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* Center-align the text */
+}
+
+.compound-model {
+    flex: 1;
+    padding: 16px;
+    box-sizing: border-box;
+    margin: 0;
     flex-direction: column;
     align-items: center;
     text-align: center; /* Center-align the text */
 }
 
 .image-description {
-    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
     max-width: 90%;
+    background-color: #f8f9fa !important; /* Same background color as other sections */
 }
 
 .model-title, .description-title {
@@ -186,14 +201,13 @@ body {
 }
 
 .image-container {
-    max-width: 60%; /* Maximum width of the container */
-    max-height: 80vh; /* Maximum height of the container */
+    max-width: 75%; /* Maximum width of the container */
     overflow: hidden; /* Prevent overflow */
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
     margin-bottom: 10px;
+    background-color: #f8f9fa !important; /* Same background color as other sections */
 }
 
 .model-image {
@@ -208,14 +222,9 @@ body {
     display: flex;
     justify-content: space-between;
     background-color: #f8f9fa; /* Same background color as other sections */
-    padding: 16px;
     margin-top: 10px;
-}
-
-/* Reset default margins and paddings for elements inside main-content-section */
-.main-content-section * {
-    margin: 0;
-    padding: 0;
+    gap: 0 !important;
+    padding: 0 !important;
     box-sizing: border-box;
 }
 
@@ -244,9 +253,8 @@ body {
 .information-container {
     position: absolute; /* Position it on top of other content */
     top: 60px; /* Adjust as needed */
-    left: 25%; /* Adjust as needed */
-    width: 25% !important; /* Adjust as needed (matches input fields) */
-    margin-left: 10px;
+    left: calc(25% + 1px); /* Adjust as needed */
+    width: 30% !important; /* Adjust as needed (matches input fields) */
     z-index: 10; /* Ensure it floats on top */
     max-height: calc(100vh - 122px); /* Set a max-height based on viewport height (This was trial and error)*/
     overflow-y: auto; /* Enable vertical scrolling */
@@ -277,19 +285,27 @@ body {
 
 .inputs {
     flex: 1;
-    background-color: white; /* White background for visibility */
+    background-color: #DBE9DE !important; /* "Gin" */
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Global gap between input groups */
+    padding-top: 16px !important;
     max-width: 25%; /* Take 25% of the space */
 }
 
+.input-group {
+    display: flex;
+    flex-direction: column;
+    padding: 0 32px 0 32px !important; /* Apply padding to each input group */
+}
+
 .model-system-group {
-    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    background-color: #DBE9DE !important; /* "Gin" */
+    /*background-color: rgba(255, 0, 0, 0.1); !* Light red background for debugging *!*/
 }
 
 .parameters-group {
-    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    background-color: #DBE9DE !important; /* "Gin" */
+    /*background-color: rgba(0, 255, 0, 0.1); !* Light green background for debugging *!*/
 }
 
 .unity-parameters-button {
@@ -301,7 +317,8 @@ body {
 }
 
 .initial-conditions-group {
-    background-color: rgba(0, 0, 255, 0.1); /* Light blue background for debugging */
+    background-color: #DBE9DE !important; /* "Gin" */
+    /*background-color: rgba(0, 0, 255, 0.1); !* Light blue background for debugging *!*/
 }
 
 .init-condition-text {
@@ -309,7 +326,8 @@ body {
 }
 
 .time-vector-group {
-    background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
+    background-color: #DBE9DE !important; /* "Gin" */
+    /*background-color: rgba(255, 255, 0, 0.1); !* Light yellow background for debugging *!*/
     margin-bottom: 10px !important; /* Global margin-bottom for each input group */
 }
 
@@ -327,27 +345,36 @@ body {
 }
 
 .label {
-  margin-bottom: 10px;
-  /*padding-left: 10px; !* Add left padding for input label *!*/
+    color: #4410AD !important; /* "Blue Gem" */
+    margin-bottom: 10px;
+    /*padding-left: 10px; !* Add left padding for input label *!*/
+}
+
+.inputs-title {
+    color: #4410AD !important; /* "Blue Gem" */
+}
+
+.input-subtext {
+    color: #4410AD !important; /* "Blue Gem" */
 }
 
 .input {
-  width: 100%;
-  margin-bottom: 10px;
-  padding-left: 10px; /* Add left padding for input text */
+    width: 100%;
+    margin-bottom: 10px;
+    padding-left: 10px; /* Add left padding for input text */
 }
 
 .button, .button-show {
-  width: 100%;
-  padding: 10px;
-  cursor: pointer;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
 }
 
 .main-content {
     flex: 3;
     display: flex;
     background-color: white; /* White background for visibility */
-    gap: 10px; /* Space between sections */
+    gap: 0; /* Space between sections */
     max-width: 75%;
 }
 
@@ -381,6 +408,7 @@ body {
     height: 100%; /* Full height of the parent container */
     width: 100%; /* Full width of the parent container */
     position: relative; /* Ensure it stays within the container bounds */
+    background-color: white;
     /*overflow-x: auto;*/
     background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
 }
@@ -424,11 +452,11 @@ body {
     align-items: stretch;
     justify-content: flex-start;
     flex-direction: row;
-    padding: 0 16px 0 0 !important;
+    padding: 0 !important;
 }
 
 .run-simulation-group {
-    max-width: calc(25% + 16px); /* Take 25% of the space */
+    max-width: 25%;
     flex-grow: 1; /* Allow it to grow if needed */
     height: 100%; /* Ensure the div takes full height of the footer */
     display: flex; /* Use flexbox to align the button */
@@ -463,6 +491,10 @@ body {
 
 .run-simulation-button:hover {
     background-color: #7BA0F0;
+}
+
+.footer-text-box {
+    padding-right: 32px;
 }
 
 .info-image {
@@ -610,79 +642,77 @@ body {
 
 /* Responsive spacing of description and image section */
 
+@media (max-width: 2200px) {
+    .image-container {
+        max-width: 70%; /* Adjust max-width for smaller viewports */
+    }
+}
+
 @media (max-width: 1800px) {
-  .image-container {
-    max-width: 80%; /* Adjust max-width for medium viewports */
-  }
+    .image-container {
+        max-width: 80%; /* Adjust max-width for smaller viewports */
+    }
 }
 
-@media (max-width: 1400px) {
-  .image-container {
-    max-width: 100%; /* Adjust max-width for smaller viewports */
-  }
+/* At 1600px or smaller, stack the description on top of the images */
+@media (max-width: 1600px) {
+    .description-images-section {
+        flex-direction: column; /* Stack elements vertically */
+        padding: 10px;
+        align-items: center; /* Center the children horizontally */
+    }
+
+    .models-container {
+        max-width: 90%;
+        gap: 20%;
+    }
+
+    .description {
+        max-width: 100% !important; /* Ensure full width for both description and models */
+        margin-bottom: 20px; /* Add space between stacked elements */
+    }
+
+    .image-container {
+        max-width: 80%;
+    }
 }
 
-/* Media queries for responsive design */
+@media (max-width: 1200px) {
+    .image-container {
+        max-width: 80%; /* Adjust max-width for smaller viewports */
+    }
+
+    /* Adjusting font size for model titles and descriptions */
+    .model-title {
+        font-size: 20px !important;
+        font-weight: bold;
+    }
+
+    .model-description {
+        /*font-size: 14px;*/
+    }
+}
+
 @media (max-width: 768px) {
     .description-images-section {
         flex-direction: column; /* Stack columns vertically on smaller screens */
         padding: 10px;
+        align-items: center; /* Center the children horizontally */
     }
 
-    .description, .simple-model, .compound-model .image-container {
+    .description, .image-container {
         max-width: 100%; /* Remove fixed width on smaller screens */
     }
 
+    /* Adjusting font size for model titles and descriptions */
+    .model-title {
+        font-size: 18px !important;
+        font-weight: bold;
+    }
+
+    /* Adjusting font size for description text and instructions */
     .description-text, .description-instruction {
         font-size: 14px; /* Smaller font size on smaller screens */
         margin-bottom: 15px; /* Adjust spacing */
     }
-}
-
-/* OLD Media Queries */
-/* TODO: Fix multi-graph-container @media */
-
-
-/* Medium screens - Two columns layout */
-@media (max-width: 1100px) {
-  .multi-graph-container {
-    grid-template-columns: repeat(2, minmax(500px, 1fr));
-  }
-  .graph-container {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-/* Small screens - Single column layout */
-@media (max-width: 768px) {
-  .multi-graph-container, .above-graph-container {
-    grid-template-columns: 1fr;
-  }
-  .graph-container {
-    flex-direction: column-reverse;
-  }
-  .title-link {
-    font-size: 16px;
-    padding: 5px;
-  }
-  .instructions-image-container {
-    flex-direction: column;
-  }
-  .instructions-column, .image-column {
-    flex: none;
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  .container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Very small screens */
-@media (max-width: 480px) {
-  .title-link {
-    font-size: 14px;
-    padding: 2px;
-  }
 }
