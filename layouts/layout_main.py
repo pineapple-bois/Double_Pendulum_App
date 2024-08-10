@@ -148,7 +148,6 @@ def get_description_images_section():
 
 def get_main_content_section():
     return html.Div(
-        id="scroll-target",
         className="main-content-section",
         children=[
             html.Div(
@@ -263,6 +262,7 @@ def get_main_content_section():
                 ]
             ),
             html.Div(
+                id="scroll-target",
                 className="main-content",
                 children=[
                     html.Div(
