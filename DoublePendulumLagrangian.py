@@ -163,7 +163,6 @@ class DoublePendulumLagrangian:
         # Set the labels, title, and grid
         ax.set_xlabel('Time / seconds')
         ax.set_ylabel('Angular displacement / degrees')
-        ax.set_title('Time Graph', fontname='Courier New', fontsize=16)
 
         ax.grid(True, color='gray', linestyle='-', linewidth=0.5, alpha=0.7)
         plt.legend(loc='best')
@@ -180,7 +179,6 @@ class DoublePendulumLagrangian:
         # Set the labels, title, and grid
         ax.set_xlabel('θ1 / degrees')
         ax.set_ylabel('θ2 / degrees')
-        ax.set_title('Phase Path', fontname='Courier New', fontsize=16)
 
         ax.grid(True, color='gray', linestyle='-', linewidth=0.5, alpha=0.7)
         plt.legend(loc='best')
