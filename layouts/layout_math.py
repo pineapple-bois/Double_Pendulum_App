@@ -41,6 +41,7 @@ def get_references_section(references):
 
 def get_lagrangian_layout():
     return html.Div(
+        id="lagrangian-scroll-target",
         className='math-layout',
         children=[
             html.Div(
@@ -75,6 +76,7 @@ def get_lagrangian_layout():
 
 def get_hamiltonian_layout():
     return html.Div(
+        id="hamiltonian-scroll-target",
         className='math-layout',
         children=[
             html.Div(
