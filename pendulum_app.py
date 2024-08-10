@@ -2,6 +2,7 @@ import dash
 from dash import html, dcc, no_update, Dash
 from dash.dependencies import Input, Output, State, ClientsideFunction
 from dash.exceptions import PreventUpdate
+import dash_bootstrap_components as dbc
 from flask import Flask, redirect, request
 import plotly.tools as tls
 import plotly.graph_objs as go
@@ -29,6 +30,10 @@ app = dash.Dash(
     external_scripts=[
         # ... (other scripts if any)
         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js'
+    ],
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP,
+        "https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
     ],
     server=server
 )
