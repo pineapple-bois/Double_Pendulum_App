@@ -33,7 +33,8 @@ def get_references_section(references):
     return html.Div(
         className='references-section',
         children=[
-            html.H2('References'),
+            html.Div(className="references-line"),
+            html.H2('References', className='references-title'),
             html.Ul([html.Li(link) for link in reference_links])
         ]
     )
@@ -56,9 +57,14 @@ def get_lagrangian_layout():
                 children=[
                     get_title_section("Lagrangian Derivation"),
                     html.Div(
-                        className='markdown-latex-container',
+                        className='math-sidebar',
                         children=[
-                            dcc.Markdown(children=lagrangian_section, mathjax=True)
+                            html.Div(
+                                className='markdown-latex-container',
+                                children=[
+                                    dcc.Markdown(children=lagrangian_section, mathjax=True)
+                                ]
+                            ),
                         ]
                     ),
                     get_references_section(lagrangian_references)
@@ -90,9 +96,14 @@ def get_hamiltonian_layout():
                 children=[
                     get_title_section("Hamiltonian Derivation"),
                     html.Div(
-                        className='markdown-latex-container',
+                        className='math-sidebar',
                         children=[
-                            dcc.Markdown(children=hamiltonian_section, mathjax=True)
+                            html.Div(
+                                className='markdown-latex-container',
+                                children=[
+                                    dcc.Markdown(children=hamiltonian_section, mathjax=True)
+                                ]
+                            ),
                         ]
                     ),
                     get_references_section(hamiltonian_references)
