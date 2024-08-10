@@ -1,14 +1,13 @@
-/* Layout refactor */
 
 /* Base styles */
 body {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Red Hat Display', sans-serif !important;
   font-size: 14px;
   margin: 0;
 }
 
 .button, .Select-control, .input, .label, .button-show, .button-hide {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Red Hat Display', sans-serif !important;
   font-size: 14px;
 }
 
@@ -47,52 +46,38 @@ body {
     Navigation bar */
 
 .navbar {
-    background-color: #333;
+    background-color: #1E0B44 !important;
     display: flex;
-    justify-content: center; /* Center the links */
-    align-items: center;
+    justify-content: start !important; /* Center the links */
+    align-items: start !important;
     position: relative; /* To position the button correctly */
     margin: 0 !important;
-    padding: 0 !important;
     box-sizing: border-box;
-}
-
-.nav-button-container {
-    position: absolute;
-    left: 16px; /* Use pixels for consistent margin */
 }
 
 .nav-links-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: start;
+    padding-left: 32px; /* Use pixels for consistent margin */
 }
 
 .nav-link {
     color: white;
+    background-color: #76B083;
     text-decoration: none;
-    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
-    font-size: 18px; /* Increase font size */
+    border-radius: 5px;
+    padding: 4px 6px;
+    margin: 0 16px 4px 6px;
+    font-size: 14px; /* Increase font size */
 }
+
+
 
 .nav-link:hover {
-    background-color: #555;
+    background-color: #88C495 !important;
     color: white;
     text-decoration: none;
-}
-
-.nav-button {
-    background-color: #555;
-    color: white;
-    border: none;
-    padding: 8px 16px; /* 8 pixels padding top/bottom, 16px left/right */
-    font-size: 18px; /* Match font size */
-    font-family: 'Courier New', Courier, monospace; /* Match font */
-    cursor: pointer;
-}
-
-.nav-button:hover {
-    background-color: #777;
 }
 
 /*  -------------------
@@ -102,17 +87,30 @@ body {
     /*background: linear-gradient(to top, #DBE9DE, #B9C4BB) !important;*/
     background: #DBE9DE !important;
     text-align: left; /* Ensure text alignment to the left */
-    padding: 48px 32px !important; /* 24 pixels padding top/bottom, 16px left/right */
+    padding: 18px 36px !important; /* 20px top/bottom, 36px left/right padding */
     margin: 0 !important; /* Ensure no margin */
     box-sizing: border-box;
+    position: relative; /* Necessary for proper positioning */
 }
 
 .title-text {
     color: #4410AD !important;
-    font-family: 'Courier New', Courier, monospace; /* Customize font */
-    font-size: 36px; /* Customize font size */
-    font-weight: bold; /* Customize font style */
+    font-family: 'Red Hat Display', sans-serif !important;
+    font-size: 60px !important; /* Customize font size */
+    font-weight: 600 !important; /* Customize font style */
     text-align: left;
+    padding: 0 !important;
+    margin: 0 !important;
+    /*background-color: rgba(255, 0, 0, 0.1) !important; !* Light red background for debugging *!*/
+}
+
+.title-underline {
+    position: absolute;
+    bottom: 0; /* Always position at the bottom of the title-section */
+    left: 36px; /* Start the line 36px from the left */
+    height: 1px; /* Thickness of the line */
+    background-color: #4410AD; /* Same color as the text */
+    width: calc(100% - 36px);
 }
 
 /*  -------------------
@@ -121,15 +119,16 @@ body {
 .description-images-section {
     display: flex;
     justify-content: space-between;
-    background-color: #f8f9fa; /* Same background color as other sections */
+    background-color: white !important; /* Same background color as other sections */
     padding: 0 !important;
-    width: 100%;
+    margin: 0 !important;
     gap: 0 !important;
+    width: 100%;
 }
 
 .description {
     flex: 1;
-    padding: 16px 16px 16px 32px;
+    padding: 36px 36px 24px 36px;
     box-sizing: border-box; /* Ensure padding is included in the element’s width */
     background-color: #DBE9DE !important; /* "Gin" */
     display: flex;
@@ -138,13 +137,8 @@ body {
     max-width: 25% !important;
 }
 
-.description-title {
-    color: #4410AD !important; /* "Blue Gem" */
-}
-
 .description-text {
     font-size: 16px;
-    margin-bottom: 30px; /* Space below the text */
     line-height: 1.2;
     text-align: left;
     color: #4410AD !important; /* "Blue Gem" */
@@ -163,36 +157,37 @@ body {
     display: flex;
     flex: 1;
     max-width: 75%;
-    gap: 10px; /* Adjust gap between models */
-    background-color: #f8f9fa !important; /* Same background color as other sections */
+    gap: 0 !important; /* Adjust gap between models */
+    padding: 0;
+    background-color: white !important; /* Same background color as other sections */
 }
 
 .simple-model {
     flex: 1;
-    padding: 16px;
+    padding: 36px 0 0 0;
     box-sizing: border-box;
     margin: 0;
     flex-direction: column;
     align-items: center;
-    text-align: center; /* Center-align the text */
+    text-align: left;
 }
 
 .compound-model {
     flex: 1;
-    padding: 16px;
+    padding: 36px 0 0 0;
     box-sizing: border-box;
     margin: 0;
     flex-direction: column;
     align-items: center;
-    text-align: center; /* Center-align the text */
+    text-align: left;
 }
 
 .image-description {
     max-width: 90%;
-    background-color: #f8f9fa !important; /* Same background color as other sections */
+    background-color: white !important; /* Same background color as other sections */
 }
 
-.model-title, .description-title {
+.model-title {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 16px; /* Space below the title */
@@ -210,7 +205,7 @@ body {
     justify-content: center;
     align-items: center;
     margin-bottom: 10px;
-    background-color: #f8f9fa !important; /* Same background color as other sections */
+    background-color: white !important; /* Same background color as other sections */
 }
 
 .model-image {
@@ -255,11 +250,11 @@ body {
 /* Container for Info Popup */
 .information-container {
     position: absolute; /* Position it on top of other content */
-    top: 60px; /* Adjust as needed */
-    left: calc(25% + 1px); /* Adjust as needed */
+    top: 50px; /* Adjust as needed */
+    left: calc(25% - 10px); /* Adjust as needed */
     width: 30% !important; /* Adjust as needed (matches input fields) */
     z-index: 10; /* Ensure it floats on top */
-    max-height: calc(100vh - 122px); /* Set a max-height based on viewport height (This was trial and error)*/
+    max-height: calc(100vh - 240px); /* Set a max-height based on viewport height (This was trial and error -126px)*/
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
@@ -283,7 +278,7 @@ body {
     font-size: 16px;  /* Set the font size for the title */
     font-weight: bold;  /* Make the title bold */
     margin-bottom: 10px !important;  /* Add some space below the title */
-    color: #333;  /* Set a color for the title text */
+    /*color: #333;  !* Set a color for the title text *!*/
 }
 
 .inputs {
@@ -298,16 +293,16 @@ body {
 .input-group {
     display: flex;
     flex-direction: column;
-    padding: 0 32px 0 32px !important; /* Apply padding to each input group */
+    padding: 0 36px 0 36px !important; /* Apply padding to each input group */
 }
 
 .model-system-group {
-    background-color: #DBE9DE !important; /* "Gin" */
+    background-color: #DBE9DE; /* "Gin" */
     /*background-color: rgba(255, 0, 0, 0.1); !* Light red background for debugging *!*/
 }
 
 .parameters-group {
-    background-color: #DBE9DE !important; /* "Gin" */
+    background-color: #DBE9DE; /* "Gin" */
     /*background-color: rgba(0, 255, 0, 0.1); !* Light green background for debugging *!*/
 }
 
@@ -320,7 +315,7 @@ body {
 }
 
 .initial-conditions-group {
-    background-color: #DBE9DE !important; /* "Gin" */
+    background-color: #DBE9DE; /* "Gin" */
     /*background-color: rgba(0, 0, 255, 0.1); !* Light blue background for debugging *!*/
 }
 
@@ -329,9 +324,9 @@ body {
 }
 
 .time-vector-group {
-    background-color: #DBE9DE !important; /* "Gin" */
+    background-color: #DBE9DE; /* "Gin" */
     /*background-color: rgba(255, 255, 0, 0.1); !* Light yellow background for debugging *!*/
-    margin-bottom: 10px !important; /* Global margin-bottom for each input group */
+    margin-bottom: 10px; /* Global margin-bottom for each input group */
 }
 
 .time-vector-text {
@@ -348,17 +343,17 @@ body {
 }
 
 .label {
-    color: #4410AD !important; /* "Blue Gem" */
+    color: #4410AD; /* "Blue Gem" */
     margin-bottom: 10px;
     /*padding-left: 10px; !* Add left padding for input label *!*/
 }
 
 .inputs-title {
-    color: #4410AD !important; /* "Blue Gem" */
+    color: #4410AD; /* "Blue Gem" */
 }
 
 .input-subtext {
-    color: #4410AD !important; /* "Blue Gem" */
+    color: #4410AD; /* "Blue Gem" */
 }
 
 .input {
@@ -449,7 +444,7 @@ body {
     Footer Section */
 
 .footer-bar {
-    background: #333;
+    background: #1E0B44 !important;
     text-align: left;
     display: flex;
     align-items: stretch;
@@ -485,7 +480,7 @@ body {
     height: 100%;
     padding: 16px 0 !important;
     margin: 0;
-    background-color: #6495ED;
+    background-color: #76B083 !important;
     color: white;
     font-size: 22px;
     border: none !important;
@@ -495,7 +490,7 @@ body {
 }
 
 .run-simulation-button:hover {
-    background-color: #7BA0F0;
+    background-color: #88C495 !important;
 }
 
 .footer-text-box {
@@ -510,12 +505,12 @@ body {
 
 .info-text, .info-link, .info-footer {
     color: white; /* Match text color with navbar */
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Red Hat Display', sans-serif !important;
 }
 
 .info-text {
     font-size: 12px;
-    margin-right: 8px;
+    margin-right: 4px;
 }
 
 .info-link {
@@ -557,7 +552,7 @@ body {
 }
 
 .references-section h2 {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Red Hat Display', sans-serif;
     font-size: 24px;
     color: black;
 }
@@ -574,7 +569,7 @@ body {
 .references-section a {
     color: #1a73e8; /* Link color */
     text-decoration: none;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Red Hat Display', sans-serif;
 }
 
 .references-section a:hover {
@@ -609,7 +604,7 @@ body {
 
 .custom-text {
   color: #2c3e50; /* Custom text color */
-  font-family: 'Courier New', Courier, monospace; /* Custom font */
+  font-family: 'Red Hat Display', sans-serif;
 }
 
 /*  -------------------
@@ -640,7 +635,7 @@ body {
 
 .custom-text {
   color: #2c3e50; /* Custom text color */
-  font-family: 'Courier New', Courier, monospace; /* Custom font */
+  font-family: 'Red Hat Display', sans-serif;
 }
 
 /*  -------------------
@@ -648,9 +643,21 @@ body {
 
 /* Responsive spacing of description and image section */
 
-@media (max-width: 2200px) {
+@media (max-width: 2600px) {
     .image-container {
         max-width: 70%; /* Adjust max-width for smaller viewports */
+    }
+    .description-text {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 2000px) {
+    .image-container {
+        max-width: 75%; /* Adjust max-width for smaller viewports */
+    }
+    .description-text {
+        font-size: 16px;
     }
 }
 
@@ -664,22 +671,23 @@ body {
 @media (max-width: 1600px) {
     .description-images-section {
         flex-direction: column; /* Stack elements vertically */
-        padding: 10px;
         align-items: center; /* Center the children horizontally */
     }
 
     .models-container {
         max-width: 90%;
-        gap: 20%;
+        gap: 0; /* Remove any gap that might cause spacing issues */
+        margin-top: 0; /* Ensure there's no margin causing extra space */
+        padding-top: 0; /* Set padding-top to 0 to remove any unintended padding */
+    }
+
+    .simple-model, .compound-model {
+        padding-top: 0 !important; /* Remove padding on individual models */
     }
 
     .description {
-        max-width: 100% !important; /* Ensure full width for both description and models */
-        margin-bottom: 20px; /* Add space between stacked elements */
-    }
-
-    .image-container {
-        max-width: 80%;
+        max-width: 100% !important;
+        margin-bottom: 20px;
     }
 }
 
@@ -702,7 +710,7 @@ body {
 @media (max-width: 768px) {
     .description-images-section {
         flex-direction: column; /* Stack columns vertically on smaller screens */
-        padding: 10px;
+        /*padding: 10px;*/
         align-items: center; /* Center the children horizontally */
     }
 
