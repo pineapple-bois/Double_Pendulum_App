@@ -430,8 +430,8 @@ body {
     left: 50%;
     transform: translateX(-50%);
     gap: 40px;
-    padding: 5px;
-    margin-bottom: 20px;
+    padding-top: 16px !important;
+
 }
 
 .graph-container {
@@ -441,14 +441,21 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: 95%;
-    padding: 5px;
+    padding: 0 !important;
+}
+
+.graph-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4410AD;
+    width: 100%;
+    text-align: left;
 }
 
 .responsive-graph {
     width: 100%;
     height: auto;
-    background-color: rgba(0, 0, 255, 0.1); /* Light blue background for debugging */
-    padding: 5px;
+    padding: 0 !important;
 }
 
 /* Style for the error message */
