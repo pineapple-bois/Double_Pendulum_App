@@ -35,11 +35,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-@server.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
+# @server.before_request
+# def before_request():
+#     if not request.is_secure:
+#         url = request.url.replace('http://', 'https://', 1)
+#         return redirect(url, code=301)
 
 
 # App set up
@@ -48,7 +48,8 @@ app.index_string = open('assets/custom-header.html', 'r').read()
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),  # Tracks the url
     dcc.Store(id='update-state', data={'clear': False, 'update': False}),
-    html.Div(id='page-content', children=get_main_layout())  # Set initial content
+    html.Div(id='page-content', children=get_main_layout()),  # Set initial content
+    dcc.Store(id='trigger-js')  # Hidden div to trigger JS
 ])
 
 
@@ -67,6 +68,21 @@ def display_page(pathname):
     # Add more pages as required
     else:
         return get_404_layout() if pathname != '/' else get_main_layout()
+
+
+# Client-side callback to run scroll.js when on the home page
+app.clientside_callback(
+    """
+    function(pathname) {
+        if (pathname === '/') {
+            initializeHomePage();  // Call the JS function to reinitialize
+        }
+        return '';
+    }
+    """,
+    Output('trigger-js', 'data'),
+    Input('url', 'pathname')
+)
 
 
 @app.callback(
@@ -296,4 +312,4 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
