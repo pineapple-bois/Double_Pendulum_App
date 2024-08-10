@@ -18,10 +18,10 @@ from DoublePendulumHamiltonian import DoublePendulumHamiltonian
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)
 
 # Math derivations
-with open('../assets/mathematics_lagrangian.txt', 'r') as file:
+with open('../assets/MarkdownScripts/mathematics_lagrangian.txt', 'r') as file:
     lagrangian_section = file.read()
 
-with open('../assets/mathematics_hamiltonian.txt', 'r') as file:
+with open('../assets/MarkdownScripts/mathematics_hamiltonian.txt', 'r') as file:
     hamiltonian_section = file.read()
 
 server = Flask(__name__)

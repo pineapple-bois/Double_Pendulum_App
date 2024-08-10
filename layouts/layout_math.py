@@ -4,10 +4,10 @@ from dash import dcc
 from layouts.layout_main import get_navbar, get_title_section, get_footer_section
 
 # Math derivations
-with open('assets/mathematics_lagrangian.txt', 'r') as file:
+with open('assets/MarkdownScripts/mathematics_lagrangian.txt', 'r') as file:
     lagrangian_section = file.read()
 
-with open('assets/mathematics_hamiltonian.txt', 'r') as file:
+with open('assets/MarkdownScripts/mathematics_hamiltonian.txt', 'r') as file:
     hamiltonian_section = file.read()
 
 # References

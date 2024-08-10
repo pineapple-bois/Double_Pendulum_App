@@ -6,7 +6,7 @@ from dash import dcc
 # 'displayModeBar': False - removes everything
 config = {'displaylogo': False, 'modeBarButtonsToRemove': ['select2d', 'lasso2d']}
 
-with open('assets/information.txt', 'r') as file:
+with open('assets/MarkdownScripts/information.txt', 'r') as file:
     information_text = file.read()
 
 
