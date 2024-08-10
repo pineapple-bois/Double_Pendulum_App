@@ -35,11 +35,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-# @server.before_request
-# def before_request():
-#     if not request.is_secure:
-#         url = request.url.replace('http://', 'https://', 1)
-#         return redirect(url, code=301)
+@server.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
 
 
 # App set up
@@ -296,4 +296,4 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
