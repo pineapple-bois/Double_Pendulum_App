@@ -271,5 +271,3 @@ $$
 \end{matrix}
 \right] \tag{8}
 $$
-
-----
