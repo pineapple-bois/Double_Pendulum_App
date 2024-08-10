@@ -23,10 +23,6 @@ def get_navbar():
         className="navbar",
         children=[
             html.Div(
-                html.Button("Toggle Dark Mode", id="theme-toggle-button", className="nav-button"),
-                className="nav-button-container"
-            ),
-            html.Div(
                 children=[
                     dcc.Link("Home", href="/", className="nav-link"),
                     dcc.Link(id='lagrangian-link', children="Lagrangian", href="/lagrangian", className="nav-link"),
@@ -44,6 +40,7 @@ def get_title_section(text):
         className="title-section",
         children=[
             html.H1(text, className="title-text"),
+            html.Div(className="title-underline")
         ]
     )
 
@@ -55,7 +52,6 @@ def get_description_images_section():
             html.Div(
                 className="description",
                 children=[
-                    html.H3("Description", className="description-title"),
                     html.P([
                                "The double pendulum is an archetypal non-linear system in classical mechanics that has "
                                "been studied since the 18th century. ",
@@ -157,7 +153,7 @@ def get_main_content_section():
                         id="info-popup",
                         children=[
                             html.Button("Close Information", id="close-info-button", n_clicks=0,
-                                        className="button close-info-button"),
+                                        className="close-info-button"),
                             dcc.Markdown(information_text, mathjax=True, className="information-content"),
                         ],
                         className="information-container",
@@ -275,14 +271,28 @@ def get_main_content_section():
                                     html.Div(id='animation-phase-container', className='above-graph-container',
                                              style={'display': 'none'},
                                              children=[
-                                                 dcc.Graph(id='pendulum-animation', config=config,
-                                                           className='responsive-graph'),
-                                                 dcc.Graph(id='phase-graph', config=config,
-                                                           className='responsive-graph')
-                                             ]),
+                                                html.Div(
+                                                    className="graph-wrapper",
+                                                    children=[
+                                                        html.Div("Trace Animation", className="graph-title"),
+                                                        dcc.Graph(id='pendulum-animation', config=config,
+                                                                  className='responsive-graph'),
+                                                    ]
+                                                ),
+                                                html.Div(
+                                                    className="graph-wrapper",
+                                                    children=[
+                                                        html.Div("Phase Portrait", className="graph-title"),
+                                                        dcc.Graph(id='phase-graph', config=config,
+                                                                  className='responsive-graph'),
+                                                    ]
+                                                )
+                                             ]
+                                    ),
                                     html.Div(id='time-graph-container', className='graph-container',
                                              style={'display': 'none'},
                                              children=[
+                                                 html.Div("Time Graph", className="graph-title"),
                                                  dcc.Graph(id='time-graph', className='responsive-graph',
                                                            responsive=True)
                                              ]),
@@ -308,7 +318,7 @@ def get_common_footer(include_button=False, page_type="main"):
             html.Div(
                 className='container-buttons run-simulation-group',
                 children=[
-                    html.Button('Run Simulation', id='submit-val', n_clicks=0,
+                    html.Button('RUN SIMULATION', id='submit-val', n_clicks=0,
                                 className='button run-simulation-button'),
                 ]
             )
