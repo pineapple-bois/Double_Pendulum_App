@@ -72,8 +72,6 @@ body {
     font-size: 14px; /* Increase font size */
 }
 
-
-
 .nav-link:hover {
     background-color: #88C495 !important;
     color: white;
@@ -110,7 +108,7 @@ body {
     left: 36px; /* Start the line 36px from the left */
     height: 1px; /* Thickness of the line */
     background-color: #4410AD; /* Same color as the text */
-    width: calc(100% - 36px);
+    width: calc(100% - 72px);
 }
 
 /*  -------------------
@@ -220,7 +218,7 @@ body {
     display: flex;
     justify-content: space-between;
     background-color: #f8f9fa; /* Same background color as other sections */
-    margin-top: 10px;
+    margin-top: 10px !important;
     gap: 0 !important;
     padding: 0 !important;
     box-sizing: border-box;
@@ -260,11 +258,16 @@ body {
 
 /* Close Button Specific Style */
 .close-info-button {
+    width: 100%;
     background-color: #ff4d4d; /* Custom background color */
     color: white; /* Custom text color */
-    border: none;
+    border: 1px solid #007bff;
+    padding: 6px 12px;
+    max-width: 100%;
     margin-bottom: 0;
     border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .close-info-button:hover {
@@ -274,99 +277,113 @@ body {
 /*  -------------------
     Input Side Bar */
 
-.inputs-title {
-    font-size: 16px;  /* Set the font size for the title */
-    font-weight: bold;  /* Make the title bold */
-    margin-bottom: 10px !important;  /* Add some space below the title */
-    /*color: #333;  !* Set a color for the title text *!*/
-}
-
 .inputs {
     flex: 1;
-    background-color: #DBE9DE !important; /* "Gin" */
+    /*background-color: #DBE9DE !important; !* "Gin" *!*/
     display: flex;
     flex-direction: column;
-    padding-top: 16px !important;
     max-width: 25%; /* Take 25% of the space */
+    gap: 10px;
 }
 
 .input-group {
+    /*background-color: #DBE9DE; !* "Gin" *!*/
     display: flex;
     flex-direction: column;
     padding: 0 36px 0 36px !important; /* Apply padding to each input group */
 }
 
+/* DELETE BELOW AFTER DEBUG/MEDIA and uncomment .input-group background */
+
 .model-system-group {
-    background-color: #DBE9DE; /* "Gin" */
-    /*background-color: rgba(255, 0, 0, 0.1); !* Light red background for debugging *!*/
+    background-color: rgba(255, 0, 0, 0.2) !important; /* Light red background for debugging */
 }
 
 .parameters-group {
-    background-color: #DBE9DE; /* "Gin" */
-    /*background-color: rgba(0, 255, 0, 0.1); !* Light green background for debugging *!*/
+    background-color: rgba(0, 255, 0, 0.2) !important; /* Light green background for debugging */
+}
+
+.initial-conditions-group {
+    background-color: rgba(0, 0, 255, 0.2) !important; /* Light blue background for debugging */
+}
+
+.time-vector-group {
+    background-color: rgba(255, 255, 0, 0.2) !important; /* Light yellow background for debugging */
 }
 
 .unity-parameters-button {
     margin-bottom: 20px;
 }
 
-.parameter-text {
-    margin-bottom: 10px;
-}
-
-.initial-conditions-group {
-    background-color: #DBE9DE; /* "Gin" */
-    /*background-color: rgba(0, 0, 255, 0.1); !* Light blue background for debugging *!*/
-}
-
-.init-condition-text {
+.input-subtext {
     margin-bottom: 20px;
 }
 
-.time-vector-group {
-    background-color: #DBE9DE; /* "Gin" */
-    /*background-color: rgba(255, 255, 0, 0.1); !* Light yellow background for debugging *!*/
-    margin-bottom: 10px; /* Global margin-bottom for each input group */
-}
-
-.time-vector-text {
-    margin-bottom: 20px;
-}
-
-.model-system-dropdown {
-    margin-bottom: 10px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
+.inputs-title {
+    color: #4410AD; /* "Blue Gem" */
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px !important;
 }
 
 .label {
     color: #4410AD; /* "Blue Gem" */
     margin-bottom: 10px;
-    /*padding-left: 10px; !* Add left padding for input label *!*/
-}
-
-.inputs-title {
-    color: #4410AD; /* "Blue Gem" */
 }
 
 .input-subtext {
     color: #4410AD; /* "Blue Gem" */
 }
 
-.input {
-    width: 100%;
-    margin-bottom: 10px;
-    padding-left: 10px; /* Add left padding for input text */
+/* Button Styles */
+.button, .button-show {
+    width: 100% !important; /* Full width of the container */
+    cursor: pointer;
+    background-color: white; /* White background */
+    color: #4410AD; /* Purple text color */
+    border: 2px solid #4410AD; /* Purple border */
+    border-radius: 25px !important; /* Rounded corners */
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
 }
 
-.button, .button-show {
-    width: 100%;
-    padding: 10px;
-    cursor: pointer;
+/* Button Hover Effect */
+.button:hover, .button-show:hover {
+    background-color: #4410AD;
+    color: white;
 }
+
+/* Input Styles */
+.input, .parameters-input {
+    width: 100% !important;
+    border: 2px solid #4410AD;
+    border-radius: 10px !important;
+    color: #4410AD;
+    box-sizing: border-box;
+    background-color: white;
+    text-align: center;
+    padding: 5px 5px;
+    margin-bottom: 15px;
+}
+
+/* Dropdowns */
+.dropdown {
+    width: 100% !important;
+    color: #4410AD;
+    background-color: white;
+    border-radius: 10px !important;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Input Focus State */
+.input:focus, .dropdown:focus {
+    border-color: #34186C; /* Darker purple border on focus */
+    outline: none; /* Remove the default outline */
+}
+
+/*  -------------------
+    Loading */
 
 .main-content {
     flex: 3;
@@ -375,9 +392,6 @@ body {
     gap: 0; /* Space between sections */
     max-width: 75%;
 }
-
-/*  -------------------
-    Loading */
 
 /* Define animation keyframes for delaying the spinner visibility */
 @keyframes delayedVisibility {
@@ -400,29 +414,33 @@ body {
 /* Ensure the spinner is centered within its container */
 .loading-container {
     display: flex;
-    justify-content: center; /* Centers horizontally */
     flex-direction: column;
-    align-items: center; /* Centers vertically */
+    align-items: flex-start;
+    justify-content: flex-start;
     height: 100%; /* Full height of the parent container */
     width: 100%; /* Full width of the parent container */
     position: relative; /* Ensure it stays within the container bounds */
-    background-color: white;
-    /*overflow-x: auto;*/
     background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
 }
 
 .above-graph-container {
-    display: flex;
-    flex-direction: row; /* Arrange children side by side */
-    margin-bottom: 20px;
-    gap: 20px;
+    position: absolute;
     background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 40px;
     padding: 5px;
+    margin-bottom: 20px;
 }
 
 .graph-container {
-    display: block;
+    position: absolute;
     background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
     padding: 5px;
 }
 
@@ -531,30 +549,46 @@ body {
 /*  -------------------
    Math Page */
 
+.math-sidebar {
+    background-color: #DBE9DE; /* "Gin" */
+}
+
 .markdown-latex-container {
   background-color: #f8f8f8; /* Light grey background */
   border: 1px solid #ddd; /* Light grey border */
   overflow-x: auto; /* Allows scrolling if content is too wide */
   overflow-y: hidden; /* Hides vertical scrollbar */
   width: 90%; /* Takes up 90% of the width */
-  margin-left: auto;
-  margin-right: auto;
   padding: 8px 16px;
   box-sizing: border-box;
+  margin-bottom: 0 !important;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* References Section */
 .references-section {
-    background: #f8f9fa;
-    text-align: left; /* Ensure text alignment to the left */
+    background: #DBE9DE !important; /* "Gin" */
+    text-align: left;
     padding: 16px 32px; /* 16 pixels padding top/bottom, 32px left/right */
     box-sizing: border-box;
+    margin: 0 !important;
+}
+
+.references-line {
+    position: relative;
+    top: 0;
+    height: 1px;
+    background-color: #4410AD;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 16px;
 }
 
 .references-section h2 {
     font-family: 'Red Hat Display', sans-serif;
     font-size: 24px;
-    color: black;
+    color: #4410AD !important; /* "Blue Gem" */
 }
 
 .references-section ul {
