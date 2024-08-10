@@ -1,4 +1,4 @@
-## The Mathematics
+#### The Mathematics
 
 The double pendulum is an example of a complex dynamical system with two degrees of freedom. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in this Lagrangian derivation.
 
@@ -7,14 +7,14 @@ Characterised by sensitivity to initial conditions and exhibiting both periodic 
 The subsequent sections offer a detailed mathematical derivation of the equations of motion. Also see the [Python derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DerivationLagrangian.ipynb) on which the below extends.
 
 
-### Behaviour at Small Angles
+#### Behaviour at Small Angles
 
 When the angles of oscillation are small, the behaviour that can be approximated using sine and cosine functions.
 
 The phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
 
 
-### Chaotic dynamics and Quasi-Periodicity
+#### Chaotic dynamics and Quasi-Periodicity
 
 The pendulums exhibit sensitive dependence on initial conditions, meaning even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
 
@@ -23,13 +23,13 @@ Quasi-periodic motion is complex yet does not repeat exactly, sitting on the bou
 
 ---
 
-## Simple Model
+### Simple Model
 
 The rods $OP_1$ and $P_1P_2$ are rigid, massless and inextensible.
 The system has two degrees of freedom.
 
 
-#### Coordinates $(x, y)$ of the bobs:
+##### Coordinates $(x, y)$ of the bobs:
 
 For $P_1$,
 
@@ -80,7 +80,7 @@ $$
 
 ----
 
-#### Euler-Lagrange Equations:
+##### Euler-Lagrange Equations:
 
 For each generalised coordinate $\theta_i$, the E-L equations are given,
 
@@ -245,7 +245,7 @@ $$
 
 ----
 
-## The compound model
+### Compound Model
 
 The `compound model` models a uniform mass distribution along the length of the rod. The rod is now subject to a rotational kinetic energy and moment of inertia about its centre of mass. By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends.
 

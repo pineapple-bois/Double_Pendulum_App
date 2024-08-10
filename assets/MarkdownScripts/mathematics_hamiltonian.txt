@@ -1,4 +1,4 @@
-## The Mathematics
+#### The Mathematics
 
 The double pendulum is an example of a complex dynamical system with two degrees of freedom. Composed of two pendulums attached end-to-end by frictionless joints, non-conservative forces are neglected at the pivot points in deriving the Lagrangian.
 
@@ -7,12 +7,12 @@ Characterised by sensitivity to initial conditions and exhibiting both periodic 
 The subsequent sections offer a detailed mathematical derivation of the equations of motion. Also see the [Python derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DevelopmentHamiltonian.ipynb) on which the below extends.
 
 
-### Behaviour at Small Angles
+#### Behaviour at Small Angles
 
 When the angles of oscillation are small, the behaviour can be approximated using sine and cosine functions and the phase paths form [Lissajous curves](https://en.wikipedia.org/wiki/Lissajous_curve), which are the product of simple harmonic motions in perpendicular directions
 
 
-### Chaotic dynamics and Quasi-Periodicity
+#### Chaotic dynamics and Quasi-Periodicity
 
 The pendulums exhibit sensitive dependence on initial conditions, meaning even minuscule differences in starting position or velocity can lead to vastly different trajectories over time. This characteristic is a hallmark of chaotic systems.
 
@@ -21,13 +21,13 @@ Quasi-periodic motion is complex yet does not repeat exactly, sitting on the bou
 
 ---
 
-## Simple Model
+### Simple Model
 
 The rods $OP_1$ and $P_1P_2$ are rigid, massless and inextensible.
 The system has two degrees of freedom.
 
 
-#### Coordinates $(x, y)$ of the bobs:
+##### Coordinates $(x, y)$ of the bobs:
 
 For $P_1$,
 
@@ -78,7 +78,7 @@ $$
 
 ----
 
-#### Hamiltonian Equations of State
+##### Hamiltonian Equations of State
 
 The Hamiltonian $\mathcal{H}$ is the Legendre transform of the Lagrangian given by:
 
@@ -108,7 +108,7 @@ Here we have assumed the system is not subject to dissipative forces such as fri
 
 ----
 
-#### The canonical momenta
+##### The canonical momenta
 
 For generalised coordinates $\mathbf{q}=(\theta_1, \theta_2)$, the partial derivative of the Lagrangian with respect to time derivative of the release angles give the canonical momenta of the Hamiltonian system.
 That is,
@@ -248,7 +248,7 @@ $$
 
 ----
 
-#### Forming the first-order system
+##### Forming the first-order system
 
 Partially differentiating the Hamiltonian $\mathcal{H}$ with respect to $p_{\theta_i}$ and $\theta_i$ returns equations $(3)$ and $(4)$ which can be written in matrix form as,
 
@@ -258,7 +258,7 @@ $$
 
 -----
 
-## The compound model
+### Compound Model
 
 The `compound model` models a uniform mass distribution along the length of the rod. The rod is now subject to a rotational kinetic energy and moment of inertia about its centre of mass. By applying the parallel axis theorem, the model accounts for the rotational dynamics about the pendulum ends.
 
@@ -314,7 +314,7 @@ $$
 
 ----
 
-#### Forming the first-order system
+##### Forming the first-order system
 
 Partially differentiating the Hamiltonian $\mathcal{H}$ with respect to $p_{\theta_i}$ and $\theta_i$ returns the matrix equation,
 
