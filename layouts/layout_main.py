@@ -29,8 +29,8 @@ def get_navbar():
             html.Div(
                 children=[
                     dcc.Link("Home", href="/", className="nav-link"),
-                    dcc.Link("Lagrangian", href="/lagrangian", className="nav-link"),
-                    dcc.Link("Hamiltonian", href="/hamiltonian", className="nav-link"),
+                    dcc.Link(id='lagrangian-link', children="Lagrangian", href="/lagrangian", className="nav-link"),
+                    dcc.Link(id='hamiltonian-link', children="Hamiltonian", href="/hamiltonian", className="nav-link"),
                     dcc.Link("Chaos", href="/chaos", className="nav-link")
                 ],
                 className="nav-links-container"
