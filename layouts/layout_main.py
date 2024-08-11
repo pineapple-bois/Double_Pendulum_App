@@ -203,7 +203,7 @@ def get_main_content_section():
                         ),
                     ]),
                     html.Div(className='input-group time-vector-group', children=[
-                        html.H4("Time Settings", className='inputs-title'),
+                        html.H4("Simulation interval", className='inputs-title'),
                         html.Div(
                             className='split-inputs time-vector-split',
                             children=[
@@ -223,7 +223,6 @@ def get_main_content_section():
                                                   className='input time-vector-input'),
                                     ]
                                 )
-
                             ]
                         )
                     ]),
@@ -299,9 +298,9 @@ def get_main_content_section():
                                         html.Label('Angles',
                                                    className='label initial-conditions-label'),
                                         dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)',
-                                                  className='input initial-conditions-input'),
+                                                  className='input initial-conditions-input_top'),
                                         dcc.Input(id='init_cond_theta2', type='number', placeholder='θ2 (Angle 2)',
-                                                  className='input initial-conditions-input'),
+                                                  className='input initial-conditions-input-top'),
                                     ]
                                 ),
                                 html.Div(
@@ -311,10 +310,10 @@ def get_main_content_section():
                                                    className='label initial-conditions-label'),
                                         dcc.Input(id='init_cond_omega1', type='number',
                                                   placeholder='ω1 (Angular velocity 1)',
-                                                  className='input initial-conditions-input'),
+                                                  className='input initial-conditions-input-bottom'),
                                         dcc.Input(id='init_cond_omega2', type='number',
                                                   placeholder='ω2 (Angular velocity 2)',
-                                                  className='input initial-conditions-input'),
+                                                  className='input initial-conditions-input-bottom'),
                                     ]
                                 )
                             ]
