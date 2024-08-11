@@ -141,19 +141,18 @@ def set_unity_parameters(n_clicks):
     [Output('param_m1', 'style'),
      Output('param_m2', 'style'),
      Output('param_M1', 'style'),
-     Output('param_M2', 'style'),
-     Output('parameters-label', 'children')],
+     Output('param_M2', 'style')],
     [Input('model-type', 'value')]
 )
 def adjust_parameters_visibility(model_type):
     if model_type == 'simple':
         # Hide M1 and M2 for the simple model
-        return ({'display': 'block'}, {'display': 'block'}, {'display': 'none'}, {'display': 'none'},
-                'Parameters (l1, l2, m1, m2, g)')
+        return ({'display': 'block'}, {'display': 'block'},
+                {'display': 'none'}, {'display': 'none'})
     elif model_type == 'compound':
         # Show M1 and M2 for the compound model
-        return ({'display': 'none'}, {'display': 'none'}, {'display': 'block'}, {'display': 'block'},
-                'Parameters (l1, l2, M1, M2, g)')
+        return ({'display': 'none'}, {'display': 'none'},
+                {'display': 'block'}, {'display': 'block'})
 
 
 @app.callback(
@@ -186,14 +185,14 @@ def adjust_parameters_visibility(model_type):
     prevent_initial_call=True
 )
 def clear_graphs_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
-    time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g,
-    model_type, system_type, current_error_message):
+                                 time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1,
+                                 param_M2, param_g, model_type, system_type, current_error_message):
 
     # Step 1: Validate inputs
     initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
     new_error_message = validate_inputs([initial_conditions],
-                                    time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
-                                    param_M1, param_M2, param_g)
+                                        time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
+                                        param_M1, param_M2, param_g)
 
     # If the error message hasn't changed, prevent updating to avoid flickering
     if new_error_message == current_error_message:
