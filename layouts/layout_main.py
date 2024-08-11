@@ -91,8 +91,7 @@ def get_description_images_section():
                                       className="description-link", target="_blank"),
                                "."
                                ],
-                           className="description-text"
-                           )
+                           className="description-text")
                 ]
             ),
             html.Div(  # New parent container for both models
@@ -160,31 +159,73 @@ def get_main_content_section():
                         style={'display': 'none'}
                     ),
                     html.Div(className='input-group model-system-group', children=[
+
                         html.H4("Model and System Selection", className='inputs-title'),
                         html.Button("What do I even choose?", id="info-button", n_clicks=0,
                                     className="button get-info-button"),
-                        html.Label('Model Type:', className='label model-type-label'),
-                        dcc.Dropdown(
-                            id='model-type',
-                            options=[
-                                {'label': 'Simple', 'value': 'simple'},
-                                {'label': 'Compound', 'value': 'compound'}
-                            ],
-                            value='simple',
-                            clearable=False,
-                            className='dropdown model-system-dropdown'
+
+                        html.Div(
+                            className='split-inputs model-system-split',
+                            children=[
+                                html.Div(
+                                    className='input-columns model-system-column',
+                                    children=[
+                                        html.Label('Model Type:', className='label model-type-label'),
+                                        dcc.Dropdown(
+                                            id='model-type',
+                                            options=[
+                                                {'label': 'Simple', 'value': 'simple'},
+                                                {'label': 'Compound', 'value': 'compound'}
+                                            ],
+                                            value='simple',
+                                            clearable=False,
+                                            className='dropdown model-system-dropdown'
+                                        ),
+                                    ]
+                                ),
+                                html.Div(
+                                    className='input-columns model-system-column',
+                                    children=[
+                                        html.Label('System Type:', className='label system-type-label'),
+                                        dcc.Dropdown(
+                                            id='system-type',
+                                            options=[
+                                                {'label': 'Lagrangian', 'value': 'lagrangian'},
+                                                {'label': 'Hamiltonian', 'value': 'hamiltonian'}
+                                            ],
+                                            value='lagrangian',
+                                            clearable=False,
+                                            className='dropdown system-type-dropdown'
+                                        ),
+                                    ]
+                                )
+                            ]
                         ),
-                        html.Label('System Type:', className='label system-type-label'),
-                        dcc.Dropdown(
-                            id='system-type',
-                            options=[
-                                {'label': 'Lagrangian', 'value': 'lagrangian'},
-                                {'label': 'Hamiltonian', 'value': 'hamiltonian'}
-                            ],
-                            value='lagrangian',
-                            clearable=False,
-                            className='dropdown system-type-dropdown'
-                        ),
+                    ]),
+                    html.Div(className='input-group time-vector-group', children=[
+                        html.H4("Time Settings", className='inputs-title'),
+                        html.Div(
+                            className='split-inputs time-vector-split',
+                            children=[
+                                html.Div(
+                                    className='input-columns time-vector-column',
+                                    children=[
+                                        html.Label('Start', className='label time-vector-label'),
+                                        dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0,
+                                                  className='input time-vector-input'),
+                                    ]
+                                ),
+                                html.Div(
+                                    className='input-columns time-vector-column',
+                                    children=[
+                                        html.Label('Stop', className='label time-vector-label'),
+                                        dcc.Input(id='time_end', type='number', placeholder='End Time', value=20,
+                                                  className='input time-vector-input'),
+                                    ]
+                                )
+
+                            ]
+                        )
                     ]),
                     html.Div(className='input-group parameters-group', children=[
                         html.H4("Parameter Selection", className='inputs-title'),
@@ -193,20 +234,39 @@ def get_main_content_section():
                             mathjax=True, className="input-subtext parameter-text"),
                         html.Button('Set Unity Parameters', id='unity-parameters', n_clicks=0,
                                     className='button unity-parameters-button'),
-                        html.Label('Parameters (l1, l2, m1, m2, M1, M2, g)', id='parameters-label',
-                                   className='label parameters-label'),
-                        dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)',
-                                  className='input parameters-input'),
-                        dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)',
-                                  className='input parameters-input'),
-                        dcc.Input(id='param_m1', type='number', placeholder='m1 (mass of bob 1)',
-                                  className='input parameters-input'),
-                        dcc.Input(id='param_m2', type='number', placeholder='m2 (mass of bob 2)',
-                                  className='input parameters-input'),
-                        dcc.Input(id='param_M1', type='number', placeholder='M1 (mass of rod 1)',
-                                  className='input parameters-input', style={'display': 'none'}),
-                        dcc.Input(id='param_M2', type='number', placeholder='M2 (mass of rod 2)',
-                                  className='input parameters-input', style={'display': 'none'}),
+                        html.Div(
+                            className='split-inputs parameter-split',
+                            children=[
+                                html.Div(
+                                    className='input-columns parameter-column',
+                                    children=[
+                                        html.Label('Lengths', id='lengths-label',
+                                                   className='label lengths-label'),
+                                        dcc.Input(id='param_l1', type='number', placeholder='l1 (length of rod 1)',
+                                                  className='input parameters-input'),
+                                        dcc.Input(id='param_l2', type='number', placeholder='l2 (length of rod 2)',
+                                                  className='input parameters-input'),
+                                    ]
+                                ),
+                                html.Div(
+                                    className='input-columns parameter-column',
+                                    children=[
+                                        html.Label('Masses', id='masses-label',
+                                                   className='label masses-label'),
+                                        dcc.Input(id='param_m1', type='number', placeholder='m1 (mass of bob 1)',
+                                                  className='input parameters-input'),
+                                        dcc.Input(id='param_m2', type='number', placeholder='m2 (mass of bob 2)',
+                                                  className='input parameters-input'),
+                                        dcc.Input(id='param_M1', type='number', placeholder='M1 (mass of rod 1)',
+                                                  className='input parameters-input', style={'display': 'none'}),
+                                        dcc.Input(id='param_M2', type='number', placeholder='M2 (mass of rod 2)',
+                                                  className='input parameters-input', style={'display': 'none'}),
+                                    ]
+                                )
+                            ]
+                        ),
+                        html.Label('Acceleration Due to Gravity', id='g-label',
+                                   className='label g-label'),
                         dcc.Dropdown(
                             id='param_g',
                             options=[
@@ -230,30 +290,35 @@ def get_main_content_section():
                     ]),
                     html.Div(className='input-group initial-conditions-group', children=[
                         html.H4("Initial Conditions", className='inputs-title'),
-                        dcc.Markdown(
-                            '''The initial angles; $\\theta_1$ & $\\theta_2$ are measured counterclockwise in degrees. A negative angle gives clockwise rotation.''',
-                            mathjax=True, className="input-subtext init-condition-text"),
-                        html.Label('Initial Conditions (θ1, θ2, ω1, ω2): degrees',
-                                   className='label initial-conditions-label'),
-                        dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)',
-                                  className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_theta2', type='number', placeholder='θ2 (Angle 2)',
-                                  className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_omega1', type='number', placeholder='ω1 (Angular velocity 1)',
-                                  className='input initial-conditions-input'),
-                        dcc.Input(id='init_cond_omega2', type='number', placeholder='ω2 (Angular velocity 2)',
-                                  className='input initial-conditions-input'),
-                    ]),
-                    html.Div(className='input-group time-vector-group', children=[
-                        html.H4("Time Settings", className='inputs-title'),
-                        dcc.Markdown(
-                            '''The default time interval is $20$ seconds. The maximum is $120$ seconds.''',
-                            mathjax=True, className="input-subtext time-vector-text"),
-                        html.Label('Time Vector (start, stop): seconds', className='label time-vector-label'),
-                        dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0,
-                                  className='input time-vector-input'),
-                        dcc.Input(id='time_end', type='number', placeholder='End Time', value=20,
-                                  className='input time-vector-input'),
+                        html.Div(
+                            className='split-inputs init-cond-split',
+                            children=[
+                                html.Div(
+                                    className='input-columns init-cond-column',
+                                    children=[
+                                        html.Label('Angles',
+                                                   className='label initial-conditions-label'),
+                                        dcc.Input(id='init_cond_theta1', type='number', placeholder='θ1 (Angle 1)',
+                                                  className='input initial-conditions-input'),
+                                        dcc.Input(id='init_cond_theta2', type='number', placeholder='θ2 (Angle 2)',
+                                                  className='input initial-conditions-input'),
+                                    ]
+                                ),
+                                html.Div(
+                                    className='input-columns init-cond-column',
+                                    children=[
+                                        html.Label('Velocities',
+                                                   className='label initial-conditions-label'),
+                                        dcc.Input(id='init_cond_omega1', type='number',
+                                                  placeholder='ω1 (Angular velocity 1)',
+                                                  className='input initial-conditions-input'),
+                                        dcc.Input(id='init_cond_omega2', type='number',
+                                                  placeholder='ω2 (Angular velocity 2)',
+                                                  className='input initial-conditions-input'),
+                                    ]
+                                )
+                            ]
+                        ),
                     ]),
                 ]
             ),
@@ -262,46 +327,55 @@ def get_main_content_section():
                 className="main-content",
                 children=[
                     html.Div(
-                        className="loading-container",
+                        className="loading-container-wrapper",  # New wrapper for centering
                         children=[
-                            dcc.Loading(
-                                id="loading-1",
-                                type="cube",  # "default", "circle", "dot", or "cube" for different spinner types
+                            html.Div(
+                                className="loading-container",
                                 children=[
-                                    html.Div(id='animation-phase-container', className='above-graph-container',
-                                             style={'display': 'none'},
-                                             children=[
-                                                html.Div(
-                                                    className="graph-wrapper",
-                                                    children=[
-                                                        html.Div("Trace Animation", className="graph-title"),
-                                                        dcc.Graph(id='pendulum-animation', config=config,
-                                                                  className='responsive-graph'),
-                                                    ]
-                                                ),
-                                                html.Div(
-                                                    className="graph-wrapper",
-                                                    children=[
-                                                        html.Div("Phase Portrait", className="graph-title"),
-                                                        dcc.Graph(id='phase-graph', config=config,
-                                                                  className='responsive-graph'),
-                                                    ]
-                                                )
-                                             ]
-                                    ),
-                                    html.Div(id='time-graph-container', className='graph-container',
-                                             style={'display': 'none'},
-                                             children=[
-                                                 html.Div("Time Graph", className="graph-title"),
-                                                 dcc.Graph(id='time-graph', className='responsive-graph',
-                                                           responsive=True)
-                                             ]),
-                                    html.Div(id='error-message', className='error-message')
+                                    dcc.Loading(
+                                        id="loading-1",
+                                        type="cube",
+                                        children=[
+                                            html.Div(
+                                                id='animation-phase-container',
+                                                className='above-graph-container',
+                                                style={'display': 'none'},
+                                                children=[
+                                                    html.Div(
+                                                        className="graph-wrapper",
+                                                        children=[
+                                                            html.Div("Trace Animation", className="graph-title"),
+                                                            dcc.Graph(id='pendulum-animation', config=config,
+                                                                      className='responsive-graph'),
+                                                        ]
+                                                    ),
+                                                    html.Div(
+                                                        className="graph-wrapper",
+                                                        children=[
+                                                            html.Div("Phase Portrait", className="graph-title"),
+                                                            dcc.Graph(id='phase-graph', config=config,
+                                                                      className='responsive-graph'),
+                                                        ]
+                                                    )
+                                                ]
+                                            ),
+                                            html.Div(
+                                                id='time-graph-container',
+                                                className='graph-container',
+                                                style={'display': 'none'},
+                                                children=[
+                                                    html.Div("Time Graph", className="graph-title"),
+                                                    dcc.Graph(id='time-graph', className='responsive-graph',
+                                                              responsive=True)
+                                                ]
+                                            ),
+                                            html.Div(id='error-message', className='error-message')
+                                        ],
+                                        className="delayed-spinner"
+                                    )
                                 ],
-                                className="delayed-spinner"
-                            )
+                            ),
                         ],
-                        style={'height': '100%', 'position': 'relative'}
                     ),
                 ]
             )
