@@ -1,13 +1,13 @@
 
 /* Base styles */
 body {
-  font-family: 'Red Hat Display', sans-serif !important;
+  font-family: 'Red Hat Display', sans-serif;
   font-size: 14px;
   margin: 0;
 }
 
 .button, .Select-control, .input, .label, .button-show, .button-hide {
-  font-family: 'Red Hat Display', sans-serif !important;
+  font-family: 'Red Hat Display', sans-serif;
   font-size: 14px;
 }
 
@@ -34,7 +34,7 @@ body {
 .body {
     flex: auto;
     overflow-y: auto;
-    margin: 0 !important;
+    margin: 0;
 }
 
 /* Footer */
@@ -45,24 +45,24 @@ body {
 /*  -------------------
     Navigation bar */
 
-.navbar {
-    background-color: #1E0B44 !important;
+.header .navbar {
+    background-color: #1E0B44;
     display: flex;
-    justify-content: start !important; /* Center the links */
-    align-items: start !important;
+    justify-content: start; /* Center the links */
+    align-items: start;
     position: relative; /* To position the button correctly */
     margin: 0 !important;
     box-sizing: border-box;
 }
 
-.nav-links-container {
+.header .nav-links-container {
     display: flex;
     justify-content: flex-start;
     align-items: start;
     padding-left: 32px; /* Use pixels for consistent margin */
 }
 
-.nav-link {
+.header .nav-link {
     color: white;
     background-color: #76B083;
     text-decoration: none;
@@ -72,8 +72,8 @@ body {
     font-size: 14px; /* Increase font size */
 }
 
-.nav-link:hover {
-    background-color: #88C495 !important;
+.header .nav-link:hover {
+    background-color: #88C495;
     color: white;
     text-decoration: none;
 }
@@ -81,33 +81,32 @@ body {
 /*  -------------------
     Title Section */
 
-.title-section {
-    /*background: linear-gradient(to top, #DBE9DE, #B9C4BB) !important;*/
-    background: #DBE9DE !important;
-    text-align: left; /* Ensure text alignment to the left */
-    padding: 18px 36px !important; /* 20px top/bottom, 36px left/right padding */
-    margin: 0 !important; /* Ensure no margin */
+.body .title-section {
+    background: #DBE9DE;
+    text-align: left;
+    padding: 18px 36px;
+    margin: 0;
     box-sizing: border-box;
-    position: relative; /* Necessary for proper positioning */
+    position: relative;
 }
 
-.title-text {
-    color: #4410AD !important;
-    font-family: 'Red Hat Display', sans-serif !important;
-    font-size: 60px !important; /* Customize font size */
-    font-weight: 600 !important; /* Customize font style */
+.body .title-text {
+    color: #4410AD;
+    font-family: 'Red Hat Display', sans-serif;
+    font-size: 60px;
+    font-weight: 600;
     text-align: left;
-    padding: 0 !important;
-    margin: 0 !important;
+    padding: 0;
+    margin: 0;
     /*background-color: rgba(255, 0, 0, 0.1) !important; !* Light red background for debugging *!*/
 }
 
-.title-underline {
+.body .title-underline {
     position: absolute;
-    bottom: 0; /* Always position at the bottom of the title-section */
-    left: 36px; /* Start the line 36px from the left */
-    height: 1px; /* Thickness of the line */
-    background-color: #4410AD; /* Same color as the text */
+    bottom: 0;
+    left: 36px;
+    height: 1px;
+    background-color: #4410AD;
     width: calc(100% - 72px);
 }
 
@@ -117,47 +116,48 @@ body {
 .description-images-section {
     display: flex;
     justify-content: space-between;
-    background-color: white !important; /* Same background color as other sections */
-    padding: 0 !important;
-    margin: 0 !important;
-    gap: 0 !important;
+    background-color: white;
+    padding: 0;
+    margin: 0;
+    gap: 0;
     width: 100%;
 }
 
 .description {
     flex: 1;
     padding: 36px 36px 24px 36px;
-    box-sizing: border-box; /* Ensure padding is included in the element’s width */
-    background-color: #DBE9DE !important; /* "Gin" */
+    box-sizing: border-box;
+    background-color: #DBE9DE ; /* "Gin" */
     display: flex;
     flex-direction: column;
-    margin: 0; /* Remove any margin that might limit width */
-    max-width: 25% !important;
+    margin: 0;
+    max-width: 25%;
 }
 
 .description-text {
     font-size: 16px;
     line-height: 1.2;
     text-align: left;
-    color: #4410AD !important; /* "Blue Gem" */
+    color: #4410AD; /* "Blue Gem" */
 }
 
 .description-link, .model-link {
-    color: #007bff; /* Link color */
-    text-decoration: none; /* Remove underline */
+    color: #007bff;
+    text-decoration: none;
 }
 
 .description-link:hover, .model-link:hover {
-    text-decoration: underline; /* Underline on hover */
+    text-decoration: underline;
 }
 
 .models-container {
     display: flex;
+    flex-direction: row;
     flex: 1;
     max-width: 75%;
-    gap: 0 !important; /* Adjust gap between models */
+    gap: 60px;
     padding: 0;
-    background-color: white !important; /* Same background color as other sections */
+    background-color: white;
 }
 
 .simple-model {
@@ -166,8 +166,8 @@ body {
     box-sizing: border-box;
     margin: 0;
     flex-direction: column;
-    align-items: center;
     text-align: left;
+    background-color: #f8f9fa;
 }
 
 .compound-model {
@@ -176,34 +176,38 @@ body {
     box-sizing: border-box;
     margin: 0;
     flex-direction: column;
-    align-items: center;
     text-align: left;
+    background-color: #f8f9fa;
 }
 
 .image-description {
     max-width: 90%;
-    background-color: white !important; /* Same background color as other sections */
+    /*background-color: white;*/
+    background-color: rgba(255, 0, 0, 0.2) !important;
+    padding-left: 32px;
 }
 
 .model-title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 16px; /* Space below the title */
+    margin-bottom: 16px;
 }
 
 .model-description {
     font-size: 16px;
-    margin-bottom: 30px; /* Space below the description */
+    margin-bottom: 30px;
 }
 
 .image-container {
-    max-width: 75%; /* Maximum width of the container */
-    overflow: hidden; /* Prevent overflow */
+    max-width: 75%;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
-    background-color: white !important; /* Same background color as other sections */
+    margin-bottom: 40px;
+    padding-left: 32px;
+    /*background-color: white;*/
+    background-color: rgba(255, 0, 0, 0.2) !important;
 }
 
 .model-image {
@@ -217,10 +221,10 @@ body {
 .main-content-section {
     display: flex;
     justify-content: space-between;
-    background-color: #f8f9fa; /* Same background color as other sections */
-    margin-top: 10px !important;
-    gap: 0 !important;
-    padding: 0 !important;
+    background-color: #f8f9fa;
+    gap: 0;
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
 }
 
@@ -247,10 +251,10 @@ body {
 
 /* Container for Info Popup */
 .information-container {
-    position: absolute; /* Position it on top of other content */
-    top: 50px; /* Adjust as needed */
-    left: calc(25% - 10px); /* Adjust as needed */
-    width: 30% !important; /* Adjust as needed (matches input fields) */
+    position: absolute;
+    top: 50px;
+    left: calc(25% - 10px);
+    width: 30%;
     z-index: 10; /* Ensure it floats on top */
     max-height: calc(100vh - 240px); /* Set a max-height based on viewport height (This was trial and error -126px)*/
     overflow-y: auto; /* Enable vertical scrolling */
@@ -279,18 +283,40 @@ body {
 
 .inputs {
     flex: 1;
-    /*background-color: #DBE9DE !important; !* "Gin" *!*/
     display: flex;
     flex-direction: column;
+    /*background-color: #DBE9DE !important; !* "Gin" *!*/
     max-width: 25%; /* Take 25% of the space */
-    gap: 10px;
+    height: 1170px;
+    justify-content: space-between;
 }
 
 .input-group {
     /*background-color: #DBE9DE; !* "Gin" *!*/
     display: flex;
     flex-direction: column;
-    padding: 0 36px 0 36px !important; /* Apply padding to each input group */
+    padding: 36px 36px 0 36px; /* Apply padding to each input group */
+    flex-grow: 1;
+}
+
+.model-system-group {
+    margin-top: auto !important;
+}
+
+.initial-conditions-group {
+    margin-bottom: auto !important;
+}
+
+.split-inputs {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.input-columns {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 /* DELETE BELOW AFTER DEBUG/MEDIA and uncomment .input-group background */
@@ -312,18 +338,18 @@ body {
 }
 
 .unity-parameters-button {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
-.input-subtext {
-    margin-bottom: 20px;
-}
+/*.input-subtext .parameter-text {*/
+/*    margin-bottom: 0 !important;*/
+/*}*/
 
 .inputs-title {
     color: #4410AD; /* "Blue Gem" */
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 10px !important;
+    margin-bottom: 10px;
 }
 
 .label {
@@ -337,13 +363,14 @@ body {
 
 /* Button Styles */
 .button, .button-show {
-    width: 100% !important; /* Full width of the container */
+    width: 100%;
     cursor: pointer;
-    background-color: white; /* White background */
-    color: #4410AD; /* Purple text color */
-    border: 2px solid #4410AD; /* Purple border */
-    border-radius: 25px !important; /* Rounded corners */
+    background-color: white;
+    color: #4410AD;
+    border: 2px solid #4410AD;
+    border-radius: 25px !important;
     text-align: center;
+    padding: 5px 5px;
     transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition on hover */
 }
 
@@ -355,9 +382,9 @@ body {
 
 /* Input Styles */
 .input, .parameters-input {
-    width: 100% !important;
-    border: 2px solid #4410AD;
-    border-radius: 10px !important;
+    width: 100%;
+    border: 1px solid #4410AD;
+    border-radius: 10px;
     color: #4410AD;
     box-sizing: border-box;
     background-color: white;
@@ -366,14 +393,18 @@ body {
     margin-bottom: 15px;
 }
 
+.time-vector-input .initial-conditions-input-bottom {
+    margin-bottom: 0;
+}
+
 /* Dropdowns */
 .dropdown {
-    width: 100% !important;
+    width: 100%;
     color: #4410AD;
     background-color: white;
-    border-radius: 10px !important;
+    border-radius: 10px;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 0
 }
 
 /* Input Focus State */
@@ -384,14 +415,6 @@ body {
 
 /*  -------------------
     Loading */
-
-.main-content {
-    flex: 3;
-    display: flex;
-    background-color: white; /* White background for visibility */
-    gap: 0; /* Space between sections */
-    max-width: 75%;
-}
 
 /* Define animation keyframes for delaying the spinner visibility */
 @keyframes delayedVisibility {
@@ -411,37 +434,65 @@ body {
     animation: delayedVisibility 0.25s forwards; /* Change delay duration (waits a 1/4 second) */
 }
 
+/* TODO: REMEMBER TO REMOVE !important FROM BELOW ELEMENTS */
+
+.main-content {
+    flex: 3;
+    display: flex;
+    background-color: white;
+    gap: 0;
+    padding: 0;
+    max-width: 75%;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Wrapper to handle centering of loading and error elements */
+.loading-container-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 0 36px;
+    background-color: #f8f9fa;
+}
+
 /* Ensure the spinner is centered within its container */
 .loading-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    height: 100%; /* Full height of the parent container */
-    width: 100%; /* Full width of the parent container */
+    align-items: center; /* Center children horizontally */
+    justify-content: center; /* Center children vertically */
+    height: 100%;
+    width: 100%;
     position: relative; /* Ensure it stays within the container bounds */
     background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
 }
 
 .above-graph-container {
-    position: absolute;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: flex-start; /* Align to top */
+    width: 100%;
+    margin: 0;
     background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    gap: 40px;
-    padding-top: 16px !important;
-
+    gap: 60px;
 }
 
 .graph-container {
-    position: absolute;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: flex-end; /* Align to bottom */
+    width: 100%;
+    margin: 0; /* No margin at the bottom */
     background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 95%;
-    padding: 0 !important;
+    padding: 0;
+}
+
+.responsive-graph {
+    height: auto;
+    padding: 0;
 }
 
 .graph-title {
@@ -450,33 +501,29 @@ body {
     color: #4410AD;
     width: 100%;
     text-align: left;
-}
-
-.responsive-graph {
-    width: 100%;
-    height: auto;
-    padding: 0 !important;
+    padding-top: 36px;
 }
 
 /* Style for the error message */
-.error-message {
+.loading-container-wrapper .error-message {
     color: red;
     text-align: center;
     font-size: 20px;
+    margin: 0;
 }
 
 /*  -------------------
     Footer Section */
 
 .footer-bar {
-    background: #1E0B44 !important;
+    background: #1E0B44;
     text-align: left;
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
     flex-direction: row;
-    padding: 0 !important;
-    margin: 0 !important; /* Ensure no margins around navbar */
+    padding: 0;
+    margin: 0; /* Ensure no margins around navbar */
     box-sizing: border-box;
 }
 
@@ -496,26 +543,26 @@ body {
 
 /* For the other pages where the button is not present */
 .footer-bar.other-page {
-    padding-top: 16px !important;
-    padding-bottom: 16px !important;
+    padding-top: 16px;
+    padding-bottom: 16px;
 }
 
 .run-simulation-button {
     width: 100%;
     height: 100%;
-    padding: 16px 0 !important;
+    padding: 16px 0;
     margin: 0;
-    background-color: #76B083 !important;
+    background-color: #76B083;
     color: white;
     font-size: 22px;
-    border: none !important;
+    border: none;
     cursor: pointer;
     border-radius: 0 !important;
     transition: background-color 0.3s ease;
 }
 
 .run-simulation-button:hover {
-    background-color: #88C495 !important;
+    background-color: #88C495;
 }
 
 .footer-text-box {
@@ -530,7 +577,7 @@ body {
 
 .info-text, .info-link, .info-footer {
     color: white; /* Match text color with navbar */
-    font-family: 'Red Hat Display', sans-serif !important;
+    font-family: 'Red Hat Display', sans-serif;
 }
 
 .info-text {
@@ -568,14 +615,14 @@ body {
   width: 90%; /* Takes up 90% of the width */
   padding: 8px 16px;
   box-sizing: border-box;
-  margin-bottom: 0 !important;
+  margin-bottom: 0;
   margin-left: auto;
   margin-right: auto;
 }
 
 /* References Section */
 .references-section {
-    background: #DBE9DE !important; /* "Gin" */
+    background: #DBE9DE; /* "Gin" */
     text-align: left;
     padding: 16px 32px; /* 16 pixels padding top/bottom, 32px left/right */
     box-sizing: border-box;
@@ -595,7 +642,7 @@ body {
 .references-section h2 {
     font-family: 'Red Hat Display', sans-serif;
     font-size: 24px;
-    color: #4410AD !important; /* "Blue Gem" */
+    color: #4410AD; /* "Blue Gem" */
 }
 
 .references-section ul {
@@ -723,11 +770,11 @@ body {
     }
 
     .simple-model, .compound-model {
-        padding-top: 0 !important; /* Remove padding on individual models */
+        padding-top: 0; /* Remove padding on individual models */
     }
 
     .description {
-        max-width: 100% !important;
+        max-width: 100%;
         margin-bottom: 20px;
     }
 }
@@ -739,7 +786,7 @@ body {
 
     /* Adjusting font size for model titles and descriptions */
     .model-title {
-        font-size: 20px !important;
+        font-size: 20px;
         font-weight: bold;
     }
 
@@ -761,7 +808,7 @@ body {
 
     /* Adjusting font size for model titles and descriptions */
     .model-title {
-        font-size: 18px !important;
+        font-size: 18px;
         font-weight: bold;
     }
 
