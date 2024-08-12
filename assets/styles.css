@@ -166,7 +166,7 @@ body {
     margin: 0;
     flex-direction: column;
     text-align: left;
-    background-color: #f8f9fa;
+    background-color: white;
 }
 
 .compound-model {
@@ -176,13 +176,13 @@ body {
     margin: 0;
     flex-direction: column;
     text-align: left;
-    background-color: #f8f9fa;
+    background-color: white;
 }
 
 .image-description {
     max-width: 90%;
     /*background-color: white;*/
-    background-color: rgba(255, 0, 0, 0.2) !important;
+    background-color: white;
     padding-left: 32px;
 }
 
@@ -206,7 +206,7 @@ body {
     margin-bottom: 40px;
     padding-left: 32px;
     /*background-color: white;*/
-    background-color: rgba(255, 0, 0, 0.2) !important;
+    background-color: white;
 }
 
 .model-image {
@@ -275,13 +275,13 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    /*background-color: #DBE9DE !important; !* "Gin" *!*/
+    background-color: #DBE9DE !important; /* "Gin" */
     max-width: 100%;
     justify-content: space-between;
 }
 
 .input-group {
-    /*background-color: #DBE9DE; !* "Gin" *!*/
+    background-color: #DBE9DE; /* "Gin" */
     display: flex;
     flex-direction: column;
     padding: 18px 36px 18px 36px; /* Apply padding to each input group */
@@ -309,17 +309,17 @@ body {
 
 /* DELETE BELOW AFTER DEBUG/MEDIA and uncomment .input-group background */
 
-.model-system-group {
-    background-color: rgba(255, 0, 0, 0.2) !important; /* Light red background for debugging */
-}
+/*.model-system-group {*/
+/*    background-color: rgba(255, 0, 0, 0.2) !important; !* Light red background for debugging *!*/
+/*}*/
 
-.parameters-group {
-    background-color: rgba(0, 255, 0, 0.2) !important; /* Light green background for debugging */
-}
+/*.parameters-group {*/
+/*    background-color: rgba(0, 255, 0, 0.2) !important; !* Light green background for debugging *!*/
+/*}*/
 
-.initial-conditions-group {
-    background-color: rgba(0, 0, 255, 0.2) !important; /* Light blue background for debugging */
-}
+/*.initial-conditions-group {*/
+/*    background-color: rgba(0, 0, 255, 0.2) !important; !* Light blue background for debugging *!*/
+/*}*/
 
 .unity-parameters-button {
     margin-bottom: 10px;
@@ -416,7 +416,6 @@ body {
     flex-grow: 1;
     width: 100%;
     box-sizing: border-box;
-    margin-top: 10px;
 }
 
 /* Sidebar */
@@ -426,7 +425,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     max-width: 25%;
-    background-color: #f8f9fa;
+    background-color: #DBE9DE; /* "Gin" */
     height: 100%;
 }
 
@@ -438,7 +437,8 @@ body {
     align-items: center;
     width: 75%;
     height: 100%;
-    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    /*background-color: rgba(0, 255, 0, 0.1); !* Light green background for debugging *!*/
+    background-color: white;
 }
 
 /* Define animation keyframes for delaying the spinner visibility */
@@ -465,7 +465,8 @@ body {
     justify-content: center; /* Center horizontally */
     align-items: flex-start; /* Align to top */
     width: 100%;
-    background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
+    /*background-color: rgba(255, 0, 0, 0.1); !* Light red background for debugging *!*/
+    background-color: white;
     gap: 40px;
 }
 
@@ -476,7 +477,8 @@ body {
     justify-content: center; /* Center horizontally */
     align-items: center;
     width: 100%;
-    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    /*background-color: rgba(0, 255, 0, 0.1); !* Light green background for debugging *!*/
+    background-color: white;
     padding: 0;
 }
 
@@ -486,15 +488,16 @@ body {
     justify-content: center; /* Center the graph container horizontally */
     align-items: center; /* Center the graph container vertically */
     width: 100%;
-    margin-top: 10px;
-    background-color: rgba(255, 0, 255, 0.2); /* Light purple background for debugging */
+    background-color: #DBE9DE; /* "Gin" */
+    /*background-color: rgba(255, 0, 255, 0.2); !* Light purple background for debugging *!*/
     padding: 36px 36px;
 }
 
 /* Graph Container */
 .graph-container {
     width: 100%;
-    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    background-color: white;
+    /*background-color: rgba(0, 255, 0, 0.1); !* Light green background for debugging *!*/
     margin: 0 auto;
 }
 
