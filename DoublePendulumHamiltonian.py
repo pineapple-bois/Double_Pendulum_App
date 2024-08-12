@@ -121,8 +121,8 @@ class DoublePendulumHamiltonian:
         plt.style.use('default')  # Reset to the default style
         fig, ax = plt.subplots()
         # Plot settings to match the animation's appearance
-        ax.plot(self.time, np.rad2deg(self.sol[:, 0]), color='darkorange', label="θ1", linewidth=2)
-        ax.plot(self.time, np.rad2deg(self.sol[:, 1]), color='green', label="θ2", linewidth=2)
+        ax.plot(self.time, np.rad2deg(self.sol[:, 0]), color='#F4762F', label="θ1", linewidth=2)
+        ax.plot(self.time, np.rad2deg(self.sol[:, 1]), color='#4EC5AE', label="θ2", linewidth=2)
 
         # Set the labels, title, and grid
         ax.set_xlabel('Time / seconds')
@@ -137,7 +137,7 @@ class DoublePendulumHamiltonian:
         fig, ax = plt.subplots()
 
         # Plot settings to match the animation's appearance
-        ax.plot(np.rad2deg(self.sol[:, 0]), np.rad2deg(self.sol[:, 1]), color='navy', label="Phase Path",
+        ax.plot(np.rad2deg(self.sol[:, 0]), np.rad2deg(self.sol[:, 1]), color='#4410AD', label="Phase Path",
                 linewidth=2)
 
         # Set the labels, title, and grid
@@ -193,9 +193,9 @@ class DoublePendulumHamiltonian:
             grid_color = 'rgba(255, 255, 255, 0.3)'  # Light grey for grid lines
 
         elif appearance == 'light':
-            pendulum_color = 'navy'  # Dark blue for better visibility against light background
-            trace_color_theta1 = 'darkorange'  # Dark orange for a vivid contrast for trace of P1
-            trace_color_theta2 = 'green'  # Dark green for trace of P2
+            pendulum_color = '#4410AD'  # Dark blue for better visibility against light background
+            trace_color_theta1 = '#F4762F'  # Dark orange for a vivid contrast for trace of P1
+            trace_color_theta2 = '#4EC5AE'  # Dark green for trace of P2
             background_color = 'rgb(255, 255, 255)'  # White for the plot background
             text_color = 'rgb(0, 0, 0)'  # Black text color for better visibility in light mode
             grid_color = 'rgba(0, 0, 0, 0.1)'  # Light black (gray) for grid lines, with transparency for subtlety
