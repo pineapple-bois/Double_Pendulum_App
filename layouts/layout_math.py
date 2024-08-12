@@ -48,7 +48,7 @@ def get_lagrangian_layout():
             html.Div(
                 className='header',
                 children=[
-                    get_navbar(),
+                    get_navbar(current_path="/lagrangian"),
                 ]
             ),
             html.Div(
@@ -88,7 +88,7 @@ def get_hamiltonian_layout():
             html.Div(
                 className='header',
                 children=[
-                    get_navbar(),
+                    get_navbar(current_path="/hamiltonian"),
                 ]
             ),
             html.Div(

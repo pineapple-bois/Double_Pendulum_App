@@ -10,7 +10,7 @@ def get_404_layout():
             html.Div(
                 className='header',
                 children=[
-                    get_navbar(),
+                    get_navbar(current_path=""),
                 ]
             ),
             html.Div(

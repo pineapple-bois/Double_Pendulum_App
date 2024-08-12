@@ -9,7 +9,7 @@ def get_chaos_layout():
             html.Div(
                 className='header',
                 children=[
-                    get_navbar(),
+                    get_navbar(current_path="/chaos"),
                 ]
             ),
             get_title_section("Exploring Non-Linear Dynamics"),

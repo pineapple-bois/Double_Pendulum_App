@@ -17,16 +17,27 @@ def github_logo():
                     style={'width': '30px'})
 
 
-def get_navbar():
+def get_navbar(current_path):
+    links = [
+        {"name": "Home", "href": "/"},
+        {"name": "Lagrangian", "href": "/lagrangian"},
+        {"name": "Hamiltonian", "href": "/hamiltonian"},
+        {"name": "Chaos", "href": "/chaos"},
+    ]
+
+    # Create the navbar with inline styling based on the current path
     return html.Div(
         className="navbar",
         children=[
             html.Div(
                 children=[
-                    dcc.Link("Home", href="/", className="nav-link"),
-                    dcc.Link(id='lagrangian-link', children="Lagrangian", href="/lagrangian", className="nav-link"),
-                    dcc.Link(id='hamiltonian-link', children="Hamiltonian", href="/hamiltonian", className="nav-link"),
-                    dcc.Link("Chaos", href="/chaos", className="nav-link")
+                    dcc.Link(
+                        link["name"],
+                        href=link["href"],
+                        className="nav-link",
+                        style={"background-color": "#76B083" if link["href"] == current_path else "#1E0B44",
+                               "color": "white"}
+                    ) for link in links
                 ],
                 className="nav-links-container"
             )
@@ -308,7 +319,6 @@ def get_input_bar():
 
 def get_animation_phase_section():
     return html.Div(
-        id="scroll-target",
         className="graph-section",
         children=[
             dcc.Loading(
@@ -371,6 +381,7 @@ def get_main_content():
         children=[
             # Parent Container for Sidebar and Animation-Phase
             html.Div(
+                id="scroll-target",
                 className="content-container",
                 children=[
                     get_input_bar(),            # Sidebar
@@ -441,7 +452,7 @@ def get_main_layout():
             html.Div(
                 className='header',
                 children=[
-                    get_navbar(),
+                    get_navbar(current_path="/"),
                 ]
             ),
             html.Div(
