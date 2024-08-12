@@ -2,12 +2,6 @@
 
 The default `Type` and `System` is "Simple", "Lagrangian" and is a good place to start.
 
-The default time interval is $20$ seconds. The maximum is $120$ seconds
-
-**The longer the simulations run, the more likely the motion will be chaotic.**
-
-***
-
 `Set Unity Parameters` for initial simulations to get a feel for the simulator.
 
 The initial angles; $\theta_1$ & $\theta_2$ are measured counterclockwise in degrees. A negative angle gives clockwise rotation, similarly for angular velocities $\omega_1$ and $\omega_2$ in degrees per second.
@@ -15,6 +9,10 @@ The initial angles; $\theta_1$ & $\theta_2$ are measured counterclockwise in deg
 Try setting `Initial conditions` to $\theta_1 = 0$, $\omega_1 = 0$, $\omega_2 = 0$ and then vary $\theta_2 \in [-\pi, \pi]$.
 
 - Let $\theta_2$ take one of the [special angles](https://en.wikipedia.org/wiki/Special_right_triangle): $30^{\circ}$, $45^{\circ}$, $60^{\circ}$, $90^{\circ}$, $120^{\circ}$, $150^{\circ}$ etc...
+
+The default time interval is $20$ seconds. The maximum is $120$ seconds
+
+**The longer the simulations run, the more likely the motion will be chaotic.**
 
 ***
 
