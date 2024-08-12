@@ -7,7 +7,12 @@ def get_404_layout():
     return html.Div(
         className='not-found-layout',
         children=[
-            get_navbar(),
+            html.Div(
+                className='header',
+                children=[
+                    get_navbar(),
+                ]
+            ),
             html.Div(
                 className='not-found-content-container',
                 children=[
@@ -16,6 +21,11 @@ def get_404_layout():
                     dcc.Link("Return to Home Page", href="/", className="nav-link")
                 ]
             ),
-            get_footer_section()
+            html.Div(
+                className='footer',
+                children=[
+                    get_footer_section()
+                ]
+            )
         ]
     )
