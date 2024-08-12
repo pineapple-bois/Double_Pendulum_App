@@ -40,11 +40,11 @@ app = dash.Dash(
 
 
 # Comment out to launch locally (development)
-# @server.before_request
-# def before_request():
-#     if not request.is_secure:
-#         url = request.url.replace('http://', 'https://', 1)
-#         return redirect(url, code=301)
+@server.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
 
 
 # App set up
@@ -70,9 +70,8 @@ def display_page(pathname):
         return get_lagrangian_layout()
     elif pathname == '/hamiltonian':
         return get_hamiltonian_layout()
-    # Add more pages as required
     else:
-        return get_404_layout() if pathname != '/' else get_main_layout()
+        return get_main_layout() if pathname == '/' else get_404_layout()
 
 
 # Client-side callback to run scroll.js when on the home page
@@ -162,6 +161,7 @@ def adjust_parameters_visibility(model_type):
         Output('pendulum-animation', 'figure', allow_duplicate=True),
         Output('animation-phase-container', 'style', allow_duplicate=True),
         Output('time-graph-container', 'style', allow_duplicate=True),
+        Output('time-graph-section', 'style', allow_duplicate=True),
         Output('error-message', 'children', allow_duplicate=True)
     ],
     [
@@ -203,7 +203,7 @@ def clear_graphs_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_o
         empty_figure = go.Figure()
         return (
             empty_figure, empty_figure, empty_figure,
-            {'display': 'none'}, {'display': 'none'},
+            {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
             new_error_message
         )
 
@@ -215,7 +215,7 @@ def clear_graphs_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_o
 
     return (
         time_figure, phase_figure, animation_figure,
-        {'display': 'none'}, {'display': 'none'},
+        {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
         new_error_message  # Should be an empty string or None if no error
     )
 
@@ -227,6 +227,7 @@ def clear_graphs_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_o
      Output('pendulum-animation', 'figure'),
      Output('animation-phase-container', 'style'),
      Output('time-graph-container', 'style'),
+     Output('time-graph-section', 'style'),
      Output('error-message', 'children')],
     [Input('submit-val', 'n_clicks')],
     [State('init_cond_theta1', 'value'),
@@ -258,7 +259,7 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
         if error_message:
             # If there are errors, return immediately
             return (no_update, no_update, no_update,
-                    {'display': 'none'}, {'display': 'none'}, error_message)
+                    {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, error_message)
 
         time_steps = int((time_end - time_start) * 200)
         time_vector = [time_start, time_end, time_steps]
@@ -308,12 +309,12 @@ def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1
         animation_fig = pendulum.animate_pendulum(trace=True, fig_width=600, fig_height=600, static=True)
 
         return (time_fig, phase_fig, animation_fig,  # graph figures
-                {'display': 'flex'}, {'display': 'block'}, '')
+                {'display': 'flex'}, {'display': 'block'}, {'display': 'flex'}, '')
 
     # If the button hasn't been clicked yet, return empty figures and keep everything hidden
     return (go.Figure(), go.Figure(), go.Figure(),
-            {'display': 'none'}, {'display': 'none'}, '')
+            {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
