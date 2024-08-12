@@ -275,7 +275,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: #DBE9DE !important; /* "Gin" */
+    background-color: #DBE9DE; /* "Gin" */
     max-width: 100%;
     justify-content: space-between;
 }
@@ -638,7 +638,7 @@ body {
     text-align: left;
     padding: 16px 32px; /* 16 pixels padding top/bottom, 32px left/right */
     box-sizing: border-box;
-    margin: 0 !important;
+    margin: 0;
 }
 
 .references-line {
