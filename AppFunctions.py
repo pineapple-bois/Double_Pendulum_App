@@ -18,28 +18,6 @@ def validate_inputs(initial_conditions_list, time_start, time_end, model_type,
                     param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g):
     error_list = []
 
-    # Time validation
-    time_errors = []
-    if time_start is None:
-        time_errors.append("Please provide a value for start time.")
-    if time_end is None:
-        time_errors.append("Please provide a value for end time.")
-
-    if time_start is not None and time_end is not None:
-        if time_start >= time_end or time_end <= 0:
-            time_errors.append("End time must be greater than start time.")
-        if time_start < 0:
-            time_errors.append("Time interval must begin at zero.")
-        if time_end - time_start > MAX_TIME:
-            time_errors.append(f"Maximum simulation time is {MAX_TIME} seconds.")
-
-    if time_errors:
-        error_list.append("Time values:")
-        error_list.append(html.Br())
-        error_list.extend([html.Div(error) for error in time_errors])
-        error_list.append(html.Br())
-        error_list.append(html.Br())
-
     # Parameter validation
     param_errors = []
     param_limits = {
@@ -104,6 +82,28 @@ def validate_inputs(initial_conditions_list, time_start, time_end, model_type,
         error_list.append("Initial conditions:")
         error_list.append(html.Br())
         error_list.extend([html.Div(error) for error in init_cond_errors])
+        error_list.append(html.Br())
+
+    # Time validation
+    time_errors = []
+    if time_start is None:
+        time_errors.append("Please provide a value for start time.")
+    if time_end is None:
+        time_errors.append("Please provide a value for end time.")
+
+    if time_start is not None and time_end is not None:
+        if time_start >= time_end or time_end <= 0:
+            time_errors.append("End time must be greater than start time.")
+        if time_start < 0:
+            time_errors.append("Time interval must begin at zero.")
+        if time_end - time_start > MAX_TIME:
+            time_errors.append(f"Maximum simulation time is {MAX_TIME} seconds.")
+
+    if time_errors:
+        error_list.append("Time values:")
+        error_list.append(html.Br())
+        error_list.extend([html.Div(error) for error in time_errors])
+        error_list.append(html.Br())
         error_list.append(html.Br())
 
     # Return the error message or None if there are no errors
