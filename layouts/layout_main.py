@@ -14,8 +14,7 @@ with open('assets/MarkdownScripts/information.txt', 'r') as file:
 def github_logo():
     return html.Img(src="assets/Images/github-mark.png",
                     className='info-image',
-                    style={'width': '30px'}
-                    )
+                    style={'width': '30px'})
 
 
 def get_navbar():
@@ -160,72 +159,53 @@ def get_input_bar():
                         style={'display': 'none'}
                     ),
                     html.Div(className='input-group model-system-group', children=[
-
                         html.H4("Model and System Selection", className='inputs-title'),
                         html.Button("What do I even choose?", id="info-button", n_clicks=0,
                                     className="button get-info-button"),
-
-                        html.Div(
-                            className='split-inputs model-system-split',
-                            children=[
-                                html.Div(
-                                    className='input-columns model-system-column',
-                                    children=[
-                                        html.Label('Model Type:', className='label model-type-label'),
-                                        dcc.Dropdown(
-                                            id='model-type',
-                                            options=[
-                                                {'label': 'Simple', 'value': 'simple'},
-                                                {'label': 'Compound', 'value': 'compound'}
-                                            ],
-                                            value='simple',
-                                            clearable=False,
-                                            className='dropdown model-system-dropdown'
-                                        ),
-                                    ]
-                                ),
-                                html.Div(
-                                    className='input-columns model-system-column',
-                                    children=[
-                                        html.Label('System Type:', className='label system-type-label'),
-                                        dcc.Dropdown(
-                                            id='system-type',
-                                            options=[
-                                                {'label': 'Lagrangian', 'value': 'lagrangian'},
-                                                {'label': 'Hamiltonian', 'value': 'hamiltonian'}
-                                            ],
-                                            value='lagrangian',
-                                            clearable=False,
-                                            className='dropdown system-type-dropdown'
-                                        ),
-                                    ]
-                                )
-                            ]
+                        html.Label('Model Type:', className='label model-type-label'),
+                        dcc.Dropdown(
+                            id='model-type',
+                            options=[
+                                {'label': 'Simple', 'value': 'simple'},
+                                {'label': 'Compound', 'value': 'compound'}
+                            ],
+                            value='simple',
+                            clearable=False,
+                            className='dropdown model-system-dropdown'
                         ),
-                    ]),
-                    html.Div(className='input-group time-vector-group', children=[
-                        html.H4("Simulation interval", className='inputs-title'),
-                        html.Div(
-                            className='split-inputs time-vector-split',
-                            children=[
-                                html.Div(
-                                    className='input-columns time-vector-column',
-                                    children=[
-                                        html.Label('Start', className='label time-vector-label'),
-                                        dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0,
-                                                  className='input time-vector-input'),
-                                    ]
-                                ),
-                                html.Div(
-                                    className='input-columns time-vector-column',
-                                    children=[
-                                        html.Label('Stop', className='label time-vector-label'),
-                                        dcc.Input(id='time_end', type='number', placeholder='End Time', value=20,
-                                                  className='input time-vector-input'),
-                                    ]
-                                )
-                            ]
-                        )
+                        html.Label('System Type:', className='label system-type-label'),
+                        dcc.Dropdown(
+                            id='system-type',
+                            options=[
+                                {'label': 'Lagrangian', 'value': 'lagrangian'},
+                                {'label': 'Hamiltonian', 'value': 'hamiltonian'}
+                            ],
+                            value='lagrangian',
+                            clearable=False,
+                            className='dropdown system-type-dropdown'
+                        ),
+                        html.Label('Acceleration Due to Gravity', id='g-label',
+                                   className='label g-label'),
+                        dcc.Dropdown(
+                            id='param_g',
+                            options=[
+                                {'label': 'Mercury: 3.7 m/s²', 'value': 3.7},
+                                {'label': 'Venus: 8.87 m/s²', 'value': 8.87},
+                                {'label': 'Earth: 9.81 m/s²', 'value': 9.81},
+                                {'label': 'Moon: 1.62 m/s²', 'value': 1.62},
+                                {'label': 'Mars: 3.71 m/s²', 'value': 3.71},
+                                {'label': 'Jupiter: 23.15 m/s²', 'value': 23.15},
+                                {'label': 'Saturn: 10.44 m/s²', 'value': 10.44},
+                                {'label': 'Uranus: 8.69 m/s²', 'value': 8.69},
+                                {'label': 'Neptune: 11.15 m/s²', 'value': 11.15},
+                                {'label': 'Pluto: 0.696 m/s²', 'value': 0.696},
+                            ],
+                            value=9.81,
+                            placeholder='Acceleration due to gravity, m/s²',
+                            clearable=False,
+                            searchable=False,
+                            className='dropdown gravity-dropdown'
+                        ),
                     ]),
                     html.Div(className='input-group parameters-group', children=[
                         html.H4("Parameter Selection", className='inputs-title'),
@@ -264,29 +244,7 @@ def get_input_bar():
                                     ]
                                 )
                             ]
-                        ),
-                        html.Label('Acceleration Due to Gravity', id='g-label',
-                                   className='label g-label'),
-                        dcc.Dropdown(
-                            id='param_g',
-                            options=[
-                                {'label': 'Mercury: 3.7 m/s²', 'value': 3.7},
-                                {'label': 'Venus: 8.87 m/s²', 'value': 8.87},
-                                {'label': 'Earth: 9.81 m/s²', 'value': 9.81},
-                                {'label': 'Moon: 1.62 m/s²', 'value': 1.62},
-                                {'label': 'Mars: 3.71 m/s²', 'value': 3.71},
-                                {'label': 'Jupiter: 23.15 m/s²', 'value': 23.15},
-                                {'label': 'Saturn: 10.44 m/s²', 'value': 10.44},
-                                {'label': 'Uranus: 8.69 m/s²', 'value': 8.69},
-                                {'label': 'Neptune: 11.15 m/s²', 'value': 11.15},
-                                {'label': 'Pluto: 0.696 m/s²', 'value': 0.696},
-                            ],
-                            value=9.81,
-                            placeholder='Acceleration due to gravity, m/s²',
-                            clearable=False,
-                            searchable=False,
-                            className='dropdown parameters-dropdown'
-                        ),
+                        )
                     ]),
                     html.Div(className='input-group initial-conditions-group', children=[
                         html.H4("Initial Conditions", className='inputs-title'),
@@ -319,6 +277,28 @@ def get_input_bar():
                                 )
                             ]
                         ),
+                        html.H4("Simulation interval", className='inputs-title time-title'),
+                        html.Div(
+                            className='split-inputs time-vector-split',
+                            children=[
+                                html.Div(
+                                    className='input-columns time-vector-column',
+                                    children=[
+                                        html.Label('Start', className='label time-vector-label'),
+                                        dcc.Input(id='time_start', type='number', placeholder='Start Time', value=0,
+                                                  className='input time-vector-input'),
+                                    ]
+                                ),
+                                html.Div(
+                                    className='input-columns time-vector-column',
+                                    children=[
+                                        html.Label('Stop', className='label time-vector-label'),
+                                        dcc.Input(id='time_end', type='number', placeholder='End Time', value=20,
+                                                  className='input time-vector-input'),
+                                    ]
+                                )
+                            ]
+                        )
                     ]),
                 ]
             )
