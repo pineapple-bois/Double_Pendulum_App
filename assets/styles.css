@@ -63,8 +63,6 @@ body {
 }
 
 .nav-link {
-    color: white;
-    background-color: #76B083;
     text-decoration: none;
     border-radius: 5px;
     padding: 4px 6px;
@@ -72,10 +70,11 @@ body {
     font-size: 14px; /* Increase font size */
 }
 
+/* currently only applies to the 404 page */
 .nav-link:hover {
     background-color: #88C495;
     color: white;
-    text-decoration: none;
+    text-decoration: underline;
 }
 
 /*  -------------------
@@ -799,6 +798,46 @@ Responsive spacing of description and image section */
         max-width: 100%;
         margin-bottom: 20px;
     }
+}
+
+@media (max-width: 1200px) {
+    .image-container {
+        max-width: 80%; /* Adjust max-width for smaller viewports */
+    }
+
+    /* Adjusting font size for model titles and descriptions */
+    .model-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .model-description {
+        /*font-size: 14px;*/
+    }
+}
+
+@media (max-width: 900px) {
+    /* Responsive spacing of description and image section */
+    .description-images-section {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: center; /* Center the children horizontally */
+    }
+
+    .models-container {
+        max-width: 90%;
+        gap: 0; /* Remove any gap that might cause spacing issues */
+        margin-top: 0; /* Ensure there's no margin causing extra space */
+        padding-top: 0; /* Set padding-top to 0 to remove any unintended padding */
+    }
+
+    .simple-model, .compound-model {
+        padding-top: 0; /* Remove padding on individual models */
+    }
+
+    .description {
+        max-width: 100%;
+        margin-bottom: 20px;
+    }
 
     /* RUN SIMULATION button should take up 1/3 of space */
     .run-simulation-group {
@@ -879,35 +918,11 @@ Responsive spacing of description and image section */
 
      /*Make the children of the above-graph-container side by side */
     .above-graph-container {
-        flex-direction: row;
+        flex-direction: column;
         align-items: center;
         padding-top: 36px;
         gap: 40px;
         box-sizing: border-box;
-    }
-}
-
-@media (max-width: 1296px) {
-    .above-graph-container {
-        flex-direction: column;
-        gap: 36px;
-    }
-
-}
-
-@media (max-width: 1200px) {
-    .image-container {
-        max-width: 80%; /* Adjust max-width for smaller viewports */
-    }
-
-    /* Adjusting font size for model titles and descriptions */
-    .model-title {
-        font-size: 20px;
-        font-weight: bold;
-    }
-
-    .model-description {
-        /*font-size: 14px;*/
     }
 }
 
