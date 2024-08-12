@@ -496,7 +496,7 @@ body {
 
 /* Graph Container */
 .graph-container {
-    width: 90%;  /* Graph container takes up 90% of the parent width */
+    width: 95%;  /* Graph container takes up 95% of the parent width */
     background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
     margin: 0 auto;  /* Center the graph container */
 }
@@ -686,25 +686,26 @@ body {
   background-color: #f8f9fa; /* Consistent background color */
 }
 
-.navbar, .footer-section {
-  flex-shrink: 0; /* Do not allow these elements to shrink */
+.body {
+    flex: none;
 }
 
 .chaos-content-container {
-  flex-grow: 1; /* Take up remaining space */
+  flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 8px 16px; /* Ensure padding is consistent */
-  background-color: #f8f9fa;
-  margin-top: 10px;
-  margin-left: auto;
-  margin-right: auto;
+  height: 100%;
+  width: 100%;
+  margin: 0;
 }
 
-.custom-text {
+.chaos-text {
   color: #2c3e50; /* Custom text color */
   font-family: 'Red Hat Display', sans-serif;
+  text-align: center; /* Center text within its container */
+  font-size: 24px; /* Adjust the font size if needed */
 }
 
 /*  -------------------
