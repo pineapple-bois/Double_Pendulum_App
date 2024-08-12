@@ -62,7 +62,7 @@ body {
     padding-left: 32px; /* Use pixels for consistent margin */
 }
 
-.header .nav-link {
+.nav-link {
     color: white;
     background-color: #76B083;
     text-decoration: none;
@@ -72,7 +72,7 @@ body {
     font-size: 14px; /* Increase font size */
 }
 
-.header .nav-link:hover {
+.nav-link:hover {
     background-color: #88C495;
     color: white;
     text-decoration: none;
@@ -81,7 +81,7 @@ body {
 /*  -------------------
     Title Section */
 
-.body .title-section {
+.title-section {
     background: #DBE9DE;
     text-align: left;
     padding: 18px 36px;
@@ -90,7 +90,7 @@ body {
     position: relative;
 }
 
-.body .title-text {
+.title-text {
     color: #4410AD;
     font-family: 'Red Hat Display', sans-serif;
     font-size: 60px;
@@ -101,7 +101,7 @@ body {
     /*background-color: rgba(255, 0, 0, 0.1) !important; !* Light red background for debugging *!*/
 }
 
-.body .title-underline {
+.title-underline {
     position: absolute;
     bottom: 0;
     left: 36px;
@@ -222,6 +222,7 @@ body {
     Information Pop-Up */
 
 .get-info-button {
+    margin-top: 10px;
     margin-bottom: 10px;
 }
 
@@ -242,8 +243,8 @@ body {
 /* Container for Info Popup */
 .information-container {
     position: absolute;
-    top: 50px;
-    left: calc(25% - 10px);
+    top: 48px;
+    left: 25%;
     width: 30%;
     z-index: 10; /* Ensure it floats on top */
     max-height: calc(100vh - 240px); /* Set a max-height based on viewport height (This was trial and error -126px)*/
@@ -277,7 +278,6 @@ body {
     flex-direction: column;
     /*background-color: #DBE9DE !important; !* "Gin" *!*/
     max-width: 100%;
-    /*height: 1200px;*/
     justify-content: space-between;
 }
 
@@ -285,7 +285,7 @@ body {
     /*background-color: #DBE9DE; !* "Gin" *!*/
     display: flex;
     flex-direction: column;
-    padding: 18px 36px 0 36px; /* Apply padding to each input group */
+    padding: 18px 36px 18px 36px; /* Apply padding to each input group */
     flex-grow: 1;
 }
 
@@ -304,9 +304,8 @@ body {
 }
 
 .input-columns {
-    display: flex;
-    flex-direction: column;
     width: 100%;
+    box-sizing: border-box;
 }
 
 /* DELETE BELOW AFTER DEBUG/MEDIA and uncomment .input-group background */
@@ -323,10 +322,6 @@ body {
     background-color: rgba(0, 0, 255, 0.2) !important; /* Light blue background for debugging */
 }
 
-.time-vector-group {
-    background-color: rgba(255, 255, 0, 0.2) !important; /* Light yellow background for debugging */
-}
-
 .unity-parameters-button {
     margin-bottom: 10px;
 }
@@ -338,8 +333,13 @@ body {
     margin-bottom: 10px;
 }
 
+.time-title {
+    margin-top: 20px;
+}
+
 .label {
     color: #4410AD; /* "Blue Gem" */
+    margin-top: 10px;
     margin-bottom: 10px;
 }
 
@@ -386,15 +386,13 @@ body {
 /* Dropdowns */
 .dropdown {
     width: 100%;
+    max-width: 100%;
+    flex-grow: 1;
     color: #4410AD;
     background-color: white;
     border-radius: 10px;
     text-align: center;
-    margin-bottom: 0
-}
-
-.parameters-dropdown {
-    margin-bottom: 20px;
+    box-sizing: border-box;
 }
 
 /* Input Focus State */
@@ -488,17 +486,17 @@ body {
     display: flex;
     justify-content: center; /* Center the graph container horizontally */
     align-items: center; /* Center the graph container vertically */
-    width: 100%;  /* Take full width */
-    margin-top: 10px; /* Add margin on top to separate from the graph section above */
+    width: 100%;
+    margin-top: 10px;
     background-color: rgba(255, 0, 255, 0.2); /* Light purple background for debugging */
-    padding: 18px 0;  /* Adjustable padding for the time graph section */
+    padding: 36px 36px;
 }
 
 /* Graph Container */
 .graph-container {
-    width: 95%;  /* Graph container takes up 95% of the parent width */
+    width: 100%;
     background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
-    margin: 0 auto;  /* Center the graph container */
+    margin: 0 auto;
 }
 
 /* Responsive Graph */
@@ -686,7 +684,7 @@ body {
   background-color: #f8f9fa; /* Consistent background color */
 }
 
-.body {
+.body-chaos {
     flex: none;
 }
 
@@ -769,8 +767,18 @@ Responsive spacing of description and image section */
     }
 }
 
-/* At 1600px or smaller, stack the description on top of the images */
+@media (max-width: 1680px) {
+    /* Make the children of the above-graph-container stack vertically */
+    .above-graph-container {
+        flex-direction: column; /* Stack the children vertically */
+        align-items: center; /* Optionally center the stacked items */
+        padding-top: 18px;
+        gap: 18px;
+    }
+}
+
 @media (max-width: 1600px) {
+    /* Responsive spacing of description and image section */
     .description-images-section {
         flex-direction: column; /* Stack elements vertically */
         align-items: center; /* Center the children horizontally */
@@ -791,6 +799,100 @@ Responsive spacing of description and image section */
         max-width: 100%;
         margin-bottom: 20px;
     }
+
+    /* RUN SIMULATION button should take up 1/3 of space */
+    .run-simulation-group {
+        max-width: 33.33333%;
+    }
+
+    /*Same with the info pop-up */
+    .information-container {
+        left: 33.33333%;
+    }
+
+    /* The input bar should be horizontal */
+    .content-container {
+        flex-direction: column; /* Stack children vertically */
+        justify-content: center; /* Center the stacked items vertically */
+        align-items: center; /* Center the stacked items horizontally */
+        width: 100%; /* Ensure full width for each child */
+        height: auto;
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .side-bar {
+        flex-direction: row; /* Arrange children horizontally */
+        justify-content: space-around; /* Space children evenly */
+        align-items: center; /* Center children vertically */
+        max-width: 100%; /* Sidebar should take up full width */
+        height: auto;
+        padding: 0 !important;
+        box-sizing: border-box;
+    }
+
+    /* Inputs container to arrange input-groups in a row */
+    .inputs {
+        flex: 1;
+        display: flex; /* Keep flexbox layout */
+        flex-direction: row; /* Change direction to row to arrange children horizontally */
+        justify-content: space-between; /* Evenly distribute space between children */
+        align-items: stretch; /* Align children to the top */
+        max-width: 100%; /* Take full width of the parent */
+    }
+
+    .input-group {
+        flex: 1; /* Allow input groups to grow/shrink equally */
+        box-sizing: border-box; /* Include padding/margin in width calculations */
+        display: flex;
+        flex-direction: column; /* Ensure content inside the input groups stacks properly */
+        align-items: stretch;
+        width: 100%;
+        padding: 36px 36px; /* Apply padding to each input group */
+    }
+
+    /* Ensure the model-system-group takes up the full height */
+    .input-group .model-system-group,
+    .input-group .initial-conditions-group {
+        flex-grow: 1; /* Allow this group to grow and fill available space */
+        height: 100%; /* Ensure it takes the full height available */
+    }
+
+        /* Dropdowns within input-groups */
+    .input-group .dropdown {
+        width: 100%; /* Ensure dropdowns take full width */
+        max-width: 100%; /* Prevent them from exceeding container width */
+        flex-grow: 1; /* Allow dropdowns to grow */
+    }
+
+    /* Graph Section */
+    .graph-section {
+        flex-direction: row; /* Set flex direction to row */
+        justify-content: center; /* Distribute space evenly between graph elements */
+        align-items: center; /* Center items vertically */
+        width: 100%; /* Ensure it occupies full width when stacked */
+        margin: 0; /* Remove any margin */
+        padding: 0; /* Remove padding */
+        box-sizing: border-box;
+    }
+
+     /*Make the children of the above-graph-container side by side */
+    .above-graph-container {
+        flex-direction: row;
+        align-items: center;
+        padding-top: 36px;
+        gap: 40px;
+        box-sizing: border-box;
+    }
+}
+
+@media (max-width: 1296px) {
+    .above-graph-container {
+        flex-direction: column;
+        gap: 36px;
+    }
+
 }
 
 @media (max-width: 1200px) {
@@ -832,62 +934,3 @@ Responsive spacing of description and image section */
         margin-bottom: 15px; /* Adjust spacing */
     }
 }
-
-/* ----------------------------
-Responsive spacing of inputs and graph section */
-
-/* Media query for screens 1680px wide or smaller */
-@media (max-width: 1680px) {
-    /* Make the children of the above-graph-container stack vertically */
-    .above-graph-container {
-        flex-direction: column; /* Stack the children vertically */
-        align-items: center; /* Optionally center the stacked items */
-        padding-top: 18px;
-        gap: 18px;
-    }
-}
-
-/* Media query for screens 1500px wide or smaller
-    WORK IN PROGRESS */
-/*@media (max-width: 1500px) {*/
-/*    !* Change the sidebar to be horizontal *!*/
-/*    .side-bar {*/
-/*        flex-direction: row; !* Change to a horizontal layout *!*/
-/*        max-width: 100%; !* Ensure it takes full width *!*/
-/*        height: auto; !* Adjust height to fit content *!*/
-/*        justify-content: flex-end; !* Space out the sidebar items *!*/
-/*    }*/
-
-/*    .side-bar .inputs {*/
-/*        display: flex;*/
-/*        flex-direction: row; !* Align inputs horizontally *!*/
-/*        justify-content: space-between; !* Space out the columns *!*/
-/*        align-items: stretch; !* Make all children stretch to the same height *!*/
-/*        width: 100%; !* Ensure it takes up 100% of the width *!*/
-/*    }*/
-
-/*    .side-bar .input-group {*/
-/*        flex: 1; !* Allow each input group to grow equally *!*/
-/*        display: flex;*/
-/*        flex-direction: column; !* Keep the content of each group vertical *!*/
-/*        justify-content: center; !* Center content vertically *!*/
-/*        margin: 0; !* Remove any margin *!*/
-/*    }*/
-
-/*    .side-bar .inputs > .input-group {*/
-/*        flex-basis: 0; !* Allow equal division of space *!*/
-/*    }*/
-
-/*    !* Flip the above-graph-container back to horizontal *!*/
-/*    .above-graph-container {*/
-/*        flex-direction: row; !* Change back to a horizontal layout *!*/
-/*        justify-content: space-between; !* Space out the graphs *!*/
-/*        gap: 20px; !* Adjust the gap between graphs *!*/
-/*    }*/
-
-/*    !*!* Adjust the width of graph wrappers to fit horizontally *!*!*/
-/*    !*.graph-wrapper {*!*/
-/*    !*    width: 45%; !* Adjust width so two graphs can fit side by side *!*!*/
-/*    !*    padding: 10px; !* Adjust padding for better fit *!*!*/
-/*    !*}*!*/
-/*}*/
