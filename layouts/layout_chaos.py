@@ -12,12 +12,7 @@ def get_chaos_layout():
                     get_navbar(),
                 ]
             ),
-            html.Div(
-                className='body',
-                children=[
-                    get_title_section("Exploring Non-Linear Dynamics"),
-                ]
-            ),
+            get_title_section("Exploring Non-Linear Dynamics"),
             html.Div(
                 className='chaos-content-container',
                 children=[
