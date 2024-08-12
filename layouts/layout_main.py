@@ -1,6 +1,6 @@
 # Main page layout
-from dash import html
 from dash import dcc
+from dash import html
 
 # Plotly figure configuration
 # 'displayModeBar': False - removes everything
@@ -53,45 +53,45 @@ def get_description_images_section():
                 className="description",
                 children=[
                     html.P([
-                               "The double pendulum is an archetypal non-linear system in classical mechanics that has "
-                               "been studied since the 18th century. ",
-                               "In this simulation, we model two types of double pendulum; simple and compound. ",
-                               dcc.Markdown('''
+                        "The double pendulum is an archetypal non-linear system in classical mechanics that has "
+                        "been studied since the 18th century. ",
+                        "In this simulation, we model two types of double pendulum; simple and compound. ",
+                        dcc.Markdown('''
                                 Both pendulums move in the $(x,y)$-plane. The system has two degrees of freedom, 
                                 uniquely determined by the values of $\\theta_1$ & $\\theta_2$.
                                 ''', mathjax=True, style={'display': 'inline'}),
-                               ],
-                           className="description-text"),
+                    ],
+                        className="description-text"),
                     html.P([
-                               "Motion of a double pendulum system is characterised by extreme sensitivity to initial "
-                               "conditions, resulting in both periodic and chaotic behaviour. ",
-                               dcc.Markdown('''
+                        "Motion of a double pendulum system is characterised by extreme sensitivity to initial "
+                        "conditions, resulting in both periodic and chaotic behaviour. ",
+                        dcc.Markdown('''
                                No closed-form solutions for $\\theta_1$ and $\\theta_2$ as 
                                functions of time are known. Therefore, the system must be solved numerically. 
                                ''', mathjax=True, style={'display': 'inline'}),
-                               "The system's equations of motion are derived using both ",
-                               html.A("Lagrangian", href="/lagrangian", className="description-link",
-                                      target="_blank"),
-                               " and ",
-                               html.A("Hamiltonian", href="/hamiltonian", className="description-link",
-                                      target="_blank"),
-                               " formalisms."
-                               ],
-                           className="description-text"),
+                        "The system's equations of motion are derived using both ",
+                        html.A("Lagrangian", href="/lagrangian", className="description-link",
+                               target="_blank"),
+                        " and ",
+                        html.A("Hamiltonian", href="/hamiltonian", className="description-link",
+                               target="_blank"),
+                        " formalisms."
+                    ],
+                        className="description-text"),
                     html.P([
-                               "This simulation provides a rich context for exploring non-linear dynamics. "
-                               "We generate a time graph, phase portrait, and animation based on the selected model "
-                               "parameters including; mass, length, release angle, and angular velocity. "
-                               "Fascinating dynamics can be discovered by simply releasing the pendulums from rest. "
-                               "The acceleration due to gravity acts as the restoring force, influencing the oscillation "
-                               "period and stability of the motion. This model allows for the simulation of pendulum "
-                               "behaviour on different ",
-                               html.A("celestial bodies in our Solar System",
-                                      href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
-                                      className="description-link", target="_blank"),
-                               "."
-                               ],
-                           className="description-text")
+                        "This simulation provides a rich context for exploring non-linear dynamics. "
+                        "We generate a time graph, phase portrait, and animation based on the selected model "
+                        "parameters including; mass, length, release angle, and angular velocity. "
+                        "Fascinating dynamics can be discovered by simply releasing the pendulums from rest. "
+                        "The acceleration due to gravity acts as the restoring force, influencing the oscillation "
+                        "period and stability of the motion. This model allows for the simulation of pendulum "
+                        "behaviour on different ",
+                        html.A("celestial bodies in our Solar System",
+                               href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_ratio.html",
+                               className="description-link", target="_blank"),
+                        "."
+                    ],
+                        className="description-text")
                 ]
             ),
             html.Div(  # New parent container for both models
@@ -112,7 +112,8 @@ def get_description_images_section():
                             html.Div(
                                 className="image-container",
                                 children=[
-                                    html.Img(src='/assets/Images/Model_Simple_Transparent_NoText.png', className="model-image")
+                                    html.Img(src='/assets/Images/Model_Simple_Transparent_NoText.png',
+                                             className="model-image")
                                 ]
                             )
                         ]
@@ -141,9 +142,9 @@ def get_description_images_section():
     )
 
 
-def get_main_content_section():
+def get_input_bar():
     return html.Div(
-        className="main-content-section",
+        className="side-bar",
         children=[
             html.Div(
                 className="inputs",
@@ -320,66 +321,87 @@ def get_main_content_section():
                         ),
                     ]),
                 ]
-            ),
-            html.Div(
-                id="scroll-target",
-                className="main-content",
-                children=[
-                    html.Div(
-                        className="loading-container-wrapper",  # New wrapper for centering
-                        children=[
-                            html.Div(
-                                className="loading-container",
-                                children=[
-                                    dcc.Loading(
-                                        id="loading-1",
-                                        type="cube",
-                                        children=[
-                                            html.Div(
-                                                id='animation-phase-container',
-                                                className='above-graph-container',
-                                                style={'display': 'none'},
-                                                children=[
-                                                    html.Div(
-                                                        className="graph-wrapper",
-                                                        children=[
-                                                            html.Div("Trace Animation", className="graph-title"),
-                                                            dcc.Graph(id='pendulum-animation', config=config,
-                                                                      className='responsive-graph'),
-                                                        ]
-                                                    ),
-                                                    html.Div(
-                                                        className="graph-wrapper",
-                                                        children=[
-                                                            html.Div("Phase Portrait", className="graph-title"),
-                                                            dcc.Graph(id='phase-graph', config=config,
-                                                                      className='responsive-graph'),
-                                                        ]
-                                                    )
-                                                ]
-                                            ),
-                                            html.Div(
-                                                id='time-graph-container',
-                                                className='graph-container',
-                                                style={'display': 'none'},
-                                                children=[
-                                                    html.Div("Time Graph", className="graph-title"),
-                                                    dcc.Graph(id='time-graph', className='responsive-graph',
-                                                              responsive=True)
-                                                ]
-                                            ),
-                                            html.Div(id='error-message', className='error-message')
-                                        ],
-                                        className="delayed-spinner"
-                                    )
-                                ],
-                            ),
-                        ],
-                    ),
-                ]
             )
         ]
     )
+
+
+def get_animation_phase_section():
+    return html.Div(
+        id="scroll-target",
+        className="graph-section",
+        children=[
+            dcc.Loading(
+                id="loading-animation-phase",
+                type="cube",
+                children=[
+                    html.Div(
+                        id='animation-phase-container',
+                        className='above-graph-container',
+                        style={'display': 'none'},
+                        children=[
+                            html.Div(
+                                className="graph-wrapper",
+                                children=[
+                                    html.Div("Trace Animation", className="graph-title"),
+                                    dcc.Graph(id='pendulum-animation', config=config,
+                                              className='responsive-graph'),
+                                ]
+                            ),
+                            html.Div(
+                                className="graph-wrapper",
+                                children=[
+                                    html.Div("Phase Portrait", className="graph-title"),
+                                    dcc.Graph(id='phase-graph', config=config,
+                                              className='responsive-graph'),
+                                ]
+                            )
+                        ]
+                    ),
+                    html.Div(id='error-message', className='error-message')
+                ],
+                className='delayed-spinner'
+            ),
+        ]
+    )
+
+
+def get_time_graph_section():
+    return html.Div(
+        id="time-graph-section",  # Parent div for the time graph
+        className="time-graph-section",  # Add a specific class for styling
+        children=[
+            html.Div(
+                id='time-graph-container',
+                className='graph-container',
+                children=[
+                    html.Div("Time Graph", className="graph-title"),
+                    dcc.Graph(id='time-graph', className='responsive-graph', responsive=True)
+                ],
+                style={'display': 'none'},
+            )
+        ],
+        style={'display': 'none'}
+    )
+
+
+def get_main_content():
+    return html.Div(
+        className="main-layout",
+        children=[
+            # Parent Container for Sidebar and Animation-Phase
+            html.Div(
+                className="content-container",
+                children=[
+                    get_input_bar(),            # Sidebar
+                    get_animation_phase_section()  # Animation-Phase
+                ]
+            ),
+            # Time Graph Section below the above container
+            get_time_graph_section()
+        ]
+    )
+
 
 
 def get_common_footer(include_button=False, page_type="main"):
@@ -447,7 +469,7 @@ def get_main_layout():
                 children=[
                     get_title_section("Double Pendulum Simulation"),
                     get_description_images_section(),
-                    get_main_content_section(),
+                    get_main_content()
                 ]
             ),
             html.Div(
