@@ -216,27 +216,13 @@ body {
 }
 
 /*  -------------------
-    Main Content Section */
-
-.main-content-section {
-    display: flex;
-    justify-content: space-between;
-    background-color: #f8f9fa;
-    gap: 0;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
+    SideBar Section */
 
 /*  -------------------
     Information Pop-Up */
 
 .get-info-button {
     margin-bottom: 10px;
-}
-
-.information-content h2, .information-content p, .information-content ul, .information-content li, .information-content hr {
-    margin-bottom: 16px; /* Adjust the value as needed */
 }
 
 /* Info Popup Style */
@@ -247,6 +233,10 @@ body {
     border-radius: 0 0 5px 5px;
     z-index: 10; /* Ensure it floats on top */
     max-height: 100%; /* Set a max-height based on viewport height */
+}
+
+.information-content h2, .information-content p, .information-content ul, .information-content li, .information-content hr {
+    margin-bottom: 16px; /* Adjust the value as needed */
 }
 
 /* Container for Info Popup */
@@ -286,8 +276,8 @@ body {
     display: flex;
     flex-direction: column;
     /*background-color: #DBE9DE !important; !* "Gin" *!*/
-    max-width: 25%; /* Take 25% of the space */
-    height: 1170px;
+    max-width: 100%;
+    /*height: 1200px;*/
     justify-content: space-between;
 }
 
@@ -295,7 +285,7 @@ body {
     /*background-color: #DBE9DE; !* "Gin" *!*/
     display: flex;
     flex-direction: column;
-    padding: 36px 36px 0 36px; /* Apply padding to each input group */
+    padding: 18px 36px 0 36px; /* Apply padding to each input group */
     flex-grow: 1;
 }
 
@@ -340,10 +330,6 @@ body {
 .unity-parameters-button {
     margin-bottom: 10px;
 }
-
-/*.input-subtext .parameter-text {*/
-/*    margin-bottom: 0 !important;*/
-/*}*/
 
 .inputs-title {
     color: #4410AD; /* "Blue Gem" */
@@ -407,6 +393,10 @@ body {
     margin-bottom: 0
 }
 
+.parameters-dropdown {
+    margin-bottom: 20px;
+}
+
 /* Input Focus State */
 .input:focus, .dropdown:focus {
     border-color: #34186C; /* Darker purple border on focus */
@@ -414,7 +404,45 @@ body {
 }
 
 /*  -------------------
-    Loading */
+    Graphs and Loading */
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Content Container (Sidebar + Animation-Phase) */
+.content-container {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+/* Sidebar */
+.side-bar {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 25%;
+    background-color: #f8f9fa;
+    height: 100%;
+}
+
+/* Graph Section */
+.graph-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 75%;
+    height: 100%;
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+}
 
 /* Define animation keyframes for delaying the spinner visibility */
 @keyframes delayedVisibility {
@@ -434,78 +462,62 @@ body {
     animation: delayedVisibility 0.25s forwards; /* Change delay duration (waits a 1/4 second) */
 }
 
-/* TODO: REMEMBER TO REMOVE !important FROM BELOW ELEMENTS */
-
-.main-content {
-    flex: 3;
-    display: flex;
-    background-color: white;
-    gap: 0;
-    padding: 0;
-    max-width: 75%;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Wrapper to handle centering of loading and error elements */
-.loading-container-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    padding: 0 36px;
-    background-color: #f8f9fa;
-}
-
-/* Ensure the spinner is centered within its container */
-.loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center children horizontally */
-    justify-content: center; /* Center children vertically */
-    height: 100%;
-    width: 100%;
-    position: relative; /* Ensure it stays within the container bounds */
-    background-color: rgba(255, 255, 0, 0.1); /* Light yellow background for debugging */
-}
-
+/* Above Graph Container */
 .above-graph-container {
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: flex-start; /* Align to top */
     width: 100%;
-    margin: 0;
     background-color: rgba(255, 0, 0, 0.1); /* Light red background for debugging */
-    gap: 60px;
+    gap: 40px;
 }
 
-.graph-container {
+/* Graph Wrapper */
+.graph-wrapper {
     display: flex;
+    flex-direction: column;
     justify-content: center; /* Center horizontally */
-    align-items: flex-end; /* Align to bottom */
+    align-items: center;
     width: 100%;
-    margin: 0; /* No margin at the bottom */
     background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
     padding: 0;
 }
 
+/* Time Graph Section */
+.time-graph-section {
+    display: flex;
+    justify-content: center; /* Center the graph container horizontally */
+    align-items: center; /* Center the graph container vertically */
+    width: 100%;  /* Take full width */
+    margin-top: 10px; /* Add margin on top to separate from the graph section above */
+    background-color: rgba(255, 0, 255, 0.2); /* Light purple background for debugging */
+    padding: 18px 0;  /* Adjustable padding for the time graph section */
+}
+
+/* Graph Container */
+.graph-container {
+    width: 90%;  /* Graph container takes up 90% of the parent width */
+    background-color: rgba(0, 255, 0, 0.1); /* Light green background for debugging */
+    margin: 0 auto;  /* Center the graph container */
+}
+
+/* Responsive Graph */
 .responsive-graph {
+    width: 100%;
     height: auto;
     padding: 0;
 }
 
+/* Graph Title */
 .graph-title {
     font-size: 16px;
     font-weight: bold;
     color: #4410AD;
-    width: 100%;
-    text-align: left;
-    padding-top: 36px;
+    text-align: center;
 }
 
 /* Style for the error message */
-.loading-container-wrapper .error-message {
+.error-message {
     color: red;
     text-align: center;
     font-size: 20px;
@@ -729,7 +741,8 @@ body {
 /*  -------------------
    NEW Media Queries */
 
-/* Responsive spacing of description and image section */
+/* ----------------------------
+Responsive spacing of description and image section */
 
 @media (max-width: 2600px) {
     .image-container {
@@ -818,3 +831,62 @@ body {
         margin-bottom: 15px; /* Adjust spacing */
     }
 }
+
+/* ----------------------------
+Responsive spacing of inputs and graph section */
+
+/* Media query for screens 1680px wide or smaller */
+@media (max-width: 1680px) {
+    /* Make the children of the above-graph-container stack vertically */
+    .above-graph-container {
+        flex-direction: column; /* Stack the children vertically */
+        align-items: center; /* Optionally center the stacked items */
+        padding-top: 18px;
+        gap: 18px;
+    }
+}
+
+/* Media query for screens 1500px wide or smaller
+    WORK IN PROGRESS */
+/*@media (max-width: 1500px) {*/
+/*    !* Change the sidebar to be horizontal *!*/
+/*    .side-bar {*/
+/*        flex-direction: row; !* Change to a horizontal layout *!*/
+/*        max-width: 100%; !* Ensure it takes full width *!*/
+/*        height: auto; !* Adjust height to fit content *!*/
+/*        justify-content: flex-end; !* Space out the sidebar items *!*/
+/*    }*/
+
+/*    .side-bar .inputs {*/
+/*        display: flex;*/
+/*        flex-direction: row; !* Align inputs horizontally *!*/
+/*        justify-content: space-between; !* Space out the columns *!*/
+/*        align-items: stretch; !* Make all children stretch to the same height *!*/
+/*        width: 100%; !* Ensure it takes up 100% of the width *!*/
+/*    }*/
+
+/*    .side-bar .input-group {*/
+/*        flex: 1; !* Allow each input group to grow equally *!*/
+/*        display: flex;*/
+/*        flex-direction: column; !* Keep the content of each group vertical *!*/
+/*        justify-content: center; !* Center content vertically *!*/
+/*        margin: 0; !* Remove any margin *!*/
+/*    }*/
+
+/*    .side-bar .inputs > .input-group {*/
+/*        flex-basis: 0; !* Allow equal division of space *!*/
+/*    }*/
+
+/*    !* Flip the above-graph-container back to horizontal *!*/
+/*    .above-graph-container {*/
+/*        flex-direction: row; !* Change back to a horizontal layout *!*/
+/*        justify-content: space-between; !* Space out the graphs *!*/
+/*        gap: 20px; !* Adjust the gap between graphs *!*/
+/*    }*/
+
+/*    !*!* Adjust the width of graph wrappers to fit horizontally *!*!*/
+/*    !*.graph-wrapper {*!*/
+/*    !*    width: 45%; !* Adjust width so two graphs can fit side by side *!*!*/
+/*    !*    padding: 10px; !* Adjust padding for better fit *!*!*/
+/*    !*}*!*/
+/*}*/
