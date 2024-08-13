@@ -75,7 +75,7 @@ $$
 Hamilton's equations are first-order and the [derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DevelopmentHamiltonian.ipynb) proved simpler than uncoupling the Euler-Lagrange equations. In this instance, the Hamiltonian was the first integral of the Lagrangian, representing total energy of the system. For $\textbf{q} = [\theta_1, \theta_2]$,
 
 $$
-\mathcal{H}(\mathbf{p}, \mathbf{q}) = \sum_{i=1}^2  \dot{q}_i p_{i} - \mathcal{L}(\mathbf{q}, \dot{\mathbf{q}}_i) \equiv T+V \equiv E_{\text{mech}}
+\mathcal{H}(\mathbf{p}, \mathbf{q}) = \sum_{i=1}^2  \dot{q_i} p_{i} - \mathcal{L}(\mathbf{q}, \dot{\mathbf{q}}) \equiv T+V \equiv E_{\text{mech}}
 $$
 
 #### Solving the equations of motion
