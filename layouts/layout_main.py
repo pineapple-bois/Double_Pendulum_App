@@ -74,18 +74,19 @@ def get_description_images_section():
                         className="description-text"),
                     html.P([
                         "Motion of a double pendulum system is characterised by extreme sensitivity to initial "
-                        "conditions, resulting in both periodic and chaotic behaviour. ",
-                        dcc.Markdown('''
-                               No closed-form solutions for $\\theta_1$ and $\\theta_2$ as 
-                               functions of time are known. Therefore, the system must be solved numerically. 
-                               ''', mathjax=True, style={'display': 'inline'}),
+                        "conditions, resulting in both periodic and chaotic behaviour. "
                         "The system's equations of motion are derived using both ",
                         html.A("Lagrangian", href="/lagrangian", className="description-link",
                                target="_blank"),
                         " and ",
                         html.A("Hamiltonian", href="/hamiltonian", className="description-link",
                                target="_blank"),
-                        " formalisms."
+                        " formalisms.",
+                        dcc.Markdown('''
+                               No closed-form solutions for $\\theta_1$ and $\\theta_2$ as 
+                               functions of time are known. Therefore, the system must be solved numerically. 
+                               ''', mathjax=True, style={'display': 'inline'}),
+
                     ],
                         className="description-text"),
                     html.P([
