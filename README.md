@@ -1,10 +1,10 @@
 # Double Pendulum App
 
-### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/) which is deployed with [`Heroku`](https://www.heroku.com). 
+#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/) which is deployed with [`Heroku`](https://www.heroku.com). 
 
 ![img](assets/Images/Screenshot.png)
 
-### It is available at: [www.double-pendulum.net](http://www.double-pendulum.net)
+#### It is available at: [www.double-pendulum.net](http://www.double-pendulum.net)
 
 The application is an extension of [Double_Pendulum](https://github.com/pineapple-bois/Double_Pendulum), which derived the symbolic equations of motion.
 
@@ -62,17 +62,19 @@ $$
 \mathcal{H} = \sum_{i=1}^2  \dot{\theta_i} p_{\theta_i} - \mathcal{L}
 $$
 
-Here, generalised velocities $\dot{\mathbf{q}}_i$ are replaced with generalised momenta $\mathbf{p}=\frac{\partial \mathcal{L}}{\partial \dot{\mathbf{q}}_i}$ and we form the equations of motion,
+Here, generalised velocities are replaced with generalised momenta and we form the equations of motion,
 
 $$
-\dot{\theta}_i=\frac{\partial \mathcal{H}}{\partial p_{\theta_i}}
+\dot{\theta_i}=\frac{\partial \mathcal{H}}{\partial p_{\theta_i}}
 $$
 
 $$
 \dot{p}_{\theta_i}=-\frac{\partial \mathcal{H}}{\partial \theta_i}
 $$
 
-Hamilton's equations are first-order and the [derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DevelopmentHamiltonian.ipynb) proved simpler than uncoupling the Euler-Lagrange equations. In this instance, the Hamiltonian was the first integral of the Lagrangian, representing total energy of the system. For $\textbf{q} = [\theta_1, \theta_2]$,
+Hamilton's equations are first-order and the [Python derivation](https://github.com/pineapple-bois/Double_Pendulum/blob/master/DevelopmentHamiltonian.ipynb) proved simpler than uncoupling the Euler-Lagrange equations. 
+
+In this instance, the Hamiltonian was the first integral of the Lagrangian, representing total energy of the system. For $\textbf{q} = [\theta_1, \theta_2]$,
 
 $$
 \mathcal{H}(\mathbf{p}, \mathbf{q}) = \sum_{i=1}^2  \dot{q_i} p_{i} - \mathcal{L}(\mathbf{q}, \dot{\mathbf{q}}) \equiv T+V \equiv E_{\text{mech}}
@@ -99,7 +101,7 @@ This application represents a hybrid of web-development and dashboard engineerin
   - The equations are numerically integrated using `SciPy`'s [solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html) function. Integrator arguments are available in the class structure but this functionality is yet to be added to the UI.
 - **Visualisation**: 
   - Figures are rendered with `Plotly` and `Matplotlib`.
-  - [`MathJax`](https://www.mathjax.org) API is used for $\LaTeX$ rendering.
+  - [`MathJax`](https://www.mathjax.org) API is used for rendering latex expressions.
 - **Error Handling**: 
   - Robust validation of user inputs, ensures computational load is never too high.
 
@@ -155,7 +157,7 @@ Double_Pendulum_App/
 
 ----
 
-## Future Development
+### Future Development
 
 The [chaos/non-linear dynamics page](https://www.double-pendulum.net/chaos) is a work in progress. 
 
@@ -225,9 +227,28 @@ python pendulum_app.py
 
 ----
 
-## Deployed Application @ [double-pendulum.net](http://www.double-pendulum.net)
+### Project Dependencies
 
-For a full list of dependencies, refer to the `requirements.txt` file.
+#### Core Libraries
+- `dash`
+- `dash-bootstrap-components`
+- `dash-core-components`
+- `dash-html-components`
+
+#### Web Server and Framework
+- `Flask`
+- `gunicorn`
+
+#### Math and Science Libraries
+- `numpy`
+- `scipy`
+- `sympy`
+
+#### Visualisation
+- `matplotlib`
+- `plotly`
+
+For a full list of dependencies and versions, refer to the [`requirements.txt`](requirements.txt) file.
 
 ----
 
