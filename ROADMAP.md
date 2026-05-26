@@ -56,6 +56,20 @@ Last audited: 2026-05-26.
   - Validation on 2026-05-26: `.venv/bin/python -m pip install -r
     requirements-dev.txt` installed `pytest`; `.venv/bin/python -m pytest`
     passed with 50 tests.
+- Phase 3: Complete.
+  - Main reusable root-level modules have been moved into
+    `src/double_pendulum/`: validation logic, symbolic math helpers, Lagrangian
+    and Hamiltonian model classes, and plotting/display helpers.
+  - Root-level `AppFunctions.py`, `MathFunctions.py`,
+    `DoublePendulumLagrangian.py`, and `DoublePendulumHamiltonian.py` remain as
+    compatibility wrappers.
+  - `pendulum_app.py` imports the reusable package directly while still
+    exposing the Flask `server` object for Gunicorn-style deployment.
+  - Dash routes, layouts, callbacks, UI, and model equations were not
+    restructured or rewritten. This is the intended stopping point before Phase
+    4 multipage architecture work.
+  - Validation on 2026-05-26: `source .venv/bin/activate && python -m pytest`
+    passed with 54 tests.
 
 ## 1. Project identity
 
@@ -106,15 +120,18 @@ Python app:
 - `layouts/` contains pseudo-multipage layout functions for the landing/main
   page, derivation pages, chaos page, 404 page, and Matplotlib-converted Plotly
   styling.
-- `AppFunctions.py` contains input validation and shared figure/display helpers.
-- `MathFunctions.py` contains symbolic mechanics helpers.
-- `DoublePendulumLagrangian.py` and `DoublePendulumHamiltonian.py` contain model
-  classes, symbolic equation setup, numerical solving, position calculation,
-  and plotting/animation behavior.
+- `src/double_pendulum/` contains reusable logic:
+  - `validation/` for input validation, constants, and Dash error rendering.
+  - `math/` for symbolic mechanics helpers.
+  - `models/` for Lagrangian and Hamiltonian model classes.
+  - `plotting/` for shared figure/display helpers.
+- `AppFunctions.py`, `MathFunctions.py`, `DoublePendulumLagrangian.py`, and
+  `DoublePendulumHamiltonian.py` are compatibility wrappers for the old import
+  paths.
 - `assets/` contains Dash-served CSS, JavaScript, markdown/LaTeX content,
   existing app images, and newer hero image experiments under `assets/Heros`.
-- `tests/validate_input_test.py` exists, but meaningful test coverage is still a
-  major gap.
+- `tests/` is organized into unit, integration, and numerical coverage from the
+  Phase 2 foundation.
 
 Important modernization context:
 

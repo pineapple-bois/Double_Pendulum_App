@@ -1,6 +1,6 @@
 import pytest
 
-from AppFunctions import validate_inputs
+from src.double_pendulum.validation import validate_input_sections
 from tests.helpers import extract_dash_text
 
 
@@ -16,15 +16,30 @@ def validation_messages(
     model_type="simple",
     params=VALID_SIMPLE_PARAMS,
 ):
-    return extract_dash_text(
-        validate_inputs(
-            initial_conditions,
-            time_start,
-            time_end,
-            model_type,
-            *params,
+    sections = validate_input_sections(
+        initial_conditions,
+        time_start,
+        time_end,
+        model_type,
+        *params,
+    )
+    return [message for section in sections for message in section.messages]
+
+
+def test_appfunctions_validation_import_remains_compatible():
+    from AppFunctions import validate_inputs as validate_inputs_compat
+
+    dash_messages = extract_dash_text(
+        validate_inputs_compat(
+            [[0, 120, 0, None]],
+            0,
+            20,
+            "simple",
+            *VALID_SIMPLE_PARAMS,
         )
     )
+
+    assert "ω2 requires a numerical value." in dash_messages
 
 
 def test_accepts_representative_simple_inputs():

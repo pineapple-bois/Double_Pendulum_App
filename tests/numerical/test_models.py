@@ -1,9 +1,8 @@
 import numpy as np
 import pytest
 
-from DoublePendulumHamiltonian import DoublePendulumHamiltonian
-from DoublePendulumLagrangian import DoublePendulumLagrangian
-from MathFunctions import M1, M2, g, l1, l2, m1, m2
+from src.double_pendulum.math.functions import M1, M2, g, l1, l2, m1, m2
+from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
 
 
 SIMPLE_PARAMETERS = {l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0, g: 9.81}

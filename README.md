@@ -132,6 +132,12 @@ Double_Pendulum_App/
 │   ├── layout_main.py
 │   ├── layout_math.py
 │   └── layout_matplotlib.py
+├── src/
+│   └── double_pendulum/
+│       ├── math/
+│       ├── models/
+│       ├── plotting/
+│       └── validation/
 ├── tests/
 ├── AppFunctions.py
 ├── DoublePendulumHamiltonian.py
@@ -158,6 +164,7 @@ Double_Pendulum_App/
   - `styles.css` - Handles app styles such as fonts, colours, media queries, and layout structure.
 - The `layouts/` directory contains a series of nested python functions that all return `dash.html.Div` objects:
   - Dash applications are designed to be single page dashboards. By abstracting the page layout as `layouts/`, the pathname is tracked by dash callbacks producing this pseudo-multi-page web application.
+- The `src/double_pendulum/` package is the home for reusable simulation, symbolic math, validation, and plotting/helper logic. Root-level modules such as `AppFunctions.py`, `MathFunctions.py`, `DoublePendulumLagrangian.py`, and `DoublePendulumHamiltonian.py` remain as compatibility wrappers during the transition.
 
 ----
 

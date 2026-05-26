@@ -15,9 +15,9 @@ from layouts.layout_math import get_lagrangian_layout, get_hamiltonian_layout
 from layouts.layout_chaos import get_chaos_layout
 from layouts.layout_404 import get_404_layout
 from layouts.layout_matplotlib import mpl_layout
-from AppFunctions import validate_inputs, generate_pendulum_figures, set_display_styles
-from DoublePendulumLagrangian import DoublePendulumLagrangian
-from DoublePendulumHamiltonian import DoublePendulumHamiltonian
+from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
+from src.double_pendulum.plotting import generate_pendulum_figures, set_display_styles
+from src.double_pendulum.validation.dash import validate_inputs
 
 # Sympy variables for parameters
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)

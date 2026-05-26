@@ -1,6 +1,6 @@
 import sympy as sp
 
-from MathFunctions import (
+from src.double_pendulum.math.functions import (
     compute_hamiltonian,
     form_lagrangian,
     g,

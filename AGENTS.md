@@ -14,10 +14,15 @@ Guidance for coding agents working in this repository. Read `README.md` for setu
 ## Repository Structure
 
 - `pendulum_app.py` - main Dash app entrypoint. Defines `server`, `app`, URL routing, and Dash callbacks.
-- `AppFunctions.py` - input validation and shared figure/display helpers.
-- `MathFunctions.py` - symbolic mechanics helpers used by pendulum model classes.
-- `DoublePendulumLagrangian.py` - Lagrangian model class and plotting/animation behavior.
-- `DoublePendulumHamiltonian.py` - Hamiltonian model class and plotting/animation behavior.
+- `AppFunctions.py` - compatibility wrapper for input validation and shared figure/display helpers.
+- `MathFunctions.py` - compatibility wrapper for symbolic mechanics helpers.
+- `DoublePendulumLagrangian.py` - compatibility wrapper for the Lagrangian model class.
+- `DoublePendulumHamiltonian.py` - compatibility wrapper for the Hamiltonian model class.
+- `src/double_pendulum/` - reusable non-Dash logic extracted from root modules.
+  - `validation/` - input validation sections, constants, and Dash error rendering wrapper.
+  - `math/` - symbolic mechanics helpers used by pendulum model classes.
+  - `models/` - Lagrangian and Hamiltonian model classes.
+  - `plotting/` - shared figure/display helpers.
 - `layouts/` - pseudo-multipage Dash layout functions:
   - `layout_main.py` - home page layout and main input UI.
   - `layout_math.py` - Lagrangian/Hamiltonian derivation pages.
@@ -116,6 +121,7 @@ Minimal Dash smoke test before finalizing changes:
 - Watch for circular imports between `pendulum_app.py`, `layouts/`, and helper modules.
 - Keep UI changes compatible with the existing app style in `assets/styles.css`.
 - Preserve data schemas, markdown file paths, image paths, and environment-variable names if any are added later.
+- Prefer adding reusable non-Dash logic under `src/double_pendulum/`; keep root-level compatibility wrappers working while migration is incremental.
 - Preserve existing `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` behavior initially. Avoid model rewrites before meaningful numerical tests exist.
 
 ## Data and Secrets
