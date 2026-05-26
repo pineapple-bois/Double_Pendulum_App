@@ -187,9 +187,9 @@ Development of new features will take place in the [Double_Pendulum_App_Developm
 #### 2. Set Up a Virtual Environment
 
 ```bash
-python3 -m venv env
-source env/bin/activate   # On macOS/Linux
-.\env\Scripts\activate    # On Windows
+python3.12 -m venv .venv
+source .venv/bin/activate   # On macOS/Linux
+.\.venv\Scripts\activate    # On Windows
 ```
 
 #### 3. Install Dependencies
