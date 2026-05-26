@@ -13,27 +13,22 @@ Guidance for coding agents working in this repository. Read `README.md` for setu
 
 ## Repository Structure
 
-- `pendulum_app.py` - main Dash app entrypoint. Defines `server`, `app`, URL routing, and Dash callbacks.
-- `AppFunctions.py` - compatibility wrapper for input validation and shared figure/display helpers.
-- `MathFunctions.py` - compatibility wrapper for symbolic mechanics helpers.
-- `DoublePendulumLagrangian.py` - compatibility wrapper for the Lagrangian model class.
-- `DoublePendulumHamiltonian.py` - compatibility wrapper for the Hamiltonian model class.
+- `pendulum_app.py` - thin Dash app entrypoint. Defines `server`, `app`, the top-level app shell, and callback registration calls.
+- `app/` - Dash-facing application layer.
+  - `callbacks/` - app-shell routing and simulation callback registration.
+  - `components/` - shared UI shell, footer, graph, reference, figure-style, card, and simulation-control helpers.
+  - `content/` - page metadata, labels, copy, markdown paths, and reference data.
+  - `pages/` - route-level page layout ownership and route registry.
 - `src/double_pendulum/` - reusable non-Dash logic extracted from root modules.
   - `validation/` - input validation sections, constants, and Dash error rendering wrapper.
   - `math/` - symbolic mechanics helpers used by pendulum model classes.
   - `models/` - Lagrangian and Hamiltonian model classes.
   - `plotting/` - shared figure/display helpers.
-- `layouts/` - pseudo-multipage Dash layout functions:
-  - `layout_main.py` - home page layout and main input UI.
-  - `layout_math.py` - Lagrangian/Hamiltonian derivation pages.
-  - `layout_chaos.py` - work-in-progress chaos page.
-  - `layout_404.py` - not-found page.
-  - `layout_matplotlib.py` - shared Plotly layout styling for converted Matplotlib figures.
 - `assets/` - Dash-served static assets:
   - `assets/styles.css` - primary app styling.
   - `assets/nav-bar.js` and `assets/scroll.js` - client-side behavior.
   - `assets/custom-header.html` - loaded by `pendulum_app.py` as `app.index_string`.
-  - `assets/MarkdownScripts/` - markdown/LaTeX content loaded by layouts.
+  - `assets/MarkdownScripts/` - markdown/LaTeX content referenced by content modules.
   - `assets/Images/` - tracked app images used by the README and UI.
   - `assets/Heros/` - future visual inspiration for the redesign.
 - `development/` - exploratory/prototype/reference work for chaos features and earlier double-pendulum model development; do not import from it in production code without review and tests.
@@ -118,10 +113,10 @@ Minimal Dash smoke test before finalizing changes:
 - Preserve public routes (`/`, `/lagrangian`, `/hamiltonian`, `/chaos`) unless the task is to change routing.
 - Preserve Dash component IDs used by callbacks unless updating every dependent callback and layout reference together.
 - Be careful with Dash callback dependencies, `suppress_callback_exceptions=True`, and pseudo-multipage layouts; missing IDs may only fail at runtime.
-- Watch for circular imports between `pendulum_app.py`, `layouts/`, and helper modules.
+- Watch for circular imports between `pendulum_app.py`, `app/pages/`, `app/components/`, and callback modules.
 - Keep UI changes compatible with the existing app style in `assets/styles.css`.
 - Preserve data schemas, markdown file paths, image paths, and environment-variable names if any are added later.
-- Prefer adding reusable non-Dash logic under `src/double_pendulum/`; keep root-level compatibility wrappers working while migration is incremental.
+- Prefer adding reusable non-Dash logic under `src/double_pendulum/`; root-level compatibility wrappers have been retired.
 - Preserve existing `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` behavior initially. Avoid model rewrites before meaningful numerical tests exist.
 
 ## Data and Secrets

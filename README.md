@@ -95,7 +95,7 @@ This application represents a hybrid of web-development and dashboard engineerin
 #### Main Features
 
 - **Deriving the equations**: 
-  - The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/MathFunctions.py). 
+  - The equations of motion are derived symbolically with `SymPy` and abstracted as reusable helpers under `src/double_pendulum/math/`.
   - A simple conditional logic structure controls which model is derived.
 - **DoublePendulum Class**:
   - Instantiating a Lagrangian or Hamiltonian double-pendulum model object; *clicking the `Run Simulation` button*, derives the symbolic equations "on-the-fly".
@@ -126,12 +126,11 @@ Double_Pendulum_App/
 │   ├── nav-bar.js
 │   ├── scroll.js
 │   └── styles.css
-├── layouts/
-│   ├── layout_404.py
-│   ├── layout_chaos.py
-│   ├── layout_main.py
-│   ├── layout_math.py
-│   └── layout_matplotlib.py
+├── app/
+│   ├── callbacks/
+│   ├── components/
+│   ├── content/
+│   └── pages/
 ├── src/
 │   └── double_pendulum/
 │       ├── math/
@@ -139,11 +138,7 @@ Double_Pendulum_App/
 │       ├── plotting/
 │       └── validation/
 ├── tests/
-├── AppFunctions.py
-├── DoublePendulumHamiltonian.py
-├── DoublePendulumLagrangian.py
 ├── LICENSE.md
-├── MathFunctions.py
 ├── ROADMAP.md
 ├── pendulum_app.py
 ├── Procfile
@@ -162,9 +157,12 @@ Double_Pendulum_App/
   - `nav-bar.js` - Script to scroll to the top of the math pages.
   - `scroll.js` - Script triggered by the "Run Simulation" button scrolls to the input/figures section of the page.
   - `styles.css` - Handles app styles such as fonts, colours, media queries, and layout structure.
-- The `layouts/` directory contains a series of nested python functions that all return `dash.html.Div` objects:
-  - Dash applications are designed to be single page dashboards. By abstracting the page layout as `layouts/`, the pathname is tracked by dash callbacks producing this pseudo-multi-page web application.
-- The `src/double_pendulum/` package is the home for reusable simulation, symbolic math, validation, and plotting/helper logic. Root-level modules such as `AppFunctions.py`, `MathFunctions.py`, `DoublePendulumLagrangian.py`, and `DoublePendulumHamiltonian.py` remain as compatibility wrappers during the transition.
+- The `app/` package contains Dash-facing application code:
+  - `app/pages/` owns route-level page layouts.
+  - `app/components/` owns reusable UI shell, controls, graph wrappers, references, and figure styling.
+  - `app/content/` owns user-facing copy, page metadata, markdown paths, and reference data.
+  - `app/callbacks/` owns routing and simulation callback registration.
+- The `src/double_pendulum/` package is the home for reusable simulation, symbolic math, validation, and plotting/helper logic.
 
 ----
 

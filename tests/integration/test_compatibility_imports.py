@@ -1,22 +1,22 @@
-def test_root_appfunctions_wrapper_exports_existing_helpers():
-    from AppFunctions import generate_pendulum_figures, set_display_styles, validate_inputs
+def test_app_function_helpers_are_importable_from_source_package():
+    from src.double_pendulum.app_functions import generate_pendulum_figures, set_display_styles
+    from src.double_pendulum.validation.dash import validate_inputs
 
     assert callable(validate_inputs)
     assert callable(generate_pendulum_figures)
     assert callable(set_display_styles)
 
 
-def test_root_mathfunctions_wrapper_exports_existing_symbols():
-    from MathFunctions import form_lagrangian, l1, theta1
+def test_math_helpers_are_importable_from_source_package():
+    from src.double_pendulum.math import form_lagrangian, l1, theta1
 
     assert callable(form_lagrangian)
     assert str(l1) == "l1"
     assert str(theta1) == "theta1(t)"
 
 
-def test_root_model_wrappers_export_existing_classes():
-    from DoublePendulumHamiltonian import DoublePendulumHamiltonian
-    from DoublePendulumLagrangian import DoublePendulumLagrangian
+def test_model_classes_are_importable_from_source_package():
+    from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
 
     assert DoublePendulumHamiltonian.__name__ == "DoublePendulumHamiltonian"
     assert DoublePendulumLagrangian.__name__ == "DoublePendulumLagrangian"

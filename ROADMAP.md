@@ -61,8 +61,9 @@ Last audited: 2026-05-26.
     `src/double_pendulum/`: validation logic, symbolic math helpers, Lagrangian
     and Hamiltonian model classes, and plotting/display helpers.
   - Root-level `AppFunctions.py`, `MathFunctions.py`,
-    `DoublePendulumLagrangian.py`, and `DoublePendulumHamiltonian.py` remain as
-    compatibility wrappers.
+    `DoublePendulumLagrangian.py`, and `DoublePendulumHamiltonian.py` initially
+    remained as compatibility wrappers. They were retired during Phase 4g after
+    active imports moved to `src/double_pendulum/`.
   - `pendulum_app.py` imports the reusable package directly while still
     exposing the Flask `server` object for Gunicorn-style deployment.
   - Dash routes, layouts, callbacks, UI, and model equations were not
@@ -70,6 +71,104 @@ Last audited: 2026-05-26.
     4 multipage architecture work.
   - Validation on 2026-05-26: `source .venv/bin/activate && python -m pytest`
     passed with 54 tests.
+- Phase 4a: Complete.
+  - Introduced a minimal Dash app-layer package with `app/content/` for
+    user-facing copy, page titles, route/navigation metadata, markdown paths,
+    and references.
+  - Introduced `app/pages/` with an explicit route-to-layout registry while
+    preserving the existing pseudo-multipage layout modules and public routes.
+  - Layout files now import structured content rather than owning long-form
+    copy directly. Callbacks, component extraction, and a thinner app entrypoint
+    remain future Phase 4 work.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 57
+    tests.
+- Phase 4b: Complete.
+  - Added `app/callbacks/simulation.py` with `register_simulation_callbacks(app)`
+    for the main simulation-page callbacks.
+  - Moved the info popup, unity-parameter, model-parameter visibility,
+    input-change clearing/validation, and run-simulation graph callbacks out of
+    `pendulum_app.py` without changing callback IDs, inputs, outputs, states,
+    validation, model, numerical, or plotting behavior.
+  - Kept URL routing and the clientside home-page reinitialization callback in
+    `pendulum_app.py` as app-shell wiring.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 58
+    tests.
+- Phase 4c: Complete.
+  - Added shared UI component helpers under `app/components/` for navigation,
+    page shell sections, footer, description/model cards, graph wrappers, and
+    references.
+  - Updated layout modules to import shared components instead of reaching into
+    `layouts/layout_main.py` for navbar, title, footer, reference, and graph
+    helper construction.
+  - Preserved existing routes, copy, CSS classes, Dash component IDs, callback
+    wiring, visual design, numerical behavior, and validation behavior.
+  - Dense simulation input controls remain inline in `layouts/layout_main.py`
+    until a lower-risk page/component extraction step can give them focused
+    ownership.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 61
+    tests.
+- Phase 4d: Complete.
+  - Added `app/components/simulation_controls.py` for the main simulation
+    sidebar controls, grouped into focused helpers for information, model/system
+    selection, physical parameters, initial conditions, and time interval
+    controls.
+  - Updated `layouts/layout_main.py` to call the simulation control component
+    while preserving page composition, copy, CSS classes, and every
+    callback-bound Dash component ID.
+  - `app/callbacks/simulation.py` was not changed; callback inputs, outputs,
+    states, validation behavior, plotting calls, and model logic remain
+    unchanged.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 62
+    tests.
+- Phase 4e: Complete.
+  - Added explicit page modules under `app/pages/` for the main simulation,
+    derivation, chaos, and 404 fallback pages.
+  - Updated `app/pages/registry.py` so `/`, `/lagrangian`, `/hamiltonian`, and
+    `/chaos` resolve directly to `app/pages` layout functions while preserving
+    the existing 404 fallback behavior.
+  - Converted legacy `layouts/layout_main.py`, `layouts/layout_math.py`,
+    `layouts/layout_chaos.py`, and `layouts/layout_404.py` into compatibility
+    wrappers so there is one route-level page source of truth.
+  - Preserved routes, copy, CSS classes, Dash component IDs, callback behavior,
+    validation behavior, graph output wiring, numerical behavior, and model
+    logic.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 64
+    tests.
+- Phase 4f: Complete.
+  - Added `app/callbacks/routing.py` with `register_routing_callbacks(app)` for
+    URL routing and the existing `initializeHomePage()` clientside
+    reinitialization hook.
+  - `pendulum_app.py` now creates and exposes the Dash/Flask app, assigns the
+    top-level layout shell, and calls explicit callback registration functions.
+  - Preserved routes, 404 fallback behavior, clientside startup behavior, copy,
+    CSS classes, Dash component IDs, callback semantics, validation behavior,
+    graph output wiring, numerical behavior, and model logic.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 66
+    tests.
+- Phase 4: Complete.
+  - Page modules now own route-level layouts under `app/pages/`.
+  - User-facing copy and metadata live under `app/content/`.
+  - Shared navigation, shell, footer, card, graph, reference, and simulation
+    control helpers live under `app/components/`.
+  - Simulation and app-shell routing callbacks are registered from
+    `app/callbacks/`.
+  - The app entrypoint is thin while preserving the Gunicorn-facing
+    `pendulum_app:server` contract.
+  - The current four-page route scope is covered by import and route-layout
+    smoke tests.
+- Phase 4g: Complete.
+  - Proved the legacy root compatibility modules and legacy `layouts/` package
+    were no longer active dependencies by repository-wide search and test
+    migration.
+  - Deleted `AppFunctions.py`, `MathFunctions.py`,
+    `DoublePendulumLagrangian.py`, `DoublePendulumHamiltonian.py`, and the
+    legacy `layouts/` package.
+  - Moved the Matplotlib-to-Plotly style helper from
+    `layouts/layout_matplotlib.py` to `app/components/figure_style.py`.
+  - Updated tests and documentation to import from the modern `app/` and
+    `src/double_pendulum/` modules.
+  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 65
+    tests.
 
 ## 1. Project identity
 
@@ -111,23 +210,29 @@ The app should avoid presenting every detail at once.
 
 ## 3. Current state summary
 
-The current app is a legacy Dash application with a Flask `server` object for
-Gunicorn/Heroku-style deployment. It is still organized mostly as a root-level
-Python app:
+The current app is a modernized Dash application with a Flask `server` object
+for Gunicorn/Heroku-style deployment:
 
-- `pendulum_app.py` creates the Dash app, exposes `server`, handles URL routing,
-  and owns the main callbacks.
-- `layouts/` contains pseudo-multipage layout functions for the landing/main
-  page, derivation pages, chaos page, 404 page, and Matplotlib-converted Plotly
-  styling.
+- `pendulum_app.py` creates the Dash app, exposes `server`, defines the
+  top-level shell, and registers app callbacks.
+- `app/content/` contains user-facing page copy, route/navigation metadata,
+  markdown asset paths, and reference lists introduced during Phase 4a.
+- `app/pages/` contains the explicit route-level page modules and route-to-layout
+  registry for the pseudo-multipage app.
+- `app/callbacks/simulation.py` registers the main simulation-page callbacks
+  introduced during Phase 4b.
+- `app/callbacks/routing.py` registers app-shell URL routing and clientside
+  page reinitialization callbacks introduced during Phase 4f.
+- `app/components/` contains shared Dash component helpers for navigation,
+  shell sections, footers, graph wrappers, references, and simple cards
+  introduced during Phase 4c, plus the simulation control panel introduced
+  during Phase 4d, plus the converted Matplotlib/Plotly figure style helper
+  retired from the old `layouts/` package during Phase 4g.
 - `src/double_pendulum/` contains reusable logic:
   - `validation/` for input validation, constants, and Dash error rendering.
   - `math/` for symbolic mechanics helpers.
   - `models/` for Lagrangian and Hamiltonian model classes.
   - `plotting/` for shared figure/display helpers.
-- `AppFunctions.py`, `MathFunctions.py`, `DoublePendulumLagrangian.py`, and
-  `DoublePendulumHamiltonian.py` are compatibility wrappers for the old import
-  paths.
 - `assets/` contains Dash-served CSS, JavaScript, markdown/LaTeX content,
   existing app images, and newer hero image experiments under `assets/Heros`.
 - `tests/` is organized into unit, integration, and numerical coverage from the
@@ -336,6 +441,10 @@ Definition of done:
 - Shared controls, graph wrappers, and navigation live in reusable components.
 - The app entrypoint is thin and understandable.
 - The current four-page scope works locally.
+
+Status: Complete as of Phase 4g. The page, content, callback, component, and
+route-registry boundaries are explicit, legacy compatibility wrappers have been
+retired, and `.venv/bin/python -m pytest` passed with 66 tests on 2026-05-26.
 
 ### Phase 5: Pedagogical UI redesign
 

@@ -26,11 +26,11 @@ def validation_messages(
     return [message for section in sections for message in section.messages]
 
 
-def test_appfunctions_validation_import_remains_compatible():
-    from AppFunctions import validate_inputs as validate_inputs_compat
+def test_dash_validation_wrapper_renders_validation_messages():
+    from src.double_pendulum.validation.dash import validate_inputs
 
     dash_messages = extract_dash_text(
-        validate_inputs_compat(
+        validate_inputs(
             [[0, 120, 0, None]],
             0,
             20,
