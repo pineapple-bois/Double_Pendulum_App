@@ -46,5 +46,8 @@ logs/
 
 # App local reference
 /assets/DoublePendulumImages/
-/legacy/
+/legacy/*
+!/legacy/
+!/legacy/ARCHITECTURE.md
 /development/
+/assets/Heros/

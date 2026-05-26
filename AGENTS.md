@@ -1,25 +1,15 @@
 # AGENTS.md
 
-Guidance for coding agents working in this repository. Read `README.md` first; it is the primary source of truth, then verify against the files listed here before editing.
+Guidance for coding agents working in this repository. Read `README.md` for setup/current usage and `ROADMAP.md` for active modernization direction before editing.
 
 ## Project Overview
 
-- This repository serves a legacy-but-deployed Plotly Dash app built on Flask for simulating and visualizing double pendulum motion.
+- This repository serves a legacy Plotly Dash app built on Flask for simulating and visualizing double pendulum motion.
 - The public app is documented as `http://www.double-pendulum.net`.
 - The app models simple and compound double pendulums, derives equations with `SymPy`, numerically integrates with `SciPy`, and renders graphs/animations with Plotly and Matplotlib.
 - Main runtime: Python Dash app with a Flask `server` object for Gunicorn/Heroku deployment.
-- Because the app is live, keep modernization changes conservative and validate them carefully before deployment.
-
-## Modernization Priorities
-
-This is an early Dash project that is already deployed, so modernization should be incremental and conservative. The first modernization priorities are:
-
-- Upgrade local development from Python 3.9 to Python 3.12. Completed locally; deployment runtime remains pinned to Python 3.9 in `runtime.txt`.
-- Move local development instructions and tooling from `env/` to `.venv/`. Completed locally.
-- Create `.gitignore` at root with the usual suspects (macOS and JetBrains specific files also). Completed locally.
-- Migrate deployment runtime configuration carefully. Heroku now prefers `.python-version` over `runtime.txt`; do not remove or replace deployment runtime files without confirming the target Heroku stack/buildpack behavior.
-- Keep changes incremental because the app is currently deployed.
-- Review `requirements.txt` as part of the Python upgrade, but do not blindly upgrade all dependencies at once. Upgrade Dash, Flask, Plotly, NumPy, SciPy, SymPy, Matplotlib, and Gunicorn incrementally, running tests and the Dash smoke test after changes.
+- The active direction is modernization first and redeployment later. Do not optimize for preserving an old Heroku dyno at the expense of the roadmap.
+- Project identity is now the Nonlinear Dynamics / Chaos Companion App, with the double pendulum as the only concrete physical system in scope.
 
 ## Repository Structure
 
@@ -40,8 +30,13 @@ This is an early Dash project that is already deployed, so modernization should 
   - `assets/custom-header.html` - loaded by `pendulum_app.py` as `app.index_string`.
   - `assets/MarkdownScripts/` - markdown/LaTeX content loaded by layouts.
   - `assets/Images/` - tracked app images used by the README and UI.
+  - `assets/Heros/` - future visual inspiration for the redesign.
+- `development/` - exploratory/prototype/reference work for chaos features and earlier double-pendulum model development; do not import from it in production code without review and tests.
+- `legacy/` - historical reference material, including the old architecture guide.
 - `tests/validate_input_test.py` - existing `unittest` tests for `AppFunctions.validate_inputs`.
-- Deployment/runtime files: `Procfile`, `runtime.txt`, `requirements.txt`.
+- `ROADMAP.md` - active modernization and product/architecture planning document.
+- `legacy/requirements-old-freeze.txt` - backup of the previous fully frozen dependency set.
+- Deployment/runtime files: `Procfile`, `.python-version`, `requirements.txt`.
 
 ## Setup and Local Development
 
@@ -61,8 +56,11 @@ python3 pendulum_app.py
 ```
 
 - Local URL: `http://127.0.0.1:8050/`.
-- Python version for current deployment is still pinned in `runtime.txt` as `python-3.9.12`; local development has moved to Python 3.12 with `.venv/`.
-- Dependencies are pinned in `requirements.txt`; no other package manager files were found.
+- Python 3.12 is the active development runtime. `.python-version` is the Python runtime source of truth for future Heroku deployment.
+- `runtime.txt` has intentionally been removed and must not be reintroduced.
+- `requirements.txt` intentionally lists only top-level application/runtime dependencies. It is not a full freeze.
+- The previous frozen dependency list is preserved in `legacy/requirements-old-freeze.txt`; do not edit it unless explicitly asked to refresh that backup.
+- No other package manager files were found.
 - No required environment variables, `.env` file, database config, or credential files were found in tracked repo files.
 - The README notes that the HTTPS redirect block in `pendulum_app.py` should be commented out for local development. Verify the current state before changing it.
 
@@ -82,7 +80,7 @@ or:
 python3 -m unittest discover -s tests -p '*_test.py'
 ```
 
-Current validation note: pinned dependencies install into the Python 3.12 `.venv/`, and the Dash app starts locally. The existing unittest file currently fails against the app's validation message output, so treat those failures as a test-suite maintenance issue to investigate before relying on the suite as a release gate.
+Current validation note: top-level dependencies install into the Python 3.12 `.venv/`; `pip check`, the existing unittest suite, `python pendulum_app.py`, and `gunicorn pendulum_app:server` have passed locally after Dash/Plotly compatibility updates. Test coverage is still thin and should not be treated as a complete safety net.
 
 Minimal Dash smoke test before finalizing changes:
 
@@ -95,37 +93,37 @@ Minimal Dash smoke test before finalizing changes:
 
 ## Deployment Notes
 
-- Deployment appears to be Heroku-style based on:
+- Future deployment is expected to remain Heroku-style based on:
   - `Procfile`: `web: gunicorn pendulum_app:server`
-  - `runtime.txt`: `python-3.9.12`
-  - `requirements.txt`: pinned Python dependencies including `gunicorn`.
+  - `.python-version`: Python runtime source of truth
+  - `requirements.txt`: top-level Python dependencies including `gunicorn`.
 - No `Dockerfile`, `heroku.yml`, `app.json`, or CI/CD config was found in tracked files.
 - Do not rename `pendulum_app.py` or the Flask `server` object without also updating `Procfile`.
-- When upgrading deployment to Python 3.12, migrate runtime config cautiously. Heroku's current Python buildpack preference is `.python-version`; verify whether `runtime.txt` is still honored on the active stack before changing or deleting it.
-- Be cautious with local-only changes such as debug mode and HTTPS redirects; they can affect the deployed app.
+- Do not restore `runtime.txt`. Validate deployment with `.python-version` after local modernization is stable.
+- Be cautious with local-only changes such as debug mode and HTTPS redirects; move them toward explicit configuration rather than commented code when that work is in scope.
 
 ## Coding Guidelines for Agents
 
 - Keep changes small and repo-specific. Avoid large rewrites unless explicitly requested.
-- Treat Python 3.12, `.venv/`, and Heroku runtime-file migration as staged modernization work, not a reason to rewrite app architecture.
+- Use `ROADMAP.md` to sequence modernization work. Architecture extraction, tests, UI redesign, chaos expansion, and deployment refresh should happen in that order unless the user explicitly redirects.
 - Preserve public routes (`/`, `/lagrangian`, `/hamiltonian`, `/chaos`) unless the task is to change routing.
 - Preserve Dash component IDs used by callbacks unless updating every dependent callback and layout reference together.
 - Be careful with Dash callback dependencies, `suppress_callback_exceptions=True`, and pseudo-multipage layouts; missing IDs may only fail at runtime.
 - Watch for circular imports between `pendulum_app.py`, `layouts/`, and helper modules.
 - Keep UI changes compatible with the existing app style in `assets/styles.css`.
 - Preserve data schemas, markdown file paths, image paths, and environment-variable names if any are added later.
-- The README mentions `DoublePendulum.py`, but the actual tracked model files are `DoublePendulumLagrangian.py` and `DoublePendulumHamiltonian.py`.
+- Preserve existing `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` behavior initially. Avoid model rewrites before meaningful numerical tests exist.
 
 ## Data and Secrets
 
 - Local content/data appears to live in `assets/MarkdownScripts/` and static images under `assets/Images/`.
 - No tracked `.env`, secrets, credentials, API tokens, or database files were found.
 - Never commit secrets. Use environment variables or a local untracked config file if secrets are introduced.
-- The local workspace contains untracked/generated items such as `env/`, `__pycache__/`, and `.idea/`; do not rely on them as source of truth.
+- The local workspace may contain untracked/generated items such as `.venv/`, `__pycache__/`, and `.idea/`; do not rely on them as source of truth.
 
 ## Agent Workflow
 
-- Read `README.md` first.
+- Read `README.md` and `ROADMAP.md` first.
 - Inspect the relevant source, layout, asset, dependency, and deployment files before editing.
 - Check `git status --short` before making changes and do not overwrite unrelated user edits.
 - Run the available tests and, for UI changes, perform the Dash smoke test above.

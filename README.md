@@ -1,12 +1,14 @@
 # Double Pendulum App
 
-#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/) which is deployed with [`Heroku`](https://www.heroku.com). 
+#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/). It is currently associated with an older [`Heroku`](https://www.heroku.com) deployment, but active development is now focused on modernization first and redeployment later.
 
 ![img](assets/Images/Screenshot.png)
 
 #### It is available at: [www.double-pendulum.net](http://www.double-pendulum.net)
 
 The application is an extension of [Double_Pendulum](https://github.com/pineapple-bois/Double_Pendulum), which derived the symbolic equations of motion.
+
+For the current modernization direction, see [`ROADMAP.md`](ROADMAP.md).
 
 ----
 
@@ -96,7 +98,7 @@ This application represents a hybrid of web-development and dashboard engineerin
   - The equations of motion are derived symbolically with `SymPy` and abstracted as a series of [dependent functions](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/MathFunctions.py). 
   - A simple conditional logic structure controls which model is derived.
 - **DoublePendulum Class**:
-  - Instantiating a [DoublePendulum](https://github.com/pineapple-bois/Double_Pendulum_App/blob/main/DoublePendulum.py) object; *clicking the `Run Simulation` button*, derives the symbolic equations "on-the-fly".
+  - Instantiating a Lagrangian or Hamiltonian double-pendulum model object; *clicking the `Run Simulation` button*, derives the symbolic equations "on-the-fly".
   - The equations are cached to reduce runtime for further simulations of the same model.
   - The equations are numerically integrated using `SciPy`'s [solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html) function. Integrator arguments are available in the class structure but this functionality is yet to be added to the UI.
 - **Visualisation**: 
@@ -136,17 +138,19 @@ Double_Pendulum_App/
 ├── DoublePendulumLagrangian.py
 ├── LICENSE.md
 ├── MathFunctions.py
+├── ROADMAP.md
 ├── pendulum_app.py
 ├── Procfile
 ├── README.md
 ├── requirements.txt
-└── runtime.txt
+└── .python-version
 ```
 
 - For Dash applications, several key files are often required to ensure proper deployment and operation:
   - `Procfile` specifies the command to run the app.
-  - `runtime.txt` defines the Python version .
+  - `.python-version` defines the Python version for future Heroku deployment.
   - `requirements.txt` lists necessary dependencies.
+  - `runtime.txt` has intentionally been removed and should not be reintroduced.
 - Dash applications automatically read and serve files located in the root of the assets/ directory:
   - `custom-header.html` - Defines the page meta-data.
   - `nav-bar.js` - Script to scroll to the top of the math pages.
@@ -161,7 +165,9 @@ Double_Pendulum_App/
 
 The [chaos/non-linear dynamics page](https://www.double-pendulum.net/chaos) is a work in progress. 
 
-Development of new features will take place in the [Double_Pendulum_App_Development](https://github.com/pineapple-bois/Double_Pendulum_App_Development) repo which aims to;
+The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory contains exploratory/reference work for chaos features and earlier double-pendulum model development. Code from `development/` should be reviewed, tested, and migrated into the modern source layout before it becomes production app code.
+
+Future chaos work aims to:
 
 1. Produce a semi-structured database of angles, velocities, positions, and momenta within specified bounds using the Hamiltonian derivation.
 2. Produce bifurcation diagrams, and Poincaré sections to qualitatively analyse periodicity.
@@ -215,7 +221,7 @@ def before_request():
 # Optionally set debug=True below (line 320)
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run(debug=False)
 ```
 #### 5. Run the Application
 
@@ -232,8 +238,6 @@ python pendulum_app.py
 #### Core Libraries
 - `dash`
 - `dash-bootstrap-components`
-- `dash-core-components`
-- `dash-html-components`
 
 #### Web Server and Framework
 - `Flask`
@@ -248,7 +252,7 @@ python pendulum_app.py
 - `matplotlib`
 - `plotly`
 
-For a full list of dependencies and versions, refer to the [`requirements.txt`](requirements.txt) file.
+The [`requirements.txt`](requirements.txt) file intentionally lists only top-level application/runtime dependencies. The old fully frozen dependency list is preserved in [`requirements-old-freeze.txt`](legacy/requirements-old-freeze.txt) for reference.
 
 ----
 
