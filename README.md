@@ -233,6 +233,31 @@ python pendulum_app.py
 
 ----
 
+### Running the Test Suite
+
+Install the app and test dependencies in the Python 3.12 virtual environment:
+
+```bash
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+Run the full test suite with:
+
+```bash
+python -m pytest
+```
+
+The current test layout is organized by purpose:
+
+- `tests/unit/` covers validation and lightweight symbolic fidelity checks.
+- `tests/integration/` covers app import, route layout smoke behavior, and the Flask `server` object used by Gunicorn.
+- `tests/numerical/` covers basic Lagrangian and Hamiltonian simulation shape, finite values, and initial-condition consistency.
+
+Known Phase 2 limits: these tests are a foundation, not a complete numerical validation project. Full derivation audits, compound-equation symbolic checks, energy-conservation tolerances, trajectory regression fixtures, and a Hamiltonian state/input convention audit are still future work.
+
+----
+
 ### Project Dependencies
 
 #### Core Libraries
@@ -253,6 +278,8 @@ python pendulum_app.py
 - `plotly`
 
 The [`requirements.txt`](requirements.txt) file intentionally lists only top-level application/runtime dependencies. The old fully frozen dependency list is preserved in [`requirements-old-freeze.txt`](legacy/requirements-old-freeze.txt) for reference.
+
+Development and test-only dependencies are listed separately in [`requirements-dev.txt`](requirements-dev.txt).
 
 ----
 

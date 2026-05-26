@@ -33,7 +33,11 @@ Guidance for coding agents working in this repository. Read `README.md` for setu
   - `assets/Heros/` - future visual inspiration for the redesign.
 - `development/` - exploratory/prototype/reference work for chaos features and earlier double-pendulum model development; do not import from it in production code without review and tests.
 - `legacy/` - historical reference material, including the old architecture guide.
-- `tests/validate_input_test.py` - existing `unittest` tests for `AppFunctions.validate_inputs`.
+- `tests/unit/` - validation and lightweight symbolic fidelity tests.
+- `tests/integration/` - Dash app import, public route layout smoke, and Flask `server` tests.
+- `tests/numerical/` - basic Lagrangian/Hamiltonian simulation shape, finite-value, position, and initial-condition tests.
+- `pytest.ini` - pytest discovery/configuration for the test suite.
+- `requirements-dev.txt` - test-only dependencies such as `pytest`.
 - `ROADMAP.md` - active modernization and product/architecture planning document.
 - `legacy/requirements-old-freeze.txt` - backup of the previous fully frozen dependency set.
 - Deployment/runtime files: `Procfile`, `.python-version`, `requirements.txt`.
@@ -60,27 +64,27 @@ python3 pendulum_app.py
 - `runtime.txt` has intentionally been removed and must not be reintroduced.
 - `requirements.txt` intentionally lists only top-level application/runtime dependencies. It is not a full freeze.
 - The previous frozen dependency list is preserved in `legacy/requirements-old-freeze.txt`; do not edit it unless explicitly asked to refresh that backup.
-- No other package manager files were found.
+- Development/test-only dependencies are listed separately in `requirements-dev.txt`.
 - No required environment variables, `.env` file, database config, or credential files were found in tracked repo files.
 - The README notes that the HTTPS redirect block in `pendulum_app.py` should be commented out for local development. Verify the current state before changing it.
 
 ## Testing and Validation
 
-There is no Makefile, pytest config, lint config, formatter config, or type-check config in the tracked repo.
+There is no Makefile, lint config, formatter config, or type-check config in the tracked repo.
 
-The existing tests use `unittest` and the filename pattern is `*_test.py`, so use:
-
-```bash
-python -m unittest discover -s tests -p '*_test.py'
-```
-
-or:
+Install test-only dependencies into the activated Python 3.12 `.venv/` when needed:
 
 ```bash
-python3 -m unittest discover -s tests -p '*_test.py'
+pip install -r requirements-dev.txt
 ```
 
-Current validation note: top-level dependencies install into the Python 3.12 `.venv/`; `pip check`, the existing unittest suite, `python pendulum_app.py`, and `gunicorn pendulum_app:server` have passed locally after Dash/Plotly compatibility updates. Test coverage is still thin and should not be treated as a complete safety net.
+Run the full test suite with:
+
+```bash
+python -m pytest
+```
+
+Current validation note: top-level dependencies and `requirements-dev.txt` install into the Python 3.12 `.venv/`; `python -m pytest` passes with the Phase 2 test foundation. Coverage is still foundational and should not be treated as a complete numerical validation project.
 
 Minimal Dash smoke test before finalizing changes:
 

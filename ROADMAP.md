@@ -34,7 +34,28 @@ Last audited: 2026-05-26.
   - Note: direct `python` is not available on this machine until `.venv` is
     activated. Local server binding required running the server commands outside
     the sandbox, then stopping them after startup was confirmed.
-- Phase 2: Not started.
+- Phase 2: Complete.
+  - Test runner is `pytest`, configured by `pytest.ini`.
+  - `requirements-dev.txt` lists test-only dependencies separately from the
+    top-level application/runtime dependencies in `requirements.txt`.
+  - Tests are organized under `tests/unit/`, `tests/integration/`, and
+    `tests/numerical/`.
+  - Validation tests cover representative valid inputs plus invalid time
+    intervals, lengths, masses, gravity, and initial conditions.
+  - App smoke tests import `pendulum_app` without starting a server, verify the
+    Flask `server` object for Gunicorn-style deployment, and check public route
+    layout creation.
+  - Numerical tests cover basic Lagrangian and Hamiltonian simulation output
+    shape, finite values, precomputed position dimensions, and
+    initial-condition consistency.
+  - Lightweight symbolic fidelity tests cross-check the simple Lagrangian and
+    Hamiltonian forms against the reference derivation notebooks. Full
+    derivation audits, compound-equation symbolic checks, energy-conservation
+    tolerances, trajectory regression fixtures, and a Hamiltonian state/input
+    convention audit remain known gaps.
+  - Validation on 2026-05-26: `.venv/bin/python -m pip install -r
+    requirements-dev.txt` installed `pytest`; `.venv/bin/python -m pytest`
+    passed with 50 tests.
 
 ## 1. Project identity
 
@@ -442,8 +463,15 @@ behavior-preserving extraction.
 
 ## 10. Testing strategy
 
-Testing is currently a major gap and should be treated as a serious project
-risk.
+Testing is still an important project risk, but Phase 2 establishes the first
+reliable safety net. The suite is intentionally foundational rather than a full
+numerical validation project.
+
+Run the suite from the activated Python 3.12 virtual environment with:
+
+```bash
+python -m pytest
+```
 
 Recommended layers:
 
