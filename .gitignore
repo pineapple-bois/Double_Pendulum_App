@@ -43,4 +43,8 @@ logs/
 # Local notebooks and IPython caches
 .ipynb_checkpoints/
 .ipython/
+
+# App local reference
 /assets/DoublePendulumImages/
+/legacy/
+/development/
