@@ -25,11 +25,23 @@ class TestValidateInputs(unittest.TestCase):
     def _extract_error_messages(errors):
         if errors is None:
             return []  # Return an empty list when there are no errors
-        # Errors is a list of html.Div objects, each containing a string and an html.Br()
+
         messages = []
-        for error in errors.children:
-            # Extract the string part of the error, assuming it's the first element in the contents of the html.Div
-            messages.append(str(error))
+
+        def collect_strings(node):
+            if node is None:
+                return
+            if isinstance(node, str):
+                messages.append(node)
+                return
+            if isinstance(node, (list, tuple)):
+                for child in node:
+                    collect_strings(child)
+                return
+            if hasattr(node, "children"):
+                collect_strings(node.children)
+
+        collect_strings(errors)
         return messages
 
     # time interval test
@@ -82,7 +94,7 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      None, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("l1 (length of rod 1) is required.", messages)
+        self.assertIn("l1 (length of rod 1) requires a numerical value.", messages)
         # Add similar tests for other parameters
 
     def test_parameters_non_numeric(self):
@@ -134,7 +146,7 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, None)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("g (acceleration due to gravity) is required.", messages)
+        self.assertIn("g (acceleration due to gravity) requires a numerical value.", messages)
 
         # Example for g being non-numeric
         errors_div = validate_inputs([[0, 120, 0, 0]],
@@ -150,7 +162,7 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 requires a numerical value.", messages)
+        self.assertIn("θ1 requires a numerical value.", messages)
 
     def test_initial_conditions_non_numeric(self):
         # Test for one of the initial conditions being non-numeric
@@ -158,7 +170,7 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 requires a numerical value.", messages)
+        self.assertIn("θ1 requires a numerical value.", messages)
 
     def test_initial_conditions_valid(self):
         # Test for all initial conditions being valid
@@ -172,31 +184,31 @@ class TestValidateInputs(unittest.TestCase):
         errors_div = validate_inputs([[0, 120, 0, None], [0, 121, 0, None], [0, 122, 0, None]],
                                      0, 20, 'simple', 1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: ω2 requires a numerical value.", messages)
-        self.assertIn("Pendulum B: ω2 requires a numerical value.", messages)
-        self.assertIn("Pendulum C: ω2 requires a numerical value.", messages)
+        self.assertIn("Pendulum 1: ω2 requires a numerical value.", messages)
+        self.assertIn("Pendulum 2: ω2 requires a numerical value.", messages)
+        self.assertIn("Pendulum 3: ω2 requires a numerical value.", messages)
 
     def test_initial_conditions_different_non_numeric_types(self):
         errors_div = validate_inputs([[[], {}, True, 'string']],
                                      0, 20, 'simple', 1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 requires a numerical value.", messages)
-        self.assertIn("Pendulum A: θ2 requires a numerical value.", messages)
-        self.assertIn("Pendulum A: ω1 requires a numerical value.", messages)
-        self.assertIn("Pendulum A: ω2 requires a numerical value.", messages)
+        self.assertIn("θ1 requires a numerical value.", messages)
+        self.assertIn("θ2 requires a numerical value.", messages)
+        self.assertIn("ω1 requires a numerical value.", messages)
+        self.assertIn("ω2 requires a numerical value.", messages)
 
     def test_extreme_angular_velocity(self):
         errors_div = validate_inputs([[0, 120, 300000, 0]],
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: ω1 must be less than 1000 deg/s.", messages)
+        self.assertIn("ω1 must be within ±1000 deg/s.", messages)
 
         errors_div = validate_inputs([[0, 120, -300000, 0]],
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: ω1 must be greater than -1000 deg/s.", messages)
+        self.assertIn("ω1 must be within ±1000 deg/s.", messages)
 
     def test_theta_range(self):
         # Test for θ being too low
@@ -204,14 +216,14 @@ class TestValidateInputs(unittest.TestCase):
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 must be between -180 and 180 degrees.", messages)
+        self.assertIn("θ1 must be between -180 and 180 degrees.", messages)
 
         # Test for θ being too high
         errors_div = validate_inputs([[361, 0, 0, 0]],
                                      0, 20, 'simple',
                                      1, 1, 1, 1, 1, 1, 9.81)
         messages = self._extract_error_messages(errors_div)
-        self.assertIn("Pendulum A: θ1 must be between -180 and 180 degrees.", messages)
+        self.assertIn("θ1 must be between -180 and 180 degrees.", messages)
 
         # Test for valid θ value
         errors_div = validate_inputs([[180, 0, 0, 0]],
@@ -223,8 +235,6 @@ class TestValidateInputs(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
 
 
 

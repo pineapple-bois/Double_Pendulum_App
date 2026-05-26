@@ -5,13 +5,13 @@ mpl_layout = go.Layout(
     paper_bgcolor='white',
     plot_bgcolor='white',
     xaxis=dict(
-        titlefont=dict(family='Red Hat Display, sans-serif', size=14, color='black'),
+        title=dict(font=dict(family='Red Hat Display, sans-serif', size=14, color='black')),
         showgrid=True,
         gridcolor='lightgrey',
         fixedrange=True  # disables horizontal zoom/pan
     ),
     yaxis=dict(
-        titlefont=dict(family='Red Hat Display, sans-serif', size=14, color='black'),
+        title=dict(font=dict(family='Red Hat Display, sans-serif', size=14, color='black')),
         showgrid=True,
         gridcolor='lightgrey',
         fixedrange=True  # disables vertical zoom/pan
