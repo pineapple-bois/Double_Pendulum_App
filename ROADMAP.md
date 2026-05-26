@@ -5,6 +5,37 @@ Pendulum Dash app into a focused companion app for nonlinear dynamics, chaos,
 numerical simulation, and mathematical explanation. It is intended to evolve as
 the project evolves. It is not a low-level issue tracker.
 
+## Current status
+
+Last audited: 2026-05-26.
+
+- Phase 0: Complete.
+  - `ROADMAP.md` exists at the repository root.
+  - `legacy/ARCHITECTURE.md` exists and root `ARCHITECTURE.md` is absent.
+  - `README.md` and `AGENTS.md` identify `ROADMAP.md` as the active
+    modernization/planning source.
+  - Documentation no longer preserves Python 3.9, `env/`, or `runtime.txt` as
+    active setup or deployment guidance.
+- Phase 1: Complete.
+  - `.python-version` exists and declares `3.12`.
+  - `runtime.txt` is absent and documentation says it must not be reintroduced.
+  - `.venv/` is ignored by `.gitignore`.
+  - `requirements.txt` is a top-level application/runtime dependency list:
+    `dash`, `dash-bootstrap-components`, `Flask`, `gunicorn`, `matplotlib`,
+    `numpy`, `plotly`, `scipy`, and `sympy`.
+  - Dash imports use modern `dash` package imports rather than legacy
+    `dash_core_components` or `dash_html_components`.
+  - Validation on 2026-05-26: `source .venv/bin/activate && python -m pip
+    install -r requirements.txt` completed with all requirements already
+    satisfied; `python -m pip check` reported no broken requirements; `python
+    pendulum_app.py` started the Dash development server at
+    `http://127.0.0.1:8050/`; `gunicorn pendulum_app:server` listened at
+    `http://127.0.0.1:8000`.
+  - Note: direct `python` is not available on this machine until `.venv` is
+    activated. Local server binding required running the server commands outside
+    the sandbox, then stopping them after startup was confirmed.
+- Phase 2: Not started.
+
 ## 1. Project identity
 
 This project is the **Nonlinear Dynamics / Chaos Companion App**.
