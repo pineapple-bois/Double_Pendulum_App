@@ -15,6 +15,12 @@ class PageMetadata:
 HOME_PAGE = PageMetadata(
     path="/",
     label="Home",
+    title="Double Pendulum Explorer",
+    description="Landing page for the nonlinear dynamics and chaos companion app.",
+)
+SIMULATION_PAGE = PageMetadata(
+    path="/simulation",
+    label="Simulation",
     title="Double Pendulum Simulation",
     description="Interactive double-pendulum simulation and visualisation.",
 )
@@ -39,16 +45,16 @@ CHAOS_PAGE = PageMetadata(
 NOT_FOUND_PAGE = PageMetadata(
     path="",
     label="Not Found",
-    title="404: Page Not Found 🍍",
-    description="Sorry, the page you are looking for does not exist.",
+    title="Page not found",
+    description="The requested page was not found.",
 )
 
 NAVIGATION_ITEMS = (
     HOME_PAGE,
+    SIMULATION_PAGE,
     LAGRANGIAN_PAGE,
     HAMILTONIAN_PAGE,
     CHAOS_PAGE,
 )
 
 PAGES_BY_PATH = {page.path: page for page in NAVIGATION_ITEMS}
-

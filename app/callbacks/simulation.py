@@ -8,7 +8,7 @@ import plotly.tools as tls
 import sympy as sp
 
 from app.components.figure_style import mpl_layout
-from app.content.home import INFO_BUTTON_CLOSE_LABEL, INFO_BUTTON_OPEN_LABEL
+from app.content.simulation import INFO_BUTTON_CLOSE_LABEL, INFO_BUTTON_OPEN_LABEL
 from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
 from src.double_pendulum.validation.dash import validate_inputs
 

@@ -6,8 +6,8 @@ from app.components.navigation import get_navbar
 from app.components.references import get_references_section
 from app.components.shell import get_body_section, get_footer_wrapper, get_header_section, get_title_section
 from app.components.simulation_controls import build_simulation_controls
-from app.content.home import MODEL_CARDS
 from app.content.math import MATH_PAGES
+from app.content.simulation import MODEL_CARDS
 
 
 SIMULATION_CONTROL_IDS = {
@@ -64,6 +64,29 @@ def collect_component_ids(component):
     return ids
 
 
+def collect_classnames(component):
+    classnames = set()
+    stack = [component]
+
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, int, float)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+            continue
+
+        class_name = getattr(item, "className", None)
+        if class_name:
+            classnames.update(str(class_name).split())
+
+        children = getattr(item, "children", None)
+        if children is not None:
+            stack.append(children)
+
+    return classnames
+
+
 def test_shell_components_return_dash_components():
     assert_dash_component(get_header_section("/"))
     assert_dash_component(get_title_section("Example"))
@@ -72,7 +95,9 @@ def test_shell_components_return_dash_components():
 
 
 def test_navigation_and_footer_components_return_dash_components():
-    assert_dash_component(get_navbar("/"))
+    navbar = get_navbar("/simulation")
+    assert_dash_component(navbar)
+    assert "site-nav-toggle" in collect_classnames(navbar)
     assert_dash_component(get_footer_section())
     assert_dash_component(get_footer_section_main())
 

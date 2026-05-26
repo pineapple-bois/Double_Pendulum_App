@@ -5,7 +5,7 @@ from app.components.navigation import get_navbar
 
 def get_header_section(current_path):
     return html.Div(
-        className="header",
+        className="site-header",
         children=[
             get_navbar(current_path=current_path),
         ],
@@ -36,4 +36,3 @@ def get_footer_wrapper(footer_content):
             footer_content,
         ],
     )
-

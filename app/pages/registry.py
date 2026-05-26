@@ -1,12 +1,14 @@
-from app.content.routes import CHAOS_PAGE, HAMILTONIAN_PAGE, HOME_PAGE, LAGRANGIAN_PAGE
+from app.content.routes import CHAOS_PAGE, HAMILTONIAN_PAGE, HOME_PAGE, LAGRANGIAN_PAGE, SIMULATION_PAGE
 from app.pages.chaos import layout as chaos_layout
-from app.pages.main import layout as main_layout
+from app.pages.home import layout as home_layout
 from app.pages.math import hamiltonian_layout, lagrangian_layout
 from app.pages.not_found import layout as not_found_layout
+from app.pages.simulation import layout as simulation_layout
 
 
 PAGE_LAYOUTS = {
-    HOME_PAGE.path: main_layout,
+    HOME_PAGE.path: home_layout,
+    SIMULATION_PAGE.path: simulation_layout,
     LAGRANGIAN_PAGE.path: lagrangian_layout,
     HAMILTONIAN_PAGE.path: hamiltonian_layout,
     CHAOS_PAGE.path: chaos_layout,

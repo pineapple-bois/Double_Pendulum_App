@@ -1,6 +1,6 @@
 from dash import dcc, html
 
-from app.content.home import LinkCopy, MarkdownCopy
+from app.content.simulation import LinkCopy, MarkdownCopy
 
 
 def render_description_part(part):
@@ -37,4 +37,3 @@ def render_model_card(card):
             ),
         ],
     )
-

@@ -1,6 +1,6 @@
 from dash import dcc, html
 
-from app.content.home import (
+from app.content.simulation import (
     FOOTER_COPYRIGHT,
     FOOTER_PREFIX,
     GITHUB_LOGO_SRC,
@@ -71,4 +71,3 @@ def get_footer_section_main():
 
 def get_footer_section():
     return get_common_footer(include_button=False, page_type="other")
-

@@ -14,7 +14,7 @@ def register_routing_callbacks(app):
     app.clientside_callback(
         """
         function(pathname) {
-            if (pathname === '/') {
+            if (pathname === '/simulation') {
                 initializeHomePage();  // Call the JS function to reinitialize
             }
             return '';
@@ -23,4 +23,3 @@ def register_routing_callbacks(app):
         Output("trigger-js", "data"),
         Input("url", "pathname"),
     )
-

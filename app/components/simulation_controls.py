@@ -1,6 +1,6 @@
 from dash import dcc, html
 
-from app.content.home import (
+from app.content.simulation import (
     ANGLES_LABEL,
     CLOSE_INFO_BUTTON_LABEL,
     GRAVITY_LABEL,
