@@ -8,12 +8,12 @@ REPOSITORY_LABEL = "pineapple-bois/Double_Pendulum_App"
 ATTRIBUTION_LABEL = "pineapple-bois"
 HOME_TITLE = "Double Pendulum Explorer"
 HOME_INTRODUCTION = (
-    "Explore nonlinear dynamics, coupled motion, and the onset of chaos through "
-    "an interactive double pendulum simulation."
+    "A double pendulum looks simple: two links, two angles, and gravity. "
+    "Its motion is anything but simple."
 )
 HOME_CONTEXT_NOTE = (
-    "A companion for building intuition before stepping into derivations, "
-    "phase-space structure, and numerical experiments."
+    "From this simple model, explore equations of motion, numerical methods, "
+    "phase portraits, and the onset of chaos."
 )
 
 

@@ -169,18 +169,19 @@ Last audited: 2026-05-26.
     `src/double_pendulum/` modules.
   - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 65
     tests.
-- Phase 5a: In progress.
-  - Introduced the first redesigned landing-page route at `/` and moved the
-    existing interactive double-pendulum workflow to `/simulation`.
-  - Removed visible navigation chrome from the home page so it reads as a full
-    hero landing page.
-  - Added a light academic header for simulation and content pages, with
-    page-aware subtitle text and hamburger navigation to Home, Simulation,
-    Lagrangian, Hamiltonian, and Chaos.
-  - Simplified the 404 page into a sparse home-style error state with links
-    back to Home and Simulation.
-  - Follow-up polish remains for browser-level visual QA across practical
-    viewport sizes and for the broader simulation/content page redesign.
+- Phase 5A: Complete.
+  - Converted `/` into the first full-hero landing page for the Double Pendulum
+    Explorer identity.
+  - Removed visible header/navigation chrome from the home page.
+  - Clarified routing so `/` owns the landing page and `/simulation` owns the
+    existing interactive double-pendulum workflow.
+  - Introduced a white/light academic header for non-home pages.
+  - Added hamburger navigation to Home, Simulation, Lagrangian, Hamiltonian,
+    and Chaos.
+  - Simplified the 404 page into a chromeless, sparse home-style error state
+    with links back to Home and Simulation.
+  - Validation on 2026-05-27: focused route/content checks passed. Phase 5B is
+    not yet defined.
 
 ## 1. Project identity
 
@@ -480,13 +481,12 @@ Definition of done:
 - Visual assets and palette choices reinforce the app's learning goals.
 - The redesign is validated in browser across practical viewport sizes.
 
-Current status: Phase 5a has established the route split and first visual
-direction: `/` is now the chromeless landing page, `/simulation` owns the
-interactive simulation workflow, non-home teaching pages use a light shared
-header with hamburger navigation, and unknown routes use a simplified 404.
-The next Phase 5 work should concentrate on browser polish, responsive visual
-QA, and redesigning the simulation/content pages without disturbing numerical
-or callback behavior.
+Current status: Phase 5A is complete. `/` is now the chromeless full-hero
+landing page, `/simulation` owns the interactive simulation workflow, non-home
+teaching pages use a white/light shared header with hamburger navigation, and
+unknown routes use a simplified chromeless 404 with links to Home and
+Simulation. Phase 5B remains intentionally undefined and should be scoped
+separately before any further UI work begins.
 
 ### Phase 6: Math fidelity and numerical validation
 
