@@ -24,6 +24,12 @@ SIMULATION_PAGE = PageMetadata(
     title="Double Pendulum Simulation",
     description="Interactive double-pendulum simulation and visualisation.",
 )
+EQUATIONS_PAGE = PageMetadata(
+    path="/equations",
+    label="Equations of Motion",
+    title="Equations of Motion",
+    description="Derive and compare the equations of motion for the double pendulum.",
+)
 LAGRANGIAN_PAGE = PageMetadata(
     path="/lagrangian",
     label="Lagrangian",
@@ -52,9 +58,17 @@ NOT_FOUND_PAGE = PageMetadata(
 NAVIGATION_ITEMS = (
     HOME_PAGE,
     SIMULATION_PAGE,
+    EQUATIONS_PAGE,
+    CHAOS_PAGE,
+)
+
+PUBLIC_ROUTE_ITEMS = (
+    HOME_PAGE,
+    SIMULATION_PAGE,
+    EQUATIONS_PAGE,
     LAGRANGIAN_PAGE,
     HAMILTONIAN_PAGE,
     CHAOS_PAGE,
 )
 
-PAGES_BY_PATH = {page.path: page for page in NAVIGATION_ITEMS}
+PAGES_BY_PATH = {page.path: page for page in PUBLIC_ROUTE_ITEMS}

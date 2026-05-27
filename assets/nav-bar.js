@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.error(`Scroll target ${link.targetId} not found!`);
                 }
             });
-        } else {
-            console.error(`Navigation link ${link.id} not found!`);
         }
     });
 });

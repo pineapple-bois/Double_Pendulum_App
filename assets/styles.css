@@ -1120,6 +1120,260 @@ body {
 }
 
 /*  -------------------
+   Equations of Motion Page */
+
+.equations-layout {
+    background: #f6f8fb;
+    color: var(--academic-ink);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.equations-page {
+    margin: 0 auto;
+    max-width: 1180px;
+    padding: 44px var(--site-gutter) 56px;
+}
+
+.equations-hero {
+    display: grid;
+    gap: 28px;
+    grid-template-columns: 1fr;
+    margin-bottom: 34px;
+}
+
+.equations-hero-copy,
+.equations-section,
+.equations-branching {
+    background: #ffffff;
+    border: 1px solid #d8e0ea;
+    border-radius: 8px;
+    box-shadow: 0 18px 42px rgba(13, 41, 90, 0.08);
+}
+
+.equations-hero-copy {
+    padding: clamp(28px, 4vw, 48px);
+}
+
+.equations-eyebrow {
+    color: var(--academic-accent);
+    font-size: var(--font-size-small);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+
+.equations-hero-title {
+    color: var(--academic-ink);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    font-weight: 800;
+    line-height: 1;
+    margin: 0 0 22px;
+}
+
+.equations-hero-text p,
+.equations-section-lead,
+.equations-branch-summary,
+.equations-model-summary p,
+.equation-markdown p {
+    color: #334766;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.56;
+    margin: 0;
+}
+
+.equations-hero-text {
+    display: block;
+    margin-top: 16px;
+}
+
+.equations-model-section {
+    margin-bottom: 34px;
+}
+
+.equations-model-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.equations-model-card {
+    background: #ffffff;
+    border: 1px solid #d8e0ea;
+    border-radius: 8px;
+    box-shadow: 0 18px 42px rgba(13, 41, 90, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 560px;
+    padding: clamp(22px, 3vw, 32px);
+}
+
+.equations-model-image-wrap {
+    align-items: center;
+    background: #ffffff;
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 320px;
+    padding: 6px 0;
+}
+
+.equations-model-image {
+    height: clamp(280px, 31vw, 360px);
+    max-width: 100%;
+    object-fit: contain;
+    width: 100%;
+}
+
+.equations-model-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0;
+}
+
+.equations-model-title,
+.equations-branch-title,
+.equations-block-title {
+    color: var(--academic-ink);
+    font-size: var(--font-size-large);
+    font-weight: 800;
+    line-height: 1.2;
+    margin: 0 0 12px;
+}
+
+.equations-model-detail-list,
+.equations-branch-list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding-left: 18px;
+}
+
+.equations-model-detail-list li,
+.equations-branch-list li {
+    color: #52657d;
+    padding-left: 2px;
+}
+
+.equations-model-detail p,
+.equations-branch-point p,
+.equations-block-note p {
+    color: #52657d;
+    font-size: var(--font-size-small);
+    font-weight: 650;
+    line-height: 1.45;
+    margin: 0;
+}
+
+.equations-section,
+.equations-branching {
+    margin-top: 24px;
+    padding: clamp(24px, 3vw, 38px);
+}
+
+.equations-section-heading {
+    margin-bottom: 24px;
+    max-width: 820px;
+}
+
+.equations-section-title {
+    color: var(--academic-ink);
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.08;
+    margin: 0 0 14px;
+}
+
+.equations-block-stack {
+    display: grid;
+    gap: 16px;
+}
+
+.equations-block,
+.equations-details-block {
+    background: #fbfcfe;
+    border: 1px solid #dfe6ef;
+    border-radius: 8px;
+    padding: 22px;
+}
+
+.equation-markdown {
+    overflow-x: auto;
+}
+
+.equation-markdown p + p {
+    margin-top: 12px;
+}
+
+.equation-markdown mjx-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+}
+
+.equations-block-note {
+    background: #eef4fa;
+    border-left: 3px solid var(--academic-accent);
+    border-radius: 0 8px 8px 0;
+    margin-top: 16px;
+    padding: 12px 14px;
+}
+
+.equations-branch-grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.equations-branch-card {
+    background: #fbfcfe;
+    border: 1px solid #dfe6ef;
+    border-radius: 8px;
+    color: inherit;
+    display: block;
+    padding: 22px;
+    text-decoration: none;
+}
+
+.equations-branch-card:hover {
+    border-color: var(--academic-accent);
+    box-shadow: 0 14px 30px rgba(13, 41, 90, 0.1);
+    color: inherit;
+    text-decoration: none;
+}
+
+.equations-details-summary {
+    color: var(--academic-ink);
+    cursor: pointer;
+    font-size: var(--font-size-medium);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.equations-details-body {
+    margin-top: 18px;
+}
+
+.equations-page .references-section {
+    background: transparent;
+    padding: 32px 0 0;
+}
+
+.equations-page .references-line {
+    background-color: #d8e0ea;
+}
+
+.equations-page .references-section h2 {
+    color: var(--academic-ink);
+}
+
+/*  -------------------
   Chaos Page */
 
 .chaos-layout {
@@ -1327,6 +1581,27 @@ Responsive spacing of description and image section */
         display: flex;
     }
 
+    .equations-page {
+        padding-top: 28px;
+    }
+
+    .equations-model-grid,
+    .equations-branch-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .equations-model-card {
+        min-height: auto;
+    }
+
+    .equations-model-image-wrap {
+        min-height: 280px;
+    }
+
+    .equations-model-image {
+        height: clamp(260px, 58vw, 340px);
+    }
+
     /* RUN SIMULATION button should take up 1/3 of space */
     .run-simulation-group {
         max-width: 33.33333%;
@@ -1442,6 +1717,28 @@ Responsive spacing of description and image section */
 
     .home-explore-number {
         flex-basis: 34px;
+    }
+
+    .equations-page {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .equations-hero-copy,
+    .equations-section,
+    .equations-branching,
+    .equations-model-card,
+    .equations-block,
+    .equations-branch-card {
+        padding: 18px;
+    }
+
+    .equations-model-image-wrap {
+        min-height: 240px;
+    }
+
+    .equations-model-image {
+        height: clamp(240px, 72vw, 320px);
     }
 
     .not-found-actions {

@@ -1,4 +1,5 @@
 from app.components.cards import render_model_card
+from app.components.derivation import render_branch_card, render_derivation_section, render_model_summary
 from app.components.figure_style import mpl_layout
 from app.components.footer import get_footer_section, get_footer_section_main
 from app.components.graphs import get_animation_phase_section, get_time_graph_section
@@ -7,6 +8,7 @@ from app.components.references import get_references_section
 from app.components.shell import get_body_section, get_footer_wrapper, get_header_section, get_title_section
 from app.components.simulation_controls import build_simulation_controls
 from app.content.math import MATH_PAGES
+from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.simulation import MODEL_CARDS
 
 
@@ -107,6 +109,15 @@ def test_card_reference_and_graph_components_return_dash_components():
     assert_dash_component(get_references_section(MATH_PAGES["lagrangian"].references))
     assert_dash_component(get_animation_phase_section("Trace Animation", "Phase Portrait"))
     assert_dash_component(get_time_graph_section("Time Graph"))
+
+
+def test_derivation_components_return_dash_components():
+    assert_dash_component(render_model_summary(MODEL_SUMMARIES[0]))
+    assert_dash_component(render_branch_card(BRANCH_CARDS[0]))
+    section = render_derivation_section(DERIVATION_SECTIONS[0])
+
+    assert_dash_component(section)
+    assert "equations-section" in collect_classnames(section)
 
 
 def test_matplotlib_plotly_style_helper_is_available():

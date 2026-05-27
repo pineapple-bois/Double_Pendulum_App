@@ -1,11 +1,12 @@
 from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE
+from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
 from app.content.not_found import NOT_FOUND_HAIKU_LINES
-from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH
+from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLIC_ROUTE_ITEMS
 from app.content.simulation import DESCRIPTION_PARAGRAPHS, INFORMATION_TEXT, MODEL_CARDS
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
-from app.pages import chaos, home, math, not_found, simulation
+from app.pages import chaos, equations, home, math, not_found, simulation
 from app.pages.registry import PAGE_LAYOUTS, get_layout_for_path
 
 
@@ -14,21 +15,35 @@ def test_navigation_metadata_preserves_public_routes():
     assert [page.path for page in NAVIGATION_ITEMS] == [
         "/",
         "/simulation",
+        "/equations",
+        "/chaos",
+    ]
+    assert [page.path for page in PUBLIC_ROUTE_ITEMS] == [
+        "/",
+        "/simulation",
+        "/equations",
         "/lagrangian",
         "/hamiltonian",
         "/chaos",
     ]
     assert PAGES_BY_PATH["/"].title == "Double Pendulum Explorer"
     assert PAGES_BY_PATH["/simulation"].title == "Double Pendulum Simulation"
-    assert set(PAGE_LAYOUTS) == {"/", "/simulation", "/lagrangian", "/hamiltonian", "/chaos"}
+    assert PAGES_BY_PATH["/equations"].title == "Equations of Motion"
+    assert set(PAGE_LAYOUTS) == {
+        "/",
+        "/simulation",
+        "/equations",
+        "/lagrangian",
+        "/hamiltonian",
+        "/chaos",
+    }
 
 
 def test_home_content_uses_double_pendulum_routes():
     assert HOME_TITLE == "Double Pendulum Explorer"
     assert [item.href for item in EXPLORE_LINKS] == [
         "/simulation",
-        "/lagrangian",
-        "/hamiltonian",
+        "/equations",
         "/chaos",
     ]
     assert FURTHER_READING
@@ -48,6 +63,38 @@ def test_page_content_modules_load_existing_copy_and_markdown():
     assert len(MATH_PAGES["hamiltonian"].references) == 4
 
 
+def test_equations_content_is_structured_and_reuses_existing_assets():
+    assert [card.title for card in MODEL_SUMMARIES] == ["Simple model", "Compound model"]
+    assert MODEL_SUMMARIES[0].image_src == "/assets/Images/Model_Simple_Transparent_NoText.png"
+    assert MODEL_SUMMARIES[1].image_src == "/assets/Images/Model_Compound_Transparent_NoText.png"
+    assert "rigid, massless, and inextensible" in MODEL_SUMMARIES[0].summary
+    assert "centre of mass" in MODEL_SUMMARIES[1].details[0]
+    assert [card.href for card in BRANCH_CARDS] == [
+        "#euler-lagrange-formulation",
+        "#hamiltonian-formulation",
+    ]
+    assert [section.section_id for section in DERIVATION_SECTIONS] == [
+        "shared-derivation",
+        "euler-lagrange-formulation",
+        "hamiltonian-formulation",
+    ]
+    shared_blocks = {
+        block.title: " ".join((block.markdown + " " + block.note).split())
+        for block in DERIVATION_SECTIONS[0].blocks
+    }
+    assert "Physical assumptions" in shared_blocks
+    assert "Non-conservative forces such as air resistance and hinge friction are neglected" in shared_blocks["Physical assumptions"]
+    assert "downward vertical" in shared_blocks["Coordinate convention"]
+    assert "x_2 = x_1 + l_2 \\sin(\\theta_2(t))" in shared_blocks["Bob positions"]
+    assert "V_2=-gm_2\\left(l_1\\cos(\\theta_1(t))+l_2\\cos(\\theta_2(t))\\right)" in shared_blocks["Energy contribution from P2"]
+    kinetic_markdown = shared_blocks["Collecting total energy"]
+    assert "will not separate into two independent pendulums" in kinetic_markdown
+    assert "Both are different formulations of the same conservative model" in shared_blocks[
+        "The Lagrangian as the common starting point"
+    ]
+    assert all(len(section.blocks) > 1 for section in DERIVATION_SECTIONS)
+
+
 def test_page_registry_returns_404_for_unknown_routes():
     layout = get_layout_for_path("/does-not-exist")
 
@@ -56,7 +103,7 @@ def test_page_registry_returns_404_for_unknown_routes():
 
 
 def test_page_registry_resolves_preserved_routes_to_layouts():
-    for pathname in ["/", "/simulation", "/lagrangian", "/hamiltonian", "/chaos"]:
+    for pathname in ["/", "/simulation", "/equations", "/lagrangian", "/hamiltonian", "/chaos"]:
         layout = get_layout_for_path(pathname)
 
         assert layout is not None
@@ -91,6 +138,7 @@ def test_page_modules_return_dash_components():
     page_layouts = [
         home.layout(),
         simulation.layout(),
+        equations.layout(),
         math.lagrangian_layout(),
         math.hamiltonian_layout(),
         chaos.layout(),

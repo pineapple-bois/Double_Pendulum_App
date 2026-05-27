@@ -19,7 +19,7 @@ def test_flask_server_is_available_for_gunicorn_style_import():
 def test_public_routes_return_layout_components():
     import pendulum_app
 
-    for pathname in ["/", "/simulation", "/lagrangian", "/hamiltonian", "/chaos"]:
+    for pathname in ["/", "/simulation", "/equations", "/lagrangian", "/hamiltonian", "/chaos"]:
         layout = get_layout_for_path(pathname)
         assert layout is not None
         assert hasattr(layout, "children")

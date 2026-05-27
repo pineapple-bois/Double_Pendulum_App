@@ -38,14 +38,9 @@ EXPLORE_LINKS = (
         description="Set parameters, run the model, and inspect motion, phase, and time plots.",
     ),
     ExploreLink(
-        title="Lagrangian",
-        href="/lagrangian",
-        description="Follow the energy-based derivation of the coupled equations of motion.",
-    ),
-    ExploreLink(
-        title="Hamiltonian",
-        href="/hamiltonian",
-        description="Recast the system through momentum, total energy, and Hamilton's equations.",
+        title="Equations of Motion",
+        href="/equations",
+        description="Compare the Euler-Lagrange and Hamiltonian routes from one shared derivation.",
     ),
     ExploreLink(
         title="Chaos",
