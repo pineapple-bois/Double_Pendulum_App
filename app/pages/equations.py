@@ -20,6 +20,16 @@ from app.content.equations import (
 from app.content.routes import EQUATIONS_PAGE
 
 
+OVERVIEW_BRANCH = "overview"
+EULER_LAGRANGE_BRANCH = "euler_lagrange"
+HAMILTONIAN_BRANCH = "hamiltonian"
+
+BRANCH_SECTIONS = {
+    EULER_LAGRANGE_BRANCH: DERIVATION_SECTIONS[1],
+    HAMILTONIAN_BRANCH: DERIVATION_SECTIONS[2],
+}
+
+
 def _hero_section():
     return html.Section(
         className="equations-hero",
@@ -85,7 +95,14 @@ def _branching_section():
     )
 
 
-def layout():
+def _selected_branch_section(selected_branch):
+    section = BRANCH_SECTIONS.get(selected_branch)
+    if section is None:
+        return []
+    return [render_derivation_section(section)]
+
+
+def layout(selected_branch=OVERVIEW_BRANCH):
     return html.Div(
         className="equations-layout",
         children=[
@@ -99,10 +116,7 @@ def layout():
                             _mechanical_model_section(),
                             render_derivation_section(DERIVATION_SECTIONS[0]),
                             _branching_section(),
-                            *[
-                                render_derivation_section(section)
-                                for section in DERIVATION_SECTIONS[1:]
-                            ],
+                            *_selected_branch_section(selected_branch),
                             get_references_section(EQUATIONS_REFERENCES),
                         ],
                     ),
@@ -114,4 +128,12 @@ def layout():
 
 
 def get_equations_layout():
-    return layout()
+    return layout(OVERVIEW_BRANCH)
+
+
+def get_euler_lagrange_layout():
+    return layout(EULER_LAGRANGE_BRANCH)
+
+
+def get_hamiltonian_layout():
+    return layout(HAMILTONIAN_BRANCH)

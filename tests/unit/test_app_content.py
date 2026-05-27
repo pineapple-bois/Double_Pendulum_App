@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from dash import dcc
+
 from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
@@ -72,8 +74,9 @@ def test_equations_content_is_structured_and_reuses_existing_assets():
     assert "rigid, massless, and inextensible" in MODEL_SUMMARIES[0].summary
     assert "centre of mass" in MODEL_SUMMARIES[1].details[0]
     assert [card.href for card in BRANCH_CARDS] == [
-        "#euler-lagrange-formulation",
-        "#hamiltonian-formulation",
+        "/equations",
+        "/lagrangian",
+        "/hamiltonian",
     ]
     assert [section.section_id for section in DERIVATION_SECTIONS] == [
         "shared-derivation",
@@ -190,6 +193,70 @@ def test_page_registry_resolves_preserved_routes_to_layouts():
         assert hasattr(layout, "children")
 
 
+def test_equations_route_lazy_mounts_overview_without_branches():
+    layout = get_layout_for_path("/equations")
+    text = " ".join(collect_text(layout))
+
+    assert "The common Lagrangian starting point" in text
+    assert "Physical assumptions" in text
+    assert "General Euler-Lagrange equation" not in text
+    assert "Why introduce momenta?" not in text
+
+
+def test_lagrangian_route_mounts_only_euler_lagrange_branch():
+    layout = get_layout_for_path("/lagrangian")
+    text = " ".join(collect_text(layout))
+
+    assert "The common Lagrangian starting point" in text
+    assert "General Euler-Lagrange equation" in text
+    assert "Coupled second-order equations for the simple model" in text
+    assert "Why introduce momenta?" not in text
+    assert "Hamiltonian as total energy" not in text
+
+
+def test_hamiltonian_route_mounts_only_hamiltonian_branch():
+    layout = get_layout_for_path("/hamiltonian")
+    text = " ".join(collect_text(layout))
+
+    assert "The common Lagrangian starting point" in text
+    assert "Why introduce momenta?" in text
+    assert "Hamiltonian as total energy" in text
+    assert "General Euler-Lagrange equation" not in text
+    assert "Coupled second-order equations for the simple model" not in text
+
+
+def test_equations_overview_has_reduced_markdown_component_count():
+    overview_count = count_components(get_layout_for_path("/equations"), dcc.Markdown)
+    euler_count = count_components(get_layout_for_path("/lagrangian"), dcc.Markdown)
+    hamiltonian_count = count_components(get_layout_for_path("/hamiltonian"), dcc.Markdown)
+
+    assert overview_count < 35
+    assert overview_count < euler_count
+    assert overview_count < hamiltonian_count
+
+
+def test_equations_layout_calls_only_selected_derivation_branch(monkeypatch):
+    called_section_ids = []
+    original_renderer = equations.render_derivation_section
+
+    def recording_renderer(section):
+        called_section_ids.append(section.section_id)
+        return original_renderer(section)
+
+    monkeypatch.setattr(equations, "render_derivation_section", recording_renderer)
+
+    equations.layout()
+    assert called_section_ids == ["shared-derivation"]
+
+    called_section_ids.clear()
+    equations.layout(equations.EULER_LAGRANGE_BRANCH)
+    assert called_section_ids == ["shared-derivation", "euler-lagrange-formulation"]
+
+    called_section_ids.clear()
+    equations.layout(equations.HAMILTONIAN_BRANCH)
+    assert called_section_ids == ["shared-derivation", "hamiltonian-formulation"]
+
+
 def test_home_and_404_have_chromeless_hero_layouts():
     home_layout = home.layout()
     not_found_layout = not_found.layout()
@@ -273,3 +340,25 @@ def collect_text(component):
             stack.append(children)
 
     return text
+
+
+def count_components(component, component_type):
+    count = 0
+    stack = [component]
+
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, int, float)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+            continue
+
+        if isinstance(item, component_type):
+            count += 1
+
+        children = getattr(item, "children", None)
+        if children is not None:
+            stack.append(children)
+
+    return count

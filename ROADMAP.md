@@ -509,6 +509,25 @@ preserved.
 
 Planned scope:
 
+- Phase 5C.1 render audit report created at
+  `development/phase_5c_1_equations_render_audit.md`.
+- Phase 5C.2 first-pass Equations lazy-mount optimisation completed.
+  - The optimisation target was scoped to the Equations page, not the Home
+    page or hero image rendering.
+  - `/equations` now renders the lightweight Equations overview only: page
+    orientation, model context, shared derivation trunk, branch choices,
+    references, and footer.
+  - `/lagrangian` preserves the old route while mounting only the
+    Euler-Lagrange derivation branch.
+  - `/hamiltonian` preserves the old route while mounting only the Hamiltonian
+    derivation branch.
+  - The unselected derivation branch is not present in the Dash layout tree,
+    rather than being hidden with CSS, `html.Details`, or collapsed panels.
+  - Component-count check after the change: `/equations` mounts 29
+    `dcc.Markdown` components, down from the Phase 5C.1 full-page baseline of
+    54; `/lagrangian` mounts 42 and `/hamiltonian` mounts 43.
+  - Tests assert branch-only content is absent from unselected routes and that
+    only the selected branch renderer is called.
 - Experiment with branch reveal/progressive disclosure for the Equations of
   Motion page so the shared modelling trunk can remain readable while the
   Euler-Lagrange and Hamiltonian branches become easier to enter deliberately.
@@ -531,6 +550,14 @@ Definition of done:
 - Production layout mode is opt-in and does not change default local behavior.
 - Existing public routes continue to resolve.
 - Existing derivation content remains preserved.
+
+Remaining follow-up:
+
+- Decide whether branch choice should become an in-page progressive disclosure
+  interaction, remain route-based, or combine both.
+- Add browser timing evidence for the lazy-mount change if more optimisation is
+  needed.
+- Keep production layout mode as a separate opt-in pass.
 
 ### Phase 6: Math fidelity and numerical validation
 
