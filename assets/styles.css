@@ -1337,15 +1337,26 @@ body {
     border-radius: 8px;
     color: inherit;
     display: block;
+    font: inherit;
     padding: 22px;
+    text-align: left;
     text-decoration: none;
+    width: 100%;
 }
 
-.equations-branch-card:hover {
+.equations-branch-card:hover,
+.equations-branch-card:focus-visible {
     border-color: var(--academic-accent);
     box-shadow: 0 14px 30px rgba(13, 41, 90, 0.1);
     color: inherit;
+    cursor: pointer;
+    outline: none;
     text-decoration: none;
+}
+
+.equations-branch-card--active {
+    border-color: var(--academic-accent);
+    box-shadow: 0 14px 30px rgba(13, 41, 90, 0.1);
 }
 
 .equations-details-summary {

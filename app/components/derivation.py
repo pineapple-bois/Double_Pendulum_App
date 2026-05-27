@@ -33,10 +33,17 @@ def render_model_summary(card):
     )
 
 
-def render_branch_card(card):
-    return html.A(
-        href=card.href,
-        className="equations-branch-card",
+def render_branch_card(card, is_active=False):
+    class_name = "equations-branch-card"
+    if is_active:
+        class_name = f"{class_name} equations-branch-card--active"
+
+    return html.Button(
+        id=f"equations-branch-{card.branch_key}-button",
+        type="button",
+        n_clicks=0,
+        className=class_name,
+        **({"aria-pressed": "true" if is_active else "false"}),
         children=[
             html.H3(card.title, className="equations-branch-title"),
             html.P(card.summary, className="equations-branch-summary"),

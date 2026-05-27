@@ -17,8 +17,8 @@ class ModelSummary:
 
 @dataclass(frozen=True)
 class BranchCard:
+    branch_key: str
     title: str
-    href: str
     summary: str
     points: tuple[str, ...]
 
@@ -316,19 +316,8 @@ SHARED_TRUNK = DerivationSection(
 
 BRANCH_CARDS = (
     BranchCard(
-        title="Overview",
-        href="/equations",
-        summary=(
-            "Review the model setup, coordinate convention, and shared Lagrangian trunk."
-        ),
-        points=(
-            "Keeps the page lightweight before entering a full derivation branch.",
-            "Shows the common modelling assumptions used by both formulations.",
-        ),
-    ),
-    BranchCard(
+        branch_key="euler_lagrange",
         title="Euler-Lagrange formulation",
-        href="/lagrangian",
         summary=(
             "Differentiate the Lagrangian with respect to coordinates and angular velocities."
         ),
@@ -338,8 +327,8 @@ BRANCH_CARDS = (
         ),
     ),
     BranchCard(
+        branch_key="hamiltonian",
         title="Hamiltonian formulation",
-        href="/hamiltonian",
         summary=(
             "Introduce canonical momenta and rewrite the system in phase space."
         ),

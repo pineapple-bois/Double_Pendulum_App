@@ -69,19 +69,20 @@ def _mechanical_model_section():
     )
 
 
-def _branching_section():
+def _branching_section(selected_branch):
     return html.Section(
+        id="equations-branch",
         className="equations-branching",
         children=[
             html.Div(
                 className="equations-section-heading",
                 children=[
-                    html.P("Two routes", className="equations-eyebrow"),
+                    html.P("Two formulations", className="equations-eyebrow"),
                     html.H2("From one Lagrangian to two formulations", className="equations-section-title"),
                     html.P(
                         (
-                            "The derivation shares a single energy trunk before splitting into "
-                            "two useful descriptions of the same motion."
+                            "Choose one formulation to mount below. The shared trunk above remains "
+                            "in place, and only the selected branch is added to the page."
                         ),
                         className="equations-section-lead",
                     ),
@@ -89,7 +90,10 @@ def _branching_section():
             ),
             html.Div(
                 className="equations-branch-grid",
-                children=[render_branch_card(card) for card in BRANCH_CARDS],
+                children=[
+                    render_branch_card(card, is_active=card.branch_key == selected_branch)
+                    for card in BRANCH_CARDS
+                ],
             ),
         ],
     )
@@ -115,8 +119,12 @@ def layout(selected_branch=OVERVIEW_BRANCH):
                             _hero_section(),
                             _mechanical_model_section(),
                             render_derivation_section(DERIVATION_SECTIONS[0]),
-                            _branching_section(),
-                            *_selected_branch_section(selected_branch),
+                            _branching_section(selected_branch),
+                            html.Div(
+                                id="equations-branch-output",
+                                className="equations-branch-output",
+                                children=_selected_branch_section(selected_branch),
+                            ),
                             get_references_section(EQUATIONS_REFERENCES),
                         ],
                     ),

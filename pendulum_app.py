@@ -2,6 +2,7 @@ import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from flask import Flask, redirect, request
+from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
 from app.content.routes import APP_TITLE, HOME_PAGE
@@ -45,6 +46,7 @@ app.layout = html.Div([
 
 register_routing_callbacks(app)
 register_simulation_callbacks(app)
+register_equations_callbacks(app)
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ from app.content.math import MATH_PAGES
 from app.content.not_found import NOT_FOUND_HAIKU_LINES
 from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLIC_ROUTE_ITEMS
 from app.content.simulation import DESCRIPTION_PARAGRAPHS, INFORMATION_TEXT, MODEL_CARDS
+from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
 from app.pages import chaos, equations, home, math, not_found, simulation
@@ -73,10 +74,13 @@ def test_equations_content_is_structured_and_reuses_existing_assets():
     assert MODEL_SUMMARIES[1].image_src == "/assets/Images/Model_Compound_Transparent_NoText.png"
     assert "rigid, massless, and inextensible" in MODEL_SUMMARIES[0].summary
     assert "centre of mass" in MODEL_SUMMARIES[1].details[0]
-    assert [card.href for card in BRANCH_CARDS] == [
-        "/equations",
-        "/lagrangian",
-        "/hamiltonian",
+    assert [card.title for card in BRANCH_CARDS] == [
+        "Euler-Lagrange formulation",
+        "Hamiltonian formulation",
+    ]
+    assert [card.branch_key for card in BRANCH_CARDS] == [
+        "euler_lagrange",
+        "hamiltonian",
     ]
     assert [section.section_id for section in DERIVATION_SECTIONS] == [
         "shared-derivation",
@@ -197,6 +201,8 @@ def test_equations_route_lazy_mounts_overview_without_branches():
     layout = get_layout_for_path("/equations")
     text = " ".join(collect_text(layout))
 
+    assert "equations-branch" in collect_ids(layout)
+    assert "equations-branch-output" in collect_ids(layout)
     assert "The common Lagrangian starting point" in text
     assert "Physical assumptions" in text
     assert "General Euler-Lagrange equation" not in text
@@ -257,6 +263,31 @@ def test_equations_layout_calls_only_selected_derivation_branch(monkeypatch):
     assert called_section_ids == ["shared-derivation", "hamiltonian-formulation"]
 
 
+def test_equations_branch_controls_include_two_choices_and_active_state():
+    expected_pressed_ids = {
+        "/equations": [],
+        "/lagrangian": ["equations-branch-euler_lagrange-button"],
+        "/hamiltonian": ["equations-branch-hamiltonian-button"],
+    }
+
+    for route, expected_active_ids in expected_pressed_ids.items():
+        cards = collect_branch_card_controls(get_layout_for_path(route))
+        assert [card.id for card in cards] == [
+            "equations-branch-euler_lagrange-button",
+            "equations-branch-hamiltonian-button",
+        ]
+
+        active_cards = [
+            card
+            for card in cards
+            if "equations-branch-card--active" in str(card.className).split()
+        ]
+        assert [card.id for card in active_cards] == expected_active_ids
+        assert [
+            card.id for card in cards if getattr(card, "aria-pressed", None) == "true"
+        ] == expected_active_ids
+
+
 def test_home_and_404_have_chromeless_hero_layouts():
     home_layout = home.layout()
     not_found_layout = not_found.layout()
@@ -279,6 +310,10 @@ def test_simulation_callback_registration_is_importable():
 
 def test_routing_callback_registration_is_importable():
     assert callable(register_routing_callbacks)
+
+
+def test_equations_callback_registration_is_importable():
+    assert callable(register_equations_callbacks)
 
 
 def test_page_modules_return_dash_components():
@@ -340,6 +375,52 @@ def collect_text(component):
             stack.append(children)
 
     return text
+
+
+def collect_ids(component):
+    ids = set()
+    stack = [component]
+
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, int, float)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+            continue
+
+        component_id = getattr(item, "id", None)
+        if component_id:
+            ids.add(component_id)
+
+        children = getattr(item, "children", None)
+        if children is not None:
+            stack.append(children)
+
+    return ids
+
+
+def collect_branch_card_controls(component):
+    cards = []
+    stack = [component]
+
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, int, float)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(reversed(item))
+            continue
+
+        class_name = str(getattr(item, "className", ""))
+        if "equations-branch-card" in class_name.split() and getattr(item, "type", None) == "button":
+            cards.append(item)
+
+        children = getattr(item, "children", None)
+        if children is not None:
+            stack.append(children)
+
+    return cards
 
 
 def count_components(component, component_type):

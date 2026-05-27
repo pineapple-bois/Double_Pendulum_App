@@ -496,14 +496,18 @@ Definition of done:
 - Visual assets and palette choices reinforce the app's learning goals.
 - The redesign is validated in browser across practical viewport sizes.
 
-Current status: Phase 5B is complete. `/` is the chromeless full-hero landing
-page. `/equations` is now the first learning page in the intended journey,
-owning the Equations of Motion derivation and model introduction. `/simulation`
-remains the second learning page and owns the interactive simulation workflow.
-Non-home teaching pages use a white/light shared header with hamburger
-navigation, unknown routes use a simplified chromeless 404 with links to Home
-and Simulation, and old `/lagrangian` and `/hamiltonian` routes remain
-preserved.
+Current status: Phase 5C.4 is complete. `/` is the chromeless full-hero
+landing page. `/equations` is now the first learning page in the intended
+journey, owning the Equations of Motion derivation and model introduction.
+`/simulation` remains the second learning page and owns the interactive
+simulation workflow. The Equations page now lazy-mounts derivation branches:
+`/equations` starts with the overview/shared trunk only, `/lagrangian` starts
+with only the Euler-Lagrange branch mounted, and `/hamiltonian` starts with
+only the Hamiltonian branch mounted. Branch switching is local within the
+Equations page and does not remount the whole page from the top. Non-home
+teaching pages use a white/light shared header with hamburger navigation,
+unknown routes use a simplified chromeless 404 with links to Home and
+Simulation, and old `/lagrangian` and `/hamiltonian` routes remain preserved.
 
 #### Phase 5C: Progressive disclosure and production layout planning
 
@@ -528,9 +532,61 @@ Planned scope:
     54; `/lagrangian` mounts 42 and `/hamiltonian` mounts 43.
   - Tests assert branch-only content is absent from unselected routes and that
     only the selected branch renderer is called.
-- Experiment with branch reveal/progressive disclosure for the Equations of
-  Motion page so the shared modelling trunk can remain readable while the
-  Euler-Lagrange and Hamiltonian branches become easier to enter deliberately.
+- Phase 5C.3 branch-orientation UX pass completed.
+  - This pass addressed spatial continuity after lazy-mounted route changes,
+    not render performance.
+  - Added a stable `#equations-branch` anchor around the branch choice region.
+  - Branch choices now link to `/equations#equations-branch`,
+    `/lagrangian#equations-branch`, and `/hamiltonian#equations-branch`.
+  - The selected branch card receives an active class while unselected branches
+    remain absent from the Dash layout tree.
+  - Native fragment anchors were not sufficient with the Dash route/content
+    update: the URL hash changed, but the viewport stayed at the page top.
+  - Added a minimal clientside scroll helper scoped to `/equations`,
+    `/lagrangian`, and `/hamiltonian` when the hash is `#equations-branch`.
+  - Tests assert branch-link fragments, active branch state, and continued
+    branch absence on unselected routes.
+  - Browser checks covered direct `/equations`, `/lagrangian`, and
+    `/hamiltonian` fragment loads; branch-card clicks between overview,
+    Euler-Lagrange, and Hamiltonian; and back/forward behavior.
+- Phase 5C.4 local branch-switcher pass completed.
+  - Phase 5C.3 improved route orientation, but the user could still see the
+    route change, top-of-page remount, MathJax/typesetting delay, and delayed
+    scroll correction. This was judged worse than an in-page formulation
+    switcher.
+  - Replaced route-link branch cards with two local branch controls:
+    Euler-Lagrange formulation and Hamiltonian formulation. The Overview card
+    was removed because the overview is the shared trunk state rather than a
+    formulation choice.
+  - `/equations` now renders the shared trunk and branch switcher with no full
+    branch mounted initially.
+  - `/lagrangian` still works as a direct entry route and initializes the local
+    switcher with only the Euler-Lagrange branch mounted.
+  - `/hamiltonian` still works as a direct entry route and initializes the local
+    switcher with only the Hamiltonian branch mounted.
+  - Local switching updates only the branch output container and active button
+    state; URL updates during local switching were deferred to preserve smooth
+    in-page behavior and avoid full page remounts.
+  - The Phase 5C.3 delayed scroll helper was removed.
+  - True lazy mounting remains preserved: the unselected branch is not present
+    in the Dash layout tree.
+  - Component-count check after the change: `/equations` mounts 27
+    `dcc.Markdown` components; `/lagrangian` mounts 40; `/hamiltonian` mounts
+    41.
+  - Tests assert the two-choice switcher, direct-route selected state, branch
+    absence for unselected routes, and broad component-count expectations.
+  - Browser checks covered direct `/equations`, `/lagrangian`, and
+    `/hamiltonian`; selecting each formulation from `/equations`; switching
+    Euler-Lagrange to Hamiltonian and back; switching from direct branch routes;
+    stable viewport position near the switcher; and MathJax rendering in the
+    selected branch.
+
+  > User Comment: "Local branch switching preserves lazy mounting and avoids full-page remounts. 
+  > A small click-to-render delay remains when mounting a derivation branch, likely due to Markdown/MathJax rendering. 
+  > This is acceptable for now and should not be optimised further until the production layout is clearer."
+
+- Continue refining branch reveal/progressive disclosure only if needed after
+  the local branch switcher has been used in the browser.
 - Investigate content rendering optimisation for long mathematical sections,
   including whether equation-heavy blocks can be rendered more efficiently
   without collapsing the page into a single markdown blob.
@@ -553,10 +609,10 @@ Definition of done:
 
 Remaining follow-up:
 
-- Decide whether branch choice should become an in-page progressive disclosure
-  interaction, remain route-based, or combine both.
 - Add browser timing evidence for the lazy-mount change if more optimisation is
   needed.
+- Decide whether local branch switching should update the URL through a
+  history-only clientside enhancement without triggering route remounts.
 - Keep production layout mode as a separate opt-in pass.
 
 ### Phase 6: Math fidelity and numerical validation
