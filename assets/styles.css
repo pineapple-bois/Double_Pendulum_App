@@ -20,8 +20,8 @@
     --academic-panel-strong: rgba(17, 38, 73, 0.9);
     --academic-accent: #244a7d;
     --academic-accent-soft: #eef4fa;
-    --site-header-surface: #ffffff;
-    --site-header-border: #d8e0ea;
+    --site-header-surface: var(--academic-navy);
+    --site-header-border: rgba(215, 230, 244, 0.18);
     --site-header-height: 58px;
     --site-content-width: 1480px;
     --site-gutter: clamp(20px, 5vw, 72px);
@@ -70,6 +70,39 @@ body {
     flex: none;
 }
 
+.site-footer {
+    align-items: center;
+    background: var(--academic-navy);
+    border-top: 1px solid var(--site-header-border);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+    min-height: 54px;
+    padding: 14px var(--site-gutter);
+}
+
+.site-footer-link {
+    align-items: center;
+    color: var(--academic-link);
+    display: inline-flex;
+    font-size: var(--font-size-small);
+    gap: 8px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-decoration: none;
+}
+
+.site-footer-link:hover {
+    color: var(--academic-text);
+    text-decoration: underline;
+}
+
+.site-footer-icon {
+    filter: brightness(0) invert(1);
+    height: 20px;
+    width: 20px;
+}
+
 /*  -------------------
     Shared site header */
 
@@ -78,9 +111,17 @@ body {
     border-bottom: 1px solid var(--site-header-border);
     box-sizing: border-box;
     flex: none;
+    left: 0;
     min-height: var(--site-header-height);
-    position: relative;
-    z-index: 20;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 100%;
+    z-index: 200;
+}
+
+.site-header + .body {
+    padding-top: var(--site-header-height);
 }
 
 .site-nav {
@@ -103,7 +144,7 @@ body {
 }
 
 .site-brand {
-    color: var(--academic-ink);
+    color: var(--academic-text);
     font-size: var(--font-size-large);
     font-weight: 800;
     line-height: 1.2;
@@ -112,12 +153,12 @@ body {
 }
 
 .site-brand:hover {
-    color: var(--academic-accent);
+    color: var(--academic-link);
     text-decoration: none;
 }
 
 .site-page-subtitle {
-    color: var(--academic-muted);
+    color: var(--academic-subtle-text);
     font-size: var(--font-size-small);
     font-weight: 700;
     line-height: 1.2;
@@ -125,7 +166,7 @@ body {
 
 .site-nav-link {
     border-radius: 8px;
-    color: var(--academic-ink);
+    color: var(--academic-link);
     display: block;
     font-size: var(--font-size-small);
     font-weight: 700;
@@ -136,8 +177,8 @@ body {
 
 .site-nav-link:hover,
 .site-nav-link-active {
-    background: var(--academic-accent-soft);
-    color: var(--academic-accent);
+    background: rgba(215, 230, 244, 0.12);
+    color: var(--academic-text);
     text-decoration: none;
 }
 
@@ -164,11 +205,11 @@ body {
 }
 
 .site-nav-toggle:hover {
-    background: var(--academic-accent-soft);
+    background: rgba(215, 230, 244, 0.12);
 }
 
 .site-nav-toggle-bar {
-    background: var(--academic-accent);
+    background: var(--academic-link);
     border-radius: 999px;
     display: block;
     height: 2px;
@@ -176,10 +217,10 @@ body {
 }
 
 .site-nav-panel {
-    background: #ffffff;
+    background: var(--academic-surface);
     border: 1px solid var(--site-header-border);
     border-radius: 8px;
-    box-shadow: 0 18px 40px rgba(13, 41, 90, 0.18);
+    box-shadow: 0 18px 40px rgba(2, 10, 28, 0.34);
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -194,7 +235,7 @@ body {
     Legacy navigation bar */
 
 .header .navbar {
-    background-color: #1E0B44;
+    background-color: var(--academic-navy);
     display: flex;
     justify-content: start; /* Center the links */
     align-items: start;
@@ -219,8 +260,8 @@ body {
 
 /* currently only applies to the 404 page */
 .nav-link:hover {
-    background-color: #88C495;
-    color: white;
+    background-color: rgba(215, 230, 244, 0.12);
+    color: var(--academic-text);
     text-decoration: underline;
 }
 
@@ -971,7 +1012,7 @@ body {
     Footer Section */
 
 .footer-bar {
-    background: #1E0B44;
+    background: var(--academic-navy);
     text-align: left;
     display: flex;
     align-items: stretch;
@@ -1391,6 +1432,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Full viewport height */
+  padding-top: var(--site-header-height);
   background-color: #f8f9fa; /* Consistent background color */
 }
 

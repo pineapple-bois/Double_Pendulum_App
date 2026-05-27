@@ -9,6 +9,8 @@ from app.content.simulation import (
     RUN_SIMULATION_LABEL,
 )
 
+SITE_ATTRIBUTION_LABEL = "pineapple-bois"
+
 
 def github_logo():
     return html.Img(
@@ -19,6 +21,26 @@ def github_logo():
 
 
 def get_common_footer(include_button=False, page_type="main"):
+    if not include_button:
+        return html.Footer(
+            className="site-footer",
+            children=[
+                dcc.Link(
+                    children=[
+                        html.Span(SITE_ATTRIBUTION_LABEL, className="site-footer-label"),
+                        html.Img(
+                            src="/assets/Images/github-mark.png",
+                            className="site-footer-icon",
+                            alt="GitHub",
+                        ),
+                    ],
+                    href=REPOSITORY_URL,
+                    target="_blank",
+                    className="site-footer-link",
+                ),
+            ],
+        )
+
     children = []
 
     if include_button:

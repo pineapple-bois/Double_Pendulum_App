@@ -7,12 +7,10 @@ from app.components.derivation import (
     render_model_summary,
 )
 from app.components.footer import get_footer_section
-from app.components.references import get_references_section
 from app.components.shell import get_body_section, get_footer_wrapper, get_header_section
 from app.content.equations import (
     BRANCH_CARDS,
     DERIVATION_SECTIONS,
-    EQUATIONS_REFERENCES,
     INTRODUCTION_PARAGRAPHS,
     MECHANICAL_MODEL_LEAD,
     MODEL_SUMMARIES,
@@ -125,7 +123,6 @@ def layout(selected_branch=OVERVIEW_BRANCH):
                                 className="equations-branch-output",
                                 children=_selected_branch_section(selected_branch),
                             ),
-                            get_references_section(EQUATIONS_REFERENCES),
                         ],
                     ),
                 ]

@@ -98,9 +98,11 @@ def test_shell_components_return_dash_components():
 
 def test_navigation_and_footer_components_return_dash_components():
     navbar = get_navbar("/simulation")
+    footer = get_footer_section()
     assert_dash_component(navbar)
     assert "site-nav-toggle" in collect_classnames(navbar)
-    assert_dash_component(get_footer_section())
+    assert_dash_component(footer)
+    assert {"site-footer", "site-footer-link", "site-footer-icon"} <= collect_classnames(footer)
     assert_dash_component(get_footer_section_main())
 
 

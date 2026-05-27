@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from app.content.math import HAMILTONIAN_REFERENCES, LAGRANGIAN_REFERENCES, Reference
-
 
 SIMPLE_MODEL_IMAGE_SRC = "/assets/Images/Model_Simple_Transparent_NoText.png"
 COMPOUND_MODEL_IMAGE_SRC = "/assets/Images/Model_Compound_Transparent_NoText.png"
@@ -980,17 +978,4 @@ DERIVATION_SECTIONS = (
     SHARED_TRUNK,
     EULER_LAGRANGE_SECTION,
     HAMILTONIAN_SECTION,
-)
-
-EQUATIONS_REFERENCES = tuple(
-    dict.fromkeys(
-        LAGRANGIAN_REFERENCES
-        + HAMILTONIAN_REFERENCES
-        + (
-            Reference(
-                text="Double pendulum derivation notebooks - pineapple-bois",
-                href="https://github.com/pineapple-bois/Double_Pendulum",
-            ),
-        )
-    )
 )

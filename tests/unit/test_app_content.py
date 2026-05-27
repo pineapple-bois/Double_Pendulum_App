@@ -200,9 +200,11 @@ def test_page_registry_resolves_preserved_routes_to_layouts():
 def test_equations_route_lazy_mounts_overview_without_branches():
     layout = get_layout_for_path("/equations")
     text = " ".join(collect_text(layout))
+    classnames = collect_classnames(layout)
 
     assert "equations-branch" in collect_ids(layout)
     assert "equations-branch-output" in collect_ids(layout)
+    assert "references-section" not in classnames
     assert "The common Lagrangian starting point" in text
     assert "Physical assumptions" in text
     assert "General Euler-Lagrange equation" not in text

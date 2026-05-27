@@ -585,6 +585,31 @@ Planned scope:
   > A small click-to-render delay remains when mounting a derivation branch, likely due to Markdown/MathJax rendering. 
   > This is acceptable for now and should not be optimised further until the production layout is clearer."
 
+#### Phase 5D: Shared chrome cohesion
+
+- Phase 5D.1 shared site chrome cohesion completed.
+  - Restyled the shared site header with the Home hero navy academic palette:
+    dark navy surface, pale/white brand and links, pale hamburger bars, and a
+    dark cohesive dropdown panel.
+  - Made `.site-header` fixed and added a reliable top offset for routed page
+    content so titles and first content blocks begin below the header.
+  - Added a minimal dark navy `site-footer` for normal content pages with only
+    the `pineapple-bois` attribution link.
+  - Kept the simulation footer/control path separate from the normal
+    `site-footer`; the `/simulation` Run Simulation button remains in
+    `footer-bar main-page` and remains visible and clickable.
+  - Superseded the old white shared-header styling and removed the legacy
+    green hover from the old nav fallback styling.
+  - Changed files: `assets/styles.css`, `app/components/footer.py`, and
+    `ROADMAP.md`.
+  - Validation on 2026-05-27: `.venv/bin/python -m pytest` passed; browser
+    checks covered `/`, `/simulation`, `/equations`, `/lagrangian`,
+    `/hamiltonian`, `/chaos`, and an unknown route. Manual checks confirmed the
+    header remains fixed while scrolling, content starts below the header,
+    hamburger/dropdown navigation works, normal-page footers are dark and
+    subtle, the simulation Run Simulation button remains usable, and no legacy
+    green/purple nav hover appeared.
+
 - Continue refining branch reveal/progressive disclosure only if needed after
   the local branch switcher has been used in the browser.
 - Investigate content rendering optimisation for long mathematical sections,
