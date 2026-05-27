@@ -344,144 +344,282 @@ EULER_LAGRANGE_SECTION = DerivationSection(
     eyebrow="Branch 1",
     title="Euler-Lagrange formulation",
     lead=(
-        "The Euler-Lagrange equations turn the Lagrangian into two coupled second-order "
-        "equations. For numerical integration, the accelerations are then isolated and the "
-        "state is rewritten using angular velocities."
+        "The Euler-Lagrange formulation works directly with the shared Lagrangian. It produces "
+        "two coupled second-order equations for the angular coordinates, then rewrites them as "
+        "a first-order system for numerical integration."
     ),
     blocks=(
         EquationBlock(
             title="General Euler-Lagrange equation",
             markdown=r"""
-For each generalized coordinate $\theta_i$,
-
-$$
-\frac{d}{dt}\left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_i}\right)
-- \frac{\partial \mathcal{L}}{\partial \theta_i}=0.
-$$
-""",
+            For each generalized coordinate $\theta_i$,
+            
+            $$
+            \frac{\mathrm{d}}{\mathrm{d}t}
+            \left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_i}\right)
+            - \frac{\partial \mathcal{L}}{\partial \theta_i}=0.
+            $$
+            
+            The partial derivatives treat $\theta_i$ and $\dot{\theta}_i$ as independent variables.
+            The outer total time derivative then accounts for how
+            $\partial\mathcal{L}/\partial\dot{\theta}_i$ changes along the actual motion.
+            """,
         ),
         EquationBlock(
-            title="Simple model equations",
+            title="Applying the operator to two coordinates",
             markdown=r"""
-Let $\Delta=\theta_1-\theta_2$. After differentiating and simplifying,
-
-$$
-(m_1+m_2)l_1\ddot{\theta}_1
-+m_2l_2\cos(\Delta)\ddot{\theta}_2
-+m_2l_2\sin(\Delta)\dot{\theta}_2^2
-+g(m_1+m_2)\sin(\theta_1)=0,
-$$
-
-$$
-l_2\ddot{\theta}_2
-+l_1\cos(\Delta)\ddot{\theta}_1
--l_1\sin(\Delta)\dot{\theta}_1^2
-+g\sin(\theta_2)=0.
-$$
-""",
+            For the double pendulum, the generalized coordinate vector is
+            
+            $$
+            \mathbf{q}=(\theta_1,\theta_2).
+            $$
+            
+            Applying the Euler-Lagrange operator separately gives two equations:
+            
+            $$
+            \frac{\mathrm{d}}{\mathrm{d}t}
+            \left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_1}\right)
+            -\frac{\partial \mathcal{L}}{\partial \theta_1}=0,
+            $$
+            
+            $$
+            \frac{\mathrm{d}}{\mathrm{d}t}
+            \left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_2}\right)
+            -\frac{\partial \mathcal{L}}{\partial \theta_2}=0.
+            $$
+            
+            Because the Lagrangian contains both $\dot{\theta}_1$ and $\dot{\theta}_2$ in a shared
+            kinetic-energy term, these equations contain both angular accelerations. They are therefore
+            coupled second-order equations rather than two independent pendulum equations.
+            """,
         ),
         EquationBlock(
-            title="Coupled acceleration system",
+            title="Where the coupling enters",
             markdown=r"""
-The equations can be arranged as
-
-$$
-\begin{bmatrix}
-1 & \alpha_1 \\
-\alpha_2 & 1
-\end{bmatrix}
-\begin{bmatrix}
-\ddot{\theta}_1 \\
-\ddot{\theta}_2
-\end{bmatrix}
-=
-\begin{bmatrix}
-f_1 \\
-f_2
-\end{bmatrix},
-$$
-
-where
-
-$$
-\alpha_1=\frac{m_2l_2\cos(\Delta)}{l_1(m_1+m_2)}, \qquad
-\alpha_2=\frac{l_1\cos(\Delta)}{l_2},
-$$
-
-$$
-f_1=\frac{g(m_1+m_2)\sin(\theta_1)+m_2l_2\sin(\Delta)\dot{\theta}_2^2}
-{l_1(m_1+m_2)}, \qquad
-f_2=\frac{g\sin(\theta_2)-l_1\sin(\Delta)\dot{\theta}_1^2}{l_2}.
-$$
-""",
+            The coupling comes from the kinetic-energy cross term in the shared Lagrangian:
+            
+            $$
+            m_2l_1l_2\cos(\theta_1-\theta_2)\dot{\theta}_1\dot{\theta}_2.
+            $$
+            
+            Differentiating this term contributes factors of $\cos(\theta_1-\theta_2)$ multiplying
+            angular accelerations, and factors of $\sin(\theta_1-\theta_2)$ multiplying squared angular
+            velocities. This is why the acceleration of one link appears in the equation for the other.
+            """,
             note=(
-                "This matrix form keeps the coupling visible while making the numerical state "
-                "update easy to implement."
+                "The coupling depends on the relative angle $\\theta_1-\\theta_2$, even though "
+                "the coordinates themselves are absolute angles measured from the vertical."
+            ),
+        ),
+        EquationBlock(
+            title="Coupled second-order equations for the simple model",
+            markdown=r"""
+            Let $\Delta=\theta_1-\theta_2$. Applying the Euler-Lagrange operator to the simple-model
+            Lagrangian gives
+            
+            $$
+            (m_1+m_2)l_1\ddot{\theta}_1
+            +m_2l_2\cos(\Delta)\ddot{\theta}_2
+            +m_2l_2\sin(\Delta)\dot{\theta}_2^2
+            +g(m_1+m_2)\sin(\theta_1)=0,
+            $$
+            
+            $$
+            l_2\ddot{\theta}_2
+            +l_1\cos(\Delta)\ddot{\theta}_1
+            -l_1\sin(\Delta)\dot{\theta}_1^2
+            +g\sin(\theta_2)=0.
+            $$
+            
+            These are second-order because they contain $\ddot{\theta}_1$ and $\ddot{\theta}_2$.
+            They are coupled because each equation contains the acceleration of the other coordinate.
+            """,
+        ),
+        EquationBlock(
+            title="Isolating the angular accelerations",
+            markdown=r"""
+            To solve numerically, the angular accelerations need to be isolated. Here the non-acceleration
+            terms are moved to the right-hand side. With this sign convention,
+            
+            $$
+            \begin{bmatrix}
+            1 & \alpha_1 \\
+            \alpha_2 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+            \ddot{\theta}_1 \\
+            \ddot{\theta}_2
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            b_1 \\
+            b_2
+            \end{bmatrix},
+            $$
+            
+            with
+            
+            $$
+            \alpha_1=\frac{m_2l_2\cos(\Delta)}{l_1(m_1+m_2)}, \qquad
+            \alpha_2=\frac{l_1\cos(\Delta)}{l_2},
+            $$
+            
+            $$
+            b_1=-\frac{g(m_1+m_2)\sin(\theta_1)+m_2l_2\sin(\Delta)\dot{\theta}_2^2}
+            {l_1(m_1+m_2)},
+            $$
+            
+            $$
+            b_2=\frac{l_1\sin(\Delta)\dot{\theta}_1^2-g\sin(\theta_2)}{l_2}.
+            $$
+            
+            Solving the $2\times2$ linear system gives
+            
+            $$
+            \ddot{\theta}_1=\frac{b_1-\alpha_1b_2}{1-\alpha_1\alpha_2}, \qquad
+            \ddot{\theta}_2=\frac{-\alpha_2b_1+b_2}{1-\alpha_1\alpha_2}.
+            $$
+            """,
+            note=(
+                "The signs of $b_1$ and $b_2$ come from moving every non-acceleration term "
+                "to the right-hand side before inverting the acceleration matrix."
             ),
         ),
         EquationBlock(
             title="First-order simulation system",
             markdown=r"""
-Set $\omega_i=\dot{\theta}_i$. Then
-
-$$
-\frac{d}{dt}
-\begin{bmatrix}
-\theta_1 \\
-\theta_2 \\
-\omega_1 \\
-\omega_2
-\end{bmatrix}
-=
-\begin{bmatrix}
-\omega_1 \\
-\omega_2 \\
-g_1(\theta_1,\theta_2,\omega_1,\omega_2) \\
-g_2(\theta_1,\theta_2,\omega_1,\omega_2)
-\end{bmatrix},
-$$
-
-with
-
-$$
-g_1=\frac{f_1-\alpha_1f_2}{1-\alpha_1\alpha_2}, \qquad
-g_2=\frac{-\alpha_2f_1+f_2}{1-\alpha_1\alpha_2}.
-$$
-""",
+            Most numerical ODE solvers expect a first-order system. Introduce angular velocities
+            
+            $$
+            \omega_i=\dot{\theta}_i.
+            $$
+            
+            Then the simple-model Euler-Lagrange system becomes
+            
+            $$
+            \frac{\mathrm{d}}{\mathrm{d}t}
+            \begin{bmatrix}
+            \theta_1 \\
+            \theta_2 \\
+            \omega_1 \\
+            \omega_2
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            \omega_1 \\
+            \omega_2 \\
+            \dfrac{b_1-\alpha_1b_2}{1-\alpha_1\alpha_2} \\
+            \dfrac{-\alpha_2b_1+b_2}{1-\alpha_1\alpha_2}
+            \end{bmatrix}.
+            $$
+            """,
+            note=(
+                "This first-order form is the version used by numerical ODE solvers."
+            ),
         ),
         EquationBlock(
-            title="Compound model summary",
+            title="Compound model mechanics",
             markdown=r"""
-The same Euler-Lagrange procedure applies to the compound model, but the rods now have
-distributed mass and rotational inertia. The kinetic energy therefore includes center-of-mass
-translation and rod rotation:
-
-$$
-I_{\mathrm{cm}}=\frac{1}{12}Ml^2.
-$$
-
-After applying the parallel axis theorem, the final simulation state has the same shape,
-
-$$
-\frac{d}{dt}
-\begin{bmatrix}
-\theta_1 \\
-\theta_2 \\
-\omega_1 \\
-\omega_2
-\end{bmatrix}
-=
-\begin{bmatrix}
-\omega_1 \\
-\omega_2 \\
-G_1(\theta_1,\theta_2,\omega_1,\omega_2; M_1,M_2,l_1,l_2,g) \\
-G_2(\theta_1,\theta_2,\omega_1,\omega_2; M_1,M_2,l_1,l_2,g)
-\end{bmatrix}.
-$$
-""",
+            The compound model changes the energy terms, not the variational principle. The rods have
+            distributed mass, so each rod contributes translational kinetic energy through its centre of
+            mass and rotational kinetic energy about its own centre of mass.
+            
+            For a uniform thin rod,
+            
+            $$
+            I_{\mathrm{cm}}=\frac{1}{12}Ml^2.
+            $$
+            
+            Rotation about an end uses the parallel axis theorem:
+            
+            $$
+            I_{\mathrm{end}}
+            =I_{\mathrm{cm}}+M\left(\frac{l}{2}\right)^2
+            =\frac{1}{3}Ml^2.
+            $$
+            
+            The rotational kinetic energy of each rod is
+            
+            $$
+            T_{\mathrm{rot}}=\frac{1}{2}I_{\mathrm{end}}\omega^2.
+            $$
+            """,
+        ),
+        EquationBlock(
+            title="Compound-model Lagrangian",
+            markdown=r"""
+            Combining centre-of-mass translation, rotational kinetic energy, and gravitational potential
+            energy gives the uniform-rod compound Lagrangian:
+            
+            $$
+            \mathcal{L}_{\mathrm{c}}
+            =\frac{7M_1l_1^2\dot{\theta}_1^2}{24}
+            +\frac{M_2l_1^2\dot{\theta}_1^2}{8}
+            +\frac{M_2l_1l_2\cos(\Delta)\dot{\theta}_1\dot{\theta}_2}{4}
+            +\frac{7M_2l_2^2\dot{\theta}_2^2}{24}
+            +\frac{g}{2}\left(M_1l_1\cos(\theta_1)+M_2l_1\cos(\theta_1)+M_2l_2\cos(\theta_2)\right).
+            $$
+            
+            The coefficients differ from the simple model because mass is distributed along the rods
+            instead of being concentrated only at the endpoints.
+            """,
+        ),
+        EquationBlock(
+            title="Compound-model Euler-Lagrange equations",
+            markdown=r"""
+            Applying the same Euler-Lagrange operator to $\mathcal{L}_{\mathrm{c}}$ gives
+            
+            $$
+            (7M_1+3M_2)l_1\ddot{\theta}_1
+            +3M_2l_2\cos(\Delta)\ddot{\theta}_2
+            +6(M_1+M_2)g\sin(\theta_1)
+            +3M_2l_2\sin(\Delta)\dot{\theta}_2^2=0,
+            $$
+            
+            $$
+            7l_2\ddot{\theta}_2
+            +3l_1\cos(\Delta)\ddot{\theta}_1
+            -3l_1\sin(\Delta)\dot{\theta}_1^2
+            +6g\sin(\theta_2)=0.
+            $$
+            
+            With non-acceleration terms moved to the right-hand side, the same matrix pattern appears:
+            
+            $$
+            \begin{bmatrix}
+            1 & \beta_1 \\
+            \beta_2 & 1
+            \end{bmatrix}
+            \begin{bmatrix}
+            \ddot{\theta}_1 \\
+            \ddot{\theta}_2
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            c_1 \\
+            c_2
+            \end{bmatrix},
+            $$
+            
+            where
+            
+            $$
+            \beta_1=\frac{3M_2l_2\cos(\Delta)}{l_1(7M_1+3M_2)}, \qquad
+            \beta_2=\frac{3l_1\cos(\Delta)}{7l_2},
+            $$
+            
+            $$
+            c_1=-\frac{6(M_1+M_2)g\sin(\theta_1)+3M_2l_2\sin(\Delta)\dot{\theta}_2^2}
+            {l_1(7M_1+3M_2)},
+            $$
+            
+            $$
+            c_2=\frac{3l_1\sin(\Delta)\dot{\theta}_1^2-6g\sin(\theta_2)}{7l_2}.
+            $$
+            """,
             note=(
-                "The page keeps the compound branch compact because its algebra follows the same "
-                "method while changing the inertia terms."
+                "The compound model has different inertia coefficients, but it is governed by "
+                "the same Euler-Lagrange principle."
             ),
         ),
     ),
@@ -492,212 +630,347 @@ HAMILTONIAN_SECTION = DerivationSection(
     eyebrow="Branch 2",
     title="Hamiltonian formulation",
     lead=(
-        "The Hamiltonian branch is denser algebraically, but conceptually direct: exchange "
-        "angular velocities for canonical momenta, write total energy in those variables, and "
-        "differentiate the Hamiltonian."
+        "The Hamiltonian formulation starts from the same Lagrangian, but changes variables. "
+        "Instead of evolving angular velocities directly, it introduces canonical momenta and "
+        "writes the dynamics as a first-order system in phase space."
     ),
     blocks=(
         EquationBlock(
-            title="Legendre transform and Hamiltonian equations",
+            title="Why introduce momenta?",
             markdown=r"""
-The Hamiltonian is the Legendre transform of the Lagrangian:
-
-$$
-\mathcal{H}=\sum_{i=1}^{2}\dot{\theta}_i p_{\theta_i}-\mathcal{L}.
-$$
-
-Hamilton's equations are
-
-$$
-\dot{\theta}_i=\frac{\partial \mathcal{H}}{\partial p_{\theta_i}}, \qquad
-\dot{p}_{\theta_i}=-\frac{\partial \mathcal{H}}{\partial \theta_i}.
-$$
-""",
+            The Euler-Lagrange branch works with coordinates and velocities. The Hamiltonian branch
+            uses coordinates and canonical momenta:
+            
+            $$
+            (\theta_1,\theta_2,\dot{\theta}_1,\dot{\theta}_2)
+            \quad\longrightarrow\quad
+            (\theta_1,\theta_2,p_{\theta_1},p_{\theta_2}).
+            $$
+            
+            For a double pendulum, these momenta are not simply independent $mv$ terms. The kinetic
+            energy is coupled, so the momentum associated with one angle can depend on both angular
+            velocities.
+            """,
+            note=(
+                "The Euler-Lagrange and Hamiltonian branches describe the same conservative system."
+            ),
         ),
         EquationBlock(
             title="Canonical momenta",
             markdown=r"""
-The canonical momenta are
-
-$$
-p_{\theta_1}=(m_1+m_2)l_1^2\dot{\theta}_1
-+m_2l_1l_2\cos(\Delta)\dot{\theta}_2,
-$$
-
-$$
-p_{\theta_2}=m_2l_1l_2\cos(\Delta)\dot{\theta}_1
-+m_2l_2^2\dot{\theta}_2.
-$$
-""",
+            The canonical momentum conjugate to each angular coordinate is defined by
+            
+            $$
+            p_{\theta_i}=\frac{\partial \mathcal{L}}{\partial \dot{\theta}_i}.
+            $$
+            
+            Applying this definition to the simple-model Lagrangian gives
+            
+            $$
+            p_{\theta_1}=(m_1+m_2)l_1^2\dot{\theta}_1
+            +m_2l_1l_2\cos(\Delta)\dot{\theta}_2,
+            $$
+            
+            $$
+            p_{\theta_2}=m_2l_1l_2\cos(\Delta)\dot{\theta}_1
+            +m_2l_2^2\dot{\theta}_2.
+            $$
+            
+            The cross terms come from differentiating the kinetic-energy coupling term. This is why
+            $p_{\theta_1}$ and $p_{\theta_2}$ each contain information about both angular velocities.
+            """,
+            note="Canonical momenta are coupled because the kinetic energy is coupled.",
         ),
         EquationBlock(
-            title="Momentum matrix",
+            title="Momentum matrix for the simple model",
             markdown=r"""
-The momenta can be written as
-
-$$
-\begin{bmatrix}
-p_{\theta_1} \\
-p_{\theta_2}
-\end{bmatrix}
-=
-\mathbf{B}
-\begin{bmatrix}
-\dot{\theta}_1 \\
-\dot{\theta}_2
-\end{bmatrix},
-$$
-
-where
-
-$$
-\mathbf{B}=
-\begin{bmatrix}
-(m_1+m_2)l_1^2 & m_2l_1l_2\cos(\Delta) \\
-m_2l_1l_2\cos(\Delta) & m_2l_2^2
-\end{bmatrix}.
-$$
-""",
+            The two momentum equations can be collected into a matrix relation:
+            
+            $$
+            \begin{bmatrix}
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}
+            =
+            \mathbf{B}
+            \begin{bmatrix}
+            \dot{\theta}_1 \\
+            \dot{\theta}_2
+            \end{bmatrix},
+            $$
+            
+            where the symmetric matrix $\mathbf{B}$ is the configuration-dependent inertia matrix:
+            
+            $$
+            \mathbf{B}=
+            \begin{bmatrix}
+            (m_1+m_2)l_1^2 & m_2l_1l_2\cos(\Delta) \\
+            m_2l_1l_2\cos(\Delta) & m_2l_2^2
+            \end{bmatrix}.
+            $$
+            
+            The entries of $\mathbf{B}$ depend on the current configuration through
+            $\Delta=\theta_1-\theta_2$. In compact form, the simple-model kinetic energy is
+            
+            $$
+            T=\frac{1}{2}
+            \begin{bmatrix}
+            \dot{\theta}_1 & \dot{\theta}_2
+            \end{bmatrix}
+            \mathbf{B}
+            \begin{bmatrix}
+            \dot{\theta}_1 \\
+            \dot{\theta}_2
+            \end{bmatrix}.
+            $$
+            """,
+        ),
+        EquationBlock(
+            title="Recovering velocities from momenta",
+            markdown=r"""
+            The Hamiltonian must be written in terms of coordinates and momenta, not velocities.
+            That is why the momentum matrix must be inverted:
+            
+            $$
+            \begin{bmatrix}
+            \dot{\theta}_1 \\
+            \dot{\theta}_2
+            \end{bmatrix}
+            =
+            \mathbf{B}^{-1}
+            \begin{bmatrix}
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}.
+            $$
+            
+            For positive masses and lengths, this matrix is invertible. The angular velocities are
+            
+            $$
+            \dot{\theta}_1 =
+            \frac{-l_1p_{\theta_2}\cos(\Delta)+l_2p_{\theta_1}}
+            {l_1^2l_2\left(m_1+m_2\sin^2(\Delta)\right)},
+            $$
+            
+            $$
+            \dot{\theta}_2 =
+            \frac{l_1(m_1+m_2)p_{\theta_2}-l_2m_2p_{\theta_1}\cos(\Delta)}
+            {l_1l_2^2m_2\left(m_1+m_2\sin^2(\Delta)\right)}.
+            $$
+            
+            These expressions are the first two Hamiltonian equations in explicit form: they recover
+            the angular velocities from the phase-space variables.
+            """,
+        ),
+        EquationBlock(
+            title="Legendre transform",
+            markdown=r"""
+            The Legendre transform replaces the velocity description with the momentum description:
+            
+            $$
+            \mathcal{H}
+            =\sum_{i=1}^{2}\dot{\theta}_i p_{\theta_i}-\mathcal{L}.
+            $$
+            
+            Because the simple and compound systems are conservative and their Lagrangians do not
+            depend explicitly on time, this Hamiltonian is the total mechanical energy expressed in
+            phase-space variables.
+            """,
+        ),
+        EquationBlock(
+            title="Hamiltonian as total energy",
+            markdown=r"""
+            Using the inverse momentum matrix, the kinetic energy can be written as
+            
+            $$
+            T=\frac{1}{2}
+            \begin{bmatrix}
+            p_{\theta_1} & p_{\theta_2}
+            \end{bmatrix}
+            \mathbf{B}^{-1}
+            \begin{bmatrix}
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}.
+            $$
+            
+            For the simple model, the Hamiltonian becomes
+            
+            $$
+            \mathcal{H}
+            =\frac{
+            l_1^2(m_1+m_2)p_{\theta_2}^2
+            -2l_1l_2m_2p_{\theta_1}p_{\theta_2}\cos(\Delta)
+            +l_2^2m_2p_{\theta_1}^2}
+            {2l_1^2l_2^2m_2\left(m_1+m_2\sin^2(\Delta)\right)}
+            -g\left((m_1+m_2)l_1\cos(\theta_1)+m_2l_2\cos(\theta_2)\right).
+            $$
+            
+            This is the same total energy $T+V$, but now written using
+            $(\theta_1,\theta_2,p_{\theta_1},p_{\theta_2})$ instead of
+            $(\theta_1,\theta_2,\dot{\theta}_1,\dot{\theta}_2)$.
+            """,
+        ),
+        EquationBlock(
+            title="Hamilton's equations",
+            markdown=r"""
+            Hamilton's equations specify how each phase-space variable evolves:
+            
+            $$
+            \dot{\theta}_i=\frac{\partial \mathcal{H}}{\partial p_{\theta_i}},
+            \qquad
+            \dot{p}_{\theta_i}=-\frac{\partial \mathcal{H}}{\partial \theta_i}.
+            $$
+            
+            Unlike the Euler-Lagrange equations, which first appear as second-order equations in
+            $\theta_1$ and $\theta_2$, Hamilton's equations are first-order by construction.
+            """,
+            note="Hamilton's equations are first-order by construction.",
+        ),
+        EquationBlock(
+            title="First-order phase-space system",
+            markdown=r"""
+            For the simple model, the simulation state is
+            
+            $$
+            \mathbf{y}=
+            \begin{bmatrix}
+            \theta_1 & \theta_2 & p_{\theta_1} & p_{\theta_2}
+            \end{bmatrix}^{T}.
+            $$
+            
+            The evolution law is
+            
+            $$
+            \frac{\mathrm{d}}{\mathrm{d}t}
+            \begin{bmatrix}
+            \theta_1 \\
+            \theta_2 \\
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            \partial\mathcal{H}/\partial p_{\theta_1} \\
+            \partial\mathcal{H}/\partial p_{\theta_2} \\
+            -\partial\mathcal{H}/\partial \theta_1 \\
+            -\partial\mathcal{H}/\partial \theta_2
+            \end{bmatrix}.
+            $$
+            
+            The first two components are the velocity formulas obtained from $\mathbf{B}^{-1}$.
+            The last two components give the momentum evolution from the position derivatives of
+            the Hamiltonian.
+            """,
+        ),
+        EquationBlock(
+            title="Compound-model momentum matrix",
+            markdown=r"""
+            The compound model uses the same canonical construction, but the distributed rod mass
+            changes the inertia matrix. Differentiating the compound Lagrangian with respect to the
+            angular velocities gives
+            
+            $$
+            \begin{bmatrix}
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}
+            =
+            \mathbf{B}_c
+            \begin{bmatrix}
+            \dot{\theta}_1 \\
+            \dot{\theta}_2
+            \end{bmatrix},
+            $$
+            
+            with the compound momentum matrix
+            
+            $$
+            \mathbf{B}_c=
+            \begin{bmatrix}
+            \left(\frac{7M_1}{12}+\frac{M_2}{4}\right)l_1^2
+            & \frac{M_2l_1l_2\cos(\Delta)}{4} \\
+            \frac{M_2l_1l_2\cos(\Delta)}{4}
+            & \frac{7M_2l_2^2}{12}
+            \end{bmatrix}.
+            $$
+            
+            The diagonal coefficients include each rod's centre-of-mass translation and rotational
+            inertia. The off-diagonal terms still depend on $\cos(\Delta)$, so the two generalized
+            momenta remain coupled.
+            """,
+        ),
+        EquationBlock(
+            title="Compound Hamiltonian system",
+            markdown=r"""
+            The compound Hamiltonian is formed by using the inverse compound inertia matrix:
+            
+            $$
+            \mathcal{H}_c
+            =\frac{1}{2}
+            \begin{bmatrix}
+            p_{\theta_1} & p_{\theta_2}
+            \end{bmatrix}
+            \mathbf{B}_c^{-1}
+            \begin{bmatrix}
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}
+            -\frac{g}{2}\left(M_1l_1\cos(\theta_1)+M_2l_1\cos(\theta_1)+M_2l_2\cos(\theta_2)\right).
+            $$
+            
+            Equivalently, expanding the inverse matrix gives
+            
+            $$
+            \mathcal{H}_c
+            =\frac{
+            6\left[
+            7M_1l_1^2p_{\theta_2}^2
+             +3M_2l_1^2p_{\theta_2}^2
+             -6M_2l_1l_2p_{\theta_1}p_{\theta_2}\cos(\Delta)
+             +7M_2l_2^2p_{\theta_1}^2
+            \right]}
+            {M_2l_1^2l_2^2\left(49M_1+9M_2\sin^2(\Delta)+12M_2\right)}
+            -\frac{g}{2}\left((M_1+M_2)l_1\cos(\theta_1)+M_2l_2\cos(\theta_2)\right).
+            $$
+            
+            The first two Hamiltonian equations recover the angular velocities:
+            
+            $$
+            \dot{\theta}_1=
+            \frac{12\left(-3l_1p_{\theta_2}\cos(\Delta)+7l_2p_{\theta_1}\right)}
+            {l_1^2l_2\left(49M_1+9M_2\sin^2(\Delta)+12M_2\right)},
+            $$
+            
+            $$
+            \dot{\theta}_2=
+            \frac{12\left(l_1(7M_1+3M_2)p_{\theta_2}
+            -3M_2l_2p_{\theta_1}\cos(\Delta)\right)}
+            {M_2l_1l_2^2\left(49M_1+9M_2\sin^2(\Delta)+12M_2\right)}.
+            $$
+            
+            The complete compound phase-space system is
+            
+            $$
+            \frac{\mathrm{d}}{\mathrm{d}t}
+            \begin{bmatrix}
+            \theta_1 \\
+            \theta_2 \\
+            p_{\theta_1} \\
+            p_{\theta_2}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+            \partial\mathcal{H}_c/\partial p_{\theta_1} \\
+            \partial\mathcal{H}_c/\partial p_{\theta_2} \\
+            -\partial\mathcal{H}_c/\partial \theta_1 \\
+            -\partial\mathcal{H}_c/\partial \theta_2
+            \end{bmatrix}.
+            $$
+            """,
             note=(
-                "The symmetric matrix $\\mathbf{B}$ is the angle-dependent inertia matrix."
-            ),
-        ),
-        EquationBlock(
-            title="Velocities in terms of momenta",
-            markdown=r"""
-Since $\mathbf{B}$ is invertible for positive masses and lengths,
-
-$$
-\begin{bmatrix}
-\dot{\theta}_1 \\
-\dot{\theta}_2
-\end{bmatrix}
-=
-\mathbf{B}^{-1}
-\begin{bmatrix}
-p_{\theta_1} \\
-p_{\theta_2}
-\end{bmatrix}.
-$$
-
-Explicitly,
-
-$$
-\dot{\theta}_1 =
-\frac{-l_1p_{\theta_2}\cos(\Delta)+l_2p_{\theta_1}}
-{l_1^2l_2\left(m_1+m_2\sin^2(\Delta)\right)},
-$$
-
-$$
-\dot{\theta}_2 =
-\frac{l_1(m_1+m_2)p_{\theta_2}-l_2m_2p_{\theta_1}\cos(\Delta)}
-{l_1l_2^2m_2\left(m_1+m_2\sin^2(\Delta)\right)}.
-$$
-""",
-        ),
-        EquationBlock(
-            title="Hamiltonian and first-order system",
-            markdown=r"""
-The simple-model Hamiltonian can be written as
-
-$$
-\mathcal{H}
-=\frac{
-l_1^2(m_1+m_2)p_{\theta_2}^2
--2l_1l_2m_2p_{\theta_1}p_{\theta_2}\cos(\Delta)
-+l_2^2m_2p_{\theta_1}^2}
-{2l_1^2l_2^2m_2\left(m_1+m_2\sin^2(\Delta)\right)}
--g\left((m_1+m_2)l_1\cos(\theta_1)+m_2l_2\cos(\theta_2)\right).
-$$
-
-The final state is already first order:
-
-$$
-\frac{d}{dt}
-\begin{bmatrix}
-\theta_1 \\
-\theta_2 \\
-p_{\theta_1} \\
-p_{\theta_2}
-\end{bmatrix}
-=
-\begin{bmatrix}
-\partial\mathcal{H}/\partial p_{\theta_1} \\
-\partial\mathcal{H}/\partial p_{\theta_2} \\
--\partial\mathcal{H}/\partial \theta_1 \\
--\partial\mathcal{H}/\partial \theta_2
-\end{bmatrix}.
-$$
-""",
-        ),
-        EquationBlock(
-            title="Compound model summary",
-            markdown=r"""
-For the compound model, the momentum relation keeps the same matrix form,
-
-$$
-\begin{bmatrix}
-p_{\theta_1} \\
-p_{\theta_2}
-\end{bmatrix}
-=
-\mathbf{B}_c
-\begin{bmatrix}
-\dot{\theta}_1 \\
-\dot{\theta}_2
-\end{bmatrix},
-$$
-
-with
-
-$$
-\mathbf{B}_c=
-\begin{bmatrix}
-\left(\frac{7M_1}{12}+\frac{M_2}{4}\right)l_1^2
-& \frac{M_2l_1l_2\cos(\Delta)}{4} \\
-\frac{M_2l_1l_2\cos(\Delta)}{4}
-& \frac{7M_2l_2^2}{12}
-\end{bmatrix}.
-$$
-
-The Hamiltonian is then formed by the same energy expression,
-
-$$
-\mathcal{H}_c
-=\frac{1}{2}
-\begin{bmatrix}
-p_{\theta_1} & p_{\theta_2}
-\end{bmatrix}
-\mathbf{B}_c^{-1}
-\begin{bmatrix}
-p_{\theta_1} \\
-p_{\theta_2}
-\end{bmatrix}
--\frac{g}{2}\left(M_1l_1\cos(\theta_1)+M_2l_1\cos(\theta_1)+M_2l_2\cos(\theta_2)\right).
-$$
-
-Its simulation system is
-
-$$
-\frac{d}{dt}
-\begin{bmatrix}
-\theta_1 \\
-\theta_2 \\
-p_{\theta_1} \\
-p_{\theta_2}
-\end{bmatrix}
-=
-\begin{bmatrix}
-\partial\mathcal{H}_c/\partial p_{\theta_1} \\
-\partial\mathcal{H}_c/\partial p_{\theta_2} \\
--\partial\mathcal{H}_c/\partial \theta_1 \\
--\partial\mathcal{H}_c/\partial \theta_2
-\end{bmatrix}.
-$$
-""",
-            note=(
-                "The distributed rod mass changes the inertia matrix and Hamiltonian, while the "
-                "canonical first-order structure remains the same."
+                "The distributed rod mass changes the inertia matrix and Hamiltonian, while "
+                "the canonical first-order structure remains the same."
             ),
         ),
     ),

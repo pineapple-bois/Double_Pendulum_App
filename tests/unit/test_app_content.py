@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
@@ -14,14 +16,14 @@ def test_navigation_metadata_preserves_public_routes():
     assert APP_TITLE == "Double Pendulum Simulation - pineapple-bois"
     assert [page.path for page in NAVIGATION_ITEMS] == [
         "/",
-        "/simulation",
         "/equations",
+        "/simulation",
         "/chaos",
     ]
     assert [page.path for page in PUBLIC_ROUTE_ITEMS] == [
         "/",
-        "/simulation",
         "/equations",
+        "/simulation",
         "/lagrangian",
         "/hamiltonian",
         "/chaos",
@@ -42,8 +44,8 @@ def test_navigation_metadata_preserves_public_routes():
 def test_home_content_uses_double_pendulum_routes():
     assert HOME_TITLE == "Double Pendulum Explorer"
     assert [item.href for item in EXPLORE_LINKS] == [
-        "/simulation",
         "/equations",
+        "/simulation",
         "/chaos",
     ]
     assert FURTHER_READING
@@ -93,6 +95,84 @@ def test_equations_content_is_structured_and_reuses_existing_assets():
         "The Lagrangian as the common starting point"
     ]
     assert all(len(section.blocks) > 1 for section in DERIVATION_SECTIONS)
+
+
+def test_equations_euler_lagrange_branch_is_guided_and_uses_project_notation():
+    agents_text = Path("AGENTS.md").read_text()
+    assert "\\frac{\\mathrm{d}}{\\mathrm{d}t}" in agents_text
+    assert "Preserve standard `\\partial` notation" in agents_text
+
+    euler_blocks = {
+        block.title: " ".join((block.markdown + " " + block.note).split())
+        for block in DERIVATION_SECTIONS[1].blocks
+    }
+    assert list(euler_blocks) == [
+        "General Euler-Lagrange equation",
+        "Applying the operator to two coordinates",
+        "Where the coupling enters",
+        "Coupled second-order equations for the simple model",
+        "Isolating the angular accelerations",
+        "First-order simulation system",
+        "Compound model mechanics",
+        "Compound-model Lagrangian",
+        "Compound-model Euler-Lagrange equations",
+    ]
+    assert "\\frac{d" not in " ".join(euler_blocks.values())
+    assert "\\frac{\\mathrm{d}}{\\mathrm{d}t}" in euler_blocks["General Euler-Lagrange equation"]
+    assert "partial derivatives treat" in euler_blocks["General Euler-Lagrange equation"]
+    assert "kinetic-energy cross term" in euler_blocks["Where the coupling enters"]
+    assert "b_1=-\\frac" in euler_blocks["Isolating the angular accelerations"]
+    assert "I_{\\mathrm{cm}}=\\frac{1}{12}Ml^2" in euler_blocks["Compound model mechanics"]
+    assert "I_{\\mathrm{end}}" in euler_blocks["Compound model mechanics"]
+    assert "\\mathcal{L}_{\\mathrm{c}}" in euler_blocks["Compound-model Lagrangian"]
+    assert "7M_1l_1^2\\dot{\\theta}_1^2" in euler_blocks["Compound-model Lagrangian"]
+    assert "c_1=-\\frac" in euler_blocks["Compound-model Euler-Lagrange equations"]
+    assert "page keeps" not in " ".join(euler_blocks.values())
+
+
+def test_equations_hamiltonian_branch_is_guided_and_uses_project_notation():
+    hamiltonian_blocks = {
+        block.title: " ".join((block.markdown + " " + block.note).split())
+        for block in DERIVATION_SECTIONS[2].blocks
+    }
+    assert list(hamiltonian_blocks) == [
+        "Why introduce momenta?",
+        "Canonical momenta",
+        "Momentum matrix for the simple model",
+        "Recovering velocities from momenta",
+        "Legendre transform",
+        "Hamiltonian as total energy",
+        "Hamilton's equations",
+        "First-order phase-space system",
+        "Compound-model momentum matrix",
+        "Compound Hamiltonian system",
+    ]
+    hamiltonian_text = " ".join(hamiltonian_blocks.values())
+    assert "\\frac{d" not in hamiltonian_text
+    assert "p_{\\theta_i}=\\frac{\\partial \\mathcal{L}}{\\partial \\dot{\\theta}_i}" in hamiltonian_blocks[
+        "Canonical momenta"
+    ]
+    assert "not simply independent $mv$ terms" in hamiltonian_blocks["Why introduce momenta?"]
+    assert "configuration-dependent inertia matrix" in hamiltonian_blocks[
+        "Momentum matrix for the simple model"
+    ]
+    assert "must be written in terms of coordinates and momenta" in hamiltonian_blocks[
+        "Recovering velocities from momenta"
+    ]
+    assert "total mechanical energy expressed in phase-space variables" in hamiltonian_blocks[
+        "Legendre transform"
+    ]
+    assert "\\frac{\\mathrm{d}}{\\mathrm{d}t}" in hamiltonian_blocks[
+        "First-order phase-space system"
+    ]
+    assert "first-order by construction" in hamiltonian_blocks["Hamilton's equations"]
+    assert "\\mathbf{B}_c" in hamiltonian_blocks["Compound-model momentum matrix"]
+    assert "7M_1l_1^2p_{\\theta_2}^2" in hamiltonian_blocks["Compound Hamiltonian system"]
+    assert "49M_1+9M_2\\sin^2(\\Delta)+12M_2" in hamiltonian_blocks[
+        "Compound Hamiltonian system"
+    ]
+    assert "source says" not in hamiltonian_text
+    assert "corrected" not in hamiltonian_text
 
 
 def test_page_registry_returns_404_for_unknown_routes():

@@ -7,7 +7,7 @@ the project evolves. It is not a low-level issue tracker.
 
 ## Current status
 
-Last audited: 2026-05-26.
+Last audited: 2026-05-27.
 
 - Phase 0: Complete.
   - `ROADMAP.md` exists at the repository root.
@@ -180,8 +180,23 @@ Last audited: 2026-05-26.
     and Chaos.
   - Simplified the 404 page into a chromeless, sparse home-style error state
     with links back to Home and Simulation.
-  - Validation on 2026-05-27: focused route/content checks passed. Phase 5B is
-    not yet defined.
+  - Validation on 2026-05-27: focused route/content checks passed.
+- Phase 5B: Complete.
+  - Added the single-page `/equations` route as the accepted Equations of Motion
+    derivation and model-introduction page.
+  - Preserved `/lagrangian` and `/hamiltonian` as public routes while routing
+    the learning journey toward the unified Equations of Motion page.
+  - Promoted Equations of Motion ahead of Simulation in the intended learning
+    journey. Equations of Motion is now the first learning page after Home;
+    Simulation remains page 2.
+  - Rebuilt the derivation content as structured sections and equation blocks:
+    shared modelling trunk, Euler-Lagrange formulation, and Hamiltonian
+    formulation.
+  - Preserved old source markdown, notebook references, image assets, and route
+    behavior for later clean-up rather than deleting superseded material during
+    the redesign phase.
+  - Added project mathematical notation guidance for upright roman
+    `\mathrm{d}` in displayed ordinary derivatives.
 
 ## 1. Project identity
 
@@ -481,12 +496,41 @@ Definition of done:
 - Visual assets and palette choices reinforce the app's learning goals.
 - The redesign is validated in browser across practical viewport sizes.
 
-Current status: Phase 5A is complete. `/` is now the chromeless full-hero
-landing page, `/simulation` owns the interactive simulation workflow, non-home
-teaching pages use a white/light shared header with hamburger navigation, and
-unknown routes use a simplified chromeless 404 with links to Home and
-Simulation. Phase 5B remains intentionally undefined and should be scoped
-separately before any further UI work begins.
+Current status: Phase 5B is complete. `/` is the chromeless full-hero landing
+page. `/equations` is now the first learning page in the intended journey,
+owning the Equations of Motion derivation and model introduction. `/simulation`
+remains the second learning page and owns the interactive simulation workflow.
+Non-home teaching pages use a white/light shared header with hamburger
+navigation, unknown routes use a simplified chromeless 404 with links to Home
+and Simulation, and old `/lagrangian` and `/hamiltonian` routes remain
+preserved.
+
+#### Phase 5C: Progressive disclosure and production layout planning
+
+Planned scope:
+
+- Experiment with branch reveal/progressive disclosure for the Equations of
+  Motion page so the shared modelling trunk can remain readable while the
+  Euler-Lagrange and Hamiltonian branches become easier to enter deliberately.
+- Investigate content rendering optimisation for long mathematical sections,
+  including whether equation-heavy blocks can be rendered more efficiently
+  without collapsing the page into a single markdown blob.
+- Add an opt-in production layout mode using `DASH_LAYOUT_MODE=production`.
+- Scope any production-only layout rules under `.app-shell--production` so the
+  existing development/default layout remains stable while the production
+  presentation is tested.
+- Preserve existing content, routes, source markdown, notebooks, and assets
+  throughout Phase 5C. Do not delete superseded material during this phase.
+
+Definition of done:
+
+- The progressive-disclosure experiment is evaluated against readability,
+  accessibility, and route stability.
+- Any rendering optimisation is measured or justified before becoming the
+  default.
+- Production layout mode is opt-in and does not change default local behavior.
+- Existing public routes continue to resolve.
+- Existing derivation content remains preserved.
 
 ### Phase 6: Math fidelity and numerical validation
 

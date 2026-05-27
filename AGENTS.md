@@ -118,6 +118,7 @@ Minimal Dash smoke test before finalizing changes:
 - Preserve data schemas, markdown file paths, image paths, and environment-variable names if any are added later.
 - Prefer adding reusable non-Dash logic under `src/double_pendulum/`; root-level compatibility wrappers have been retired.
 - Preserve existing `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` behavior initially. Avoid model rewrites before meaningful numerical tests exist.
+- In mathematical markdown, render ordinary differential operators with upright roman `\mathrm{d}` in displayed equations, for example `\frac{\mathrm{d}}{\mathrm{d}t}` rather than `\frac{d}{dt}`. Preserve standard `\partial` notation for partial derivatives.
 
 ## Data and Secrets
 

@@ -33,14 +33,14 @@ class ReadingItem:
 
 EXPLORE_LINKS = (
     ExploreLink(
-        title="Simulation",
-        href="/simulation",
-        description="Set parameters, run the model, and inspect motion, phase, and time plots.",
-    ),
-    ExploreLink(
         title="Equations of Motion",
         href="/equations",
         description="Compare the Euler-Lagrange and Hamiltonian routes from one shared derivation.",
+    ),
+    ExploreLink(
+        title="Simulation",
+        href="/simulation",
+        description="Set parameters, run the model, and inspect motion, phase, and time plots.",
     ),
     ExploreLink(
         title="Chaos",
