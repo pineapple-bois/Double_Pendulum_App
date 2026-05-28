@@ -1009,6 +1009,180 @@ body {
 }
 
 /*  -------------------
+    Simulation Workspace */
+
+.simulation-layout {
+    background: #f4f7fb;
+    min-height: 100vh;
+}
+
+.simulation-layout .body {
+    background: #f4f7fb;
+}
+
+.simulation-workspace {
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--site-header-height));
+    scroll-margin-top: var(--site-header-height);
+}
+
+.simulation-workspace-primary {
+    align-items: stretch;
+    background: #f4f7fb;
+    display: grid;
+    grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+    min-height: calc(100vh - var(--site-header-height));
+    width: 100%;
+}
+
+.simulation-layout .side-bar {
+    background: #edf3f8;
+    border-right: 1px solid #d5dee9;
+    box-sizing: border-box;
+    height: auto;
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+}
+
+.simulation-layout .inputs {
+    background: #edf3f8;
+    justify-content: flex-start;
+}
+
+.simulation-layout .input-group {
+    background: transparent;
+    border-bottom: 1px solid #d5dee9;
+    padding: 22px 28px;
+}
+
+.simulation-layout .input-group:last-child {
+    border-bottom: 0;
+}
+
+.simulation-layout .model-system-group,
+.simulation-layout .initial-conditions-group {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+}
+
+.simulation-layout .inputs-title,
+.simulation-layout .label,
+.simulation-layout .input-subtext {
+    color: var(--academic-ink);
+}
+
+.simulation-layout .button,
+.simulation-layout .button-show {
+    background-color: white;
+    border: 1px solid #b7c5d6;
+    border-radius: 8px !important;
+    color: var(--academic-ink);
+    font-weight: 700;
+    min-height: 34px;
+}
+
+.simulation-layout .button:hover,
+.simulation-layout .button-show:hover {
+    background-color: var(--academic-accent);
+    border-color: var(--academic-accent);
+    color: white;
+}
+
+.simulation-layout .input,
+.simulation-layout .parameters-input .time-vector-input {
+    border: 1px solid #b7c5d6;
+    border-radius: 8px;
+    color: var(--academic-ink);
+    min-height: 34px;
+}
+
+.simulation-layout .dropdown {
+    border-radius: 8px;
+    color: var(--academic-ink);
+}
+
+.simulation-output-workspace {
+    align-items: stretch;
+    background: white;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    width: 100%;
+}
+
+.simulation-layout .graph-section {
+    align-items: center;
+    background: white;
+    box-sizing: border-box;
+    flex: 1;
+    justify-content: center;
+    min-height: 520px;
+    padding: 28px;
+    width: 100%;
+}
+
+.simulation-layout .above-graph-container {
+    background: white;
+    gap: 28px;
+}
+
+.simulation-layout .graph-wrapper {
+    background: white;
+}
+
+.simulation-layout .time-graph-section {
+    background: #f4f7fb;
+    border-top: 1px solid #d5dee9;
+    padding: 28px;
+}
+
+.simulation-layout .graph-container {
+    border: 1px solid #d5dee9;
+    box-shadow: 0 18px 45px rgba(4, 24, 67, 0.08);
+}
+
+.simulation-layout .graph-title {
+    color: var(--academic-ink);
+    padding: 14px 0 6px;
+}
+
+.simulation-layout .information-container {
+    left: 360px;
+    max-height: calc(100vh - var(--site-header-height) - 72px);
+    top: calc(var(--site-header-height) + 24px);
+    width: min(420px, calc(100vw - 400px));
+}
+
+.simulation-layout .information-content {
+    border-color: #d5dee9;
+    border-radius: 0 0 8px 8px;
+}
+
+.simulation-layout .close-info-button {
+    background-color: var(--academic-ink);
+    border-color: var(--academic-ink);
+    border-radius: 8px 8px 0 0;
+}
+
+.simulation-layout .close-info-button:hover {
+    background-color: var(--academic-accent);
+}
+
+.simulation-layout .run-simulation-button {
+    background-color: var(--academic-accent);
+    border-left: 1px solid var(--site-header-border);
+    color: white;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.simulation-layout .run-simulation-button:hover {
+    background-color: #315e97;
+}
+
+/*  -------------------
     Footer Section */
 
 .footer-bar {
@@ -1796,5 +1970,94 @@ Responsive spacing of description and image section */
 
     .not-found-actions {
         flex-direction: column;
+    }
+}
+
+@media (max-width: 1100px) {
+    .simulation-workspace-primary {
+        grid-template-columns: 1fr;
+    }
+
+    .simulation-layout .side-bar {
+        border-bottom: 1px solid #d5dee9;
+        border-right: 0;
+    }
+
+    .simulation-layout .inputs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .simulation-layout .information-container {
+        left: 24px;
+        right: 24px;
+        top: calc(var(--site-header-height) + 24px);
+        width: auto;
+    }
+}
+
+@media (max-width: 900px) {
+    .simulation-workspace-primary.content-container {
+        align-items: stretch;
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-content: stretch;
+    }
+
+    .simulation-layout .side-bar {
+        align-items: stretch;
+        display: flex;
+        flex-direction: column;
+        max-width: none;
+        width: 100%;
+    }
+
+    .simulation-layout .inputs {
+        align-items: stretch;
+        display: grid;
+        flex-direction: column;
+        grid-template-columns: 1fr;
+        justify-content: flex-start;
+        padding: 0;
+    }
+
+    .simulation-layout .input-group {
+        padding: 20px;
+        width: 100%;
+    }
+
+    .simulation-layout .graph-section {
+        min-height: 420px;
+        padding: 20px;
+    }
+
+    .simulation-layout .time-graph-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 650px) {
+    .simulation-layout .graph-section,
+    .simulation-layout .time-graph-section {
+        padding: 16px;
+    }
+
+    .simulation-layout .split-inputs {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .simulation-layout .footer-bar.main-page {
+        flex-direction: column;
+    }
+
+    .simulation-layout .run-simulation-group {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .simulation-layout .footer-text-box {
+        justify-content: flex-start;
+        padding: 14px 20px;
     }
 }

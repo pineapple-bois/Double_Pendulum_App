@@ -496,18 +496,23 @@ Definition of done:
 - Visual assets and palette choices reinforce the app's learning goals.
 - The redesign is validated in browser across practical viewport sizes.
 
-Current status: Phase 5C.4 is complete. `/` is the chromeless full-hero
-landing page. `/equations` is now the first learning page in the intended
-journey, owning the Equations of Motion derivation and model introduction.
-`/simulation` remains the second learning page and owns the interactive
-simulation workflow. The Equations page now lazy-mounts derivation branches:
-`/equations` starts with the overview/shared trunk only, `/lagrangian` starts
-with only the Euler-Lagrange branch mounted, and `/hamiltonian` starts with
-only the Hamiltonian branch mounted. Branch switching is local within the
+Current status: Phase 5B is complete. `/` is the chromeless full-hero landing
+page and `/equations` is now the first learning page in the intended journey,
+owning the Equations of Motion derivation and model introduction. The active UI
+directions are Phase 5C for Equations-page rendering, reveal behaviour, and
+production layout experiments, and Phase 5D for converting `/simulation` into a
+clean production-style interactive workspace. The intended teaching journey is
+Home, Equations of Motion, Simulation, and Chaos. `/simulation` remains the
+second learning page, but it should now behave as the place where users work
+with controls and outputs rather than where the mechanical model is introduced
+through long explanatory content. The Equations page now lazy-mounts derivation
+branches: `/equations` starts with the overview/shared trunk only, `/lagrangian`
+starts with only the Euler-Lagrange branch mounted, and `/hamiltonian` starts
+with only the Hamiltonian branch mounted. Branch switching is local within the
 Equations page and does not remount the whole page from the top. Non-home
-teaching pages use a white/light shared header with hamburger navigation,
-unknown routes use a simplified chromeless 404 with links to Home and
-Simulation, and old `/lagrangian` and `/hamiltonian` routes remain preserved.
+teaching pages use the fixed dark navy shared header/footer direction, unknown
+routes use a simplified chromeless 404 with links to Home and Simulation, and
+old `/lagrangian` and `/hamiltonian` routes remain preserved.
 
 #### Phase 5C: Progressive disclosure and production layout planning
 
@@ -585,9 +590,9 @@ Planned scope:
   > A small click-to-render delay remains when mounting a derivation branch, likely due to Markdown/MathJax rendering. 
   > This is acceptable for now and should not be optimised further until the production layout is clearer."
 
-#### Phase 5D: Shared chrome cohesion
+#### Shared chrome cohesion completed
 
-- Phase 5D.1 shared site chrome cohesion completed.
+- Shared site chrome cohesion completed.
   - Restyled the shared site header with the Home hero navy academic palette:
     dark navy surface, pale/white brand and links, pale hamburger bars, and a
     dark cohesive dropdown panel.
@@ -639,6 +644,41 @@ Remaining follow-up:
 - Decide whether local branch switching should update the URL through a
   history-only clientside enhancement without triggering route remounts.
 - Keep production layout mode as a separate opt-in pass.
+
+#### Phase 5D: Simulation workspace redesign
+
+Planned scope:
+
+- Redesign `/simulation` as an interactive workspace rather than a
+  documentation page.
+- `/simulation` should open directly into the simulation controls and output
+  workspace.
+- Legacy explanatory copy and model diagrams should be removed from the live
+  page and preserved under `legacy/`.
+- Existing simulation callbacks, component IDs, parameter semantics, and output
+  targets should be preserved.
+- The current footer-anchored "Run Simulation" behavior should be retained until
+  the final simulation UX is redesigned.
+- The page should align visually with the fixed dark navy header/footer
+  direction.
+- The layout should move toward a left control rail/sidebar and main output
+  workspace.
+- This phase is a visual/layout pass, not a simulation engine, callback, or
+  numerical refactor.
+
+Phase 5D.1: Simulation page production workspace pass:
+
+- Remove the old top-of-page simulation introduction, Simple Model card, and
+  Compound Model card from the live `/simulation` route.
+- Preserve that removed explanatory content and the referenced simple/compound
+  model image paths in `legacy/simulation_intro_content.md`.
+- Keep the model type dropdown, system type dropdown, gravity dropdown,
+  parameter controls, initial-condition controls, simulation interval controls,
+  unity-parameter button, footer Run Simulation button, and existing output
+  graph targets intact.
+- Make a conservative visual pass that brings the page closer to the Phase 5
+  dark navy app shell and production workspace direction without inventing major
+  new simulation features.
 
 ### Phase 6: Math fidelity and numerical validation
 
@@ -717,14 +757,20 @@ Definition of done:
 
 Immediate page scope is limited to:
 
-- landing page
-- main simulation
-- derivation
-- chaos
+- Home
+- Equations of Motion
+- Simulation
+- Chaos
 
 Additional pages are future work. They should not drive the first refactor.
 The first refactor should make the current teaching flow easier to maintain,
 test, and improve.
+
+The current teaching journey is Home, Equations of Motion, Simulation, and
+Chaos. Simulation should function as the interactive workspace for running and
+reading numerical experiments; the mechanical model introduction belongs on the
+Equations of Motion page or in preserved legacy/reference material, not as long
+introductory content above the live workspace.
 
 ## 8. UI and fidelity direction
 
@@ -739,6 +785,11 @@ still to be confirmed.
 Visual fidelity should support mathematical clarity. Motion, phase-space
 structure, derivation steps, and numerical interpretation should remain the
 center of the experience.
+
+The simulation page should move toward a production workspace: a fixed dark navy
+header/footer shell, a restrained left control rail, and a main output area for
+animation, phase portrait, and time graph results. Long model-introduction copy
+should not sit above the simulation controls.
 
 ## 9. Math/model fidelity goals
 

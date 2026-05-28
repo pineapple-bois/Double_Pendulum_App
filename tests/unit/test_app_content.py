@@ -7,7 +7,7 @@ from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMA
 from app.content.math import MATH_PAGES
 from app.content.not_found import NOT_FOUND_HAIKU_LINES
 from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLIC_ROUTE_ITEMS
-from app.content.simulation import DESCRIPTION_PARAGRAPHS, INFORMATION_TEXT, MODEL_CARDS
+from app.content.simulation import INFORMATION_TEXT
 from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
@@ -59,8 +59,12 @@ def test_home_content_uses_double_pendulum_routes():
 
 def test_page_content_modules_load_existing_copy_and_markdown():
     assert INFORMATION_TEXT.strip()
-    assert DESCRIPTION_PARAGRAPHS
-    assert [card.title for card in MODEL_CARDS] == ["Simple Model", "Compound Model"]
+    legacy_simulation_intro = Path("legacy/simulation_intro_content.md").read_text()
+    assert "The double pendulum is an archetypal non-linear system" in legacy_simulation_intro
+    assert "Simple Model" in legacy_simulation_intro
+    assert "Compound Model" in legacy_simulation_intro
+    assert "/assets/Images/Model_Simple_Transparent_NoText.png" in legacy_simulation_intro
+    assert "/assets/Images/Model_Compound_Transparent_NoText.png" in legacy_simulation_intro
 
     assert MATH_PAGES["lagrangian"].markdown.strip()
     assert MATH_PAGES["hamiltonian"].markdown.strip()
@@ -308,6 +312,35 @@ def test_home_and_404_have_chromeless_hero_layouts():
 
 def test_simulation_callback_registration_is_importable():
     assert callable(register_simulation_callbacks)
+
+
+def test_simulation_layout_opens_directly_into_workspace():
+    layout = simulation.layout()
+    text = " ".join(collect_text(layout))
+    classnames = collect_classnames(layout)
+    ids = collect_ids(layout)
+
+    assert "title-section" not in classnames
+    assert "description-images-section" not in classnames
+    assert "models-container" not in classnames
+    assert "Double Pendulum Simulation" not in text
+    assert "The double pendulum is an archetypal non-linear system" not in text
+    assert "Rigid, massless, and inextensible rods" not in text
+    assert "uniform thin rods" not in text
+    assert "simulation-workspace" in classnames
+    assert "side-bar" in classnames
+    assert "simulation-output-workspace" in classnames
+    assert {
+        "scroll-target",
+        "submit-val",
+        "model-type",
+        "system-type",
+        "param_g",
+        "unity-parameters",
+        "pendulum-animation",
+        "phase-graph",
+        "time-graph",
+    } <= ids
 
 
 def test_routing_callback_registration_is_importable():

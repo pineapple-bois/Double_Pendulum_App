@@ -2,6 +2,9 @@ import dash
 from dash import no_update
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import plotly.tools as tls

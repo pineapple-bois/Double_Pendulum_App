@@ -9,7 +9,7 @@ from app.components.shell import get_body_section, get_footer_wrapper, get_heade
 from app.components.simulation_controls import build_simulation_controls
 from app.content.math import MATH_PAGES
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
-from app.content.simulation import MODEL_CARDS
+from app.content.simulation import ModelCard
 
 
 SIMULATION_CONTROL_IDS = {
@@ -107,7 +107,13 @@ def test_navigation_and_footer_components_return_dash_components():
 
 
 def test_card_reference_and_graph_components_return_dash_components():
-    assert_dash_component(render_model_card(MODEL_CARDS[0]))
+    legacy_card = ModelCard(
+        title="Legacy Model",
+        markdown="Archived model description.",
+        image_src="/assets/Images/Model_Simple_Transparent_NoText.png",
+        card_class="simple-model",
+    )
+    assert_dash_component(render_model_card(legacy_card))
     assert_dash_component(get_references_section(MATH_PAGES["lagrangian"].references))
     assert_dash_component(get_animation_phase_section("Trace Animation", "Phase Portrait"))
     assert_dash_component(get_time_graph_section("Time Graph"))
