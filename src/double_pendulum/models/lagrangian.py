@@ -5,6 +5,7 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from ..math.functions import *
+from .metadata import SolverMetadata
 
 omega1 = sp.Function('omega1')(t)
 omega2 = sp.Function('omega2')(t)
@@ -126,11 +127,26 @@ class DoublePendulumLagrangian:
         """
         if integrator == odeint:
             sol = odeint(self._system, self.initial_conditions, self.time, **integrator_args)
+            self.solver_time = np.array(self.time, copy=True)
+            self.solver_metadata = SolverMetadata.from_odeint(
+                integrator,
+                self.time,
+                sol,
+                integrator_args,
+            )
         elif integrator == solve_ivp:
             t_span = (self.time[0], self.time[-1])
-            sol = solve_ivp(lambda t, y: self._system(y, t), t_span, self.initial_conditions,
-                            t_eval=self.time, **integrator_args)
-            sol = sol.y.T  # Transpose
+            ode_result = solve_ivp(lambda t, y: self._system(y, t), t_span, self.initial_conditions,
+                                   t_eval=self.time, **integrator_args)
+            self.solver_time = np.array(ode_result.t, copy=True)
+            sol = ode_result.y.T  # Transpose
+            self.solver_metadata = SolverMetadata.from_solve_ivp(
+                integrator,
+                ode_result,
+                self.time,
+                sol,
+                integrator_args,
+            )
         else:
             raise ValueError("Unsupported integrator")
         return sol
