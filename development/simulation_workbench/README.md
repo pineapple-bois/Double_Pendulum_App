@@ -29,18 +29,26 @@ development/simulation_workbench/
 ├── README.md
 ├── tier_0/
 │   └── INVENTORY.md
-└── tier_1/
+├── tier_1/
+│   ├── README.md
+│   ├── TIER_1_RESULT_CONTRACT.md
+│   ├── TIER_1_NUMERICAL_BASELINE.md
+│   ├── TIER_1B_SOLVER_METADATA.md
+│   ├── TIER_1C_HAMILTONIAN_CONVENTION.md
+│   ├── TIER_1D_OPTION_1_HAMILTONIAN_CONVERSION.md
+│   ├── TIER_1_CLOSEOUT.md
+│   ├── tier1_baseline.py
+│   ├── tier1_baseline_results.json
+│   ├── tier1c_hamiltonian_convention.py
+│   └── tier1c_hamiltonian_convention_results.json
+└── tier_2/
     ├── README.md
-    ├── TIER_1_RESULT_CONTRACT.md
-    ├── TIER_1_NUMERICAL_BASELINE.md
-    ├── TIER_1B_SOLVER_METADATA.md
-    ├── TIER_1C_HAMILTONIAN_CONVENTION.md
-    ├── TIER_1D_OPTION_1_HAMILTONIAN_CONVERSION.md
-    ├── TIER_1_CLOSEOUT.md
-    ├── tier1_baseline.py
-    ├── tier1_baseline_results.json
-    ├── tier1c_hamiltonian_convention.py
-    └── tier1c_hamiltonian_convention_results.json
+    ├── TIER_2_OUTPUT_COMPOSITION.md
+    ├── OUTPUT_DECISIONS.md
+    ├── workspace_preview_app.py
+    ├── output_composition.py
+    ├── tier2_metrics.py
+    └── tier2_preview_results.json
 ```
 
 File-management rule: new notes, scripts, and compact evidence files should
