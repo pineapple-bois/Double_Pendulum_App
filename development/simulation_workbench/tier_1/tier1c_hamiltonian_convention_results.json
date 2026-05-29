@@ -1,0 +1,313 @@
+{
+  "momentum_mapping": {
+    "compound": "p = [[7/12*M1*l1^2 + 1/4*M2*l1^2, 1/4*M2*l1*l2*cos(theta1 - theta2)], [1/4*M2*l1*l2*cos(theta1 - theta2), 7/12*M2*l2^2]] @ omega",
+    "simple": "p = [[(m1 + m2) * l1^2, m2 * l1 * l2 * cos(theta1 - theta2)], [m2 * l1 * l2 * cos(theta1 - theta2), m2 * l2^2]] @ omega"
+  },
+  "notes": [
+    "The current Hamiltonian constructor applies np.deg2rad to all four UI-shaped values.",
+    "For Hamiltonian equations, the final two state values are canonical momenta.",
+    "The zero-tail request hides the ambiguity because zero angular velocity maps to zero momentum."
+  ],
+  "purpose": "Hamiltonian state-convention audit evidence",
+  "results": [
+    {
+      "canonical_momenta_if_tail_is_angular_velocity": [
+        0.0,
+        0.0
+      ],
+      "current_tail_matches_canonical_momenta": true,
+      "hamiltonian_current_tail": [
+        0.0,
+        0.0
+      ],
+      "hamiltonian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
+      "hamiltonian_state_shape": [
+        5,
+        4
+      ],
+      "hamiltonian_state_variables": [
+        "theta1",
+        "theta2",
+        "p_theta_1",
+        "p_theta_2"
+      ],
+      "lagrangian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
+      "lagrangian_state_shape": [
+        5,
+        4
+      ],
+      "lagrangian_state_variables": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "max_abs_tail_momentum_difference": 0.0,
+      "model_type": "simple",
+      "parameters": {
+        "g": 9.81,
+        "l1": 1.0,
+        "l2": 1.0,
+        "m1": 1.0,
+        "m2": 1.0
+      },
+      "request_name": "zero_tail",
+      "solver_success": {
+        "hamiltonian": true,
+        "lagrangian": true
+      },
+      "tail_minus_expected_canonical_momenta": [
+        0.0,
+        0.0
+      ],
+      "ui_request_degrees": [
+        45.0,
+        -30.0,
+        0.0,
+        0.0
+      ],
+      "ui_request_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "canonical_momenta_if_tail_is_angular_velocity": [
+        0.32647962787933243,
+        -0.04209401756064952
+      ],
+      "current_tail_matches_canonical_momenta": false,
+      "hamiltonian_current_tail": [
+        0.17453292519943295,
+        -0.08726646259971647
+      ],
+      "hamiltonian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.17453292519943295,
+        -0.08726646259971647
+      ],
+      "hamiltonian_state_shape": [
+        5,
+        4
+      ],
+      "hamiltonian_state_variables": [
+        "theta1",
+        "theta2",
+        "p_theta_1",
+        "p_theta_2"
+      ],
+      "lagrangian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.17453292519943295,
+        -0.08726646259971647
+      ],
+      "lagrangian_state_shape": [
+        5,
+        4
+      ],
+      "lagrangian_state_variables": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "max_abs_tail_momentum_difference": 0.1519467026798995,
+      "model_type": "simple",
+      "parameters": {
+        "g": 9.81,
+        "l1": 1.0,
+        "l2": 1.0,
+        "m1": 1.0,
+        "m2": 1.0
+      },
+      "request_name": "nonzero_tail",
+      "solver_success": {
+        "hamiltonian": true,
+        "lagrangian": true
+      },
+      "tail_minus_expected_canonical_momenta": [
+        -0.1519467026798995,
+        -0.04517244503906696
+      ],
+      "ui_request_degrees": [
+        45.0,
+        -30.0,
+        10.0,
+        -5.0
+      ],
+      "ui_request_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.17453292519943295,
+        -0.08726646259971647
+      ]
+    },
+    {
+      "canonical_momenta_if_tail_is_angular_velocity": [
+        0.0,
+        0.0
+      ],
+      "current_tail_matches_canonical_momenta": true,
+      "hamiltonian_current_tail": [
+        0.0,
+        0.0
+      ],
+      "hamiltonian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
+      "hamiltonian_state_shape": [
+        5,
+        4
+      ],
+      "hamiltonian_state_variables": [
+        "theta1",
+        "theta2",
+        "p_theta_1",
+        "p_theta_2"
+      ],
+      "lagrangian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
+      "lagrangian_state_shape": [
+        5,
+        4
+      ],
+      "lagrangian_state_variables": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "max_abs_tail_momentum_difference": 0.0,
+      "model_type": "compound",
+      "parameters": {
+        "M1": 1.0,
+        "M2": 1.0,
+        "g": 9.81,
+        "l1": 1.0,
+        "l2": 1.0
+      },
+      "request_name": "zero_tail",
+      "solver_success": {
+        "hamiltonian": true,
+        "lagrangian": true
+      },
+      "tail_minus_expected_canonical_momenta": [
+        0.0,
+        0.0
+      ],
+      "ui_request_degrees": [
+        45.0,
+        -30.0,
+        0.0,
+        0.0
+      ],
+      "ui_request_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "canonical_momenta_if_tail_is_angular_velocity": [
+        0.13979754870297742,
+        -0.03961232525673454
+      ],
+      "current_tail_matches_canonical_momenta": false,
+      "hamiltonian_current_tail": [
+        0.17453292519943295,
+        -0.08726646259971647
+      ],
+      "hamiltonian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.17453292519943295,
+        -0.08726646259971647
+      ],
+      "hamiltonian_state_shape": [
+        5,
+        4
+      ],
+      "hamiltonian_state_variables": [
+        "theta1",
+        "theta2",
+        "p_theta_1",
+        "p_theta_2"
+      ],
+      "lagrangian_internal_initial_conditions": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.17453292519943295,
+        -0.08726646259971647
+      ],
+      "lagrangian_state_shape": [
+        5,
+        4
+      ],
+      "lagrangian_state_variables": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "max_abs_tail_momentum_difference": 0.047654137342981934,
+      "model_type": "compound",
+      "parameters": {
+        "M1": 1.0,
+        "M2": 1.0,
+        "g": 9.81,
+        "l1": 1.0,
+        "l2": 1.0
+      },
+      "request_name": "nonzero_tail",
+      "solver_success": {
+        "hamiltonian": true,
+        "lagrangian": true
+      },
+      "tail_minus_expected_canonical_momenta": [
+        0.03473537649645553,
+        -0.047654137342981934
+      ],
+      "ui_request_degrees": [
+        45.0,
+        -30.0,
+        10.0,
+        -5.0
+      ],
+      "ui_request_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.17453292519943295,
+        -0.08726646259971647
+      ]
+    }
+  ],
+  "tier": "Phase 6 / Tier 1C",
+  "time_vector": [
+    0.0,
+    0.1,
+    5
+  ],
+  "tolerance": 1e-12
+}

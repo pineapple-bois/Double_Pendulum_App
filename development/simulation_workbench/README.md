@@ -16,6 +16,36 @@ The purpose of this workbench is to answer, with evidence:
 - what rendering and callback costs are acceptable?
 - which ideas should be accepted, rejected, deferred, or promoted?
 
+## File structure
+
+The workbench root is the manifesto and index area. Tier-specific artifacts
+belong in tier directories so the evidence trail can scale without turning this
+directory into a flat archive.
+
+Current structure:
+
+```text
+development/simulation_workbench/
+├── README.md
+├── tier_0/
+│   └── INVENTORY.md
+└── tier_1/
+    ├── README.md
+    ├── TIER_1_RESULT_CONTRACT.md
+    ├── TIER_1_NUMERICAL_BASELINE.md
+    ├── TIER_1B_SOLVER_METADATA.md
+    ├── TIER_1C_HAMILTONIAN_CONVENTION.md
+    ├── tier1_baseline.py
+    ├── tier1_baseline_results.json
+    ├── tier1c_hamiltonian_convention.py
+    └── tier1c_hamiltonian_convention_results.json
+```
+
+File-management rule: new notes, scripts, and compact evidence files should
+live under the directory for their tier, such as `tier_1/` or `tier_2/`. Keep
+only cross-tier manifesto, index, and operating-rule material at the workbench
+root.
+
 ## Core manifesto
 
 `/simulation` is the core interactive instrument of the app.
@@ -99,7 +129,7 @@ Inspect and document:
 
 Expected artifacts:
 
-- `INVENTORY.md`;
+- `tier_0/INVENTORY.md`;
 - a list of callback/component IDs that must be preserved or intentionally
   migrated;
 - a list of existing outputs and whether they are accepted, provisional,
@@ -307,13 +337,13 @@ run data can be trusted.
 
 Recommended first task:
 
-- create `INVENTORY.md` for the current `/simulation` page, callbacks, outputs,
-  plotting helpers, model classes, tests, and known evidence gaps.
+- create `tier_0/INVENTORY.md` for the current `/simulation` page, callbacks,
+  outputs, plotting helpers, model classes, tests, and known evidence gaps.
 
 Recommended second task:
 
 - draft the simulation-result contract and produce the first numerical evidence
-  baseline for representative runs.
+  baseline for representative runs under `tier_1/`.
 
 Only after those exist should Tier 2 decide the first accepted output
 composition for the live Simulation workspace.

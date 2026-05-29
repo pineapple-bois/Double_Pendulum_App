@@ -1045,7 +1045,7 @@ prototype without changing the live `/simulation` page.
 Suggested Tier 1 scope:
 
 - Define a small internal `SimulationResult` or result-contract note/prototype
-  under `development/simulation_workbench/`.
+  under `development/simulation_workbench/tier_1/`.
 - Run representative simple and compound, Lagrangian and Hamiltonian cases
   through the current model classes.
 - Record baseline checks for:
