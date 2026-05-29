@@ -54,6 +54,25 @@
     ];
     const PLOTLY_FRAME_DURATION_MS = 33;
     const PLOTLY_FRAME_SAMPLE_STEP = 10;
+    const PALETTE = {
+        ink: "#0d295a",
+        navy: "#041843",
+        slate: "#496284",
+        muted: "#73859c",
+        blue: "#244a7d",
+        blueSoft: "#5f83a5",
+        teal: "#2f7d7b",
+        tealSoft: "#76aaa7",
+        grid: "rgba(183, 197, 214, 0.38)",
+        gridFine: "rgba(183, 197, 214, 0.22)",
+        axis: "rgba(13, 41, 90, 0.72)",
+        trace: "rgba(47, 125, 123, 0.28)",
+        traceSoft: "rgba(95, 131, 165, 0.18)",
+        marker: "#2f7d5c",
+        staleFill: "rgba(184, 135, 46, 0.12)",
+        staleText: "#6f4a12",
+        white: "#ffffff",
+    };
 
     const rendererState = {
         shell: null,
@@ -433,12 +452,17 @@
     }
 
     function buildMetrics(payload) {
+        const projectionRanges = equalizeRanges(
+            rangeForArrays([payload.theta1_deg], 0.08, 10),
+            rangeForArrays([payload.theta2_deg], 0.08, 10),
+            10
+        );
         return {
             sampleCount: Number(payload.sample_count),
             timeRange: rangeForArrays([payload.time_s], 0.02, 1),
             angleRange: rangeForArrays([payload.theta1_deg, payload.theta2_deg], 0.08, 10),
-            projectionXRange: rangeForArrays([payload.theta1_deg], 0.08, 10),
-            projectionYRange: rangeForArrays([payload.theta2_deg], 0.08, 10),
+            projectionXRange: projectionRanges.x,
+            projectionYRange: projectionRanges.y,
             positionRange: buildPositionRange(payload),
         };
     }
@@ -475,8 +499,28 @@
         };
     }
 
+    function equalizeRanges(xRange, yRange, minimumSpan) {
+        const xSpan = Math.max(minimumSpan || 1, xRange.max - xRange.min);
+        const ySpan = Math.max(minimumSpan || 1, yRange.max - yRange.min);
+        const span = Math.max(xSpan, ySpan);
+        const xMid = (xRange.min + xRange.max) / 2;
+        const yMid = (yRange.min + yRange.max) / 2;
+        return {
+            x: {
+                min: xMid - span / 2,
+                max: xMid + span / 2,
+            },
+            y: {
+                min: yMid - span / 2,
+                max: yMid + span / 2,
+            },
+        };
+    }
+
     function buildPositionRange(payload) {
         const bounds = payload.bounds || {};
+        const parameterValues = payload.parameters && payload.parameters.values ? payload.parameters.values : {};
+        const lengthExtent = Math.abs(Number(parameterValues.l1) || 0) + Math.abs(Number(parameterValues.l2) || 0);
         const minX = Math.min(Number(bounds.min_x), 0);
         const maxX = Math.max(Number(bounds.max_x), 0);
         const minY = Math.min(Number(bounds.min_y), 0);
@@ -487,11 +531,13 @@
             Math.abs(Number.isFinite(minY) ? minY : 0),
             Math.abs(Number.isFinite(maxY) ? maxY : 0),
             Number(bounds.max_abs_extent) || 0,
+            lengthExtent,
             1
         ) * 1.12;
         return {
             min: -extent,
             max: extent,
+            extent: extent,
         };
     }
 
@@ -718,50 +764,40 @@
         const height = panel.height;
         const payload = rendererState.payload;
         const frame = rendererState.selectedFrame;
-        const x1 = Number(payload.x1[frame]);
-        const y1 = Number(payload.y1[frame]);
-        const x2 = Number(payload.x2[frame]);
-        const y2 = Number(payload.y2[frame]);
-        const extent = rendererState.metrics.positionRange.max;
-        const scale = Math.min(width, height) * 0.42 / extent;
-        const originX = width / 2;
-        const originY = height / 2;
-        const point = function (x, y) {
-            return {
-                x: originX + x * scale,
-                y: originY - y * scale,
-            };
-        };
-        const p0 = point(0, 0);
-        const p1 = point(x1, y1);
-        const p2 = point(x2, y2);
+        const plot = squarePlotArea(width, height, { left: 38, right: 20, top: 18, bottom: 42 });
+        const range = rendererState.metrics.positionRange;
+        const map = motionMapper(plot, range);
+        const p0 = map(0, 0);
+        const p1 = map(Number(payload.x1[frame]), Number(payload.y1[frame]));
+        const p2 = map(Number(payload.x2[frame]), Number(payload.y2[frame]));
 
         clearCanvas(ctx, width, height);
         drawPanelBackground(ctx, width, height);
         if (rendererState.options.grid) {
-            drawGrid(ctx, width, height, 40);
+            drawMotionGrid(ctx, plot, range, map);
         }
         if (rendererState.options.axes) {
-            drawCrossAxes(ctx, width, height, originX, originY);
+            drawMotionAxes(ctx, plot, range, map);
         }
+        drawMotionTrace(ctx, payload, map, frame);
 
         ctx.lineCap = "round";
-        ctx.lineWidth = 3.25;
-        ctx.strokeStyle = "#315b82";
+        ctx.lineWidth = 2.4;
+        ctx.strokeStyle = PALETTE.ink;
         ctx.beginPath();
         ctx.moveTo(p0.x, p0.y);
         ctx.lineTo(p1.x, p1.y);
         ctx.stroke();
 
-        ctx.strokeStyle = "#7f5c68";
+        ctx.strokeStyle = PALETTE.slate;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
 
-        drawBob(ctx, p0.x, p0.y, 4, "#516f83");
-        drawBob(ctx, p1.x, p1.y, 7, "#5f83a5");
-        drawBob(ctx, p2.x, p2.y, 8, "#9a6467");
+        drawBob(ctx, p0.x, p0.y, 3.5, PALETTE.slate, PALETTE.white);
+        drawBob(ctx, p1.x, p1.y, 5.5, PALETTE.blueSoft, PALETTE.ink);
+        drawBob(ctx, p2.x, p2.y, 6.25, PALETTE.teal, PALETTE.ink);
         drawStaleOverlay(ctx, width, height);
     }
 
@@ -790,16 +826,16 @@
         if (rendererState.options.axes) {
             drawPlotAxes(ctx, plot);
         }
-        drawLineSeries(ctx, payload.time_s, payload.theta1_deg, mapX, mapY, "#315b82");
-        drawLineSeries(ctx, payload.time_s, payload.theta2_deg, mapX, mapY, "#9a6467");
+        drawLineSeries(ctx, payload.time_s, payload.theta1_deg, mapX, mapY, PALETTE.blue);
+        drawLineSeries(ctx, payload.time_s, payload.theta2_deg, mapX, mapY, PALETTE.teal);
 
         const cursorX = mapX(Number(payload.time_s[frame]));
         drawCursor(ctx, cursorX, plot.top, plot.bottom);
-        drawBob(ctx, cursorX, mapY(Number(payload.theta1_deg[frame])), 4.25, "#315b82");
-        drawBob(ctx, cursorX, mapY(Number(payload.theta2_deg[frame])), 4.25, "#9a6467");
+        drawBob(ctx, cursorX, mapY(Number(payload.theta1_deg[frame])), 4.25, PALETTE.blue, PALETTE.white);
+        drawBob(ctx, cursorX, mapY(Number(payload.theta2_deg[frame])), 4.25, PALETTE.teal, PALETTE.white);
         drawLegend(ctx, plot.left, 18, [
-            ["theta1", "#315b82"],
-            ["theta2", "#9a6467"],
+            ["θ₁", PALETTE.blue],
+            ["θ₂", PALETTE.teal],
         ]);
         drawStaleOverlay(ctx, width, height);
     }
@@ -815,24 +851,25 @@
         const payload = rendererState.payload;
         const metrics = rendererState.metrics;
         const frame = rendererState.selectedFrame;
-        const margin = { left: 50, right: 20, top: 30, bottom: 38 };
-        const plot = plotArea(width, height, margin);
+        const plot = squarePlotArea(width, height, { left: 56, right: 18, top: 14, bottom: 54 });
         const mapX = scaleLinear(metrics.projectionXRange, { min: plot.left, max: plot.right });
         const mapY = scaleLinear(metrics.projectionYRange, { min: plot.bottom, max: plot.top });
 
         clearCanvas(ctx, width, height);
         drawPanelBackground(ctx, width, height);
-        drawPlotScaffold(ctx, plot, "theta1 (deg)", "theta2 (deg)");
+        drawPlotScaffold(ctx, plot, "θ₁ (deg)", "θ₂ (deg)", { xOffset: 42, yOffset: 42 });
         if (rendererState.options.grid) {
             drawPlotGrid(ctx, plot, 5, 5);
         }
         if (rendererState.options.axes) {
             drawPlotAxes(ctx, plot);
+            drawZeroAxes(ctx, plot, metrics.projectionXRange, metrics.projectionYRange, mapX, mapY);
+            drawPlotTickLabels(ctx, plot, metrics.projectionXRange, metrics.projectionYRange, mapX, mapY);
         }
 
         ctx.save();
-        ctx.strokeStyle = "rgba(49, 91, 130, 0.72)";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(36, 74, 125, 0.72)";
+        ctx.lineWidth = 1.8;
         ctx.beginPath();
         for (let index = 0; index < payload.theta1_deg.length; index += 1) {
             const x = mapX(Number(payload.theta1_deg[index]));
@@ -850,8 +887,9 @@
             ctx,
             mapX(Number(payload.theta1_deg[frame])),
             mapY(Number(payload.theta2_deg[frame])),
-            5.5,
-            "#9a6467"
+            5.25,
+            PALETTE.marker,
+            PALETTE.white
         );
         drawStaleOverlay(ctx, width, height);
     }
@@ -867,7 +905,7 @@
         drawMessage(rendererState.canvases.time, "Angular displacement", "Run a successful simulation to inspect time samples.");
         drawMessage(rendererState.canvases.projection, "Angular state projection", "No drawable payload is active.");
         updateReadout(body);
-        updateFrameIndicator(status === STATUS.EMPTY ? "No active frame" : title);
+        updateFrameIndicator();
         updateScrubber();
         updateControls();
     }
@@ -899,13 +937,13 @@
             String(runIdFrom(payload)),
             "frame",
             String(frame + 1) + "/" + String(payload.sample_count),
-            "t=" + formatNumber(payload.time_s[frame], 3) + " s",
-            "theta1=" + formatNumber(payload.theta1_deg[frame], 2) + " deg",
-            "theta2=" + formatNumber(payload.theta2_deg[frame], 2) + " deg",
+            "t = " + formatNumber(payload.time_s[frame], 3) + " s",
+            "θ₁ = " + formatNumber(payload.theta1_deg[frame], 2) + " deg",
+            "θ₂ = " + formatNumber(payload.theta2_deg[frame], 2) + " deg",
         ];
         if (Array.isArray(payload.omega1_deg_per_s) && Array.isArray(payload.omega2_deg_per_s)) {
-            pieces.push("omega1=" + formatNumber(payload.omega1_deg_per_s[frame], 2) + " deg/s");
-            pieces.push("omega2=" + formatNumber(payload.omega2_deg_per_s[frame], 2) + " deg/s");
+            pieces.push("ω₁ = " + formatNumber(payload.omega1_deg_per_s[frame], 2) + " deg/s");
+            pieces.push("ω₂ = " + formatNumber(payload.omega2_deg_per_s[frame], 2) + " deg/s");
         } else {
             pieces.push("angular velocity series unavailable");
         }
@@ -922,7 +960,7 @@
         return [
             "Inspecting frame",
             String(frame + 1) + "/" + String(payload.sample_count),
-            "at t=" + formatNumber(payload.time_s[frame], 3) + " s.",
+            "at t = " + formatNumber(payload.time_s[frame], 3) + " s.",
         ].join(" ");
     }
 
@@ -939,15 +977,14 @@
             return;
         }
         if (!canInspect()) {
-            indicator.textContent = message || "No active frame";
+            indicator.textContent = message || "t = --";
             return;
         }
         const payload = rendererState.payload;
         const frame = rendererState.selectedFrame;
-        indicator.textContent = [
-            "Frame " + String(frame + 1) + "/" + String(payload.sample_count),
-            "t=" + formatNumber(payload.time_s[frame], 3) + " s",
-        ].join(" · ");
+        const currentTime = formatNumber(payload.time_s[frame], 1);
+        const finalTime = formatNumber(payload.time_s[payload.sample_count - 1], 1);
+        indicator.textContent = "t = " + currentTime + " / " + finalTime + " s";
     }
 
     function updateControls() {
@@ -1069,13 +1106,13 @@
     }
 
     function drawPanelBackground(ctx, width, height) {
-        ctx.fillStyle = "#f8fbfd";
+        ctx.fillStyle = PALETTE.white;
         ctx.fillRect(0, 0, width, height);
     }
 
     function drawGrid(ctx, width, height, step) {
         ctx.save();
-        ctx.strokeStyle = "rgba(183, 197, 214, 0.35)";
+        ctx.strokeStyle = PALETTE.grid;
         ctx.lineWidth = 1;
         for (let x = 0; x <= width; x += step) {
             ctx.beginPath();
@@ -1094,7 +1131,7 @@
 
     function drawCrossAxes(ctx, width, height, originX, originY) {
         ctx.save();
-        ctx.strokeStyle = "rgba(35, 61, 104, 0.45)";
+        ctx.strokeStyle = PALETTE.axis;
         ctx.lineWidth = 1.25;
         ctx.beginPath();
         ctx.moveTo(originX, 0);
@@ -1105,11 +1142,11 @@
         ctx.restore();
     }
 
-    function drawBob(ctx, x, y, radius, fillStyle) {
+    function drawBob(ctx, x, y, radius, fillStyle, strokeStyle) {
         ctx.save();
         ctx.fillStyle = fillStyle;
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = strokeStyle || "rgba(255, 255, 255, 0.92)";
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fill();
@@ -1119,7 +1156,7 @@
 
     function drawCanvasLabel(ctx, text, x, y) {
         ctx.save();
-        ctx.fillStyle = "#233d68";
+        ctx.fillStyle = PALETTE.ink;
         ctx.font = "600 13px 'Red Hat Display', Arial, sans-serif";
         ctx.fillText(text, x, y);
         ctx.restore();
@@ -1128,14 +1165,14 @@
     function drawFrameStamp(ctx, width, height) {
         ctx.save();
         ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
-        ctx.strokeStyle = "rgba(183, 197, 214, 0.7)";
+        ctx.strokeStyle = PALETTE.grid;
         ctx.lineWidth = 1;
         const text = "Frame " + String(rendererState.selectedFrame + 1) + "/" + String(rendererState.metrics.sampleCount);
         ctx.font = "600 12px 'Red Hat Display', Arial, sans-serif";
         const textWidth = ctx.measureText(text).width;
         ctx.fillRect(width - textWidth - 24, height - 34, textWidth + 14, 22);
         ctx.strokeRect(width - textWidth - 24, height - 34, textWidth + 14, 22);
-        ctx.fillStyle = "#233d68";
+        ctx.fillStyle = PALETTE.ink;
         ctx.fillText(text, width - textWidth - 17, height - 19);
         ctx.restore();
     }
@@ -1145,12 +1182,28 @@
             return;
         }
         ctx.save();
-        ctx.fillStyle = "rgba(184, 135, 46, 0.14)";
+        ctx.fillStyle = PALETTE.staleFill;
         ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = "#6f4a12";
+        ctx.fillStyle = PALETTE.staleText;
         ctx.font = "700 13px 'Red Hat Display', Arial, sans-serif";
         ctx.fillText("Stale output - rerun to play current result", 14, height - 16);
         ctx.restore();
+    }
+
+    function squarePlotArea(width, height, margin) {
+        const availableWidth = Math.max(1, width - margin.left - margin.right);
+        const availableHeight = Math.max(1, height - margin.top - margin.bottom);
+        const size = Math.max(1, Math.min(availableWidth, availableHeight));
+        const left = margin.left + (availableWidth - size) / 2;
+        const top = margin.top + (availableHeight - size) / 2;
+        return {
+            left: left,
+            right: left + size,
+            top: top,
+            bottom: top + size,
+            width: size,
+            height: size,
+        };
     }
 
     function plotArea(width, height, margin) {
@@ -1164,6 +1217,143 @@
         };
     }
 
+    function motionMapper(plot, range) {
+        const scale = plot.width / Math.max(1e-9, range.max - range.min);
+        return function (x, y) {
+            return {
+                x: plot.left + (Number(x) - range.min) * scale,
+                y: plot.bottom - (Number(y) - range.min) * scale,
+            };
+        };
+    }
+
+    function niceStep(rawStep) {
+        const step = Math.abs(Number(rawStep)) || 1;
+        const exponent = Math.floor(Math.log10(step));
+        const base = step / Math.pow(10, exponent);
+        const niceBase = base <= 1 ? 1 : base <= 2 ? 2 : base <= 5 ? 5 : 10;
+        return niceBase * Math.pow(10, exponent);
+    }
+
+    function ticksForRange(range, targetCount) {
+        const span = Math.max(1e-9, range.max - range.min);
+        const step = niceStep(span / Math.max(1, targetCount || 6));
+        const ticks = [];
+        const start = Math.ceil(range.min / step) * step;
+        for (let value = start; value <= range.max + step * 0.5; value += step) {
+            if (value >= range.min - step * 0.5 && value <= range.max + step * 0.5) {
+                ticks.push(Number(value.toFixed(6)));
+            }
+        }
+        return ticks;
+    }
+
+    function formatTick(value) {
+        const number = Number(value);
+        if (!Number.isFinite(number)) {
+            return "";
+        }
+        if (Math.abs(number) >= 10 || Number.isInteger(number)) {
+            return String(Math.round(number));
+        }
+        return number.toFixed(1);
+    }
+
+    function drawMotionGrid(ctx, plot, range, map) {
+        const ticks = ticksForRange(range, 6);
+        ctx.save();
+        ctx.strokeStyle = PALETTE.gridFine;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ticks.forEach(function (tick) {
+            const verticalTop = map(tick, range.max);
+            const verticalBottom = map(tick, range.min);
+            const horizontalLeft = map(range.min, tick);
+            const horizontalRight = map(range.max, tick);
+            ctx.moveTo(verticalTop.x, verticalTop.y);
+            ctx.lineTo(verticalBottom.x, verticalBottom.y);
+            ctx.moveTo(horizontalLeft.x, horizontalLeft.y);
+            ctx.lineTo(horizontalRight.x, horizontalRight.y);
+        });
+        ctx.stroke();
+        ctx.strokeStyle = PALETTE.grid;
+        ctx.strokeRect(plot.left, plot.top, plot.width, plot.height);
+        ctx.restore();
+    }
+
+    function drawMotionAxes(ctx, plot, range, map) {
+        const xAxisStart = map(range.min, 0);
+        const xAxisEnd = map(range.max, 0);
+        const yAxisStart = map(0, range.min);
+        const yAxisEnd = map(0, range.max);
+        const ticks = ticksForRange(range, 6);
+
+        ctx.save();
+        ctx.strokeStyle = PALETTE.axis;
+        ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        ctx.moveTo(plot.left, xAxisStart.y);
+        ctx.lineTo(plot.right, xAxisEnd.y);
+        ctx.moveTo(yAxisStart.x, plot.bottom);
+        ctx.lineTo(yAxisEnd.x, plot.top);
+        ctx.stroke();
+
+        ctx.fillStyle = PALETTE.muted;
+        ctx.font = "500 10.5px 'Red Hat Display', Arial, sans-serif";
+        ctx.textAlign = "center";
+        ticks.forEach(function (tick) {
+            const xTick = map(tick, 0);
+            if (xTick.x >= plot.left + 2 && xTick.x <= plot.right - 2) {
+                ctx.fillText(formatTick(tick), xTick.x, plot.bottom + 14);
+            }
+            const yTick = map(0, tick);
+            if (yTick.y >= plot.top + 2 && yTick.y <= plot.bottom - 2 && Math.abs(tick) > 1e-9) {
+                ctx.textAlign = "right";
+                ctx.fillText(formatTick(tick), plot.left - 6, yTick.y + 3);
+                ctx.textAlign = "center";
+            }
+        });
+
+        ctx.fillStyle = PALETTE.ink;
+        ctx.font = "700 12px 'Red Hat Display', Arial, sans-serif";
+        ctx.fillText("x", (plot.left + plot.right) / 2, plot.bottom + 30);
+        ctx.save();
+        ctx.translate(plot.left - 28, (plot.top + plot.bottom) / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText("y", 0, 0);
+        ctx.restore();
+        ctx.restore();
+    }
+
+    function drawMotionTrace(ctx, payload, map, frame) {
+        const step = Math.max(1, Math.floor(Number(payload.sample_count || 1) / 700));
+        const drawTrace = function (xValues, yValues, color, width) {
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = "round";
+            ctx.lineJoin = "round";
+            ctx.beginPath();
+            for (let index = 0; index <= frame; index += step) {
+                const point = map(Number(xValues[index]), Number(yValues[index]));
+                if (index === 0) {
+                    ctx.moveTo(point.x, point.y);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                }
+            }
+            if (frame > 0 && frame % step !== 0) {
+                const point = map(Number(xValues[frame]), Number(yValues[frame]));
+                ctx.lineTo(point.x, point.y);
+            }
+            ctx.stroke();
+            ctx.restore();
+        };
+
+        drawTrace(payload.x1, payload.y1, PALETTE.traceSoft, 1.2);
+        drawTrace(payload.x2, payload.y2, PALETTE.trace, 1.5);
+    }
+
     function scaleLinear(domain, range) {
         const domainSpan = domain.max - domain.min || 1;
         const rangeSpan = range.max - range.min;
@@ -1172,13 +1362,16 @@
         };
     }
 
-    function drawPlotScaffold(ctx, plot, xLabel, yLabel) {
+    function drawPlotScaffold(ctx, plot, xLabel, yLabel, options) {
+        const xOffset = options && Number.isFinite(Number(options.xOffset)) ? Number(options.xOffset) : 28;
+        const yOffset = options && Number.isFinite(Number(options.yOffset)) ? Number(options.yOffset) : 32;
         ctx.save();
-        ctx.fillStyle = "#233d68";
+        ctx.fillStyle = PALETTE.ink;
         ctx.font = "600 12px 'Red Hat Display', Arial, sans-serif";
-        ctx.fillText(xLabel, plot.right - 70, plot.bottom + 26);
+        ctx.textAlign = "center";
+        ctx.fillText(xLabel, (plot.left + plot.right) / 2, plot.bottom + xOffset);
         ctx.save();
-        ctx.translate(16, plot.top + 94);
+        ctx.translate(plot.left - yOffset, (plot.top + plot.bottom) / 2);
         ctx.rotate(-Math.PI / 2);
         ctx.fillText(yLabel, 0, 0);
         ctx.restore();
@@ -1187,7 +1380,7 @@
 
     function drawPlotGrid(ctx, plot, columns, rows) {
         ctx.save();
-        ctx.strokeStyle = "rgba(183, 197, 214, 0.35)";
+        ctx.strokeStyle = PALETTE.grid;
         ctx.lineWidth = 1;
         for (let index = 0; index <= columns; index += 1) {
             const x = plot.left + (plot.width * index) / columns;
@@ -1208,13 +1401,79 @@
 
     function drawPlotAxes(ctx, plot) {
         ctx.save();
-        ctx.strokeStyle = "rgba(35, 61, 104, 0.7)";
+        ctx.strokeStyle = PALETTE.axis;
         ctx.lineWidth = 1.25;
         ctx.beginPath();
         ctx.moveTo(plot.left, plot.top);
         ctx.lineTo(plot.left, plot.bottom);
         ctx.lineTo(plot.right, plot.bottom);
         ctx.stroke();
+        ctx.restore();
+    }
+
+    function drawZeroAxes(ctx, plot, xRange, yRange, mapX, mapY) {
+        ctx.save();
+        ctx.strokeStyle = "rgba(13, 41, 90, 0.42)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        if (xRange.min < 0 && xRange.max > 0) {
+            const zeroX = mapX(0);
+            ctx.moveTo(zeroX, plot.top);
+            ctx.lineTo(zeroX, plot.bottom);
+        }
+        if (yRange.min < 0 && yRange.max > 0) {
+            const zeroY = mapY(0);
+            ctx.moveTo(plot.left, zeroY);
+            ctx.lineTo(plot.right, zeroY);
+        }
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    function drawPlotTickLabels(ctx, plot, xRange, yRange, mapX, mapY) {
+        const xTicks = ticksForRange(xRange, 5);
+        const yTicks = ticksForRange(yRange, 5);
+
+        ctx.save();
+        ctx.strokeStyle = PALETTE.grid;
+        ctx.fillStyle = PALETTE.muted;
+        ctx.lineWidth = 1;
+        ctx.font = "500 10.5px 'Red Hat Display', Arial, sans-serif";
+
+        ctx.beginPath();
+        xTicks.forEach(function (tick) {
+            const x = mapX(tick);
+            if (x >= plot.left - 0.5 && x <= plot.right + 0.5) {
+                ctx.moveTo(x, plot.bottom);
+                ctx.lineTo(x, plot.bottom + 4);
+            }
+        });
+        yTicks.forEach(function (tick) {
+            const y = mapY(tick);
+            if (y >= plot.top - 0.5 && y <= plot.bottom + 0.5) {
+                ctx.moveTo(plot.left - 4, y);
+                ctx.lineTo(plot.left, y);
+            }
+        });
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        xTicks.forEach(function (tick) {
+            const x = mapX(tick);
+            if (x >= plot.left - 0.5 && x <= plot.right + 0.5) {
+                ctx.fillText(formatTick(tick), x, plot.bottom + 7);
+            }
+        });
+
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        yTicks.forEach(function (tick) {
+            const y = mapY(tick);
+            if (y >= plot.top - 0.5 && y <= plot.bottom + 0.5) {
+                ctx.fillText(formatTick(tick), plot.left - 8, y);
+            }
+        });
         ctx.restore();
     }
 
@@ -1238,7 +1497,7 @@
 
     function drawCursor(ctx, x, top, bottom) {
         ctx.save();
-        ctx.strokeStyle = "rgba(35, 61, 104, 0.82)";
+        ctx.strokeStyle = "rgba(13, 41, 90, 0.82)";
         ctx.lineWidth = 1.5;
         ctx.setLineDash([5, 4]);
         ctx.beginPath();
@@ -1257,7 +1516,7 @@
             const color = item[1];
             ctx.fillStyle = color;
             ctx.fillRect(x + offset, y - 9, 18, 3);
-            ctx.fillStyle = "#233d68";
+            ctx.fillStyle = PALETTE.ink;
             ctx.fillText(label, x + offset + 24, y - 5);
             offset += 78;
         });
@@ -1276,7 +1535,7 @@
         drawPanelBackground(ctx, width, height);
         drawGrid(ctx, width, height, 42);
         ctx.save();
-        ctx.fillStyle = "#233d68";
+        ctx.fillStyle = PALETTE.ink;
         ctx.font = "700 15px 'Red Hat Display', Arial, sans-serif";
         ctx.fillText(title, 18, 34);
         ctx.font = "500 13px 'Red Hat Display', Arial, sans-serif";

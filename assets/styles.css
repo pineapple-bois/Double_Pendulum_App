@@ -1113,8 +1113,7 @@ body {
 }
 
 .simulation-interaction-shell {
-    background: #f4f7fb;
-    border-bottom: 1px solid #d5dee9;
+    background: white;
     box-sizing: border-box;
     display: grid;
     gap: 18px;
@@ -1124,7 +1123,7 @@ body {
 .simulation-summary-diagnostics {
     display: grid;
     gap: 16px;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(220px, 0.9fr) minmax(220px, 1fr) minmax(220px, 1fr);
 }
 
 .simulation-detail-diagnostics {
@@ -1196,11 +1195,22 @@ body {
     padding-left: 18px;
 }
 
+.simulation-output-header-row {
+    align-items: center;
+    display: block;
+    margin: 0 0 18px;
+}
+
+.simulation-output-header-row .simulation-panel-heading {
+    margin: 0;
+}
+
 .canvas-workspace-grid {
     display: grid;
-    gap: 14px;
+    gap: 20px;
     grid-template-areas:
         "motion projection"
+        "scrubber scrubber"
         "time time";
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
@@ -1217,13 +1227,18 @@ body {
     grid-area: time;
 }
 
+.canvas-time-selector {
+    grid-area: scrubber;
+}
+
 .canvas-placeholder-panel {
-    background: #f8fbfd;
+    background: white;
+    border: 0;
+    padding: 0;
 }
 
 .canvas-placeholder,
 .selected-state-readout {
-    border: 1px dashed #b7c5d6;
     border-radius: 8px;
     color: #496284;
     font-size: var(--font-size-small);
@@ -1231,29 +1246,47 @@ body {
     padding: 14px;
 }
 
+.canvas-placeholder {
+    background: white;
+    border: 0;
+    border-radius: 0;
+    min-height: 0;
+    padding: 0;
+}
+
 .selected-state-readout {
     background: #f8fbfd;
+    border: 1px solid #d5dee9;
     border-style: solid;
     line-height: 1.45;
     min-height: auto;
 }
 
 .canvas-renderer-panel {
-    background: #f8fbfd;
-    border-style: solid;
-    min-height: 220px;
+    background: white;
+    border: 0;
+    min-height: 0;
     overflow: hidden;
     padding: 0;
 }
 
 .simulation-canvas-view {
     display: block;
-    height: 300px;
     width: 100%;
 }
 
+.canvas-panel-motion .canvas-renderer-panel,
+.canvas-panel-projection .canvas-renderer-panel {
+    aspect-ratio: 1 / 1;
+}
+
+.canvas-panel-motion .simulation-canvas-view,
+.canvas-panel-projection .simulation-canvas-view {
+    height: 100%;
+}
+
 .canvas-panel-time .simulation-canvas-view {
-    height: 280px;
+    height: 300px;
 }
 
 .simulation-interaction-shell[data-result-state="stale"] .canvas-renderer-panel {
@@ -1267,15 +1300,27 @@ body {
 }
 
 .playback-shell {
+    align-items: center;
+    background: #f8fbfd;
+    border: 1px solid #d5dee9;
+    border-radius: 8px;
+    box-sizing: border-box;
     display: grid;
     gap: 12px;
+    grid-template-columns: auto minmax(150px, max-content) minmax(180px, 1fr);
+    margin: 0;
+    padding: 10px 12px;
+}
+
+.canvas-playback-panel {
+    position: static;
 }
 
 .playback-control-row {
     align-items: center;
     display: grid;
-    gap: 14px;
-    grid-template-columns: auto minmax(160px, 1fr);
+    gap: 8px;
+    grid-template-columns: auto;
 }
 
 .playback-button-group {
@@ -1287,7 +1332,7 @@ body {
 .playback-button-group .button {
     border-radius: 8px !important;
     flex: 0 0 auto;
-    min-width: 72px;
+    min-width: 64px;
     padding: 8px 12px;
     width: auto;
 }
@@ -1298,20 +1343,23 @@ body {
 }
 
 .simulation-frame-indicator {
-    background: #f8fbfd;
-    border: 1px solid #d5dee9;
-    border-radius: 8px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     color: #233d68;
     font-size: var(--font-size-small);
-    font-weight: 700;
-    min-height: 34px;
-    padding: 8px 12px;
+    font-weight: 800;
+    min-height: auto;
+    padding: 0;
+    white-space: nowrap;
 }
 
 .scrubber-row {
     align-items: center;
     display: grid;
     gap: 10px;
+    margin: 0;
+    padding: 0;
 }
 
 .simulation-scrubber {
@@ -1330,10 +1378,21 @@ body {
 }
 
 .playback-options-row {
-    align-items: start;
+    align-items: center;
     display: grid;
-    gap: 12px;
-    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px;
+    grid-template-columns: minmax(0, 1fr);
+    justify-self: start;
+}
+
+.playback-header-status {
+    min-width: 0;
+}
+
+.playback-header-status .simulation-status-message {
+    font-size: var(--font-size-small);
+    line-height: 1.35;
+    padding: 8px 10px;
 }
 
 .display-options-toggle label {
@@ -1349,11 +1408,63 @@ body {
     accent-color: var(--academic-accent);
 }
 
+.canvas-inspection-workspace {
+    border: 0;
+    padding: 0;
+}
+
+.simulation-diagnostics-toggle {
+    background: white;
+    border: 1px solid #d5dee9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: var(--academic-ink);
+}
+
+.simulation-diagnostics-summary {
+    cursor: pointer;
+    font-size: var(--font-size-small);
+    font-weight: 800;
+    list-style-position: inside;
+    padding: 12px 14px;
+}
+
+.simulation-diagnostics-summary:hover {
+    background: var(--academic-accent-soft);
+}
+
+.simulation-diagnostics-toggle[open] .simulation-diagnostics-summary {
+    border-bottom: 1px solid #d5dee9;
+}
+
+.simulation-diagnostics-toggle .simulation-summary-diagnostics {
+    padding: 14px;
+}
+
+@media (max-width: 1180px) {
+    .simulation-output-header-row {
+        grid-template-columns: 1fr;
+    }
+
+    .playback-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .playback-control-row {
+        grid-template-columns: auto;
+    }
+
+    .playback-options-row {
+        justify-self: start;
+    }
+}
+
 @media (max-width: 980px) {
     .canvas-workspace-grid {
         grid-template-areas:
             "motion"
             "projection"
+            "scrubber"
             "time";
     }
 
@@ -1362,9 +1473,8 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .simulation-canvas-view,
     .canvas-panel-time .simulation-canvas-view {
-        height: 240px;
+        height: 260px;
     }
 
     .playback-control-row,
@@ -2256,8 +2366,7 @@ Responsive spacing of description and image section */
         width: auto;
     }
 
-    .simulation-summary-diagnostics,
-    .canvas-workspace-grid {
+    .simulation-summary-diagnostics {
         grid-template-columns: 1fr;
     }
 }

@@ -345,6 +345,9 @@ def test_simulation_layout_opens_directly_into_workspace():
         "canvas-projection-view",
         "simulation-play-button",
         "simulation-scrubber",
+        "selected-state-readout",
+        "simulation-diagnostics-toggle",
+        "simulation-diagnostics-content",
     } <= ids
     assert {
         "pendulum-animation",

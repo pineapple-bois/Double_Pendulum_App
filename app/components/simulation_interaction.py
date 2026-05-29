@@ -26,6 +26,8 @@ SCRUBBER_ID = "simulation-scrubber"
 DISPLAY_OPTIONS_ID = "simulation-display-options"
 FRAME_INDICATOR_ID = "simulation-frame-indicator"
 RENDERER_SYNC_SIGNAL_ID = "simulation-renderer-sync-signal"
+DIAGNOSTICS_TOGGLE_ID = "simulation-diagnostics-toggle"
+DIAGNOSTICS_CONTENT_ID = "simulation-diagnostics-content"
 
 EMPTY_STATE_MESSAGE = (
     "No simulation run yet. Run a validated setup to prepare motion playback, "
@@ -107,7 +109,12 @@ def build_canvas_workspace_placeholder():
         id=CANVAS_WORKSPACE_ID,
         className="simulation-panel canvas-inspection-workspace",
         children=[
-            html.H3("Simulation Output", className="simulation-panel-heading"),
+            html.Div(
+                className="simulation-output-header-row",
+                children=[
+                    build_playback_shell(),
+                ],
+            ),
             html.Div(
                 className="canvas-workspace-grid",
                 children=[
@@ -125,6 +132,7 @@ def build_canvas_workspace_placeholder():
                         "Theta-theta angular state projection view",
                         "canvas-panel-projection",
                     ),
+                    build_scrubber_shell(),
                     _canvas_panel(
                         "Angular Displacement",
                         CANVAS_TIME_SERIES_PLACEHOLDER_ID,
@@ -139,12 +147,14 @@ def build_canvas_workspace_placeholder():
 
 
 def build_playback_shell():
-    return html.Section(
-        className="simulation-panel playback-shell canvas-playback-panel",
+    return html.Div(
+        className=(
+            "playback-shell canvas-playback-panel simulation-playback-strip "
+            "simulation-playback-header"
+        ),
         children=[
-            html.H3("Playback", className="simulation-panel-heading"),
             html.Div(
-                className="playback-control-row",
+                className="playback-control-row playback-header-controls",
                 children=[
                     html.Div(
                         className="playback-controls playback-button-group",
@@ -154,30 +164,10 @@ def build_playback_shell():
                             html.Button("Reset", id=RESET_BUTTON_ID, className="button", disabled=True),
                         ],
                     ),
-                    html.Div(
-                        id=FRAME_INDICATOR_ID,
-                        className="simulation-frame-indicator",
-                        children="Frame 0 · t=0.000 s",
-                    ),
                 ],
             ),
             html.Div(
-                className="scrubber-row",
-                children=[
-                    dcc.Input(
-                        id=SCRUBBER_ID,
-                        type="range",
-                        min=0,
-                        max=0,
-                        value=0,
-                        step=1,
-                        disabled=True,
-                        className="simulation-scrubber",
-                    ),
-                ],
-            ),
-            html.Div(
-                className="playback-options-row",
+                className="playback-options-row playback-header-display",
                 children=[
                     dcc.Checklist(
                         id=DISPLAY_OPTIONS_ID,
@@ -190,11 +180,33 @@ def build_playback_shell():
                         className="display-options-toggle",
                     ),
                     html.Div(
-                        id=SELECTED_STATE_READOUT_ID,
-                        className="selected-state-readout",
-                        children="Selected frame: 0",
+                        id=FRAME_INDICATOR_ID,
+                        className="simulation-frame-indicator",
+                        children="t = --",
                     ),
                 ],
+            ),
+            html.Div(
+                className="playback-header-status",
+                children=build_status_shell(),
+            ),
+        ],
+    )
+
+
+def build_scrubber_shell():
+    return html.Div(
+        className="scrubber-row canvas-time-selector",
+        children=[
+            dcc.Input(
+                id=SCRUBBER_ID,
+                type="range",
+                min=0,
+                max=0,
+                value=0,
+                step=1,
+                disabled=True,
+                className="simulation-scrubber",
             ),
         ],
     )
@@ -209,23 +221,43 @@ def build_status_shell():
 
 
 def build_summary_diagnostics_shell():
-    return html.Div(
-        className="simulation-summary-diagnostics simulation-detail-diagnostics",
+    return html.Details(
+        id=DIAGNOSTICS_TOGGLE_ID,
+        className="simulation-diagnostics-toggle",
+        open=False,
         children=[
-            html.Section(
-                id=RUN_SUMMARY_AREA_ID,
-                className="simulation-panel run-summary-area",
+            html.Summary("Show diagnostics", className="simulation-diagnostics-summary"),
+            html.Div(
+                id=DIAGNOSTICS_CONTENT_ID,
+                className="simulation-summary-diagnostics simulation-detail-diagnostics",
                 children=[
-                    html.H3("Run Summary", className="simulation-panel-heading"),
-                    html.P("Awaiting a simulation run."),
-                ],
-            ),
-            html.Section(
-                id=SOLVER_DIAGNOSTICS_AREA_ID,
-                className="simulation-panel solver-diagnostics-area",
-                children=[
-                    html.H3("Solver Diagnostics", className="simulation-panel-heading"),
-                    html.P("Solver has not run yet."),
+                    html.Section(
+                        className="simulation-panel selected-state-diagnostics-area",
+                        children=[
+                            html.H3("Selected State", className="simulation-panel-heading"),
+                            html.Div(
+                                id=SELECTED_STATE_READOUT_ID,
+                                className="selected-state-readout",
+                                children="Selected frame: 0",
+                            ),
+                        ],
+                    ),
+                    html.Section(
+                        id=RUN_SUMMARY_AREA_ID,
+                        className="simulation-panel run-summary-area",
+                        children=[
+                            html.H3("Run Summary", className="simulation-panel-heading"),
+                            html.P("Awaiting a simulation run."),
+                        ],
+                    ),
+                    html.Section(
+                        id=SOLVER_DIAGNOSTICS_AREA_ID,
+                        className="simulation-panel solver-diagnostics-area",
+                        children=[
+                            html.H3("Solver Diagnostics", className="simulation-panel-heading"),
+                            html.P("Solver has not run yet."),
+                        ],
+                    ),
                 ],
             ),
         ],
@@ -239,9 +271,7 @@ def build_simulation_interaction_shell():
         children=[
             *build_simulation_state_stores(),
             html.Div(id=RENDERER_SYNC_SIGNAL_ID, className="simulation-renderer-sync-signal"),
-            build_status_shell(),
             build_canvas_workspace_placeholder(),
-            build_playback_shell(),
             build_summary_diagnostics_shell(),
         ],
     )

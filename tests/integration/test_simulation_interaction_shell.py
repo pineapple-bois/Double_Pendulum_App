@@ -9,6 +9,8 @@ from app.components.simulation_interaction import (
     CANVAS_PROJECTION_VIEW_ID,
     CANVAS_TIME_SERIES_VIEW_ID,
     CANVAS_WORKSPACE_ID,
+    DIAGNOSTICS_CONTENT_ID,
+    DIAGNOSTICS_TOGGLE_ID,
     DISPLAY_OPTIONS_ID,
     FRAME_INDICATOR_ID,
     INTERACTION_SHELL_ID,
@@ -20,6 +22,7 @@ from app.components.simulation_interaction import (
     RESULT_STATE_STORE_ID,
     RUN_SUMMARY_AREA_ID,
     SCRUBBER_ID,
+    SELECTED_STATE_READOUT_ID,
     SOLVER_DIAGNOSTICS_AREA_ID,
     STATUS_MESSAGE_ID,
 )
@@ -76,12 +79,15 @@ SHELL_IDS = {
     PAUSE_BUTTON_ID,
     RESET_BUTTON_ID,
     SCRUBBER_ID,
+    SELECTED_STATE_READOUT_ID,
     DISPLAY_OPTIONS_ID,
     FRAME_INDICATOR_ID,
     CANVAS_MOTION_VIEW_ID,
     CANVAS_TIME_SERIES_VIEW_ID,
     CANVAS_PROJECTION_VIEW_ID,
     RENDERER_SYNC_SIGNAL_ID,
+    DIAGNOSTICS_TOGGLE_ID,
+    DIAGNOSTICS_CONTENT_ID,
 }
 
 
@@ -140,6 +146,24 @@ def find_by_id(component, target_id):
     return None
 
 
+def find_by_class(component, target_class):
+    stack = [component]
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, int, float)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+            continue
+        class_name = getattr(item, "className", None)
+        if class_name and target_class in str(class_name).split():
+            return item
+        children = getattr(item, "children", None)
+        if children is not None:
+            stack.append(children)
+    return None
+
+
 def text_from(component):
     return " ".join(extract_dash_text(component))
 
@@ -180,21 +204,48 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert isinstance(find_by_id(layout, CANVAS_MOTION_VIEW_ID), html.Canvas)
     assert isinstance(find_by_id(layout, CANVAS_TIME_SERIES_VIEW_ID), html.Canvas)
     assert isinstance(find_by_id(layout, CANVAS_PROJECTION_VIEW_ID), html.Canvas)
-    assert find_by_id(layout, FRAME_INDICATOR_ID) is not None
+    frame_indicator = find_by_id(layout, FRAME_INDICATOR_ID)
+    assert frame_indicator is not None
+    assert "t =" in text_from(frame_indicator)
+    assert "Frame" not in text_from(frame_indicator)
+    diagnostics_toggle = find_by_id(layout, DIAGNOSTICS_TOGGLE_ID)
+    assert isinstance(diagnostics_toggle, html.Details)
+    assert diagnostics_toggle.open is False
+    assert "Show diagnostics" in text_from(diagnostics_toggle)
+    diagnostics_content = find_by_id(layout, DIAGNOSTICS_CONTENT_ID)
+    assert diagnostics_content is not None
+    assert find_by_id(diagnostics_content, SELECTED_STATE_READOUT_ID) is not None
     assert {
         "canvas-panel-motion",
         "canvas-panel-projection",
         "canvas-panel-time",
+        "simulation-output-header-row",
+        "simulation-playback-strip",
+        "simulation-playback-header",
+        "canvas-time-selector",
         "playback-control-row",
+        "playback-header-controls",
+        "playback-header-display",
+        "playback-header-status",
+        "selected-state-diagnostics-area",
+        "simulation-diagnostics-toggle",
         "simulation-detail-diagnostics",
     } <= classes
+    assert "simulation-output-control-layout" not in classes
 
     scrubber = find_by_id(layout, SCRUBBER_ID)
     display_options = find_by_id(layout, DISPLAY_OPTIONS_ID)
+    time_selector = find_by_class(layout, "canvas-time-selector")
+    playback_status = find_by_class(layout, "playback-header-status")
+    playback_display = find_by_class(layout, "playback-header-display")
 
     assert isinstance(scrubber, dcc.Input)
     assert scrubber.type == "range"
     assert scrubber.disabled is True
+    assert find_by_id(time_selector, SCRUBBER_ID) is not None
+    assert find_by_id(playback_status, STATUS_MESSAGE_ID) is not None
+    assert find_by_id(playback_display, DISPLAY_OPTIONS_ID) is not None
+    assert find_by_id(playback_display, FRAME_INDICATOR_ID) is not None
     assert isinstance(display_options, dcc.Checklist)
     assert display_options.value == ["axes", "grid"]
     assert {option["value"] for option in display_options.options} == {"axes", "grid"}
@@ -429,6 +480,16 @@ def test_renderer_asset_exists_and_stays_within_task_c_boundaries():
     assert "submit-val" in source
     assert "PLOTLY_FRAME_SAMPLE_STEP" in source
     assert "frameForTime" in source
+    assert "squarePlotArea" in source
+    assert "motionMapper" in source
+    assert "drawMotionTrace" in source
+    assert "drawPlotTickLabels" in source
+    assert "θ₁ (deg)" in source
+    assert "θ₂ (deg)" in source
+    assert "t = \" + currentTime" in source
+    assert "formatNumber(payload.time_s[frame], 1)" in source
+    assert "formatNumber(payload.time_s[payload.sample_count - 1], 1)" in source
+    assert "PALETTE" in source
 
     lowered = source.lower()
     assert "energy" not in lowered
