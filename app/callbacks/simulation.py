@@ -1,7 +1,5 @@
 import dash
-from dash import no_update
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
 import matplotlib
 
 matplotlib.use("Agg")
@@ -9,9 +7,12 @@ import matplotlib.pyplot as plt
 import plotly.graph_objs as go
 import plotly.tools as tls
 import sympy as sp
+from time import perf_counter_ns
 
 from app.components.figure_style import mpl_layout
+from app.components.graphs import get_animation_phase_children, get_time_graph_children
 from app.content.simulation import INFO_BUTTON_CLOSE_LABEL, INFO_BUTTON_OPEN_LABEL
+from app.content.simulation import PHASE_PORTRAIT_TITLE, TIME_GRAPH_TITLE, TRACE_ANIMATION_TITLE
 from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
 from src.double_pendulum.validation.dash import validate_inputs
 
@@ -82,9 +83,8 @@ def register_simulation_callbacks(app):
 
     @app.callback(
         [
-            Output('time-graph', 'figure', allow_duplicate=True),
-            Output('phase-graph', 'figure', allow_duplicate=True),
-            Output('pendulum-animation', 'figure', allow_duplicate=True),
+            Output('animation-phase-container', 'children', allow_duplicate=True),
+            Output('time-graph-container', 'children', allow_duplicate=True),
             Output('animation-phase-container', 'style', allow_duplicate=True),
             Output('time-graph-container', 'style', allow_duplicate=True),
             Output('time-graph-section', 'style', allow_duplicate=True),
@@ -119,36 +119,39 @@ def register_simulation_callbacks(app):
         new_error_message = validate_inputs([initial_conditions],
                                             time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
                                             param_M1, param_M2, param_g)
-
-        # If the error message hasn't changed, prevent updating to avoid flickering
-        if new_error_message == current_error_message:
-            raise PreventUpdate
+        instance_id = f"stale-{perf_counter_ns()}"
+        empty_figure = go.Figure()
+        animation_phase_children = get_animation_phase_children(
+            TRACE_ANIMATION_TITLE,
+            PHASE_PORTRAIT_TITLE,
+            animation_figure=empty_figure,
+            phase_figure=empty_figure,
+            instance_id=instance_id,
+        )
+        time_graph_children = get_time_graph_children(
+            TIME_GRAPH_TITLE,
+            figure=empty_figure,
+            instance_id=instance_id,
+        )
 
         # Step 2: If there's an error, return empty graphs and hide graph containers
         if new_error_message:
-            empty_figure = go.Figure()
             return (
-                empty_figure, empty_figure, empty_figure,
+                animation_phase_children, time_graph_children,
                 {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
                 new_error_message
             )
 
-        # Step 3: If no error, update graphs and show graph containers
-        # (Your logic to generate the figures goes here. For now, returning empty for example)
-        time_figure = go.Figure()  # Replace with actual figure generation logic
-        phase_figure = go.Figure()  # Replace with actual figure generation logic
-        animation_figure = go.Figure()  # Replace with actual figure generation logic
-
+        # Step 3: If no error, mark current outputs stale and hide graph containers
         return (
-            time_figure, phase_figure, animation_figure,
+            animation_phase_children, time_graph_children,
             {'display': 'none'}, {'display': 'none'}, {'display': 'none'},
             new_error_message  # Should be an empty string or None if no error
         )
 
     @app.callback(
-        [Output('time-graph', 'figure'),
-         Output('phase-graph', 'figure'),
-         Output('pendulum-animation', 'figure'),
+        [Output('animation-phase-container', 'children'),
+         Output('time-graph-container', 'children'),
          Output('animation-phase-container', 'style'),
          Output('time-graph-container', 'style'),
          Output('time-graph-section', 'style'),
@@ -182,7 +185,17 @@ def register_simulation_callbacks(app):
                                             param_M1, param_M2, param_g)
             if error_message:
                 # If there are errors, return immediately
-                return (no_update, no_update, no_update,
+                instance_id = f"error-{n_clicks}-{perf_counter_ns()}"
+                empty_figure = go.Figure()
+                return (
+                        get_animation_phase_children(
+                            TRACE_ANIMATION_TITLE,
+                            PHASE_PORTRAIT_TITLE,
+                            animation_figure=empty_figure,
+                            phase_figure=empty_figure,
+                            instance_id=instance_id,
+                        ),
+                        get_time_graph_children(TIME_GRAPH_TITLE, figure=empty_figure, instance_id=instance_id),
                         {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, error_message)
 
             time_steps = int((time_end - time_start) * 200)
@@ -231,10 +244,30 @@ def register_simulation_callbacks(app):
             # Generate the animation figure
             pendulum.precompute_positions()  # Make sure positions are precomputed
             animation_fig = pendulum.animate_pendulum(trace=True, fig_width=600, fig_height=600, static=True)
+            instance_id = f"run-{n_clicks}"
+            animation_phase_children = get_animation_phase_children(
+                TRACE_ANIMATION_TITLE,
+                PHASE_PORTRAIT_TITLE,
+                animation_figure=animation_fig,
+                phase_figure=phase_fig,
+                instance_id=instance_id,
+            )
+            time_graph_children = get_time_graph_children(
+                TIME_GRAPH_TITLE,
+                figure=time_fig,
+                instance_id=instance_id,
+            )
 
-            return (time_fig, phase_fig, animation_fig,  # graph figures
+            return (animation_phase_children, time_graph_children,
                     {'display': 'flex'}, {'display': 'block'}, {'display': 'flex'}, '')
 
         # If the button hasn't been clicked yet, return empty figures and keep everything hidden
-        return (go.Figure(), go.Figure(), go.Figure(),
+        empty_figure = go.Figure()
+        return (get_animation_phase_children(
+                    TRACE_ANIMATION_TITLE,
+                    PHASE_PORTRAIT_TITLE,
+                    animation_figure=empty_figure,
+                    phase_figure=empty_figure,
+                ),
+                get_time_graph_children(TIME_GRAPH_TITLE, figure=empty_figure),
                 {'display': 'none'}, {'display': 'none'}, {'display': 'none'}, '')
