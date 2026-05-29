@@ -1,0 +1,28 @@
+{
+  "accepted_rules": [
+    "No visual state may continue animating after its simulation result has been superseded.",
+    "Input changes after success mark output stale and cancel playback.",
+    "Clear and failure states cancel playback and remove active payload.",
+    "Selected frame is shared across motion, time-series cursor, projection marker, and readout."
+  ],
+  "playback_states": [
+    "idle",
+    "playing",
+    "paused",
+    "scrubbing",
+    "ended",
+    "cancelled"
+  ],
+  "preview_port": 8066,
+  "preview_scope": "State transition demonstration only; no production code and no numerical solve.",
+  "purpose": "Compact interaction-contract preview summary; no solver arrays or renderer artifacts.",
+  "simulation_states": [
+    "empty",
+    "running",
+    "success",
+    "stale",
+    "failed",
+    "cleared"
+  ],
+  "tier": "Phase 6 / Tier 3D"
+}
