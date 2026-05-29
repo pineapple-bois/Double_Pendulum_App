@@ -4,6 +4,7 @@ from app.components.footer import get_footer_section_main
 from app.components.graphs import get_animation_phase_section as get_animation_phase_graphs
 from app.components.graphs import get_time_graph_section as get_time_graph
 from app.components.shell import get_body_section, get_footer_wrapper, get_header_section
+from app.components.simulation_interaction import build_simulation_interaction_shell
 from app.components.simulation_controls import build_simulation_controls
 from app.content.routes import SIMULATION_PAGE
 from app.content.simulation import (
@@ -33,6 +34,7 @@ def get_main_content():
                     html.Div(
                         className="simulation-output-workspace",
                         children=[
+                            build_simulation_interaction_shell(),
                             get_animation_phase_section(),
                             get_time_graph_section(),
                         ],
