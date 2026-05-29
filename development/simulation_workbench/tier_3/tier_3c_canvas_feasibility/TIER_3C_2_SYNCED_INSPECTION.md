@@ -1,98 +1,181 @@
-# Tier 3C.2 Synced Inspection Polish
+# Tier 3C.2 Canvas-Native Synced Inspection
 
 Tier: Phase 6 / Simulation Workbench Tier 3C.2
 Date: 2026-05-29
 
 ## Summary
 
-Tier 3C.2 improves the Canvas preview from motion-only playback to inspectable
-motion. It adds a reference frame, optional axes/grid/origin rendering, and
-scrub-synced Plotly analytical views.
+Tier 3C.2 revises the Canvas preview so Canvas is tested as the synchronized
+motion and inspection renderer, not only the physical motion renderer.
 
-This remains workbench-only. No production `/simulation` page, callback,
-component ID, CSS, model mathematics, solver default, energy diagnostic, chaos
-diagnostic, or Poincare section was changed.
+The active preview now uses Canvas-native panels for:
 
-## What Was Added
+- physical pendulum motion;
+- angular displacement time series;
+- theta-theta angular state projection;
+- selected-time/state readout.
 
-- Canvas display options for axes, grid, and origin marker.
-- An explicit pivot/origin marker.
-- Equal-aspect physical scaling retained in the Canvas projection.
-- Canvas overlay text explaining the rendering transform.
-- Angular displacement time-series Plotly view.
-- Theta-theta angular state projection Plotly view.
-- Shared scrubber-selected frame used by Canvas and both Plotly marker views.
-- Selected-time/state readout.
+The earlier Plotly analytical panels are removed from the active preview. Plotly
+remains useful for future analytical views, but it should not define the Tier
+3C.2 architecture.
 
-## Coordinate Reference Frame
+## Why Plotly Panels Were Removed
 
-Python supplies physical bob coordinates:
+The previous Plotly-panel direction proved a useful idea, but the wrong
+architecture for this spike. It mixed a Canvas playback lifecycle with Plotly
+inspection redraws, which made Tier 3C less clear.
+
+Tier 3C.2 now tests the cleaner question:
+
+Can one JavaScript Canvas manager render motion and synced inspection from one
+Python-owned payload and one selected-frame state?
+
+Plotly is deferred as a possible future fallback for richer analytical
+inspection, hover, export, and accessible chart features.
+
+## Responsibility Boundary
+
+Plain dependency map:
+
+```text
+Python model run -> arrays and metadata -> Dash payload -> JavaScript Canvas manager -> draw selected frame and synced inspection views
+```
+
+Python owns:
+
+- simulation request construction;
+- model construction;
+- numerical integration;
+- Hamiltonian velocity-to-momentum conversion through existing model behavior;
+- bob position arrays;
+- angle/state arrays;
+- solver metadata;
+- warning metadata;
+- run identity;
+- payload preparation.
+
+Dash owns:
+
+- transporting the run-scoped payload to the browser;
+- storing the latest payload in `dcc.Store`;
+- not streaming animation frames through Python callbacks.
+
+JavaScript owns:
+
+- active run ID;
+- selected frame;
+- playback state;
+- play, pause, reset, and scrub;
+- stale-run cancellation;
+- Canvas rendering;
+- current-time cursor;
+- projection marker;
+- status/readout updates.
+
+JavaScript must not own equations of motion, numerical integration, physical
+correctness, velocity-to-momentum conversion, energy diagnostics, or chaos
+diagnostics.
+
+## Canvas Payload Schema
+
+The active payload includes:
+
+- `schema_version`;
+- `kind`;
+- `run_id`;
+- `model_type`;
+- `system_type`;
+- `preset_name`;
+- `time`;
+- `positions.x1`, `positions.y1`, `positions.x2`, `positions.y2`;
+- `angular_state.theta1_deg`, `angular_state.theta2_deg`;
+- `sample_count`;
+- `duration_seconds`;
+- `user_initial_conditions`;
+- `solver_metadata`;
+- `warnings`;
+- `bounds`;
+- `payload_byte_estimate`.
+
+Full arrays exist only in the live Dash payload. Compact results JSON omits
+arrays.
+
+## Canvas Panel Architecture
+
+The JavaScript manager has one shared payload and one shared selected frame.
+
+It uses separate draw functions:
+
+- `drawMotion(frame)`;
+- `drawTimeSeries(frame)`;
+- `drawProjection(frame)`;
+- `selectedReadout(frame)`.
+
+The playback loop advances the shared selected frame and redraws all three
+Canvas panels from the same state. Scrub does the same, without Python
+callbacks per frame.
+
+## Canvas Panels
+
+Motion view:
+
+- rods;
+- bobs;
+- optional trail;
+- pivot marker;
+- optional axes;
+- optional grid;
+- equal-aspect physical scaling.
+
+Time-series view:
+
+- `theta1(t)`;
+- `theta2(t)`;
+- optional axes/grid;
+- current-time cursor;
+- selected `theta1` and `theta2` markers.
+
+Angular state projection:
+
+- theta-theta angular state projection;
+- optional axes/grid;
+- selected-state marker.
+
+This projection is not a full phase portrait.
+
+## Axes, Grid, And Coordinate Mapping
+
+Python supplies physical coordinates:
 
 - `x` increases to the right;
 - `y` increases upward;
-- the pivot/origin is `(0, 0)`.
+- the pivot is the physical anchor at `(0, 0)`.
 
-Canvas screen coordinates have `y` increasing downward, so JavaScript performs a
-rendering transform:
+Canvas screen coordinates have `y` increasing downward, so JavaScript applies a
+rendering transform. The transform preserves equal physical scale for the
+motion view. This is rendering only; it is not physics.
 
-```text
-physical x/y from Python -> equal-aspect screen projection -> Canvas draw calls
-```
-
-The transform is rendering-only. JavaScript does not compute equations,
-integrate trajectories, alter initial conditions, or make physical claims.
-
-The grid and axes are drawn from the payload bounds. They are visual reference
-marks around the Python-computed coordinate data, not numerical diagnostics.
-
-## Synced Selected Frame
-
-The Dash scrubber remains the shared selected-frame control.
-
-On scrub:
-
-- Canvas pauses playback and draws the selected frame;
-- the time-series view moves its selected-time marker;
-- the theta-theta angular state projection moves its selected-state marker;
-- the readout updates run ID, frame, selected time, `theta1`, and `theta2`.
-
-The time-series and projection figures are created clientside from the same
-payload. Python sends the trusted arrays once; there is no Python callback per
-animation frame.
+Axes and grid can be toggled. The pivot is visually anchored with a marker, but
+the preview no longer labels it as “origin.”
 
 ## Sync Status
 
 Works now:
 
-- scrub updates Canvas;
-- scrub updates the time-series marker;
-- scrub updates the angular state projection marker;
-- scrub updates the selected-time/state readout;
-- axes/grid/origin toggles redraw the current Canvas frame;
-- play, pause, reset, clear, failure, and stale-run cancellation behavior are
-  preserved in the Canvas manager.
+- scrub updates motion Canvas;
+- scrub updates time-series cursor and markers;
+- scrub updates angular projection marker;
+- scrub updates selected-time/state readout;
+- playback updates all three Canvas panels from the same selected-frame state;
+- axes/grid toggles redraw all Canvas panels;
+- play, pause, reset, clear, failure, and stale-run cancellation remain in one
+  Canvas manager.
 
-Deferred:
+Partial or deferred:
 
-- live Plotly marker movement during playback.
-
-Playback currently updates Canvas and the Canvas status. It does not drive the
-Dash scrubber value or Plotly markers on every animation frame. That is
-intentional for this pass: syncing Plotly on every playback frame could
-reintroduce callback/render pressure before Tier 3D defines the interaction
-contract.
-
-## Payload Change
-
-Tier 3C.2 adds angular samples to the payload:
-
-- `angular_state.theta1_deg`;
-- `angular_state.theta2_deg`;
-- an explicit label that the theta-theta output is an angular state projection,
-  not a full phase portrait.
-
-The Canvas renderer still only needs positions, bounds, sample count, and run
-ID to draw. The angular samples support the synced inspection views.
+- no Plotly analytical fallback is active in Tier 3C.2;
+- no export, hover, or accessibility layer exists yet;
+- no automated browser regression exists for Canvas lifecycle behavior.
 
 ## Updated Metrics
 
@@ -104,68 +187,39 @@ Regenerated compact metrics:
 | compound Hamiltonian nonzero | `1200` | `164761` | `137.3` |
 | simple Lagrangian small angle | `2000` | `274831` | `137.4` |
 
-The payload grew because it now carries angular state samples for synchronized
-Plotly inspection. This reinforces the Tier 3C caution: Canvas is a lifecycle
-and interaction candidate, not automatically a payload-size win.
-
-## Browser Smoke Result
-
-The preview was started at `http://127.0.0.1:8065/` and checked in browser.
-
-Observed:
-
-- axes/grid control was present;
-- grid toggle changed state and redrew the current Canvas frame;
-- Run produced a payload and drew frame zero;
-- scrub updated Canvas status to the selected frame;
-- scrub updated the selected-time/state readout;
-- play started playback;
-- pause preserved the current frame;
-- reset returned to frame zero;
-- play followed by Clear produced a cleared state and stopped playback;
-- play followed by Simulated Failure produced a failure state and stopped
-  playback;
-- play followed by a new Run replaced the active run and reset to frame zero.
-
-This is still a smoke check, not a complete browser regression suite.
+The payload carries physical positions plus angular samples. Canvas-native
+inspection strengthens the interaction model, but it does not make Canvas a
+payload-size win.
 
 ## Production-Candidate Signal
 
-Canvas is a stronger production candidate after this pass because it now
-supports an inspectable reference frame and shared selected-time state. The
-combination of Canvas motion plus Plotly analytical markers looks like a viable
-hybrid direction:
+Canvas is a stronger production candidate after this revision because it can
+own the full synced inspection loop:
 
-- Canvas for physical motion and playback lifecycle;
-- Plotly for analytical time series and state projections;
-- one shared selected frame/time.
+- physical motion;
+- selected-time inspection;
+- time-series cursor;
+- angular projection marker;
+- playback lifecycle;
+- stale-run cancellation.
 
-This still needs Tier 3D before promotion. The product must decide whether the
-future workspace prioritizes autoplay, selected-time inspection, or both.
+This does not mean Canvas is ready for production promotion. Tier 3D still
+needs to define the accepted interaction contract.
 
 ## Remaining Risks Before Tier 3D
 
-- Browser playback and stale-state behavior still need manual inspection.
-- Plotly marker sync during playback is deferred.
-- Payload size increased with synced inspection arrays.
-- Canvas accessibility/export behavior is still unresolved.
-- The coordinate grid is visual context, not numerical validation.
-- Future implementation must prevent physics from creeping into JavaScript.
+- Browser lifecycle behavior needs fuller manual or automated coverage.
+- Payload size remains a real concern.
+- Canvas accessibility/export behavior is unresolved.
+- Canvas-native charts lack Plotly hover, zoom, and export behavior.
+- Future maintainers must keep physics out of JavaScript.
+- The grid and axes are visual context, not numerical validation.
 
 ## Recommended Next Task
 
 Proceed to Tier 3D interaction contract.
 
-Tier 3D should decide the accepted lifecycle and sync model for:
-
-- run;
-- rerun;
-- clear;
-- failure;
-- input-stale state;
-- play;
-- pause;
-- reset;
-- scrub;
-- selected time;
-- whether Plotly markers should update live during playback or only on scrub.
+Tier 3D should decide the accepted lifecycle and sync model for run, rerun,
+clear, failure, input-stale state, play, pause, reset, scrub, selected time,
+and whether production needs Canvas-native charts, Plotly analytical fallback,
+or a hybrid split.

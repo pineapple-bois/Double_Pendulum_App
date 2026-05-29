@@ -14,10 +14,10 @@ only drawing and playback lifecycle. This first pass demonstrates that a
 run-scoped Python motion payload can drive a plain Canvas renderer with play,
 pause, reset, scrub, clear, and simulated failure states.
 
-Tier 3C.2 extends the same preview with reference-frame controls and
-scrub-synced Plotly inspection views. Canvas now shows optional axes, grid, and
-origin markers, while the shared scrubber updates Canvas, a time-series marker,
-a theta-theta angular state projection marker, and a selected-state readout.
+Tier 3C.2 revises the same preview toward Canvas-native synced inspection.
+Canvas now shows optional axes and grid, while one JavaScript manager draws the
+motion view, angular displacement time series, theta-theta angular state
+projection, selected-time cursor, selected-state markers, and readout.
 
 No production `/simulation` page, callback, component ID, CSS, model behavior,
 plotting behavior, solver behavior, energy diagnostic, chaos diagnostic, or
@@ -71,7 +71,8 @@ Dash transport layer:
 JavaScript side:
 
 - receives already-computed time and position arrays;
-- draws rods and bobs on Canvas;
+- draws rods, bobs, angular curves, projection paths, cursors, and markers on
+  Canvas;
 - handles play, pause, reset, and scrub;
 - cancels stale playback when run identity changes;
 - may show rendering status.
@@ -104,12 +105,12 @@ The Tier 3C payload is intentionally explicit and run-scoped:
 - `bounds`;
 - `payload_byte_estimate`.
 
-The Canvas renderer needs only `run_id`, `time`, `positions`, `bounds`, and
-`sample_count` to draw. The other fields support status, diagnostics, and future
+The motion renderer needs only `run_id`, `time`, `positions`, `bounds`, and
+`sample_count` to draw physical motion. The Canvas-native inspection panels use
+the angular samples. The other fields support status, diagnostics, and future
 comparison.
 
-The angular samples support synced Plotly inspection. The theta-theta output is
-an angular state projection, not a full phase portrait.
+The theta-theta output is an angular state projection, not a full phase portrait.
 
 Tier 3C does not reduce or cap the selected sample set to make Canvas look
 cheap. The browser receives the full selected sample set and maps playback time
@@ -143,19 +144,24 @@ On scrub, it cancels playback and draws the selected frame.
 On clear or failure, it cancels playback and clears the Canvas with a state
 message.
 
-Tier 3C.2 adds reference-frame options. JavaScript can draw:
+Tier 3C.2 adds Canvas-native reference-frame and inspection options. JavaScript
+can draw:
 
 - a grid based on the payload bounds;
 - physical `x` and `y` axes;
-- the pivot/origin marker at `(0, 0)`.
+- the pivot marker at `(0, 0)`;
+- angular displacement curves;
+- a current-time cursor;
+- a theta-theta angular state projection;
+- a selected-state marker.
 
 Python coordinates use physical `y` upward. Canvas screen coordinates use `y`
 downward. JavaScript applies an equal-aspect display transform from physical
 coordinates to screen coordinates; it does not compute physics.
 
-The shared scrubber also updates clientside Plotly inspection views. Playback
-marker sync is deferred to avoid Plotly redraws on every animation frame before
-Tier 3D defines the interaction contract.
+The shared selected frame updates all Canvas panels. Playback and scrub both
+redraw motion, time-series, projection, and readout without Python callbacks per
+animation frame.
 
 ## Test Cases
 
@@ -178,9 +184,9 @@ there.
 
 | Case | Samples | Payload bytes | Bytes/sample | Model build | Precompute | Payload prep |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| simple Lagrangian nonzero | `640` | `88425` | `138.2` | `2.0148s` | `0.000021s` | `0.0017s` |
-| compound Hamiltonian nonzero | `1200` | `164761` | `137.3` | `0.3704s` | `0.000028s` | `0.0032s` |
-| simple Lagrangian small angle | `2000` | `274831` | `137.4` | `0.0210s` | `0.000040s` | `0.0056s` |
+| simple Lagrangian nonzero | `640` | `88425` | `138.2` | `2.1750s` | `0.000021s` | `0.0018s` |
+| compound Hamiltonian nonzero | `1200` | `164761` | `137.3` | `0.4132s` | `0.000025s` | `0.0033s` |
+| simple Lagrangian small angle | `2000` | `274831` | `137.4` | `0.0201s` | `0.000034s` | `0.0056s` |
 
 The first simple Lagrangian model build includes cache/equation warmup effects,
 so it should not be read as pure integration time.
@@ -217,8 +223,9 @@ Implemented behavior:
 - play does not start multiple loops for the same active run;
 - scrub cancels playback and draws the selected frame;
 - reset cancels playback and returns to frame zero.
-- axes/grid/origin toggles redraw the current frame without changing physics;
-- scrub updates Canvas, Plotly markers, and the selected-state readout.
+- axes/grid toggles redraw all Canvas panels without changing physics;
+- scrub updates motion, time-series cursor, projection marker, and readout;
+- playback updates all three Canvas panels from the same selected-frame state.
 
 Observed in this task:
 
@@ -226,7 +233,6 @@ Observed in this task:
 - compact metrics were generated;
 - browser smoke verified axes/grid toggle, scrub sync, play, pause, reset,
   new-run cancellation, clear, and simulated failure.
-- playback-driven Plotly marker sync is deferred.
 
 Manual sequences to complete:
 
@@ -254,14 +260,13 @@ callback for every animation frame.
 Canvas makes selected-time inspection feel architecturally natural because the
 renderer can draw any precomputed sample by index.
 
-Tier 3C.2 strengthens this signal: Canvas can serve as the physical motion
-surface while Plotly handles analytical inspection views tied to the same
-selected frame.
+Tier 3C.2 strengthens this signal: Canvas can serve as the physical motion and
+synced inspection surface tied to the same selected frame.
 
 ## What Canvas Does Poorly
 
 Canvas is not self-describing in the way Plotly figures are. It does not provide
-built-in axes, hover, export, accessibility, or modebar behavior.
+built-in hover, zoom, export, accessibility, or modebar behavior.
 
 Plain JavaScript introduces maintenance burden. Future work would need careful
 tests around run identity, browser resizing, scrub behavior, and stale-state
@@ -303,13 +308,14 @@ it is not ready for promotion yet.
 
 Recommended next task:
 
-Continue with a deeper Canvas interaction spike or Tier 3D interaction contract
-focused on the accepted selected-time idea:
+Proceed to Tier 3D interaction contract focused on the accepted selected-time
+idea:
 
 - define whether the future workspace needs autoplay, scrub, selected-time
   inspection, or both;
 - manually inspect the Tier 3C preview lifecycle;
-- compare Canvas against a refined Plotly static scrubber path;
+- decide whether production wants Canvas-native analytical panels, Plotly
+  analytical fallback, or a hybrid split;
 - study payload encoding only after the interaction contract is clearer.
 
 Do not claim Canvas is better solely because it feels smooth once. The credible

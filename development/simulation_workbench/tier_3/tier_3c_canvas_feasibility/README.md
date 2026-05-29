@@ -7,8 +7,9 @@ This is a workbench-only feasibility spike. It does not replace Plotly
 analytical plots, redesign `/simulation`, modify production callbacks, change
 model behavior, or make a final renderer decision.
 
-Tier 3C.2 adds inspectability polish: axes/grid/origin display options and
-scrub-synced Plotly analytical views.
+Tier 3C.2 revises the preview toward Canvas-native synced inspection: the active
+preview uses Canvas for physical motion, angular displacement time series, and
+theta-theta angular state projection.
 
 ## Python And JavaScript Boundary
 
@@ -38,9 +39,9 @@ Dash owns:
 JavaScript owns:
 
 - receiving already-computed time and position arrays;
-- drawing rods and bobs on Canvas;
+- drawing rods, bobs, angular curves, and projection markers on Canvas;
 - play, pause, reset, and scrub;
-- drawing optional axes, grid, and origin reference marks;
+- drawing optional axes and grid reference marks;
 - cancelling stale playback when run identity changes;
 - lightweight render status.
 
@@ -79,7 +80,7 @@ To regenerate compact metrics without starting the Dash server:
 - `canvas_motion_preview.py` - Dash preview and compact metrics runner.
 - `assets/canvas_motion.js` - workbench-only Canvas playback manager.
 - `TIER_3C_CANVAS_FEASIBILITY.md` - feasibility report and recommendation.
-- `TIER_3C_2_SYNCED_INSPECTION.md` - focused note on reference frame and synced inspection.
+- `TIER_3C_2_SYNCED_INSPECTION.md` - focused note on Canvas-native synced inspection.
 - `tier3c_results.json` - compact metrics; no full arrays are saved.
 
 ## Reference Frame And Inspection
@@ -92,19 +93,19 @@ only a display transform.
 The preview includes toggles for:
 
 - axes;
-- grid;
-- origin/pivot marker.
+- grid.
 
-The shared scrubber updates:
+The pivot is visually anchored with a marker but is not labelled as “origin.”
 
-- the Canvas frame;
-- a marker on the angular displacement time series;
-- a marker on the theta-theta angular state projection;
+The active Tier 3C.2 preview is Canvas-native. The shared selected frame updates:
+
+- the physical motion Canvas;
+- the Canvas angular displacement time-series cursor and markers;
+- the Canvas theta-theta angular state projection marker;
 - a selected-time/state readout.
 
-Playback marker sync is deferred. Playback updates Canvas locally; Plotly marker
-updates happen on scrub so the preview avoids Python callbacks or Plotly redraws
-on every animation frame.
+Playback and scrub both update the Canvas-native inspection views without Python
+callbacks per animation frame.
 
 ## What This Can Prove
 

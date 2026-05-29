@@ -34,7 +34,6 @@ import matplotlib
 matplotlib.use("Agg")
 import numpy as np
 from dash import Dash, Input, Output, State, callback_context, dcc, html
-import plotly.graph_objs as go
 
 
 def find_repo_root(start: Path) -> Path:
@@ -308,28 +307,6 @@ def metrics_table(metrics: dict[str, Any]) -> html.Table:
     )
 
 
-def empty_inspection_figure(title: str, message: str) -> go.Figure:
-    fig = go.Figure()
-    fig.update_layout(
-        title=title,
-        height=320,
-        margin=dict(l=48, r=20, t=48, b=44),
-        annotations=[
-            {
-                "text": message,
-                "showarrow": False,
-                "xref": "paper",
-                "yref": "paper",
-                "x": 0.5,
-                "y": 0.5,
-            }
-        ],
-        xaxis={"visible": False},
-        yaxis={"visible": False},
-    )
-    return fig
-
-
 def boundary_card() -> html.Div:
     return html.Div(
         [
@@ -355,7 +332,7 @@ def app_layout() -> html.Div:
                 [
                     html.H1("Tier 3C Canvas Motion Preview", style={"marginBottom": "6px"}),
                     html.P(
-                        "Workbench-only Canvas renderer spike. Python computes the simulation; JavaScript only draws and controls playback.",
+                        "Workbench-only Canvas renderer spike. Python computes the simulation; JavaScript draws motion and synced inspection views.",
                         style={"color": "#596579"},
                     ),
                     dcc.Store(id="tier3c-run-counter", data=0),
@@ -451,9 +428,8 @@ def app_layout() -> html.Div:
                                                         options=[
                                                             {"label": "Axes", "value": "axes"},
                                                             {"label": "Grid", "value": "grid"},
-                                                            {"label": "Origin marker", "value": "origin"},
                                                         ],
-                                                        value=["axes", "grid", "origin"],
+                                                        value=["axes", "grid"],
                                                         inline=True,
                                                     ),
                                                 ],
@@ -535,26 +511,32 @@ def app_layout() -> html.Div:
                             ),
                             html.Div(
                                 [
-                                    dcc.Graph(
-                                        id="tier3c-time-series",
-                                        figure=empty_inspection_figure(
-                                            "Angular displacement time series",
-                                            "Run a successful simulation to inspect angular state.",
-                                        ),
-                                        config={"displaylogo": False},
+                                    html.H3("Angular displacement time series", style={"marginTop": 0}),
+                                    html.Canvas(
+                                        id="tier3c-time-series-canvas",
+                                        style={
+                                            "width": "100%",
+                                            "height": "320px",
+                                            "border": "1px solid #d9dee8",
+                                            "borderRadius": "8px",
+                                            "background": "white",
+                                        },
                                     )
                                 ],
                                 style=PANEL_STYLE,
                             ),
                             html.Div(
                                 [
-                                    dcc.Graph(
-                                        id="tier3c-projection",
-                                        figure=empty_inspection_figure(
-                                            "Theta-theta angular state projection",
-                                            "Run a successful simulation to inspect the projection.",
-                                        ),
-                                        config={"displaylogo": False},
+                                    html.H3("Theta-theta angular state projection", style={"marginTop": 0}),
+                                    html.Canvas(
+                                        id="tier3c-projection-canvas",
+                                        style={
+                                            "width": "100%",
+                                            "height": "320px",
+                                            "border": "1px solid #d9dee8",
+                                            "borderRadius": "8px",
+                                            "background": "white",
+                                        },
                                     )
                                 ],
                                 style=PANEL_STYLE,
@@ -635,6 +617,7 @@ app.clientside_callback(
     }
     """,
     Output("tier3c-canvas-status", "children"),
+    Output("tier3c-selected-readout", "children"),
     Input("tier3c-motion-payload", "data"),
     Input("tier3c-play", "n_clicks"),
     Input("tier3c-pause", "n_clicks"),
@@ -642,20 +625,6 @@ app.clientside_callback(
     Input("tier3c-scrubber", "value"),
     Input("tier3c-canvas-options", "value"),
     prevent_initial_call=True,
-)
-
-
-app.clientside_callback(
-    """
-    function(payload, scrubValue) {
-        return window.dash_clientside.tier3c_canvas.inspectionFigures(payload, scrubValue);
-    }
-    """,
-    Output("tier3c-time-series", "figure"),
-    Output("tier3c-projection", "figure"),
-    Output("tier3c-selected-readout", "children"),
-    Input("tier3c-motion-payload", "data"),
-    Input("tier3c-scrubber", "value"),
 )
 
 
@@ -679,7 +648,7 @@ def collect_metrics() -> dict[str, Any]:
         "tier": "Phase 6 / Tier 3C",
         "purpose": "Compact Canvas motion and synced-inspection payload metrics; arrays omitted",
         "payload_policy": "full selected sample set plus theta1/theta2 inspection samples are serialized to the Dash store; no frame-count reduction",
-        "sync_policy": "scrub updates Canvas, time-series marker, theta-theta projection marker, and selected-state readout; playback marker sync is deferred",
+        "sync_policy": "Canvas-native motion, time-series, projection, and readout share one selected-frame state for scrub and playback",
         "manual_observation_status": "browser smoke verified axes/grid toggle, scrub sync, play, pause, reset, new-run cancellation, clear, and simulated failure",
         "tier3b_reference": tier3b_reference,
         "cases": cases,
