@@ -1,0 +1,62 @@
+{
+  "cases": [
+    {
+      "approx_bytes_per_sample": 138.1640625,
+      "duration_seconds": 4.0,
+      "kind": "success",
+      "model_type": "simple",
+      "payload_byte_estimate": 88425,
+      "payload_preparation_seconds": 0.0017307079979218543,
+      "position_precompute_seconds": 2.0916006178595126e-05,
+      "position_values_finite": true,
+      "preset_name": "nonzero_tail",
+      "python_model_construction_seconds": 2.014758624995011,
+      "run_id": 1,
+      "sample_count": 640,
+      "solver_success": true,
+      "system_type": "lagrangian"
+    },
+    {
+      "approx_bytes_per_sample": 137.30083333333334,
+      "duration_seconds": 6.0,
+      "kind": "success",
+      "model_type": "compound",
+      "payload_byte_estimate": 164761,
+      "payload_preparation_seconds": 0.0032022499945014715,
+      "position_precompute_seconds": 2.8084003133699298e-05,
+      "position_values_finite": true,
+      "preset_name": "nonzero_tail",
+      "python_model_construction_seconds": 0.37039520899998024,
+      "run_id": 2,
+      "sample_count": 1200,
+      "solver_success": true,
+      "system_type": "hamiltonian"
+    },
+    {
+      "approx_bytes_per_sample": 137.4155,
+      "duration_seconds": 8.0,
+      "kind": "success",
+      "model_type": "simple",
+      "payload_byte_estimate": 274831,
+      "payload_preparation_seconds": 0.0055924579937709495,
+      "position_precompute_seconds": 4.012499994132668e-05,
+      "position_values_finite": true,
+      "preset_name": "small_angle",
+      "python_model_construction_seconds": 0.021043333006673492,
+      "run_id": 3,
+      "sample_count": 2000,
+      "solver_success": true,
+      "system_type": "lagrangian"
+    }
+  ],
+  "manual_observation_status": "browser smoke verified axes/grid toggle, scrub sync, play, pause, reset, new-run cancellation, clear, and simulated failure",
+  "payload_policy": "full selected sample set plus theta1/theta2 inspection samples are serialized to the Dash store; no frame-count reduction",
+  "purpose": "Compact Canvas motion and synced-inspection payload metrics; arrays omitted",
+  "sync_policy": "scrub updates Canvas, time-series marker, theta-theta projection marker, and selected-state readout; playback marker sync is deferred",
+  "tier": "Phase 6 / Tier 3C",
+  "tier3b_reference": {
+    "case_count": 3,
+    "path": "development/simulation_workbench/tier_3/tier_3b_plotly_strategies/tier3b_results.json",
+    "summary": "Tier 3B showed reduced frames are not preferred; static scrubber suggests selected-time inspection is valuable."
+  }
+}
