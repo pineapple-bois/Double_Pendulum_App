@@ -1,0 +1,239 @@
+{
+  "cases": [
+    {
+      "case": {
+        "duration_seconds": 4.0,
+        "label": "Short simple Lagrangian",
+        "model_type": "simple",
+        "preset": "nonzero_tail",
+        "sample_count": 640,
+        "system_type": "lagrangian"
+      },
+      "case_id": "short_simple_lagrangian",
+      "solver_state_convention": "angles_and_angular_velocities",
+      "solver_success": true,
+      "strategies": [
+        {
+          "metrics": {
+            "build_time_seconds": 0.02422287499939557,
+            "frame_count": 64,
+            "model_construction_seconds": 2.205846249999013,
+            "plotly_json_size_bytes": 54406,
+            "point_count": 1475,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 2.2300691249984084,
+            "trace_count": 3
+          },
+          "strategy": "current_frames",
+          "strategy_label": "Current Plotly frames"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.010176749994570855,
+            "frame_count": 26,
+            "model_construction_seconds": 2.205846249999013,
+            "plotly_json_size_bytes": 49578,
+            "point_count": 1361,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 2.2160229999935837,
+            "trace_count": 3
+          },
+          "strategy": "reduced_frames",
+          "strategy_label": "Reduced Plotly frames"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.006192625005496666,
+            "frame_count": 0,
+            "model_construction_seconds": 2.205846249999013,
+            "plotly_json_size_bytes": 47983,
+            "point_count": 1283,
+            "slider_step_count": 32,
+            "total_python_seconds_if_model_reused": 2.2120388750045095,
+            "trace_count": 3
+          },
+          "strategy": "static_scrubber",
+          "strategy_label": "Plotly static scrubber"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.003441790999204386,
+            "frame_count": 0,
+            "model_construction_seconds": 2.205846249999013,
+            "plotly_json_size_bytes": 43127,
+            "point_count": 1283,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 2.209288040998217,
+            "trace_count": 3
+          },
+          "strategy": "selected_frame_server",
+          "strategy_label": "Server-selected frame"
+        }
+      ]
+    },
+    {
+      "case": {
+        "duration_seconds": 6.0,
+        "label": "Moderate compound Hamiltonian",
+        "model_type": "compound",
+        "preset": "nonzero_tail",
+        "sample_count": 1200,
+        "system_type": "hamiltonian"
+      },
+      "case_id": "moderate_compound_hamiltonian",
+      "solver_state_convention": "angles_and_canonical_momenta",
+      "solver_success": true,
+      "strategies": [
+        {
+          "metrics": {
+            "build_time_seconds": 0.02451070800452726,
+            "frame_count": 120,
+            "model_construction_seconds": 0.3853756659955252,
+            "plotly_json_size_bytes": 95279,
+            "point_count": 2763,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 0.40988637400005246,
+            "trace_count": 3
+          },
+          "strategy": "current_frames",
+          "strategy_label": "Current Plotly frames"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.015659083001082763,
+            "frame_count": 48,
+            "model_construction_seconds": 0.3853756659955252,
+            "plotly_json_size_bytes": 86287,
+            "point_count": 2547,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 0.40103474899660796,
+            "trace_count": 3
+          },
+          "strategy": "reduced_frames",
+          "strategy_label": "Reduced Plotly frames"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.005522375002328772,
+            "frame_count": 0,
+            "model_construction_seconds": 0.3853756659955252,
+            "plotly_json_size_bytes": 83642,
+            "point_count": 2403,
+            "slider_step_count": 60,
+            "total_python_seconds_if_model_reused": 0.39089804099785397,
+            "trace_count": 3
+          },
+          "strategy": "static_scrubber",
+          "strategy_label": "Plotly static scrubber"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.0035305839992361143,
+            "frame_count": 0,
+            "model_construction_seconds": 0.3853756659955252,
+            "plotly_json_size_bytes": 74576,
+            "point_count": 2403,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 0.3889062499947613,
+            "trace_count": 3
+          },
+          "strategy": "selected_frame_server",
+          "strategy_label": "Server-selected frame"
+        }
+      ]
+    },
+    {
+      "case": {
+        "duration_seconds": 8.0,
+        "label": "Larger simple Lagrangian",
+        "model_type": "simple",
+        "preset": "small_angle",
+        "sample_count": 2000,
+        "system_type": "lagrangian"
+      },
+      "case_id": "larger_simple_lagrangian",
+      "solver_state_convention": "angles_and_angular_velocities",
+      "solver_success": true,
+      "strategies": [
+        {
+          "metrics": {
+            "build_time_seconds": 0.0361474579985952,
+            "frame_count": 200,
+            "model_construction_seconds": 0.020874791000096593,
+            "plotly_json_size_bytes": 158897,
+            "point_count": 4603,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 0.057022248998691794,
+            "trace_count": 3
+          },
+          "strategy": "current_frames",
+          "strategy_label": "Current Plotly frames"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.02365875000396045,
+            "frame_count": 80,
+            "model_construction_seconds": 0.020874791000096593,
+            "plotly_json_size_bytes": 143997,
+            "point_count": 4243,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 0.04453354100405704,
+            "trace_count": 3
+          },
+          "strategy": "reduced_frames",
+          "strategy_label": "Reduced Plotly frames"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.006627916998695582,
+            "frame_count": 0,
+            "model_construction_seconds": 0.020874791000096593,
+            "plotly_json_size_bytes": 139773,
+            "point_count": 4003,
+            "slider_step_count": 100,
+            "total_python_seconds_if_model_reused": 0.027502707998792175,
+            "trace_count": 3
+          },
+          "strategy": "static_scrubber",
+          "strategy_label": "Plotly static scrubber"
+        },
+        {
+          "metrics": {
+            "build_time_seconds": 0.003428292002354283,
+            "frame_count": 0,
+            "model_construction_seconds": 0.020874791000096593,
+            "plotly_json_size_bytes": 124572,
+            "point_count": 4003,
+            "slider_step_count": 0,
+            "total_python_seconds_if_model_reused": 0.024303083002450876,
+            "trace_count": 3
+          },
+          "strategy": "selected_frame_server",
+          "strategy_label": "Server-selected frame"
+        }
+      ]
+    }
+  ],
+  "graph_identity_policy": "unique graph per run inherited from Tier 3A",
+  "manual_observation_status": "metrics generated; browser responsiveness remains manual",
+  "purpose": "Compact Plotly motion strategy metrics",
+  "strategies": {
+    "current_frames": {
+      "description": "Existing animate_pendulum output with frame step 10.",
+      "label": "Current Plotly frames"
+    },
+    "reduced_frames": {
+      "description": "Workbench-only Plotly frames using a coarser frame step.",
+      "label": "Reduced Plotly frames"
+    },
+    "selected_frame_server": {
+      "description": "No Plotly frames; Dash selects a single static frame.",
+      "label": "Server-selected frame"
+    },
+    "static_scrubber": {
+      "description": "No frames; Plotly slider updates the pendulum trace.",
+      "label": "Plotly static scrubber"
+    }
+  },
+  "tier": "Phase 6 / Tier 3B"
+}
