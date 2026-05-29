@@ -49,10 +49,23 @@ development/simulation_workbench/
 │   ├── output_composition.py
 │   ├── tier2_metrics.py
 │   └── tier2_preview_results.json
-└── tier_3/
+├── tier_3/
     ├── README.md
     ├── TIER_3_ROADMAP.md
-    └── tier_3a_animation_lifecycle/
+    ├── tier_3a_animation_lifecycle/
+    ├── tier_3b_plotly_strategies/
+    ├── tier_3c_canvas_feasibility/
+    ├── tier_3d_interaction_contract/
+    └── tier_3e_renderer_decision/
+└── tier_4_production_promotion/
+    ├── README.md
+    ├── TIER_4_PROMOTION_CLEANUP.md
+    ├── ACCEPTED_DECISIONS.md
+    ├── API_TIGHTENING_REQUIREMENTS.md
+    ├── PRODUCTION_TASK_A_PAYLOAD_API.md
+    ├── PRODUCTION_TASK_B_CANVAS_INTEGRATION.md
+    ├── PRODUCTION_TEST_PLAN.md
+    └── ROLLBACK_AND_DEFERRED_WORK.md
 ```
 
 File-management rule: new notes, scripts, and compact evidence files should
@@ -149,7 +162,7 @@ Expected artifacts:
 - a list of existing outputs and whether they are accepted, provisional,
   historical, or unknown.
 
-### Tier 1: Simulation result contract and numerical evidence baseline
+### Tier 1: Numerical trust baseline and result contract foundations
 
 Goal: define what a simulation run must expose before deciding what to render.
 
@@ -188,7 +201,11 @@ Expected artifacts:
 - numerical baseline report;
 - explicit list of quantities that are trusted, untrusted, or not yet audited.
 
-### Tier 2: First output composition
+Tier 1 also established the accepted user-facing initial-condition convention:
+`theta1`, `theta2`, `omega1`, `omega2`. Hamiltonian simulations convert those
+angular velocities to canonical momenta before solving.
+
+### Tier 2: First output composition preview
 
 Goal: test a coherent post-run Simulation workspace, not isolated eye-candy.
 
@@ -211,7 +228,7 @@ Each candidate must answer:
 - what rendering/callback cost does it introduce?
 - should it be accepted, rejected, deferred, or revised?
 
-### Tier 3: Animation and interaction experiments
+### Tier 3: Animation, Canvas renderer, interaction lifecycle, and renderer decision
 
 Goal: measure expensive or fragile interaction ideas before accepting them.
 
@@ -220,10 +237,7 @@ Candidate experiments may include:
 - animation frame strategy;
 - play/pause/reset;
 - scrubber behavior;
-- synced plot cursor or state readout;
-- preserving zoom/pan where appropriate;
 - compare/clear/rerun behavior;
-- nearby-initial-condition comparison;
 - clientside update paths if Dash/Plotly redraws are too expensive.
 
 Record:
@@ -238,12 +252,23 @@ Record:
 - responsiveness across repeated runs;
 - any browser or memory degradation observed.
 
-### Tier 4: Comparison and chaos bridge
+Accepted Tier 3 direction:
 
-Goal: prepare the Simulation page to support later chaos teaching without
-turning `/simulation` into the Chaos page prematurely.
+- Canvas is the preferred production candidate for physical motion and synced
+  selected-time inspection.
+- Python owns all mathematical and numerical truth.
+- JavaScript owns rendering and playback/inspection state only.
+- Plotly remains available as fallback or richer future analytical inspection.
+- Reduced-frame Plotly animation should not be promoted as the main UX.
+- The Tier 3D event matrix is the lifecycle authority.
 
-Candidate ideas:
+### Moved out of this workbench: comparison and chaos bridge
+
+The previous Tier 4 comparison/chaos bridge is cancelled from this workbench
+sequence and moved to a future development branch to be defined later.
+
+The idea remains valuable, but it introduces distinct scientific and
+pedagogical questions:
 
 - side-by-side runs;
 - perturbation controls;
@@ -252,14 +277,14 @@ Candidate ideas:
 - energy-drift comparison;
 - bridges to future chaos modules.
 
-Every comparison feature must state what is being compared, why it is meaningful,
-and what claims should not be made from the visual alone.
+These are not prerequisites for promoting the accepted Canvas renderer
+direction.
 
-### Tier 5: Promotion plan
+### Tier 4: Production promotion package, API hardening plan, and final workbench cleanup
 
 Goal: turn accepted workbench decisions into maintainable production behavior.
 
-A promotion plan should state:
+The Tier 4 promotion package should state:
 
 - what user problem the accepted tier solves;
 - which files will change;
@@ -271,6 +296,11 @@ A promotion plan should state:
 - which numerical assumptions are trusted;
 - which limitations remain documented;
 - how to roll back or defer if the promoted path fails.
+
+Tier 4 splits the production implementation into two tasks:
+
+- Production Task A: Python Canvas payload API and tests.
+- Production Task B: Canvas renderer integration into `/simulation`.
 
 ## Candidate output decision record
 
@@ -341,23 +371,15 @@ Maintainability evidence:
 - tests cover promoted behavior;
 - production code does not import unstable workbench modules.
 
-## First recommended tasks
+## Current recommended next tasks
 
-Start with Tier 0 and Tier 1.
+Tier 0 through Tier 3 now provide the evidence trail for Canvas promotion.
 
-Do not fill the blank Simulation workspace with plots just because it is blank.
-First define the doctrine, inspect the existing machinery, and establish what
-run data can be trusted.
+The next production work should follow Tier 4:
 
-Recommended first task:
+1. Implement Production Task A: Python Canvas payload API and tests.
+2. Implement Production Task B: Canvas renderer integration into `/simulation`
+   using the tested payload API and Tier 3D lifecycle contract.
 
-- create `tier_0/INVENTORY.md` for the current `/simulation` page, callbacks,
-  outputs, plotting helpers, model classes, tests, and known evidence gaps.
-
-Recommended second task:
-
-- draft the simulation-result contract and produce the first numerical evidence
-  baseline for representative runs under `tier_1/`.
-
-Only after those exist should Tier 2 decide the first accepted output
-composition for the live Simulation workspace.
+Comparison and chaos bridge work is intentionally deferred to a future
+development branch. It should not block the Canvas renderer promotion path.

@@ -50,7 +50,7 @@ def find_repo_root(start: Path) -> Path:
     for candidate in [start, *start.parents]:
         if (
             (candidate / "AGENTS.md").is_file()
-            and (candidate / "README.md").is_file()
+            and (candidate / "TIER4_README.md").is_file()
             and (candidate / "src" / "double_pendulum").is_dir()
         ):
             return candidate
