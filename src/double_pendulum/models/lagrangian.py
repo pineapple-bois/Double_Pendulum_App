@@ -5,6 +5,12 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from ..math.functions import *
+from .initial_conditions import (
+    LAGRANGIAN_SOLVER_STATE_CONVENTION,
+    LAGRANGIAN_STATE_VARIABLE_NAMES,
+    USER_INITIAL_CONDITION_NAMES,
+    user_initial_conditions_to_radians,
+)
 from .metadata import SolverMetadata
 
 omega1 = sp.Function('omega1')(t)
@@ -81,7 +87,13 @@ class DoublePendulumLagrangian:
 
     def __init__(self, parameters, initial_conditions, time_vector,
                  model='simple', integrator=solve_ivp, **integrator_args):
-        self.initial_conditions = np.deg2rad(initial_conditions)
+        self.user_initial_conditions_degrees = np.asarray(initial_conditions, dtype=float)
+        self.user_initial_conditions_radians = user_initial_conditions_to_radians(initial_conditions)
+        self.user_initial_condition_names = list(USER_INITIAL_CONDITION_NAMES)
+        self.solver_state_variable_names = list(LAGRANGIAN_STATE_VARIABLE_NAMES)
+        self.solver_state_convention = LAGRANGIAN_SOLVER_STATE_CONVENTION
+        self.initial_condition_conversion = "degrees_to_radians"
+        self.initial_conditions = np.array(self.user_initial_conditions_radians, copy=True)
         self.time = np.linspace(time_vector[0], time_vector[1], time_vector[2])
         self.parameters = parameters
         self.model = model

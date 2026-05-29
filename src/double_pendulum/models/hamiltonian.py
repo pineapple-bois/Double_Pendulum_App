@@ -7,6 +7,14 @@ from scipy.integrate import odeint, solve_ivp
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from ..math.functions import *
+from .initial_conditions import (
+    HAMILTONIAN_SOLVER_STATE_CONVENTION,
+    HAMILTONIAN_STATE_VARIABLE_NAMES,
+    USER_INITIAL_CONDITION_NAMES,
+    angular_velocities_to_canonical_momenta,
+    hamiltonian_solver_initial_conditions,
+    user_initial_conditions_to_radians,
+)
 from .metadata import SolverMetadata
 
 p_theta_1 = sp.Function('p_theta_1')(t)
@@ -25,6 +33,15 @@ def hamiltonian_first_order_system(model='simple'):
 
 
 class DoublePendulumHamiltonian:
+    """
+    Hamiltonian double-pendulum model.
+
+    Public callers pass user-facing initial conditions as
+    [theta1, theta2, omega1, omega2] in degrees and degrees per second. The
+    solver state is [theta1, theta2, p_theta_1, p_theta_2], so the constructor
+    converts angular velocities to canonical momenta before integration.
+    """
+
     # Class variable for caching
     _cache = {}
 
@@ -46,10 +63,25 @@ class DoublePendulumHamiltonian:
 
     def __init__(self, parameters, initial_conditions, time_vector,
                  model='simple', integrator=solve_ivp, **integrator_args):
-        self.initial_conditions = np.deg2rad(initial_conditions)
-        self.time = np.linspace(time_vector[0], time_vector[1], time_vector[2])
         self.parameters = parameters
         self.model = model
+        self.user_initial_conditions_degrees = np.asarray(initial_conditions, dtype=float)
+        self.user_initial_conditions_radians = user_initial_conditions_to_radians(initial_conditions)
+        self.user_initial_condition_names = list(USER_INITIAL_CONDITION_NAMES)
+        self.solver_state_variable_names = list(HAMILTONIAN_STATE_VARIABLE_NAMES)
+        self.solver_state_convention = HAMILTONIAN_SOLVER_STATE_CONVENTION
+        self.initial_condition_conversion = "angular_velocities_to_canonical_momenta"
+        self.initial_canonical_momenta = angular_velocities_to_canonical_momenta(
+            parameters,
+            self.user_initial_conditions_radians,
+            model,
+        )
+        self.initial_conditions = hamiltonian_solver_initial_conditions(
+            parameters,
+            self.user_initial_conditions_radians,
+            model,
+        )
+        self.time = np.linspace(time_vector[0], time_vector[1], time_vector[2])
 
         # Get equations for the specified model
         MAT_EQ, eqn1, eqn2, eqn3, eqn4 = self._compute_and_cache_equations(model)
