@@ -41,14 +41,18 @@ development/simulation_workbench/
 │   ├── tier1_baseline_results.json
 │   ├── tier1c_hamiltonian_convention.py
 │   └── tier1c_hamiltonian_convention_results.json
-└── tier_2/
+├── tier_2/
+│   ├── README.md
+│   ├── TIER_2_OUTPUT_COMPOSITION.md
+│   ├── OUTPUT_DECISIONS.md
+│   ├── workspace_preview_app.py
+│   ├── output_composition.py
+│   ├── tier2_metrics.py
+│   └── tier2_preview_results.json
+└── tier_3/
     ├── README.md
-    ├── TIER_2_OUTPUT_COMPOSITION.md
-    ├── OUTPUT_DECISIONS.md
-    ├── workspace_preview_app.py
-    ├── output_composition.py
-    ├── tier2_metrics.py
-    └── tier2_preview_results.json
+    ├── TIER_3_ROADMAP.md
+    └── tier_3a_animation_lifecycle/
 ```
 
 File-management rule: new notes, scripts, and compact evidence files should

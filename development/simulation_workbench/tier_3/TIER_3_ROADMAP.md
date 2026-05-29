@@ -71,7 +71,11 @@ Expected behavior:
 - changed inputs either mark the output stale or prevent stale playback;
 - no visual state should continue animating after its simulation result has been superseded.
 
-Tier 3A starts here.
+Tier 3A started here and is now closed for this specific production bug:
+manual inspection found that replacing the `dcc.Graph` instance on each run
+fixes stale Plotly playback, and the strategy has been promoted to the existing
+`/simulation` page. Future Tier 3 work should still define broader interaction
+contracts and renderer strategy before a larger Simulation workspace redesign.
 
 ## Directory Structure
 
