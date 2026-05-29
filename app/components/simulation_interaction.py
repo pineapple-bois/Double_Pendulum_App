@@ -28,8 +28,8 @@ FRAME_INDICATOR_ID = "simulation-frame-indicator"
 RENDERER_SYNC_SIGNAL_ID = "simulation-renderer-sync-signal"
 
 EMPTY_STATE_MESSAGE = (
-    "No simulation run yet. Run a validated setup to prepare the Canvas "
-    "inspection workspace, run summary, and solver diagnostics."
+    "No simulation run yet. Run a validated setup to prepare motion playback, "
+    "run summary, and solver diagnostics."
 )
 
 
@@ -107,7 +107,7 @@ def build_canvas_workspace_placeholder():
         id=CANVAS_WORKSPACE_ID,
         className="simulation-panel canvas-inspection-workspace",
         children=[
-            html.H3("Canvas Workspace", className="simulation-panel-heading"),
+            html.H3("Simulation Output", className="simulation-panel-heading"),
             html.Div(
                 className="canvas-workspace-grid",
                 children=[

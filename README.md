@@ -102,7 +102,12 @@ This application represents a hybrid of web-development and dashboard engineerin
   - The equations are cached to reduce runtime for further simulations of the same model.
   - The equations are numerically integrated using `SciPy`'s [solve_ivp](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html) function. Integrator arguments are available in the class structure but this functionality is yet to be added to the UI.
 - **Visualisation**: 
-  - Figures are rendered with `Plotly` and `Matplotlib`.
+  - The production Simulation page now uses a Canvas renderer for motion,
+    angular displacement, and angular state projection playback from
+    Python-built payloads.
+  - `Plotly` and `Matplotlib` remain dependencies for retained plotting helpers
+    and future richer analytical inspection, but legacy Plotly outputs are no
+    longer generated in the normal Simulation run flow.
   - [`MathJax`](https://www.mathjax.org) API is used for rendering latex expressions.
 - **Error Handling**: 
   - Robust validation of user inputs, ensures computational load is never too high.

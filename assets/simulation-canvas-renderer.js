@@ -888,7 +888,7 @@
         if (status === "unsupported" || status === "invalid") {
             return "Canvas unavailable";
         }
-        return "Canvas workspace";
+        return "Simulation output";
     }
 
     function updateReadoutForFrame() {

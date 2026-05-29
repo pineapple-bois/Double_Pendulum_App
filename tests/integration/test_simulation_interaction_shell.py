@@ -30,14 +30,6 @@ from tests.helpers import extract_dash_text
 
 CALLBACK_SENSITIVE_IDS = {
     "submit-val",
-    "animation-phase-container",
-    "time-graph-container",
-    "time-graph-section",
-    "error-message",
-    "pendulum-animation",
-    "phase-graph",
-    "time-graph",
-    "loading-animation-phase",
     "scroll-target",
     "model-type",
     "system-type",
@@ -58,6 +50,17 @@ CALLBACK_SENSITIVE_IDS = {
     "info-popup",
     "info-button",
     "close-info-button",
+}
+
+LEGACY_PLOTLY_OUTPUT_IDS = {
+    "animation-phase-container",
+    "time-graph-container",
+    "time-graph-section",
+    "error-message",
+    "pendulum-animation",
+    "phase-graph",
+    "time-graph",
+    "loading-animation-phase",
 }
 
 SHELL_IDS = {
@@ -141,12 +144,20 @@ def text_from(component):
     return " ".join(extract_dash_text(component))
 
 
+def callback_outputs(callback):
+    outputs = callback.get("output") or []
+    if isinstance(outputs, (list, tuple)):
+        return outputs
+    return [outputs]
+
+
 def test_simulation_layout_adds_memory_scoped_stores_and_preserves_existing_ids():
     layout = get_layout_for_path("/simulation")
     ids = collect_ids(layout)
 
     assert CALLBACK_SENSITIVE_IDS <= ids
     assert SHELL_IDS <= ids
+    assert LEGACY_PLOTLY_OUTPUT_IDS.isdisjoint(ids)
 
     canvas_store = find_by_id(layout, CANVAS_PAYLOAD_STORE_ID)
     result_store = find_by_id(layout, RESULT_STATE_STORE_ID)
@@ -201,11 +212,22 @@ def test_submit_val_remains_registered_run_trigger():
 
     assert len(submit_callbacks) == 1
     callback = submit_callbacks[0]
-    output_ids = {output.component_id for output in callback["output"]}
+    output_ids = {output.component_id for output in callback_outputs(callback)}
     assert CANVAS_PAYLOAD_STORE_ID in output_ids
     assert RESULT_STATE_STORE_ID in output_ids
-    assert "animation-phase-container" in output_ids
-    assert "time-graph-container" in output_ids
+    assert LEGACY_PLOTLY_OUTPUT_IDS.isdisjoint(output_ids)
+
+
+def test_callbacks_do_not_target_retired_plotly_layout_components():
+    import pendulum_app
+
+    callback_output_ids = {
+        output.component_id
+        for callback in pendulum_app.app.callback_map.values()
+        for output in callback_outputs(callback)
+    }
+
+    assert LEGACY_PLOTLY_OUTPUT_IDS.isdisjoint(callback_output_ids)
 
 
 def test_renderer_store_sync_clientside_callback_is_registered():
@@ -227,7 +249,7 @@ def test_renderer_store_sync_clientside_callback_is_registered():
     assert "clientside_function" in renderer_callback_config
 
 
-def test_successful_run_result_stores_valid_canvas_payload_and_keeps_plotly_fallback():
+def test_successful_run_result_stores_valid_canvas_payload_without_plotly_generation():
     result = build_simulation_run_result(
         1,
         10.0,
@@ -252,8 +274,9 @@ def test_successful_run_result_stores_valid_canvas_payload_and_keeps_plotly_fall
     assert payload["status"] == "success"
     assert payload["rendering"]["drawable"] is True
     assert result["result_state"]["status"] == "success"
-    assert result["animation_phase_style"] == {"display": "flex"}
-    assert result["time_graph_container_style"] == {"display": "block"}
+    assert "animation_phase_children" not in result
+    assert "time_graph_children" not in result
+    assert "animation_phase_style" not in result
 
     summary_text = text_from(result["run_summary_children"])
     diagnostics_text = text_from(result["solver_diagnostics_children"])

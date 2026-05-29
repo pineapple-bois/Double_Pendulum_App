@@ -337,10 +337,23 @@ def test_simulation_layout_opens_directly_into_workspace():
         "system-type",
         "param_g",
         "unity-parameters",
+        "canvas-motion-payload-store",
+        "simulation-result-state-store",
+        "simulation-playback-state-store",
+        "canvas-motion-view",
+        "canvas-time-series-view",
+        "canvas-projection-view",
+        "simulation-play-button",
+        "simulation-scrubber",
+    } <= ids
+    assert {
         "pendulum-animation",
         "phase-graph",
         "time-graph",
-    } <= ids
+        "animation-phase-container",
+        "time-graph-container",
+        "time-graph-section",
+    }.isdisjoint(ids)
 
 
 def test_routing_callback_registration_is_importable():

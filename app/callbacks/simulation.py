@@ -1,18 +1,9 @@
 import dash
 from dash import html
 from dash.dependencies import Input, Output, State
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import plotly.graph_objs as go
-import plotly.tools as tls
 import sympy as sp
 from copy import deepcopy
-from time import perf_counter_ns
 
-from app.components.figure_style import mpl_layout
-from app.components.graphs import get_animation_phase_children, get_time_graph_children
 from app.components.simulation_interaction import (
     CANVAS_PAYLOAD_STORE_ID,
     EMPTY_STATE_MESSAGE,
@@ -26,7 +17,6 @@ from app.components.simulation_interaction import (
     initial_playback_state,
 )
 from app.content.simulation import INFO_BUTTON_CLOSE_LABEL, INFO_BUTTON_OPEN_LABEL
-from app.content.simulation import PHASE_PORTRAIT_TITLE, TIME_GRAPH_TITLE, TRACE_ANIMATION_TITLE
 from app.serialization import (
     build_canvas_motion_payload,
     estimate_canvas_payload_size,
@@ -114,28 +104,6 @@ def _parameter_values(model_type, param_l1, param_l2, param_m1, param_m2, param_
     else:
         weights = {M1: param_M1, M2: param_M2}
     return {l1: param_l1, l2: param_l2, g: param_g, **weights}
-
-
-def _empty_plotly_outputs(instance_id, error_message=None):
-    empty_figure = go.Figure()
-    return {
-        "animation_phase_children": get_animation_phase_children(
-            TRACE_ANIMATION_TITLE,
-            PHASE_PORTRAIT_TITLE,
-            animation_figure=empty_figure,
-            phase_figure=empty_figure,
-            instance_id=instance_id,
-        ),
-        "time_graph_children": get_time_graph_children(
-            TIME_GRAPH_TITLE,
-            figure=empty_figure,
-            instance_id=instance_id,
-        ),
-        "animation_phase_style": {"display": "none"},
-        "time_graph_container_style": {"display": "none"},
-        "time_graph_section_style": {"display": "none"},
-        "error_message": error_message,
-    }
 
 
 def _render_run_summary(payload):
@@ -227,12 +195,6 @@ def _state_outputs(payload, status, message, playback_state="idle", previous_pla
 
 def _callback_outputs(result):
     return (
-        result["animation_phase_children"],
-        result["time_graph_children"],
-        result["animation_phase_style"],
-        result["time_graph_container_style"],
-        result["time_graph_section_style"],
-        result["error_message"],
         result["canvas_payload"],
         result["result_state"],
         result["playback_state"],
@@ -250,9 +212,7 @@ def _failed_result(
     system_type,
     message,
     errors=None,
-    error_message=None,
     solver_metadata=None,
-    instance_id=None,
     previous_playback_state=None,
 ):
     payload = build_canvas_motion_payload(
@@ -265,17 +225,13 @@ def _failed_result(
         errors=errors or [],
         solver_metadata=solver_metadata,
     )
-    result = _empty_plotly_outputs(instance_id or f"failed-{run_id}-{perf_counter_ns()}", error_message=error_message)
-    result.update(
-        _state_outputs(
-            payload,
-            "failed",
-            message,
-            playback_state="cancelled",
-            previous_playback_state=previous_playback_state,
-        )
+    return _state_outputs(
+        payload,
+        "failed",
+        message,
+        playback_state="cancelled",
+        previous_playback_state=previous_playback_state,
     )
-    return result
 
 
 def build_input_change_result(
@@ -301,8 +257,6 @@ def build_input_change_result(
     new_error_message = validate_inputs([initial_conditions],
                                         time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
                                         param_M1, param_M2, param_g)
-    instance_id = f"stale-{perf_counter_ns()}"
-
     if new_error_message:
         message = "Validation failed. Correct the highlighted inputs before rerunning."
         return _failed_result(
@@ -311,8 +265,6 @@ def build_input_change_result(
             system_type=system_type,
             message=message,
             errors=[_flatten_dash_text(new_error_message) or "Validation failed."],
-            error_message=new_error_message,
-            instance_id=instance_id,
             previous_playback_state=current_playback_state,
         )
 
@@ -327,17 +279,13 @@ def build_input_change_result(
         status = "empty"
         playback_state = "idle"
 
-    result = _empty_plotly_outputs(instance_id, error_message=None)
-    result.update(
-        _state_outputs(
-            payload,
-            status,
-            message,
-            playback_state=playback_state,
-            previous_playback_state=current_playback_state,
-        )
+    return _state_outputs(
+        payload,
+        status,
+        message,
+        playback_state=playback_state,
+        previous_playback_state=current_playback_state,
     )
-    return result
 
 
 def build_simulation_run_result(
@@ -362,17 +310,13 @@ def build_simulation_run_result(
     run_id = int(n_clicks or 0)
     if run_id <= 0:
         payload = initial_canvas_payload()
-        result = _empty_plotly_outputs(None, error_message="")
-        result.update(
-            _state_outputs(
-                payload,
-                "empty",
-                EMPTY_STATE_MESSAGE,
-                playback_state="idle",
-                previous_playback_state=initial_playback_state(),
-            )
+        return _state_outputs(
+            payload,
+            "empty",
+            EMPTY_STATE_MESSAGE,
+            playback_state="idle",
+            previous_playback_state=initial_playback_state(),
         )
-        return result
 
     initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
     error_message = validate_inputs([initial_conditions],
@@ -386,8 +330,6 @@ def build_simulation_run_result(
             system_type=system_type,
             message=message,
             errors=[_flatten_dash_text(error_message) or "Validation failed."],
-            error_message=error_message,
-            instance_id=f"error-{run_id}-{perf_counter_ns()}",
             previous_playback_state=current_playback_state,
         )
 
@@ -456,69 +398,13 @@ def build_simulation_run_result(
             previous_playback_state=current_playback_state,
         )
 
-    try:
-        matplotlib_time_fig = pendulum.time_graph()
-        time_fig = tls.mpl_to_plotly(matplotlib_time_fig)
-        time_fig.update_layout(
-            autosize=True,
-            margin=dict(l=20, r=20, t=20, b=20),
-        )
-        plt.close(matplotlib_time_fig)
-
-        matplotlib_phase_fig = pendulum.phase_path()
-        phase_fig = tls.mpl_to_plotly(matplotlib_phase_fig)
-        phase_fig.update_layout(
-            autosize=True,
-            margin=dict(l=20, r=20, t=20, b=20),
-            width=600,
-            height=600,
-        )
-        plt.close(matplotlib_phase_fig)
-
-        time_fig.update_layout(mpl_layout)
-        phase_fig.update_layout(mpl_layout)
-
-        animation_fig = pendulum.animate_pendulum(trace=True, fig_width=600, fig_height=600, static=True)
-    except Exception as exc:
-        return _failed_result(
-            run_id=run_id,
-            model_type=model_type,
-            system_type=system_type,
-            message="Plotly fallback generation failed.",
-            errors=[str(exc)],
-            solver_metadata=solver_metadata_dict,
-            previous_playback_state=current_playback_state,
-        )
-
-    instance_id = f"run-{run_id}"
-    result = {
-        "animation_phase_children": get_animation_phase_children(
-            TRACE_ANIMATION_TITLE,
-            PHASE_PORTRAIT_TITLE,
-            animation_figure=animation_fig,
-            phase_figure=phase_fig,
-            instance_id=instance_id,
-        ),
-        "time_graph_children": get_time_graph_children(
-            TIME_GRAPH_TITLE,
-            figure=time_fig,
-            instance_id=instance_id,
-        ),
-        "animation_phase_style": {"display": "flex"},
-        "time_graph_container_style": {"display": "block"},
-        "time_graph_section_style": {"display": "flex"},
-        "error_message": "",
-    }
-    result.update(
-        _state_outputs(
-            payload,
-            "success",
-            "Run completed. Canvas workspace is ready.",
-            playback_state="idle",
-            previous_playback_state={"selected_frame": 0, "axes": True, "grid": True},
-        )
+    return _state_outputs(
+        payload,
+        "success",
+        "Run completed. Simulation output is ready.",
+        playback_state="idle",
+        previous_playback_state={"selected_frame": 0, "axes": True, "grid": True},
     )
-    return result
 
 
 def register_simulation_callbacks(app):
@@ -584,12 +470,6 @@ def register_simulation_callbacks(app):
 
     @app.callback(
         [
-            Output('animation-phase-container', 'children', allow_duplicate=True),
-            Output('time-graph-container', 'children', allow_duplicate=True),
-            Output('animation-phase-container', 'style', allow_duplicate=True),
-            Output('time-graph-container', 'style', allow_duplicate=True),
-            Output('time-graph-section', 'style', allow_duplicate=True),
-            Output('error-message', 'children', allow_duplicate=True),
             Output(CANVAS_PAYLOAD_STORE_ID, 'data', allow_duplicate=True),
             Output(RESULT_STATE_STORE_ID, 'data', allow_duplicate=True),
             Output(PLAYBACK_STATE_STORE_ID, 'data', allow_duplicate=True),
@@ -616,16 +496,15 @@ def register_simulation_callbacks(app):
             Input('system-type', 'value')
         ],
         [
-            State('error-message', 'children'),
             State(CANVAS_PAYLOAD_STORE_ID, 'data'),
             State(PLAYBACK_STATE_STORE_ID, 'data'),
         ],
         prevent_initial_call=True
     )
-    def clear_graphs_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
-                                     time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1,
-                                     param_M2, param_g, model_type, system_type, current_error_message,
-                                     current_payload, current_playback_state):
+    def mark_output_stale_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
+                                          time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1,
+                                          param_M2, param_g, model_type, system_type, current_payload,
+                                          current_playback_state):
         result = build_input_change_result(
             init_cond_theta1,
             init_cond_theta2,
@@ -648,13 +527,7 @@ def register_simulation_callbacks(app):
         return _callback_outputs(result)
 
     @app.callback(
-        [Output('animation-phase-container', 'children'),
-         Output('time-graph-container', 'children'),
-         Output('animation-phase-container', 'style'),
-         Output('time-graph-container', 'style'),
-         Output('time-graph-section', 'style'),
-         Output('error-message', 'children'),
-         Output(CANVAS_PAYLOAD_STORE_ID, 'data'),
+        [Output(CANVAS_PAYLOAD_STORE_ID, 'data'),
          Output(RESULT_STATE_STORE_ID, 'data'),
          Output(PLAYBACK_STATE_STORE_ID, 'data'),
          Output(STATUS_MESSAGE_ID, 'children'),

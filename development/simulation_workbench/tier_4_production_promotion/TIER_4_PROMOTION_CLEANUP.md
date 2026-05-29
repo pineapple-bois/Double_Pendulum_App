@@ -5,6 +5,26 @@ Date: 2026-05-29
 
 ## Summary
 
+Integration D promotes the accepted Canvas path to the normal production
+Simulation output.
+
+Current production result:
+
+- `/simulation` renders the Canvas-powered Simulation output as the primary
+  output surface.
+- Successful runs build and store the Task A Canvas payload, result state,
+  playback state, run summary, and solver diagnostics.
+- Legacy Plotly graph sections are no longer rendered on the normal Simulation
+  page and Plotly figures are no longer generated in the normal run callback.
+- Plotly graph helper functions and model plotting methods remain in the
+  codebase as dormant rollback/future analytical-inspection helpers rather
+  than being purged during this cleanup.
+- The Canvas renderer remains isolated in `assets/simulation-canvas-renderer.js`
+  and the Python payload API remains isolated under `app/serialization/`.
+
+The following historical handoff text records the promotion path that led to
+that result.
+
 The Simulation Workbench now has a clear production handoff.
 
 Canvas is the preferred candidate for physical motion and synced selected-time
