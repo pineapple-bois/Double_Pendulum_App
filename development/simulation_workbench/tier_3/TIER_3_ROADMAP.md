@@ -110,7 +110,11 @@ development/simulation_workbench/tier_3/
 - tier_3e_renderer_decision/
   - README.md
   - TIER_3E_RENDERER_DECISION.md
+  - CANVAS_RENDERER_API.md
+  - CANVAS_STRESS_CHECKS.md
   - PROMOTION_PLAN.md
+  - canvas_stress_runner.py
+  - tier3e_results.json
 
 The root Tier 3 directory is for the roadmap and index only.
 
