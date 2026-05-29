@@ -680,34 +680,109 @@ Phase 5D.1: Simulation page production workspace pass:
   dark navy app shell and production workspace direction without inventing major
   new simulation features.
 
-### Phase 6: Math fidelity and numerical validation
+### Phase 6: Simulation Manifesto and Workbench
 
-Raise confidence in the mathematical and numerical behavior.
+Define what the `/simulation` page is for before filling the cleared workspace
+with plots. Phase 6 is a high-level product, numerical, rendering, and UX
+evidence programme. It is not another Phase 5 styling pass, and it is not a
+detached sandbox outside the app. The Simulation page is the product surface;
+the workbench exists to decide what deserves to appear there.
+
+Core premise:
+
+- `/simulation` is the core interactive instrument of the app.
+- It is not a documentation page and not a gallery of attractive plots.
+- Every output or interaction must earn its place by improving at least one of:
+  interpretability, numerical trust, interaction quality, rendering
+  performance, or maintainability.
+- Exploratory visuals may be prototyped before complete numerical validation,
+  but production acceptance requires explicit evidence for the underlying
+  `DoublePendulum` model outputs.
 
 Key work:
 
-- Build toward Level 3 numerical testing:
+- Create and maintain `development/simulation_workbench/README.md` as the
+  manifesto for the Simulation page.
+- Inventory the current simulation page, callback IDs, output targets, plotting
+  helpers, model classes, tests, and numerical evidence gaps.
+- Define independent workbench tiers so experiments remain focused,
+  documented, and accept/reject-able.
+- Define a simulation-result contract before over-investing in particular
+  plots. Candidate fields include model type, system type, gravity, parameters,
+  initial conditions, time interval, solver metadata, state arrays, position
+  arrays, energy arrays when available, runtime, and validation warnings.
+- Pull the previous math-fidelity and numerical-validation goals into this
+  phase as evidence gates:
   - output shape and finite-value tests
   - initial-condition consistency tests
   - energy sanity checks
   - numerical drift checks under suitable tolerances
   - trajectory consistency checks for representative parameter sets
-- Define tolerances explicitly and document why they are acceptable.
-- Compare Lagrangian and Hamiltonian behavior where the state definitions make
-  comparison meaningful.
-- Avoid overclaiming exact conservation in chaotic or numerically sensitive
-  regimes.
+  - documented solver methods, tolerances, and failure states
+  - Lagrangian/Hamiltonian comparisons only where state definitions make the
+    comparison meaningful
+- Prototype candidate outputs only when their question and evidence requirements
+  are documented. Candidate outputs include physical animation, time-series
+  plots, state-space projections, energy diagnostics, solver/run summaries,
+  comparison runs, and useful empty states before the first run.
+- Measure rendering and callback behaviour before accepting expensive outputs:
+  integration time, figure-build time, callback latency, Plotly JSON size, trace
+  count, point count, frame count, time to first useful visual, and browser
+  responsiveness.
+- Use promotion plans rather than migration plans. Accepted workbench tiers may
+  reshape the live `/simulation` page, but durable code should be promoted into
+  `app/` or `src/double_pendulum/` deliberately, with tests and documented
+  assumptions.
 
 Definition of done:
 
+- `development/simulation_workbench/README.md` exists and states the Simulation
+  Manifesto, guardrails, tier model, evidence gates, and promotion rules.
+- A current inventory of simulation-page controls, callbacks, output IDs,
+  plotting helpers, model classes, and test coverage exists under the
+  workbench.
+- Candidate outputs have decision records explaining the question answered,
+  required data, risks, metrics, and acceptance decision.
 - Representative simulations have documented sanity expectations.
-- Energy and drift checks exist for suitable regimes and tolerances.
-- Numerical failures are distinguishable from UI failures.
-- Model changes cannot silently break basic physical plausibility.
+- Numerical failures are distinguishable from UI/rendering failures.
+- At least one accepted output composition or empty-state direction is supported
+  by numerical, performance, and interpretability evidence.
 
-### Phase 7: Chaos content scaffolding
+### Phase 7: Simulation workspace promotion and production hardening
 
-Develop chaos content carefully after the simulation foundations are stable.
+Promote accepted Phase 6 workbench decisions into the live `/simulation`
+experience. This phase turns evidenced prototypes into maintainable production
+page behavior.
+
+Key work:
+
+- Build the default Simulation workspace around accepted output tiers rather
+  than the historical animation/time-series/phase-graph assumptions.
+- Promote durable non-Dash logic into `src/double_pendulum/` and page/callback
+  code into `app/` only after the workbench evidence supports it.
+- Preserve callback-bound component IDs unless every dependent layout and
+  callback reference is updated together.
+- Keep the left control rail, run action, output workspace, diagnostics, and
+  empty states coherent across practical viewport sizes.
+- Add or update tests for the promoted result contract, figure builders,
+  callback paths, validation behavior, and representative numerical regimes.
+- Keep the footer-anchored Run Simulation workflow only as long as it remains
+  justified by the accepted Simulation page design.
+
+Definition of done:
+
+- The live `/simulation` page exposes only accepted outputs and interactions.
+- The page has a clear pre-run state, run state, result state, and validation
+  failure state.
+- Promoted code has tests and no production dependency on `development/`.
+- Numerical, rendering, and UX limitations are documented rather than hidden.
+- Browser smoke checks confirm the default Simulation workflow remains usable.
+
+### Phase 8: Chaos content scaffolding
+
+Develop chaos content carefully after the simulation foundations are stable and
+credible. Phase 8 should build on the accepted Simulation workbench evidence and
+Phase 7 production-hardening decisions rather than raw exploratory prototypes.
 
 Future content scaffolding:
 
@@ -725,15 +800,16 @@ should not be promoted wholesale without tests and review.
 
 Definition of done:
 
-- Chaos concepts are introduced progressively from visible motion to phase-space
+- Chaos concepts are introduced progressively from visible motion to state-space
   structure to quantitative diagnostics.
-- Prototype chaos code has been reviewed and migrated intentionally.
+- Prototype chaos code has been reviewed and promoted intentionally.
 - New metrics have tests or clearly documented limitations.
 - Expensive computations have realistic performance boundaries.
 
-### Phase 8: Deployment refresh
+### Phase 9: Deployment refresh
 
-Redeploy only after local modernization is stable.
+Redeploy only after local modernization is stable and the Simulation workspace
+has a tested, credible default experience.
 
 Key work:
 
