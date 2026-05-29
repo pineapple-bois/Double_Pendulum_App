@@ -10,10 +10,8 @@ COMPOUND_PARAMETERS = {l1: 1.0, l2: 1.0, M1: 1.0, M2: 1.0, g: 9.81}
 INITIAL_CONDITIONS_DEGREES = [10.0, 20.0, 0.0, 0.0]
 TIME_VECTOR = [0.0, 0.05, 4]
 
-# Current behavior note: the Hamiltonian class state is
-# [theta1, theta2, p_theta_1, p_theta_2], but the app passes the same
-# UI-shaped degree values used by the Lagrangian angular-velocity state.
-# These tests preserve that contract without asserting it is physically final.
+# The user-facing initial-condition convention is [theta1, theta2, omega1, omega2].
+# Hamiltonian models convert the last two values to canonical momenta internally.
 
 
 @pytest.mark.parametrize(

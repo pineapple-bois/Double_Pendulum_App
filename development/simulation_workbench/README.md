@@ -35,6 +35,8 @@ development/simulation_workbench/
     ├── TIER_1_NUMERICAL_BASELINE.md
     ├── TIER_1B_SOLVER_METADATA.md
     ├── TIER_1C_HAMILTONIAN_CONVENTION.md
+    ├── TIER_1D_OPTION_1_HAMILTONIAN_CONVERSION.md
+    ├── TIER_1_CLOSEOUT.md
     ├── tier1_baseline.py
     ├── tier1_baseline_results.json
     ├── tier1c_hamiltonian_convention.py

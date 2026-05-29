@@ -24,9 +24,13 @@ before new Simulation page outputs are accepted. Field status labels mean:
 | `lengths` | Rod lengths `l1`, `l2`. | available today | `param_l1`, `param_l2`, passed in `parameters`. |
 | `masses` | Active simple masses `m1`, `m2` or compound masses `M1`, `M2`. | available today | Callback chooses symbols based on `model_type`. |
 | `initial_conditions_ui` | Values entered by the UI. | available today | Callback receives `[theta1, theta2, omega1, omega2]` before model construction. |
-| `initial_conditions_internal` | Values used by solver. | available today | `pendulum.initial_conditions` after `np.deg2rad(...)`. |
-| `state_variable_names` | Names and order of state columns. | available but not cleanly packaged | Lagrangian is `[theta1, theta2, omega1, omega2]`; Hamiltonian is `[theta1, theta2, p_theta_1, p_theta_2]`. |
-| `state_units` | Units for each state column. | unsafe/needs mathematical audit | Angle columns are radians internally. Lagrangian velocity columns appear converted from deg/s to rad/s. Hamiltonian momentum slots are not audited. |
+| `user_initial_conditions_degrees` | UI values as entered: degrees and degrees per second. | available today | Model instances expose `pendulum.user_initial_conditions_degrees`. |
+| `user_initial_conditions_radians` | UI values converted to radians and radians per second. | available today | Model instances expose `pendulum.user_initial_conditions_radians`. |
+| `initial_conditions_internal` | Values used by solver. | available today | `pendulum.initial_conditions`; Lagrangian keeps angular velocities, Hamiltonian stores converted canonical momenta. |
+| `solver_state_variable_names` | Names and order of state columns. | available today | `pendulum.solver_state_variable_names`; Lagrangian is `[theta1, theta2, omega1, omega2]`, Hamiltonian is `[theta1, theta2, p_theta_1, p_theta_2]`. |
+| `solver_state_convention` | Solver-state convention label. | available today | `pendulum.solver_state_convention`. |
+| `initial_condition_conversion` | Conversion applied between UI request and solver state. | available today | Lagrangian: `degrees_to_radians`; Hamiltonian: `angular_velocities_to_canonical_momenta`. |
+| `state_units` | Units for each state column. | available but not cleanly packaged | Angle columns are radians internally; Lagrangian velocity columns are rad/s; Hamiltonian momentum units are implicit in the model parameters and not yet formatted for UI display. |
 | `time_start` | Requested start time. | available today | `time_start` callback state. |
 | `time_end` | Requested end time. | available today | `time_end` callback state. |
 | `requested_sample_count` | Number of requested time samples. | available but not cleanly packaged | Callback computes `int((time_end - time_start) * 200)`. |
@@ -42,7 +46,7 @@ before new Simulation page outputs are accepted. Field status labels mean:
 | `solver_success` | Whether solver reports success. | available today | Tier 1b stores `solve_ivp.success`; `odeint` metadata leaves this as `None`. |
 | `solver_status` | Solver status code. | available today | Tier 1b stores `solve_ivp.status`; `odeint` metadata leaves this as `None`. |
 | `solver_message` | Human-readable solver message. | available today | Tier 1b stores `solve_ivp.message`; `odeint` metadata leaves this as `None`. |
-| `warnings` | Nonfatal issues or convention warnings. | missing today | Needed for Hamiltonian convention and future numerical warnings. |
+| `warnings` | Nonfatal issues or convention warnings. | missing today | Needed for future numerical warnings; the Hamiltonian input convention warning was resolved by Tier 1D conversion. |
 | `errors` | Controlled validation, solver, or rendering failure state. | missing today | Validation errors exist separately; solver/render errors are not captured as result data. |
 | `runtime_duration` | Time spent constructing/integrating/deriving figures. | missing today | Tier 1 script measures this externally; production code does not. |
 | `solver_metadata_available` | Explicit flag for solver metadata retention. | available today | Model instances expose `pendulum.solver_metadata`. |
@@ -88,20 +92,17 @@ before new Simulation page outputs are accepted. Field status labels mean:
 | `plotly_json_size` | Approximate payload-size proxy. | available but not cleanly packaged | Tier 1 script uses `len(fig.to_json())`; full JSON is not saved. |
 | `point_count` | Approximate rendered point count across traces/frames. | available but not cleanly packaged | Tier 1 script records a compact summary. |
 
-## Hamiltonian Convention Warning
+## Hamiltonian Convention Decision
 
-The current UI labels the final two initial-condition inputs as angular
-velocities. The Hamiltonian model state, however, is
+The accepted user-facing convention is `[theta1, theta2, omega1, omega2]` for
+both Lagrangian and Hamiltonian modes. The Hamiltonian solver state remains
 `[theta1, theta2, p_theta_1, p_theta_2]`, where the final two slots are
-canonical momenta. The current code passes the UI-shaped values into the
-Hamiltonian class and applies `np.deg2rad(...)` to all four entries.
+canonical momenta.
 
-Existing tests preserve that behavior, but they do not prove that the
-Hamiltonian run is physically initialized from angular velocities correctly.
-Tier 1C completed the first convention audit and confirmed the mismatch for
-nonzero UI-labelled angular velocities. Until a velocity-to-momentum conversion
-path is implemented and tested, Hamiltonian visual outputs should be treated as
-behavior-preserving and exploratory, not as strong physical evidence.
+Tier 1D implements Option 1: Hamiltonian model construction converts UI angular
+velocities to canonical momenta before solving. Model instances now keep both
+the user-facing request and the internal solver state so future
+`SimulationResult` work can preserve the distinction.
 
 ## Minimum Future Contract Shape
 
@@ -116,8 +117,11 @@ SimulationResult
       masses
     initial_conditions
       ui_values
+      ui_values_radians
       internal_values
-      state_variable_names
+      solver_state_variable_names
+      solver_state_convention
+      initial_condition_conversion
       state_units
     time
       start

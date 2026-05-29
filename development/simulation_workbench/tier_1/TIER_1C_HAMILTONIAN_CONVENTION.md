@@ -12,12 +12,13 @@ initial-condition request and the Hamiltonian model state. This task did not
 change production UI, callbacks, component IDs, plotting, animation, model
 behavior, equations, or validation.
 
-The audit result is direct: the Lagrangian model uses angular velocities in the
-last two state columns, while the Hamiltonian model uses canonical momenta. The
-live UI currently labels the final two inputs as angular velocities and the
-Hamiltonian constructor applies `np.deg2rad(...)` to those values as if they can
-occupy the momentum slots directly. That behavior is deterministic and covered
-as behavior, but it is not physically accepted.
+The audit result was direct: the Lagrangian model uses angular velocities in
+the last two state columns, while the Hamiltonian model uses canonical momenta.
+At the time of the Tier 1C audit, the live UI labelled the final two inputs as
+angular velocities and the Hamiltonian constructor applied `np.deg2rad(...)` to
+those values as if they could occupy the momentum slots directly. Tier 1D
+replaced that behavior with explicit angular-velocity to canonical-momentum
+conversion.
 
 ## Current Lagrangian Convention
 
@@ -41,16 +42,10 @@ second after conversion. The `_system` method unpacks the state as
 
 ## Current Hamiltonian Convention
 
-`DoublePendulumHamiltonian` uses the state order:
+`DoublePendulumHamiltonian` uses the solver state order:
 
 ```text
 [theta1, theta2, p_theta_1, p_theta_2]
-```
-
-The constructor also stores:
-
-```python
-self.initial_conditions = np.deg2rad(initial_conditions)
 ```
 
 The `_system` method unpacks the state as `th1, th2, p_th1, p_th2`, and the
@@ -61,15 +56,16 @@ velocities, and `compute_hamiltonian(...)` builds Hamiltonian dynamics from the
 momentum vector `[p_theta_1, p_theta_2]`.
 
 That means the final two Hamiltonian state entries are canonical momenta, not
-angular velocities.
+angular velocities. After Tier 1D, the constructor accepts UI-shaped angular
+velocity inputs but converts the final two values before assigning
+`self.initial_conditions`.
 
 ## Current UI Convention
 
 The simulation controls present the final two initial-condition fields as
 angular velocities. The callback flow passes the four UI values through to the
-selected model class. There is no current conversion layer that maps UI angular
-velocities to Hamiltonian canonical momenta before constructing
-`DoublePendulumHamiltonian`.
+selected model class. After Tier 1D, `DoublePendulumHamiltonian` performs the
+conversion to canonical momenta at the model boundary.
 
 ## Why The Tier 1 Zero-Velocity Baseline Was Inconclusive
 
@@ -104,15 +100,16 @@ the final two state slots.
 
 ## Script Evidence
 
-The Tier 1C script instantiated simple and compound Lagrangian/Hamiltonian
-models for a zero-tail request and a nonzero-tail request:
+Before the Tier 1D implementation, the Tier 1C script instantiated simple and
+compound Lagrangian/Hamiltonian models for a zero-tail request and a nonzero-tail
+request:
 
 ```text
 zero tail:    [45.0, -30.0, 0.0, 0.0]
 nonzero tail: [45.0, -30.0, 10.0, -5.0]
 ```
 
-It then compared the current Hamiltonian tail against the canonical momenta
+It then compared the Hamiltonian tail at that time against the canonical momenta
 that would result if the UI tail were interpreted as angular velocity.
 
 | Model | Request | Current Hamiltonian tail | Canonical momenta from UI velocities | Match | Max abs difference |
@@ -258,11 +255,24 @@ This direction balances teaching clarity, scientific correctness, and backward
 compatibility. It also gives future diagnostics a clear place to report the
 conversion and any convention warnings.
 
+## Tier 1D Update
+
+Tier 1D implemented the recommended Option 1 convention. The Hamiltonian model
+now accepts the same user-facing `[theta1, theta2, omega1, omega2]` request as
+the Lagrangian model, then converts angular velocities to canonical momenta
+before solving.
+
+The audit script was rerun after implementation. Both nonzero Hamiltonian cases
+now match the expected canonical momenta with zero max absolute difference. See
+`TIER_1D_OPTION_1_HAMILTONIAN_CONVERSION.md` and
+`tier1c_hamiltonian_convention_results.json` for the post-implementation
+evidence.
+
 ## Recommended Next Implementation Task
 
-Tier 1D should design and test a workbench-first velocity-to-momentum conversion
-helper for simple and compound models without changing the live UI. Acceptance
-should require nonzero initial-condition cases proving that:
+Completed by Tier 1D: design and test a velocity-to-momentum conversion helper
+for simple and compound models without changing the live UI. Acceptance required
+nonzero initial-condition cases proving that:
 
 - Lagrangian requests preserve angular velocities;
 - Hamiltonian requests convert angular velocities to canonical momenta;
@@ -270,9 +280,8 @@ should require nonzero initial-condition cases proving that:
 - existing zero-tail behavior remains explainable rather than accidentally
   passing.
 
-Only after that should a production implementation task decide whether the
-conversion belongs in the callback, a simulation-run factory, or the Hamiltonian
-model constructor.
+The conversion was implemented at the Hamiltonian model boundary so callbacks
+can preserve the live UI shape.
 
 ## Claims To Avoid Until Implemented And Tested
 

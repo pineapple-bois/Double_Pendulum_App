@@ -88,7 +88,8 @@ contract and output composition are accepted.
 
 ## Remaining Blockers
 
-- Hamiltonian initial-condition convention remains unaudited.
+- Tier 1D resolved the Hamiltonian UI angular-velocity to canonical-momentum
+  conversion for model construction.
 - Runtime energy arrays and energy drift diagnostics remain unavailable.
 - Solver tolerances and method choices are still not exposed in the UI.
 - The current theta-theta projection remains a state projection, not a validated

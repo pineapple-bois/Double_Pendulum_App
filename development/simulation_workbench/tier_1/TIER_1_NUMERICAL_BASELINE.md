@@ -18,11 +18,11 @@ precompute finite position arrays, and rebuild the same state arrays
 deterministically for the same request on this machine. It also identified an
 important absence: solver metadata was discarded.
 
-Tier 1b updated the model layer to retain compact solver metadata. The compact
-JSON was regenerated after that change, so this report now includes a Tier 1b
-solver metadata addendum while preserving the original interpretation limits:
-no runtime energy arrays exist, and the Hamiltonian input convention remains
-unaudited.
+Tier 1b updated the model layer to retain compact solver metadata. Tier 1D then
+implemented the accepted Hamiltonian input convention: UI requests remain
+`theta1`, `theta2`, `omega1`, `omega2`, and Hamiltonian model construction
+converts angular velocities to canonical momenta before solving. The compact
+JSON was regenerated after those changes.
 
 The timings below are local measurements from one script run. Model
 construction timings include equation cache lookup or derivation, lambdification,
@@ -56,9 +56,9 @@ All four cases completed construction and passed the core baseline checks.
 | Case | Constructed | Shapes | Finite values | Monotonic time | Initial-condition match | Repeat deterministic | Positions | Warnings | Failures |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `simple_lagrangian` | yes | time `(1000,)`, state `(1000, 4)` | time/state yes | yes | yes, max diff `0.0` | yes, max diff `0.0` | `(4, 1000)`, finite yes | none | none |
-| `simple_hamiltonian` | yes | time `(1000,)`, state `(1000, 4)` | time/state yes | yes | yes, max diff `0.0` | yes, max diff `0.0` | `(4, 1000)`, finite yes | Hamiltonian convention | none |
+| `simple_hamiltonian` | yes | time `(1000,)`, state `(1000, 4)` | time/state yes | yes | yes, max diff `0.0` | yes, max diff `0.0` | `(4, 1000)`, finite yes | converted Hamiltonian state | none |
 | `compound_lagrangian` | yes | time `(1000,)`, state `(1000, 4)` | time/state yes | yes | yes, max diff `0.0` | yes, max diff `0.0` | `(4, 1000)`, finite yes | none | none |
-| `compound_hamiltonian` | yes | time `(1000,)`, state `(1000, 4)` | time/state yes | yes | yes, max diff `0.0` | yes, max diff `0.0` | `(4, 1000)`, finite yes | Hamiltonian convention | none |
+| `compound_hamiltonian` | yes | time `(1000,)`, state `(1000, 4)` | time/state yes | yes | yes, max diff `0.0` | yes, max diff `0.0` | `(4, 1000)`, finite yes | converted Hamiltonian state | none |
 
 Additional numerical maxima:
 
@@ -76,10 +76,10 @@ Timings are seconds. Plotly JSON sizes are approximate payload-size proxies from
 
 | Case | First construct/integrate | Repeat construct/integrate | Position precompute | Time graph build | Theta-theta projection build | Animation build |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `simple_lagrangian` | `2.0644` | `0.0197` | `0.000024` | `0.0882` | `0.0395` | `0.0248` |
-| `simple_hamiltonian` | `0.3473` | `0.0316` | `0.000021` | `0.0778` | `0.0355` | `0.0205` |
-| `compound_lagrangian` | `2.0758` | `0.0191` | `0.000021` | `0.0411` | `0.0780` | `0.0206` |
-| `compound_hamiltonian` | `0.3618` | `0.0306` | `0.000021` | `0.0408` | `0.0358` | `0.0201` |
+| `simple_lagrangian` | `2.1065` | `0.0204` | `0.000025` | `0.0828` | `0.0405` | `0.0283` |
+| `simple_hamiltonian` | `0.3713` | `0.0323` | `0.000021` | `0.0836` | `0.0368` | `0.0210` |
+| `compound_lagrangian` | `2.1831` | `0.0190` | `0.000022` | `0.0450` | `0.0816` | `0.0208` |
+| `compound_hamiltonian` | `0.3681` | `0.0307` | `0.000022` | `0.0420` | `0.0364` | `0.0212` |
 
 Rendering summary:
 
@@ -110,23 +110,21 @@ matches the requested `pendulum.time` samples exactly.
 
 ## Hamiltonian Convention Note
 
-The current UI supplies four initial-condition values labelled as
+The UI supplies four initial-condition values labelled as
 `theta1`, `theta2`, `omega1`, and `omega2`. The Hamiltonian model state is
 `theta1`, `theta2`, `p_theta_1`, and `p_theta_2`, where the final two values are
 canonical momenta.
 
-The current Hamiltonian class applies `np.deg2rad(...)` to all four incoming
-values, preserving the existing UI-shaped behavior. Existing tests and this
-baseline confirm that the behavior is repeatable and array-sane for the sampled
-cases, but they do not prove that angular-velocity inputs are being converted
-to physically correct canonical momenta.
+Tier 1C confirmed that directly passing nonzero UI-labelled angular velocities
+into Hamiltonian momentum slots was not acceptable. Tier 1D implemented Option
+1: Hamiltonian construction now converts UI angular velocities to canonical
+momenta before solving. Model instances expose both the user-facing initial
+conditions and the internal solver state.
 
-Tier 1C completed the first convention audit and confirmed that nonzero
-UI-labelled angular velocities are not equivalent to canonical momenta in the
-Hamiltonian state. Until a velocity-to-momentum conversion path is implemented
-and tested, Hamiltonian visual outputs should not be used for strong scientific
-claims. They can be used to preserve current behavior and to identify what
-evidence must be collected next.
+The baseline request still uses zero angular velocities, so it proves the
+standard array and rendering checks for the accepted path. Nonzero conversion
+evidence lives in `TIER_1D_OPTION_1_HAMILTONIAN_CONVERSION.md` and
+`tier1c_hamiltonian_convention_results.json`.
 
 ## Energy Diagnostics Note
 
@@ -174,6 +172,8 @@ What this baseline supports:
 - State arrays have expected shape and finite values.
 - The first state row matches the model's internal initial conditions for all
   four baseline cases.
+- The user-facing initial-condition convention and internal solver-state
+  convention are now separately recorded on model instances.
 - Repeat construction with the same request produces identical state arrays
   within `1e-10` for all four baseline cases.
 - Position precompute produces finite `(4, 1000)` arrays for all four baseline
@@ -185,8 +185,9 @@ What this baseline does not support:
 
 - It does not validate physical correctness of the equations.
 - It does not validate energy conservation or energy drift.
-- It does not validate Hamiltonian angular-velocity to canonical-momentum
-  conversion.
+- The zero-velocity baseline does not by itself validate Hamiltonian
+  angular-velocity to canonical-momentum conversion; Tier 1D adds nonzero tests
+  and compact evidence for that.
 - It does not validate the current theta-theta projection as a full phase
   portrait.
 - It does not test solver tolerances, alternative methods, stiff/failure
@@ -201,21 +202,20 @@ Outputs that remain visually plausible but scientifically under-evidenced:
   unknown.
 - The theta-theta projection can look like a phase portrait, but it is only a
   two-angle state projection in the current implementation.
-- Hamiltonian runs can produce finite plots, but their input-state convention is
-  not yet physically audited.
+- Hamiltonian runs now use converted internal momenta, but energy diagnostics
+  and deeper trajectory validation remain under-evidenced.
 
 ## Recommended Next Task
 
-Recommended next task: Tier 1D velocity-to-momentum conversion design.
+Recommended next task: Tier 2 first output-composition experiments.
 
 Reason:
 
 The result contract and baseline now show that the array plumbing is sane for
-representative cases, and Tier 1C has documented the Hamiltonian convention
-mismatch. Before accepting Hamiltonian visuals, energy diagnostics, or
-Lagrangian/Hamiltonian comparisons, the app needs a tested conversion path that
-keeps UI inputs as angular velocities while constructing Hamiltonian internal
-state with canonical momenta.
+representative cases, Tier 1b captures solver metadata, and Tier 1D implements
+the accepted Hamiltonian input convention. Tier 2 can begin output-composition
+experiments, but energy diagnostics and stronger physical validation remain out
+of scope until separately audited.
 
 Do not implement new Simulation page visuals until that convention is resolved
 or explicitly scoped out of the accepted output.

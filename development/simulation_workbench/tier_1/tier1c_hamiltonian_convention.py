@@ -1,11 +1,12 @@
-"""Phase 6 / Tier 1C Hamiltonian convention audit helper.
+"""Phase 6 / Tier 1C/1D Hamiltonian convention audit helper.
 
 Run from the repository root:
 
     .venv/bin/python development/simulation_workbench/tier_1/tier1c_hamiltonian_convention.py
 
-The script records compact evidence about the current UI-shaped initial
-condition convention. It does not modify production model behavior.
+The script records compact evidence about the UI-shaped initial-condition
+convention and Hamiltonian solver state. It does not modify production model
+behavior.
 """
 
 from __future__ import annotations
@@ -169,14 +170,15 @@ def main() -> int:
         for request_name, request_degrees in REQUESTS_DEGREES.items()
     ]
     summary = {
-        "tier": "Phase 6 / Tier 1C",
-        "purpose": "Hamiltonian state-convention audit evidence",
+        "tier": "Phase 6 / Tier 1C and Tier 1D",
+        "purpose": "Hamiltonian state-convention audit and conversion evidence",
         "time_vector": TIME_VECTOR,
         "tolerance": TOLERANCE,
         "notes": [
-            "The current Hamiltonian constructor applies np.deg2rad to all four UI-shaped values.",
+            "Tier 1D keeps UI initial conditions as theta1, theta2, omega1, omega2.",
+            "The Hamiltonian constructor converts UI angular velocities to canonical momenta before solving.",
             "For Hamiltonian equations, the final two state values are canonical momenta.",
-            "The zero-tail request hides the ambiguity because zero angular velocity maps to zero momentum.",
+            "The zero-tail request is still checked, but the nonzero-tail request is the meaningful convention proof.",
         ],
         "momentum_mapping": {
             "simple": "p = [[(m1 + m2) * l1^2, m2 * l1 * l2 * cos(theta1 - theta2)], [m2 * l1 * l2 * cos(theta1 - theta2), m2 * l2^2]] @ omega",
@@ -187,7 +189,7 @@ def main() -> int:
 
     OUTPUT_PATH.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
 
-    print("Phase 6 / Tier 1C Hamiltonian convention audit")
+    print("Phase 6 / Tier 1C/1D Hamiltonian convention audit")
     print(f"Wrote compact JSON summary: {OUTPUT_PATH.relative_to(REPO_ROOT)}")
     for result in results:
         print(

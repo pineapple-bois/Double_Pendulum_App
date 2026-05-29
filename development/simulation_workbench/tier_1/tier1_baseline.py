@@ -85,6 +85,7 @@ class BaselineCase:
     parameter_values: dict[str, float]
     state_variable_names: list[str]
     convention_warning: str | None = None
+    convention_note: str | None = None
 
 
 BASELINE_CASES = [
@@ -105,9 +106,9 @@ BASELINE_CASES = [
         parameters={l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0, g: 9.81},
         parameter_values={"l1": 1.0, "l2": 1.0, "m1": 1.0, "m2": 1.0, "g": 9.81},
         state_variable_names=["theta1", "theta2", "p_theta_1", "p_theta_2"],
-        convention_warning=(
-            "UI-shaped initial conditions label the last two inputs as angular "
-            "velocities, but this Hamiltonian state uses canonical momenta."
+        convention_note=(
+            "Tier 1D converts UI angular velocities to canonical momenta for "
+            "the Hamiltonian solver state."
         ),
     ),
     BaselineCase(
@@ -127,9 +128,9 @@ BASELINE_CASES = [
         parameters={l1: 1.0, l2: 1.0, M1: 1.0, M2: 1.0, g: 9.81},
         parameter_values={"l1": 1.0, "l2": 1.0, "M1": 1.0, "M2": 1.0, "g": 9.81},
         state_variable_names=["theta1", "theta2", "p_theta_1", "p_theta_2"],
-        convention_warning=(
-            "UI-shaped initial conditions label the last two inputs as angular "
-            "velocities, but this Hamiltonian state uses canonical momenta."
+        convention_note=(
+            "Tier 1D converts UI angular velocities to canonical momenta for "
+            "the Hamiltonian solver state."
         ),
     ),
 ]
@@ -250,12 +251,16 @@ def run_case(case: BaselineCase) -> dict[str, Any]:
         "sample_rate_rule": f"{SAMPLE_RATE_PER_SECOND} samples per second",
         "requested_sample_count": REQUESTED_SAMPLE_COUNT,
         "state_variable_names": case.state_variable_names,
+        "user_initial_condition_names": ["theta1", "theta2", "omega1", "omega2"],
         "tolerance": TOLERANCE,
+        "notes": [],
         "warnings": [],
         "failures": [],
     }
     if case.convention_warning:
         result["warnings"].append(case.convention_warning)
+    if case.convention_note:
+        result["notes"].append(case.convention_note)
 
     try:
         model, first_duration = timed_call(lambda: construct_model(case))
@@ -299,6 +304,22 @@ def run_case(case: BaselineCase) -> dict[str, Any]:
             "max_abs_repeat_run_difference": max_abs(state_diff),
             "max_abs_state_value": max_abs(model.sol),
             "internal_initial_conditions": [float(value) for value in model.initial_conditions],
+            "user_initial_conditions_degrees": [
+                float(value) for value in getattr(model, "user_initial_conditions_degrees", INITIAL_CONDITIONS_DEGREES)
+            ],
+            "user_initial_conditions_radians": [
+                float(value)
+                for value in getattr(model, "user_initial_conditions_radians", np.deg2rad(INITIAL_CONDITIONS_DEGREES))
+            ],
+            "solver_initial_state": [float(value) for value in model.initial_conditions],
+            "solver_state_variable_names": list(
+                getattr(model, "solver_state_variable_names", case.state_variable_names)
+            ),
+            "solver_state_convention": getattr(model, "solver_state_convention", None),
+            "initial_condition_conversion": getattr(model, "initial_condition_conversion", None),
+            "initial_canonical_momenta": [
+                float(value) for value in getattr(model, "initial_canonical_momenta", [])
+            ],
             "time_start_actual": float(model.time[0]),
             "time_end_actual": float(model.time[-1]),
             "solver_metadata_available": solver_metadata is not None,
@@ -383,14 +404,15 @@ def main() -> int:
         "measurement_notes": [
             "Model construction timings include equation cache lookup/derivation, lambdification, and integration.",
             "Tier 1b model classes retain compact solve_ivp metadata; raw full OdeResult objects are not saved.",
-            "Hamiltonian cases preserve current behavior but are not a physical validation of UI velocity inputs as momenta.",
+            "Tier 1D Hamiltonian cases convert UI angular velocities to canonical momenta before solving.",
             "JSON sizes are approximate Plotly payload-size proxies; full plot JSON is not saved separately.",
         ],
         "baseline_request": {
             "gravity": 9.81,
             "lengths": {"l1": 1.0, "l2": 1.0},
             "masses": 1.0,
-            "initial_conditions_degrees": list(INITIAL_CONDITIONS_DEGREES),
+            "user_initial_conditions_degrees": list(INITIAL_CONDITIONS_DEGREES),
+            "user_initial_condition_names": ["theta1", "theta2", "omega1", "omega2"],
             "time_interval": {"start": TIME_START, "end": TIME_END},
             "sample_rate_rule": f"{SAMPLE_RATE_PER_SECOND} samples per second",
             "requested_sample_count": REQUESTED_SAMPLE_COUNT,
@@ -409,6 +431,7 @@ def main() -> int:
         status = "PASS" if all_core_checks_passed(case) else "CHECK"
         failures = "; ".join(case.get("failures", [])) or "none"
         warnings = "; ".join(case.get("warnings", [])) or "none"
+        notes = "; ".join(case.get("notes", [])) or "none"
         timing = case.get("timing_seconds", {})
         first_duration = timing.get("first_construction_integration")
         repeat_duration = timing.get("repeat_construction_integration")
@@ -422,7 +445,7 @@ def main() -> int:
             f"first={first_duration:.4f}s repeat={repeat_duration:.4f}s "
             f"solver_success={solver_success} nfev={solver_nfev} "
             f"frames={frame_total} animation_json={animation_json} bytes; "
-            f"warnings={warnings}; failures={failures}"
+            f"notes={notes}; warnings={warnings}; failures={failures}"
         )
     print(f"All core checks passed: {summary['all_core_checks_passed']}")
     return 0 if summary["all_core_checks_passed"] else 1

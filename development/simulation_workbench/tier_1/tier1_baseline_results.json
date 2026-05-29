@@ -3,12 +3,6 @@
   "all_core_checks_passed": true,
   "baseline_request": {
     "gravity": 9.81,
-    "initial_conditions_degrees": [
-      45.0,
-      -30.0,
-      0.0,
-      0.0
-    ],
     "lengths": {
       "l1": 1.0,
       "l2": 1.0
@@ -20,7 +14,19 @@
       "end": 5.0,
       "start": 0.0
     },
-    "tolerance": 1e-10
+    "tolerance": 1e-10,
+    "user_initial_condition_names": [
+      "theta1",
+      "theta2",
+      "omega1",
+      "omega2"
+    ],
+    "user_initial_conditions_degrees": [
+      45.0,
+      -30.0,
+      0.0,
+      0.0
+    ]
   },
   "cases": [
     {
@@ -43,6 +49,8 @@
       "failures": [],
       "first_state_matches_internal_initial_conditions": true,
       "first_time_matches_start": true,
+      "initial_canonical_momenta": [],
+      "initial_condition_conversion": "degrees_to_radians",
       "initial_conditions_degrees": [
         45.0,
         -30.0,
@@ -64,6 +72,7 @@
       "model_class": "src.double_pendulum.models.lagrangian.DoublePendulumLagrangian",
       "model_type": "simple",
       "name": "simple_lagrangian",
+      "notes": [],
       "parameters": {
         "g": 9.81,
         "l1": 1.0,
@@ -83,6 +92,12 @@
       "repeat_run_deterministic": true,
       "requested_sample_count": 1000,
       "sample_rate_rule": "200 samples per second",
+      "solver_initial_state": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
       "solver_metadata": {
         "integrator": "solve_ivp",
         "message": "The solver successfully reached the end of the integration interval.",
@@ -105,6 +120,13 @@
         "success": true
       },
       "solver_metadata_available": true,
+      "solver_state_convention": "angles_and_angular_velocities",
+      "solver_state_variable_names": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
       "solver_time_matches_requested": true,
       "solver_time_shape": [
         1000
@@ -137,14 +159,32 @@
       "time_start_actual": 0.0,
       "time_values_finite": true,
       "timing_seconds": {
-        "animation_build": 0.030322624996188097,
-        "first_construction_integration": 2.0394557920008083,
-        "phase_projection_build": 0.03641658400010783,
-        "position_precompute": 2.2000000171829015e-05,
-        "repeat_construction_integration": 0.019320540995977353,
-        "time_graph_build": 0.07602762500027893
+        "animation_build": 0.028320582998276222,
+        "first_construction_integration": 2.1065075420046924,
+        "phase_projection_build": 0.04053050000220537,
+        "position_precompute": 2.5291999918408692e-05,
+        "repeat_construction_integration": 0.020364417003293056,
+        "time_graph_build": 0.08280854100303259
       },
       "tolerance": 1e-10,
+      "user_initial_condition_names": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "user_initial_conditions_degrees": [
+        45.0,
+        -30.0,
+        0.0,
+        0.0
+      ],
+      "user_initial_conditions_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
       "warnings": []
     },
     {
@@ -167,6 +207,11 @@
       "failures": [],
       "first_state_matches_internal_initial_conditions": true,
       "first_time_matches_start": true,
+      "initial_canonical_momenta": [
+        0.0,
+        0.0
+      ],
+      "initial_condition_conversion": "angular_velocities_to_canonical_momenta",
       "initial_conditions_degrees": [
         45.0,
         -30.0,
@@ -188,6 +233,9 @@
       "model_class": "src.double_pendulum.models.hamiltonian.DoublePendulumHamiltonian",
       "model_type": "simple",
       "name": "simple_hamiltonian",
+      "notes": [
+        "Tier 1D converts UI angular velocities to canonical momenta for the Hamiltonian solver state."
+      ],
       "parameters": {
         "g": 9.81,
         "l1": 1.0,
@@ -207,6 +255,12 @@
       "repeat_run_deterministic": true,
       "requested_sample_count": 1000,
       "sample_rate_rule": "200 samples per second",
+      "solver_initial_state": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
       "solver_metadata": {
         "integrator": "solve_ivp",
         "message": "The solver successfully reached the end of the integration interval.",
@@ -229,6 +283,13 @@
         "success": true
       },
       "solver_metadata_available": true,
+      "solver_state_convention": "angles_and_canonical_momenta",
+      "solver_state_variable_names": [
+        "theta1",
+        "theta2",
+        "p_theta_1",
+        "p_theta_2"
+      ],
       "solver_time_matches_requested": true,
       "solver_time_shape": [
         1000
@@ -261,17 +322,33 @@
       "time_start_actual": 0.0,
       "time_values_finite": true,
       "timing_seconds": {
-        "animation_build": 0.019728541999938898,
-        "first_construction_integration": 0.3420695410022745,
-        "phase_projection_build": 0.03568204100156436,
-        "position_precompute": 2.129199856426567e-05,
-        "repeat_construction_integration": 0.0657703750039218,
-        "time_graph_build": 0.0410817500014673
+        "animation_build": 0.021046125002612825,
+        "first_construction_integration": 0.3712659579978208,
+        "phase_projection_build": 0.03680758300470188,
+        "position_precompute": 2.1416002709884197e-05,
+        "repeat_construction_integration": 0.032330624999303836,
+        "time_graph_build": 0.08359304199984763
       },
       "tolerance": 1e-10,
-      "warnings": [
-        "UI-shaped initial conditions label the last two inputs as angular velocities, but this Hamiltonian state uses canonical momenta."
-      ]
+      "user_initial_condition_names": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "user_initial_conditions_degrees": [
+        45.0,
+        -30.0,
+        0.0,
+        0.0
+      ],
+      "user_initial_conditions_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
+      "warnings": []
     },
     {
       "animation_frame_count": 100,
@@ -293,6 +370,8 @@
       "failures": [],
       "first_state_matches_internal_initial_conditions": true,
       "first_time_matches_start": true,
+      "initial_canonical_momenta": [],
+      "initial_condition_conversion": "degrees_to_radians",
       "initial_conditions_degrees": [
         45.0,
         -30.0,
@@ -314,6 +393,7 @@
       "model_class": "src.double_pendulum.models.lagrangian.DoublePendulumLagrangian",
       "model_type": "compound",
       "name": "compound_lagrangian",
+      "notes": [],
       "parameters": {
         "M1": 1.0,
         "M2": 1.0,
@@ -333,6 +413,12 @@
       "repeat_run_deterministic": true,
       "requested_sample_count": 1000,
       "sample_rate_rule": "200 samples per second",
+      "solver_initial_state": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
       "solver_metadata": {
         "integrator": "solve_ivp",
         "message": "The solver successfully reached the end of the integration interval.",
@@ -355,6 +441,13 @@
         "success": true
       },
       "solver_metadata_available": true,
+      "solver_state_convention": "angles_and_angular_velocities",
+      "solver_state_variable_names": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
       "solver_time_matches_requested": true,
       "solver_time_shape": [
         1000
@@ -387,14 +480,32 @@
       "time_start_actual": 0.0,
       "time_values_finite": true,
       "timing_seconds": {
-        "animation_build": 0.020533457995043136,
-        "first_construction_integration": 2.0496901250007795,
-        "phase_projection_build": 0.07681274999777088,
-        "position_precompute": 2.1040999854449183e-05,
-        "repeat_construction_integration": 0.018033957996522076,
-        "time_graph_build": 0.04008304200397106
+        "animation_build": 0.020840292003413197,
+        "first_construction_integration": 2.1831342919977033,
+        "phase_projection_build": 0.08160304199554957,
+        "position_precompute": 2.1583997295238078e-05,
+        "repeat_construction_integration": 0.019047042005695403,
+        "time_graph_build": 0.0450489579961868
       },
       "tolerance": 1e-10,
+      "user_initial_condition_names": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "user_initial_conditions_degrees": [
+        45.0,
+        -30.0,
+        0.0,
+        0.0
+      ],
+      "user_initial_conditions_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
       "warnings": []
     },
     {
@@ -417,6 +528,11 @@
       "failures": [],
       "first_state_matches_internal_initial_conditions": true,
       "first_time_matches_start": true,
+      "initial_canonical_momenta": [
+        0.0,
+        0.0
+      ],
+      "initial_condition_conversion": "angular_velocities_to_canonical_momenta",
       "initial_conditions_degrees": [
         45.0,
         -30.0,
@@ -438,6 +554,9 @@
       "model_class": "src.double_pendulum.models.hamiltonian.DoublePendulumHamiltonian",
       "model_type": "compound",
       "name": "compound_hamiltonian",
+      "notes": [
+        "Tier 1D converts UI angular velocities to canonical momenta for the Hamiltonian solver state."
+      ],
       "parameters": {
         "M1": 1.0,
         "M2": 1.0,
@@ -457,6 +576,12 @@
       "repeat_run_deterministic": true,
       "requested_sample_count": 1000,
       "sample_rate_rule": "200 samples per second",
+      "solver_initial_state": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
       "solver_metadata": {
         "integrator": "solve_ivp",
         "message": "The solver successfully reached the end of the integration interval.",
@@ -479,6 +604,13 @@
         "success": true
       },
       "solver_metadata_available": true,
+      "solver_state_convention": "angles_and_canonical_momenta",
+      "solver_state_variable_names": [
+        "theta1",
+        "theta2",
+        "p_theta_1",
+        "p_theta_2"
+      ],
       "solver_time_matches_requested": true,
       "solver_time_shape": [
         1000
@@ -511,23 +643,39 @@
       "time_start_actual": 0.0,
       "time_values_finite": true,
       "timing_seconds": {
-        "animation_build": 0.020379207999212667,
-        "first_construction_integration": 0.35770108299766434,
-        "phase_projection_build": 0.03598004200466676,
-        "position_precompute": 2.1665997337549925e-05,
-        "repeat_construction_integration": 0.029934083999251015,
-        "time_graph_build": 0.039168292001704685
+        "animation_build": 0.021160541000426747,
+        "first_construction_integration": 0.3680688330059638,
+        "phase_projection_build": 0.0364402919949498,
+        "position_precompute": 2.2332998923957348e-05,
+        "repeat_construction_integration": 0.030690583000250626,
+        "time_graph_build": 0.04199008399882587
       },
       "tolerance": 1e-10,
-      "warnings": [
-        "UI-shaped initial conditions label the last two inputs as angular velocities, but this Hamiltonian state uses canonical momenta."
-      ]
+      "user_initial_condition_names": [
+        "theta1",
+        "theta2",
+        "omega1",
+        "omega2"
+      ],
+      "user_initial_conditions_degrees": [
+        45.0,
+        -30.0,
+        0.0,
+        0.0
+      ],
+      "user_initial_conditions_radians": [
+        0.7853981633974483,
+        -0.5235987755982988,
+        0.0,
+        0.0
+      ],
+      "warnings": []
     }
   ],
   "measurement_notes": [
     "Model construction timings include equation cache lookup/derivation, lambdification, and integration.",
     "Tier 1b model classes retain compact solve_ivp metadata; raw full OdeResult objects are not saved.",
-    "Hamiltonian cases preserve current behavior but are not a physical validation of UI velocity inputs as momenta.",
+    "Tier 1D Hamiltonian cases convert UI angular velocities to canonical momenta before solving.",
     "JSON sizes are approximate Plotly payload-size proxies; full plot JSON is not saved separately."
   ],
   "purpose": "Numerical evidence baseline for current simulation model behavior",

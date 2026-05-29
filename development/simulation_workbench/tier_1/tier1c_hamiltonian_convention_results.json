@@ -4,11 +4,12 @@
     "simple": "p = [[(m1 + m2) * l1^2, m2 * l1 * l2 * cos(theta1 - theta2)], [m2 * l1 * l2 * cos(theta1 - theta2), m2 * l2^2]] @ omega"
   },
   "notes": [
-    "The current Hamiltonian constructor applies np.deg2rad to all four UI-shaped values.",
+    "Tier 1D keeps UI initial conditions as theta1, theta2, omega1, omega2.",
+    "The Hamiltonian constructor converts UI angular velocities to canonical momenta before solving.",
     "For Hamiltonian equations, the final two state values are canonical momenta.",
-    "The zero-tail request hides the ambiguity because zero angular velocity maps to zero momentum."
+    "The zero-tail request is still checked, but the nonzero-tail request is the meaningful convention proof."
   ],
-  "purpose": "Hamiltonian state-convention audit evidence",
+  "purpose": "Hamiltonian state-convention audit and conversion evidence",
   "results": [
     {
       "canonical_momenta_if_tail_is_angular_velocity": [
@@ -88,16 +89,16 @@
         0.32647962787933243,
         -0.04209401756064952
       ],
-      "current_tail_matches_canonical_momenta": false,
+      "current_tail_matches_canonical_momenta": true,
       "hamiltonian_current_tail": [
-        0.17453292519943295,
-        -0.08726646259971647
+        0.32647962787933243,
+        -0.04209401756064952
       ],
       "hamiltonian_internal_initial_conditions": [
         0.7853981633974483,
         -0.5235987755982988,
-        0.17453292519943295,
-        -0.08726646259971647
+        0.32647962787933243,
+        -0.04209401756064952
       ],
       "hamiltonian_state_shape": [
         5,
@@ -125,7 +126,7 @@
         "omega1",
         "omega2"
       ],
-      "max_abs_tail_momentum_difference": 0.1519467026798995,
+      "max_abs_tail_momentum_difference": 0.0,
       "model_type": "simple",
       "parameters": {
         "g": 9.81,
@@ -140,8 +141,8 @@
         "lagrangian": true
       },
       "tail_minus_expected_canonical_momenta": [
-        -0.1519467026798995,
-        -0.04517244503906696
+        0.0,
+        0.0
       ],
       "ui_request_degrees": [
         45.0,
@@ -234,16 +235,16 @@
         0.13979754870297742,
         -0.03961232525673454
       ],
-      "current_tail_matches_canonical_momenta": false,
+      "current_tail_matches_canonical_momenta": true,
       "hamiltonian_current_tail": [
-        0.17453292519943295,
-        -0.08726646259971647
+        0.13979754870297742,
+        -0.03961232525673454
       ],
       "hamiltonian_internal_initial_conditions": [
         0.7853981633974483,
         -0.5235987755982988,
-        0.17453292519943295,
-        -0.08726646259971647
+        0.13979754870297742,
+        -0.03961232525673454
       ],
       "hamiltonian_state_shape": [
         5,
@@ -271,7 +272,7 @@
         "omega1",
         "omega2"
       ],
-      "max_abs_tail_momentum_difference": 0.047654137342981934,
+      "max_abs_tail_momentum_difference": 0.0,
       "model_type": "compound",
       "parameters": {
         "M1": 1.0,
@@ -286,8 +287,8 @@
         "lagrangian": true
       },
       "tail_minus_expected_canonical_momenta": [
-        0.03473537649645553,
-        -0.047654137342981934
+        0.0,
+        0.0
       ],
       "ui_request_degrees": [
         45.0,
@@ -303,7 +304,7 @@
       ]
     }
   ],
-  "tier": "Phase 6 / Tier 1C",
+  "tier": "Phase 6 / Tier 1C and Tier 1D",
   "time_vector": [
     0.0,
     0.1,

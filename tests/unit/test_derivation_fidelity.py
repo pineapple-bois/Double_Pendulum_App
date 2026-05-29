@@ -36,9 +36,9 @@ def test_simple_lagrangian_matches_reference_kinetic_minus_potential_form():
 def test_simple_hamiltonian_uses_expected_mass_matrix_and_potential_energy():
     # Cross-checked against development/math_reference/DevelopmentHamiltonian.ipynb
     # and development/math_reference/MathFunctions.py. Energy conservation and
-    # trajectory regression remain known Phase 2 gaps. The Hamiltonian runtime
-    # state/input convention also needs a later audit because the equations use
-    # canonical momenta while the current UI is velocity-oriented.
+    # trajectory regression remain known Phase 2 gaps. The runtime Hamiltonian
+    # model now converts UI angular velocities to canonical momenta before
+    # solving; this test only checks the symbolic Hamiltonian form.
     delta = theta1 - theta2
     denominator = l1**2 * l2**2 * m2 * (m1 + m2 * sp.sin(delta) ** 2)
     expected_kinetic = (
