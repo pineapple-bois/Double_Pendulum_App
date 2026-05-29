@@ -32,22 +32,16 @@ class ModelCard:
     card_class: str
 
 
-INFO_BUTTON_OPEN_LABEL = "What do I even choose?"
-INFO_BUTTON_CLOSE_LABEL = "Close Information"
-CLOSE_INFO_BUTTON_LABEL = "Close Information"
-
-MODEL_SYSTEM_TITLE = "Model and System Selection"
-MODEL_TYPE_LABEL = "Model Type:"
+MODEL_SYSTEM_TITLE = "System"
 MODEL_TYPE_OPTIONS = (
     {"label": "Simple", "value": "simple"},
     {"label": "Compound", "value": "compound"},
 )
-SYSTEM_TYPE_LABEL = "System Type:"
 SYSTEM_TYPE_OPTIONS = (
-    {"label": "Lagrangian", "value": "lagrangian"},
+    {"label": "Euler-Lagrange", "value": "lagrangian"},
     {"label": "Hamiltonian", "value": "hamiltonian"},
 )
-GRAVITY_LABEL = "Acceleration Due to Gravity"
+GRAVITY_LABEL = "Gravity"
 GRAVITY_PLACEHOLDER = "Acceleration due to gravity, m/s²"
 GRAVITY_OPTIONS = (
     {"label": "Mercury: 3.7 m/s²", "value": 3.7},
@@ -62,17 +56,15 @@ GRAVITY_OPTIONS = (
     {"label": "Pluto: 0.696 m/s²", "value": 0.696},
 )
 
-PARAMETER_TITLE = "Parameter Selection"
-UNITY_PARAMETERS_MARKDOWN = "Unity Parameters sets masses to $1 \\ \\text{kg}$ and lengths to $1 \\ \\text{m}$:"
+PARAMETER_TITLE = "Parameters"
 UNITY_PARAMETERS_BUTTON_LABEL = "Set Unity Parameters"
 LENGTHS_LABEL = "Lengths"
 MASSES_LABEL = "Masses"
-INITIAL_CONDITIONS_TITLE = "Initial Conditions"
-ANGLES_LABEL = "Angles"
-VELOCITIES_LABEL = "Velocities"
-SIMULATION_INTERVAL_TITLE = "Simulation interval"
+INITIAL_CONDITIONS_TITLE = "Initial state"
+SIMULATION_INTERVAL_TITLE = "Duration (s)"
 START_LABEL = "Start"
-STOP_LABEL = "Stop"
+STOP_LABEL = "Duration"
+TIME_CAP_COPY = "Maximum duration: 60 s."
 
 INPUT_PLACEHOLDERS = {
     "l1": "l1 (length of rod 1)",
@@ -89,7 +81,9 @@ INPUT_PLACEHOLDERS = {
     "time_end": "End Time",
 }
 
-RUN_SIMULATION_LABEL = "RUN SIMULATION"
+RUN_SECTION_TITLE = "Run"
+RUN_VALIDATION_INITIAL = "Ready once the setup is complete."
+RUN_SIMULATION_LABEL = "Run simulation"
 TRACE_ANIMATION_TITLE = "Trace Animation"
 PHASE_PORTRAIT_TITLE = "Phase Portrait"
 TIME_GRAPH_TITLE = "Time Graph"

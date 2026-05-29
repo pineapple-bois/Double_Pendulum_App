@@ -1,6 +1,6 @@
 from dash import html
 
-from app.components.footer import get_footer_section_main
+from app.components.footer import get_footer_section
 from app.components.shell import get_body_section, get_footer_wrapper, get_header_section
 from app.components.simulation_interaction import build_simulation_interaction_shell
 from app.components.simulation_controls import build_simulation_controls
@@ -36,7 +36,7 @@ def layout():
             get_body_section([
                 get_main_content(),
             ]),
-            get_footer_wrapper(get_footer_section_main()),
+            get_footer_wrapper(get_footer_section()),
         ],
     )
 

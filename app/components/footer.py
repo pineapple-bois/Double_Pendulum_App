@@ -20,6 +20,27 @@ def github_logo():
     )
 
 
+def footer_text_box():
+    return html.Div(
+        className="footer-text-box",
+        children=[
+            github_logo(),
+            html.Div(
+                children=[
+                    html.Span(FOOTER_PREFIX, className="info-text"),
+                    dcc.Link(
+                        REPOSITORY_LABEL,
+                        href=REPOSITORY_URL,
+                        target="_blank",
+                        className="info-link",
+                    ),
+                    html.Div(FOOTER_COPYRIGHT, className="info-footer"),
+                ],
+            ),
+        ],
+    )
+
+
 def get_common_footer(include_button=False, page_type="main"):
     if not include_button:
         return html.Footer(
@@ -58,26 +79,7 @@ def get_common_footer(include_button=False, page_type="main"):
             )
         )
 
-    children.append(
-        html.Div(
-            className="footer-text-box",
-            children=[
-                github_logo(),
-                html.Div(
-                    children=[
-                        html.Span(FOOTER_PREFIX, className="info-text"),
-                        dcc.Link(
-                            REPOSITORY_LABEL,
-                            href=REPOSITORY_URL,
-                            target="_blank",
-                            className="info-link",
-                        ),
-                        html.Div(FOOTER_COPYRIGHT, className="info-footer"),
-                    ],
-                ),
-            ],
-        )
-    )
+    children.append(footer_text_box())
 
     footer_class = f"footer-bar {page_type}-page"
 
@@ -87,8 +89,13 @@ def get_common_footer(include_button=False, page_type="main"):
     )
 
 
-def get_footer_section_main():
-    return get_common_footer(include_button=True, page_type="main")
+def get_footer_section_main(include_button=True):
+    if not include_button:
+        return html.Div(
+            className="footer-bar main-page",
+            children=[footer_text_box()],
+        )
+    return get_common_footer(include_button=include_button, page_type="main")
 
 
 def get_footer_section():

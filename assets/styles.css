@@ -699,58 +699,6 @@ body {
     SideBar Section */
 
 /*  -------------------
-    Information Pop-Up */
-
-.get-info-button {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-/* Info Popup Style */
-.information-content {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 0 0 5px 5px;
-    z-index: 10; /* Ensure it floats on top */
-    max-height: 100%; /* Set a max-height based on viewport height */
-}
-
-.information-content h2, .information-content p, .information-content ul, .information-content li, .information-content hr {
-    margin-bottom: 16px; /* Adjust the value as needed */
-    font-size: var(--font-size-small);
-}
-
-/* Container for Info Popup */
-.information-container {
-    position: absolute;
-    top: 48px;
-    left: 25%;
-    width: 30%;
-    z-index: 10; /* Ensure it floats on top */
-    max-height: calc(100vh - 240px); /* Set a max-height based on viewport height (This was trial and error -126px)*/
-    overflow-y: auto; /* Enable vertical scrolling */
-}
-
-/* Close Button Specific Style */
-.close-info-button {
-    width: 100%;
-    background-color: #ff4d4d; /* Custom background color */
-    color: white; /* Custom text color */
-    border: 1px solid #007bff;
-    padding: 6px 12px;
-    max-width: 100%;
-    margin-bottom: 0;
-    border-radius: 5px 5px 0 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.close-info-button:hover {
-    background-color: #ff3333; /* Darker shade on hover */
-}
-
-/*  -------------------
     Input Side Bar */
 
 .inputs {
@@ -1047,13 +995,17 @@ body {
 
 .simulation-layout .inputs {
     background: #edf3f8;
+    display: flex;
+    flex-direction: column;
     justify-content: flex-start;
+    min-height: 100%;
 }
 
 .simulation-layout .input-group {
     background: transparent;
     border-bottom: 1px solid #d5dee9;
-    padding: 22px 28px;
+    flex-grow: 0;
+    padding: 18px 24px;
 }
 
 .simulation-layout .input-group:last-child {
@@ -1064,6 +1016,18 @@ body {
 .simulation-layout .initial-conditions-group {
     margin-bottom: 0 !important;
     margin-top: 0 !important;
+}
+
+.simulation-layout .run-group {
+    background: #e6eef7;
+    border-bottom: 0;
+    border-top: 1px solid #d5dee9;
+    bottom: 0;
+    box-shadow: 0 -8px 18px rgba(13, 41, 90, 0.08);
+    gap: 12px;
+    margin-top: auto;
+    position: sticky;
+    z-index: 2;
 }
 
 .simulation-layout .inputs-title,
@@ -1095,6 +1059,150 @@ body {
     border-radius: 8px;
     color: var(--academic-ink);
     min-height: 34px;
+}
+
+.simulation-layout .binary-choice {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 6px 0 14px;
+}
+
+.simulation-layout .binary-choice label {
+    align-items: center;
+    background: white;
+    border: 1px solid #b7c5d6;
+    border-radius: 8px;
+    color: var(--academic-ink);
+    display: inline-flex;
+    font-size: var(--font-size-small);
+    font-weight: 800;
+    gap: 6px;
+    justify-content: center;
+    margin: 0;
+    min-height: 34px;
+    padding: 6px 8px;
+}
+
+.simulation-layout .binary-choice input {
+    accent-color: var(--academic-accent);
+}
+
+.simulation-layout .slider-control {
+    margin: 0 0 16px;
+    min-width: 0;
+}
+
+.simulation-layout .initial-state-slider-stack {
+    display: grid;
+    gap: 2px;
+}
+
+.simulation-layout .initial-state-slider-section {
+    display: grid;
+    gap: 0;
+    min-width: 0;
+}
+
+.simulation-layout .slider-label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.simulation-layout .simulation-slider {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0 0 16px;
+}
+
+.simulation-layout .simulation-slider .dash-range-slider-input {
+    border: 1px solid #b7c5d6;
+    border-radius: 6px;
+    color: var(--academic-ink);
+    font-size: var(--font-size-xsmall);
+    font-weight: 700;
+    justify-self: end;
+    margin-bottom: 0;
+    max-width: 72px;
+    order: 2;
+    text-align: center;
+}
+
+.simulation-layout .simulation-slider .dash-slider-wrapper {
+    order: 1;
+    padding: 0 0 16px;
+}
+
+.simulation-layout .simulation-slider .dash-slider-track {
+    background-color: #c5d1df;
+    height: 5px;
+}
+
+.simulation-layout .simulation-slider .dash-slider-range {
+    background-color: var(--academic-accent);
+}
+
+.simulation-layout .simulation-slider .dash-slider-thumb {
+    background: white;
+    border: 2px solid var(--academic-accent);
+    height: 16px;
+    width: 16px;
+}
+
+.simulation-layout .simulation-slider .dash-slider-thumb:focus-visible,
+.simulation-layout .simulation-slider .dash-slider-thumb:hover {
+    border-color: #315e97;
+    box-shadow: 0 0 0 4px rgba(36, 74, 125, 0.16);
+}
+
+.simulation-layout .simulation-slider .dash-slider-mark {
+    color: #496284;
+    font-size: 0.58rem;
+    line-height: 1.1;
+}
+
+.simulation-layout .simulation-slider .rc-slider-rail {
+    background-color: #c5d1df;
+    height: 5px;
+}
+
+.simulation-layout .simulation-slider .rc-slider-track {
+    background-color: var(--academic-accent);
+    height: 5px;
+}
+
+.simulation-layout .simulation-slider .rc-slider-handle {
+    border: 2px solid var(--academic-accent);
+    height: 16px;
+    margin-top: -6px;
+    width: 16px;
+}
+
+.simulation-layout .simulation-slider .rc-slider-handle:focus,
+.simulation-layout .simulation-slider .rc-slider-handle:hover {
+    border-color: #315e97;
+    box-shadow: 0 0 0 4px rgba(36, 74, 125, 0.16);
+}
+
+.simulation-layout .simulation-slider .rc-slider-mark {
+    color: #496284;
+    font-size: 0.58rem;
+    line-height: 1.1;
+}
+
+.simulation-layout .simulation-slider .rc-slider-dot {
+    border-color: #b7c5d6;
+}
+
+.simulation-layout .simulation-slider .rc-slider-dot-active {
+    border-color: var(--academic-accent);
+}
+
+.simulation-layout .time-start-hidden {
+    display: none;
 }
 
 .simulation-layout .dropdown {
@@ -1519,38 +1627,55 @@ body {
     padding: 14px 0 6px;
 }
 
-.simulation-layout .information-container {
-    left: 360px;
-    max-height: calc(100vh - var(--site-header-height) - 72px);
-    top: calc(var(--site-header-height) + 24px);
-    width: min(420px, calc(100vw - 400px));
-}
-
-.simulation-layout .information-content {
-    border-color: #d5dee9;
-    border-radius: 0 0 8px 8px;
-}
-
-.simulation-layout .close-info-button {
-    background-color: var(--academic-ink);
-    border-color: var(--academic-ink);
-    border-radius: 8px 8px 0 0;
-}
-
-.simulation-layout .close-info-button:hover {
-    background-color: var(--academic-accent);
-}
-
 .simulation-layout .run-simulation-button {
     background-color: var(--academic-accent);
-    border-left: 1px solid var(--site-header-border);
+    border: 1px solid var(--academic-accent);
+    border-radius: 8px !important;
     color: white;
+    font-size: var(--font-size-medium);
     font-weight: 800;
+    height: auto;
     letter-spacing: 0;
+    margin: 0;
+    padding: 11px 14px;
+    width: 100%;
 }
 
 .simulation-layout .run-simulation-button:hover {
     background-color: #315e97;
+}
+
+.simulation-run-validation-message {
+    background: white;
+    border: 1px solid #d5dee9;
+    border-left: 4px solid #73859c;
+    border-radius: 8px;
+    color: var(--academic-ink);
+    font-size: var(--font-size-small);
+    line-height: 1.35;
+    padding: 10px 12px;
+}
+
+.simulation-run-validation-ready {
+    border-left-color: #73859c;
+}
+
+.simulation-run-validation-success {
+    border-left-color: #2f7d5c;
+}
+
+.simulation-run-validation-stale {
+    border-left-color: #b8872e;
+}
+
+.simulation-run-validation-invalid,
+.simulation-run-validation-failed {
+    border-left-color: #b43b43;
+}
+
+.simulation-run-validation-cleared,
+.simulation-run-validation-empty {
+    border-left-color: #73859c;
 }
 
 /*  -------------------
@@ -2205,11 +2330,6 @@ Responsive spacing of description and image section */
         max-width: 33.33333%;
     }
 
-    /*Same with the info pop-up */
-    .information-container {
-        left: 33.33333%;
-    }
-
     /* The input bar should be horizontal */
     .content-container {
         flex-direction: column; /* Stack children vertically */
@@ -2359,11 +2479,8 @@ Responsive spacing of description and image section */
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .simulation-layout .information-container {
-        left: 24px;
-        right: 24px;
-        top: calc(var(--site-header-height) + 24px);
-        width: auto;
+    .simulation-layout .run-group {
+        grid-column: 1 / -1;
     }
 
     .simulation-summary-diagnostics {

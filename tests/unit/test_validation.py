@@ -60,11 +60,11 @@ def test_accepts_representative_compound_inputs():
     ("time_start", "time_end", "expected_message"),
     [
         (None, 20, "Please provide a value for start time."),
-        (0, None, "Please provide a value for end time."),
+        (0, None, "Please provide an end time from 0 to 60 seconds."),
         (-1, 20, "Time interval must begin at zero."),
         (10, 5, "End time must be greater than start time."),
         (0, -1, "End time must be greater than start time."),
-        (0, 121, "Maximum simulation time is 120 seconds."),
+        (0, 61, "Maximum simulation time is 60 seconds."),
     ],
 )
 def test_rejects_invalid_time_intervals(time_start, time_end, expected_message):

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-MAX_TIME = 120
+MAX_TIME = 60
 MAX_LENGTH = 10      # meters
 MIN_LENGTH = 0.1     # meters
 MAX_MASS = 1000      # kilograms
@@ -132,7 +132,7 @@ def _validate_time_interval(time_start, time_end):
     if time_start is None:
         time_errors.append("Please provide a value for start time.")
     if time_end is None:
-        time_errors.append("Please provide a value for end time.")
+        time_errors.append(f"Please provide an end time from 0 to {MAX_TIME} seconds.")
 
     if time_start is not None and time_end is not None:
         if time_start >= time_end or time_end <= 0:

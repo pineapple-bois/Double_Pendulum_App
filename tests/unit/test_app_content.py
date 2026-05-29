@@ -7,7 +7,15 @@ from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMA
 from app.content.math import MATH_PAGES
 from app.content.not_found import NOT_FOUND_HAIKU_LINES
 from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLIC_ROUTE_ITEMS
-from app.content.simulation import INFORMATION_TEXT
+from app.content.simulation import (
+    INFORMATION_TEXT,
+    INITIAL_CONDITIONS_TITLE,
+    MODEL_SYSTEM_TITLE,
+    PARAMETER_TITLE,
+    RUN_SECTION_TITLE,
+    RUN_SIMULATION_LABEL,
+    SIMULATION_INTERVAL_TITLE,
+)
 from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
@@ -330,6 +338,22 @@ def test_simulation_layout_opens_directly_into_workspace():
     assert "simulation-workspace" in classnames
     assert "side-bar" in classnames
     assert "simulation-output-workspace" in classnames
+    assert MODEL_SYSTEM_TITLE in text
+    assert PARAMETER_TITLE in text
+    assert INITIAL_CONDITIONS_TITLE in text
+    assert SIMULATION_INTERVAL_TITLE in text
+    assert RUN_SECTION_TITLE in text
+    assert RUN_SIMULATION_LABEL in text
+    assert "Start here" not in text
+    assert "Set all masses and lengths to 1." not in text
+    assert "Maximum duration: 60 s." in text
+    assert "RUN SIMULATION" not in text
+    assert "Model and System Selection" not in text
+    assert "Parameter Selection" not in text
+    assert "Initial Conditions" not in text
+    assert "Simulation interval" not in text
+    assert "Angles" not in text
+    assert "Velocities" not in text
     assert {
         "scroll-target",
         "submit-val",
@@ -348,7 +372,15 @@ def test_simulation_layout_opens_directly_into_workspace():
         "selected-state-readout",
         "simulation-diagnostics-toggle",
         "simulation-diagnostics-content",
+        "simulation-run-validation-message",
     } <= ids
+    system_type = find_by_id(layout, "system-type")
+    assert isinstance(system_type, dcc.RadioItems)
+    assert {option["label"] for option in system_type.options} == {"Euler-Lagrange", "Hamiltonian"}
+    assert "container-buttons" not in classnames
+    assert "run-simulation-group" not in classnames
+    assert {"site-footer", "site-footer-link"} <= classnames
+    assert "footer-bar" not in classnames
     assert {
         "pendulum-animation",
         "phase-graph",
@@ -449,6 +481,27 @@ def collect_ids(component):
             stack.append(children)
 
     return ids
+
+
+def find_by_id(component, target_id):
+    stack = [component]
+
+    while stack:
+        item = stack.pop()
+        if item is None or isinstance(item, (str, int, float)):
+            continue
+        if isinstance(item, (list, tuple)):
+            stack.extend(item)
+            continue
+
+        if getattr(item, "id", None) == target_id:
+            return item
+
+        children = getattr(item, "children", None)
+        if children is not None:
+            stack.append(children)
+
+    return None
 
 
 def collect_branch_card_controls(component):

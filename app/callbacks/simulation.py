@@ -16,7 +16,7 @@ from app.components.simulation_interaction import (
     initial_canvas_payload,
     initial_playback_state,
 )
-from app.content.simulation import INFO_BUTTON_CLOSE_LABEL, INFO_BUTTON_OPEN_LABEL
+from app.components.simulation_controls import RUN_VALIDATION_MESSAGE_ID
 from app.serialization import (
     build_canvas_motion_payload,
     estimate_canvas_payload_size,
@@ -52,6 +52,16 @@ def _flatten_dash_text(component):
 
 def _status_message_class(status):
     return f"simulation-status-message simulation-status-{status}"
+
+
+def _run_validation_class(status, payload):
+    if status == "empty":
+        state = "ready"
+    elif status == "failed" and isinstance(payload, dict) and payload.get("errors"):
+        state = "invalid"
+    else:
+        state = status
+    return f"simulation-run-validation-message simulation-run-validation-{state}"
 
 
 def _result_state(status, payload, message, playback_state="idle"):
@@ -181,6 +191,29 @@ def _status_children(status, message):
     )
 
 
+def _run_validation_children(status, message, payload):
+    label_by_status = {
+        "empty": "Ready",
+        "stale": "Stale inputs",
+        "failed": "Invalid input" if isinstance(payload, dict) and payload.get("errors") else "Failed",
+        "success": "Success",
+        "cleared": "Cleared",
+        "running": "Running",
+    }
+    detail = message
+    if status == "empty":
+        detail = "Complete setup and run simulation."
+    elif status == "failed" and isinstance(payload, dict) and payload.get("errors"):
+        detail = payload["errors"][0]
+
+    return html.Div(
+        [
+            html.Strong(f"{label_by_status.get(status, status.capitalize())}: "),
+            html.Span(detail),
+        ]
+    )
+
+
 def _state_outputs(payload, status, message, playback_state="idle", previous_playback_state=None, validation_problems=None):
     return {
         "canvas_payload": payload,
@@ -188,6 +221,8 @@ def _state_outputs(payload, status, message, playback_state="idle", previous_pla
         "playback_state": _playback_state(payload, playback_state=playback_state, previous_state=previous_playback_state),
         "status_children": _status_children(status, message),
         "status_className": _status_message_class(status),
+        "run_validation_children": _run_validation_children(status, message, payload),
+        "run_validation_className": _run_validation_class(status, payload),
         "run_summary_children": _render_run_summary(payload),
         "solver_diagnostics_children": _render_solver_diagnostics(payload, validation_problems=validation_problems),
     }
@@ -200,6 +235,8 @@ def _callback_outputs(result):
         result["playback_state"],
         result["status_children"],
         result["status_className"],
+        result["run_validation_children"],
+        result["run_validation_className"],
         result["run_summary_children"],
         result["solver_diagnostics_children"],
     )
@@ -409,33 +446,6 @@ def build_simulation_run_result(
 
 def register_simulation_callbacks(app):
     @app.callback(
-        [Output("info-popup", "style"),
-         Output("info-button", "children"),
-         Output("info-button", "n_clicks")],
-        [Input("info-button", "n_clicks"),
-         Input("close-info-button", "n_clicks")],
-        [State("info-popup", "style"),
-         State("info-button", "n_clicks")]
-    )
-    def toggle_info(info_n_clicks, close_n_clicks, current_style, current_info_n_clicks):
-        ctx = dash.callback_context
-
-        if not ctx.triggered:
-            button_id = 'No clicks yet'
-        else:
-            button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-
-        if button_id == "info-button":
-            if info_n_clicks % 2 == 1:
-                return {"display": "block"}, INFO_BUTTON_CLOSE_LABEL, info_n_clicks
-            else:
-                return {"display": "none"}, INFO_BUTTON_OPEN_LABEL, info_n_clicks
-        elif button_id == "close-info-button":
-            return {"display": "none"}, INFO_BUTTON_OPEN_LABEL, current_info_n_clicks + 1
-
-        return current_style, INFO_BUTTON_OPEN_LABEL, info_n_clicks
-
-    @app.callback(
         [Output('param_l1', 'value'),
          Output('param_l2', 'value'),
          Output('param_m1', 'value'),
@@ -475,6 +485,8 @@ def register_simulation_callbacks(app):
             Output(PLAYBACK_STATE_STORE_ID, 'data', allow_duplicate=True),
             Output(STATUS_MESSAGE_ID, 'children', allow_duplicate=True),
             Output(STATUS_MESSAGE_ID, 'className', allow_duplicate=True),
+            Output(RUN_VALIDATION_MESSAGE_ID, 'children', allow_duplicate=True),
+            Output(RUN_VALIDATION_MESSAGE_ID, 'className', allow_duplicate=True),
             Output(RUN_SUMMARY_AREA_ID, 'children', allow_duplicate=True),
             Output(SOLVER_DIAGNOSTICS_AREA_ID, 'children', allow_duplicate=True),
         ],
@@ -532,6 +544,8 @@ def register_simulation_callbacks(app):
          Output(PLAYBACK_STATE_STORE_ID, 'data'),
          Output(STATUS_MESSAGE_ID, 'children'),
          Output(STATUS_MESSAGE_ID, 'className'),
+         Output(RUN_VALIDATION_MESSAGE_ID, 'children'),
+         Output(RUN_VALIDATION_MESSAGE_ID, 'className'),
          Output(RUN_SUMMARY_AREA_ID, 'children'),
          Output(SOLVER_DIAGNOSTICS_AREA_ID, 'children')],
         [Input('submit-val', 'n_clicks')],

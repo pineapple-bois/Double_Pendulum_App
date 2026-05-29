@@ -1,47 +1,42 @@
 from dash import dcc, html
 
 from app.content.simulation import (
-    ANGLES_LABEL,
-    CLOSE_INFO_BUTTON_LABEL,
     GRAVITY_LABEL,
     GRAVITY_OPTIONS,
     GRAVITY_PLACEHOLDER,
-    INFO_BUTTON_OPEN_LABEL,
-    INFORMATION_TEXT,
     INITIAL_CONDITIONS_TITLE,
     INPUT_PLACEHOLDERS,
     LENGTHS_LABEL,
     MASSES_LABEL,
     MODEL_SYSTEM_TITLE,
-    MODEL_TYPE_LABEL,
     MODEL_TYPE_OPTIONS,
     PARAMETER_TITLE,
+    RUN_SECTION_TITLE,
+    RUN_SIMULATION_LABEL,
+    RUN_VALIDATION_INITIAL,
     SIMULATION_INTERVAL_TITLE,
-    START_LABEL,
     STOP_LABEL,
-    SYSTEM_TYPE_LABEL,
     SYSTEM_TYPE_OPTIONS,
+    TIME_CAP_COPY,
     UNITY_PARAMETERS_BUTTON_LABEL,
-    UNITY_PARAMETERS_MARKDOWN,
-    VELOCITIES_LABEL,
 )
 
 
-def build_info_popup():
-    return html.Div(
-        id="info-popup",
-        children=[
-            html.Button(
-                CLOSE_INFO_BUTTON_LABEL,
-                id="close-info-button",
-                n_clicks=0,
-                className="close-info-button",
-            ),
-            dcc.Markdown(INFORMATION_TEXT, mathjax=True, className="information-content"),
-        ],
-        className="information-container",
-        style={"display": "none"},
-    )
+RUN_VALIDATION_MESSAGE_ID = "simulation-run-validation-message"
+LABELLED_ANGLE_VALUES = (-180, -90, -45, 0, 45, 90, 180)
+ANGLE_MARKS = {
+    value: str(value)
+    for value in LABELLED_ANGLE_VALUES
+}
+VELOCITY_MARKS = {
+    value: str(value)
+    for value in (-720, -360, 0, 360, 720)
+}
+TIME_MARKS = {
+    value: str(value)
+    for value in (1, 15, 30, 45, 60)
+}
+SLIDER_TOOLTIP = {"always_visible": False, "placement": "bottom"}
 
 
 def build_model_selector():
@@ -49,27 +44,19 @@ def build_model_selector():
         className="input-group model-system-group",
         children=[
             html.H4(MODEL_SYSTEM_TITLE, className="inputs-title"),
-            html.Button(
-                INFO_BUTTON_OPEN_LABEL,
-                id="info-button",
-                n_clicks=0,
-                className="button get-info-button",
-            ),
-            html.Label(MODEL_TYPE_LABEL, className="label model-type-label"),
-            dcc.Dropdown(
+            dcc.RadioItems(
                 id="model-type",
                 options=list(MODEL_TYPE_OPTIONS),
                 value="simple",
-                clearable=False,
-                className="dropdown model-system-dropdown",
+                inline=True,
+                className="binary-choice model-system-choice",
             ),
-            html.Label(SYSTEM_TYPE_LABEL, className="label system-type-label"),
-            dcc.Dropdown(
+            dcc.RadioItems(
                 id="system-type",
                 options=list(SYSTEM_TYPE_OPTIONS),
                 value="lagrangian",
-                clearable=False,
-                className="dropdown system-type-dropdown",
+                inline=True,
+                className="binary-choice system-type-choice",
             ),
             html.Label(GRAVITY_LABEL, id="g-label", className="label g-label"),
             dcc.Dropdown(
@@ -90,11 +77,6 @@ def build_physical_parameters_controls():
         className="input-group parameters-group",
         children=[
             html.H4(PARAMETER_TITLE, className="inputs-title"),
-            dcc.Markdown(
-                UNITY_PARAMETERS_MARKDOWN,
-                mathjax=True,
-                className="input-subtext parameter-text",
-            ),
             html.Button(
                 UNITY_PARAMETERS_BUTTON_LABEL,
                 id="unity-parameters",
@@ -112,12 +94,18 @@ def build_physical_parameters_controls():
                                 id="param_l1",
                                 type="number",
                                 placeholder=INPUT_PLACEHOLDERS["l1"],
+                                min=0.1,
+                                max=10,
+                                step=0.1,
                                 className="input parameters-input",
                             ),
                             dcc.Input(
                                 id="param_l2",
                                 type="number",
                                 placeholder=INPUT_PLACEHOLDERS["l2"],
+                                min=0.1,
+                                max=10,
+                                step=0.1,
                                 className="input parameters-input",
                             ),
                         ],
@@ -130,18 +118,27 @@ def build_physical_parameters_controls():
                                 id="param_m1",
                                 type="number",
                                 placeholder=INPUT_PLACEHOLDERS["m1"],
+                                min=0.1,
+                                max=1000,
+                                step=0.1,
                                 className="input parameters-input",
                             ),
                             dcc.Input(
                                 id="param_m2",
                                 type="number",
                                 placeholder=INPUT_PLACEHOLDERS["m2"],
+                                min=0.1,
+                                max=1000,
+                                step=0.1,
                                 className="input parameters-input",
                             ),
                             dcc.Input(
                                 id="param_M1",
                                 type="number",
                                 placeholder=INPUT_PLACEHOLDERS["M1"],
+                                min=0.1,
+                                max=1000,
+                                step=0.1,
                                 className="input parameters-input",
                                 style={"display": "none"},
                             ),
@@ -149,6 +146,9 @@ def build_physical_parameters_controls():
                                 id="param_M2",
                                 type="number",
                                 placeholder=INPUT_PLACEHOLDERS["M2"],
+                                min=0.1,
+                                max=1000,
+                                step=0.1,
                                 className="input parameters-input",
                                 style={"display": "none"},
                             ),
@@ -166,85 +166,146 @@ def build_initial_conditions_controls():
         children=[
             html.H4(INITIAL_CONDITIONS_TITLE, className="inputs-title"),
             html.Div(
-                className="split-inputs init-cond-split",
+                className="initial-state-slider-stack",
                 children=[
-                    html.Div(
-                        className="input-columns init-cond-column",
+                    html.Section(
+                        className="initial-state-slider-section angle-slider-section",
                         children=[
-                            html.Label(ANGLES_LABEL, className="label initial-conditions-label"),
-                            dcc.Input(
-                                id="init_cond_theta1",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["theta1"],
-                                className="input initial-conditions-input_top",
+                            html.Div(
+                                className="slider-control angle-slider-control",
+                                children=[
+                                    html.Label("θ₁ (deg)", className="label slider-label"),
+                                    dcc.Slider(
+                                        id="init_cond_theta1",
+                                        min=-180,
+                                        max=180,
+                                        step=1,
+                                        value=0,
+                                        marks=ANGLE_MARKS,
+                                        tooltip=SLIDER_TOOLTIP,
+                                        className="simulation-slider angle-slider",
+                                    ),
+                                ],
                             ),
-                            dcc.Input(
-                                id="init_cond_theta2",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["theta2"],
-                                className="input initial-conditions-input-top",
+                            html.Div(
+                                className="slider-control angle-slider-control",
+                                children=[
+                                    html.Label("θ₂ (deg)", className="label slider-label"),
+                                    dcc.Slider(
+                                        id="init_cond_theta2",
+                                        min=-180,
+                                        max=180,
+                                        step=1,
+                                        value=0,
+                                        marks=ANGLE_MARKS,
+                                        tooltip=SLIDER_TOOLTIP,
+                                        className="simulation-slider angle-slider",
+                                    ),
+                                ],
                             ),
                         ],
                     ),
-                    html.Div(
-                        className="input-columns init-cond-column",
+                    html.Section(
+                        className="initial-state-slider-section velocity-slider-section",
                         children=[
-                            html.Label(VELOCITIES_LABEL, className="label initial-conditions-label"),
-                            dcc.Input(
-                                id="init_cond_omega1",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["omega1"],
-                                className="input initial-conditions-input-bottom",
+                            html.Div(
+                                className="slider-control velocity-slider-control",
+                                children=[
+                                    html.Label("ω₁ (deg/s)", className="label slider-label"),
+                                    dcc.Slider(
+                                        id="init_cond_omega1",
+                                        min=-720,
+                                        max=720,
+                                        step=5,
+                                        value=0,
+                                        marks=VELOCITY_MARKS,
+                                        tooltip=SLIDER_TOOLTIP,
+                                        className="simulation-slider velocity-slider",
+                                    ),
+                                ],
                             ),
-                            dcc.Input(
-                                id="init_cond_omega2",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["omega2"],
-                                className="input initial-conditions-input-bottom",
+                            html.Div(
+                                className="slider-control velocity-slider-control",
+                                children=[
+                                    html.Label("ω₂ (deg/s)", className="label slider-label"),
+                                    dcc.Slider(
+                                        id="init_cond_omega2",
+                                        min=-720,
+                                        max=720,
+                                        step=5,
+                                        value=0,
+                                        marks=VELOCITY_MARKS,
+                                        tooltip=SLIDER_TOOLTIP,
+                                        className="simulation-slider velocity-slider",
+                                    ),
+                                ],
                             ),
                         ],
                     ),
                 ],
             ),
-            *build_time_controls(),
         ],
     )
 
 
 def build_time_controls():
-    return (
-        html.H4(SIMULATION_INTERVAL_TITLE, className="inputs-title time-title"),
-        html.Div(
-            className="split-inputs time-vector-split",
-            children=[
-                html.Div(
-                    className="input-columns time-vector-column",
-                    children=[
-                        html.Label(START_LABEL, className="label time-vector-label"),
-                        dcc.Input(
-                            id="time_start",
-                            type="number",
-                            placeholder=INPUT_PLACEHOLDERS["time_start"],
-                            value=0,
-                            className="input time-vector-input",
-                        ),
-                    ],
+    return html.Div(
+        className="input-group time-group",
+        children=[
+            html.H4(SIMULATION_INTERVAL_TITLE, className="inputs-title time-title"),
+            html.P(TIME_CAP_COPY, className="input-subtext time-cap-copy"),
+            html.Div(
+                className="time-start-hidden",
+                children=dcc.Input(
+                    id="time_start",
+                    type="number",
+                    value=0,
+                    min=0,
+                    max=0,
+                    className="input time-vector-input",
+                    style={"display": "none"},
                 ),
-                html.Div(
-                    className="input-columns time-vector-column",
-                    children=[
-                        html.Label(STOP_LABEL, className="label time-vector-label"),
-                        dcc.Input(
-                            id="time_end",
-                            type="number",
-                            placeholder=INPUT_PLACEHOLDERS["time_end"],
-                            value=20,
-                            className="input time-vector-input",
-                        ),
-                    ],
-                ),
-            ],
-        ),
+            ),
+            html.Div(
+                className="slider-control time-slider-control",
+                children=[
+                    html.Label(f"{STOP_LABEL} (s)", className="label time-vector-label slider-label"),
+                    dcc.Slider(
+                        id="time_end",
+                        min=1,
+                        max=60,
+                        step=1,
+                        value=20,
+                        marks=TIME_MARKS,
+                        tooltip=SLIDER_TOOLTIP,
+                        className="simulation-slider time-slider",
+                    ),
+                ],
+            ),
+        ],
+    )
+
+
+def build_run_controls():
+    return html.Div(
+        className="input-group run-group simulation-run-action",
+        children=[
+            html.H4(RUN_SECTION_TITLE, className="inputs-title run-title"),
+            html.Div(
+                id=RUN_VALIDATION_MESSAGE_ID,
+                className="simulation-run-validation-message simulation-run-validation-ready",
+                children=[
+                    html.Strong("Ready: "),
+                    html.Span(RUN_VALIDATION_INITIAL),
+                ],
+            ),
+            html.Button(
+                RUN_SIMULATION_LABEL,
+                id="submit-val",
+                n_clicks=0,
+                className="button run-simulation-button simulation-sidebar-run-button",
+            ),
+        ],
     )
 
 
@@ -255,10 +316,11 @@ def build_simulation_controls():
             html.Div(
                 className="inputs",
                 children=[
-                    build_info_popup(),
                     build_model_selector(),
                     build_physical_parameters_controls(),
                     build_initial_conditions_controls(),
+                    build_time_controls(),
+                    build_run_controls(),
                 ],
             )
         ],

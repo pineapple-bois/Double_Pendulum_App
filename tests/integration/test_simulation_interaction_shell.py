@@ -3,6 +3,7 @@ from pathlib import Path
 from dash import dcc, html
 
 from app.callbacks.simulation import build_input_change_result, build_simulation_run_result
+from app.components.simulation_controls import RUN_VALIDATION_MESSAGE_ID
 from app.components.simulation_interaction import (
     CANVAS_PAYLOAD_STORE_ID,
     CANVAS_MOTION_VIEW_ID,
@@ -33,6 +34,7 @@ from tests.helpers import extract_dash_text
 
 CALLBACK_SENSITIVE_IDS = {
     "submit-val",
+    RUN_VALIDATION_MESSAGE_ID,
     "scroll-target",
     "model-type",
     "system-type",
@@ -50,9 +52,6 @@ CALLBACK_SENSITIVE_IDS = {
     "time_start",
     "time_end",
     "unity-parameters",
-    "info-popup",
-    "info-button",
-    "close-info-button",
 }
 
 LEGACY_PLOTLY_OUTPUT_IDS = {
@@ -178,10 +177,13 @@ def callback_outputs(callback):
 def test_simulation_layout_adds_memory_scoped_stores_and_preserves_existing_ids():
     layout = get_layout_for_path("/simulation")
     ids = collect_ids(layout)
+    classes = collect_class_names(layout)
 
     assert CALLBACK_SENSITIVE_IDS <= ids
     assert SHELL_IDS <= ids
     assert LEGACY_PLOTLY_OUTPUT_IDS.isdisjoint(ids)
+    assert {"info-popup", "info-button", "close-info-button"}.isdisjoint(ids)
+    assert "container-buttons" not in classes
 
     canvas_store = find_by_id(layout, CANVAS_PAYLOAD_STORE_ID)
     result_store = find_by_id(layout, RESULT_STATE_STORE_ID)
@@ -230,7 +232,13 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
         "selected-state-diagnostics-area",
         "simulation-diagnostics-toggle",
         "simulation-detail-diagnostics",
+        "initial-state-slider-stack",
+        "initial-state-slider-section",
+        "binary-choice",
+        "model-system-choice",
+        "system-type-choice",
     } <= classes
+    assert "init-cond-split" not in classes
     assert "simulation-output-control-layout" not in classes
 
     scrubber = find_by_id(layout, SCRUBBER_ID)
@@ -238,6 +246,15 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     time_selector = find_by_class(layout, "canvas-time-selector")
     playback_status = find_by_class(layout, "playback-header-status")
     playback_display = find_by_class(layout, "playback-header-display")
+    theta1_slider = find_by_id(layout, "init_cond_theta1")
+    theta2_slider = find_by_id(layout, "init_cond_theta2")
+    omega1_slider = find_by_id(layout, "init_cond_omega1")
+    omega2_slider = find_by_id(layout, "init_cond_omega2")
+    model_type = find_by_id(layout, "model-type")
+    system_type = find_by_id(layout, "system-type")
+    time_start_input = find_by_id(layout, "time_start")
+    time_end_slider = find_by_id(layout, "time_end")
+    run_validation = find_by_id(layout, RUN_VALIDATION_MESSAGE_ID)
 
     assert isinstance(scrubber, dcc.Input)
     assert scrubber.type == "range"
@@ -246,6 +263,43 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert find_by_id(playback_status, STATUS_MESSAGE_ID) is not None
     assert find_by_id(playback_display, DISPLAY_OPTIONS_ID) is not None
     assert find_by_id(playback_display, FRAME_INDICATOR_ID) is not None
+    assert isinstance(model_type, dcc.RadioItems)
+    assert {option["value"] for option in model_type.options} == {"simple", "compound"}
+    assert isinstance(system_type, dcc.RadioItems)
+    assert {option["value"] for option in system_type.options} == {"lagrangian", "hamiltonian"}
+    assert {option["label"] for option in system_type.options} == {"Euler-Lagrange", "Hamiltonian"}
+    assert isinstance(theta1_slider, dcc.Slider)
+    assert theta1_slider.min == -180
+    assert theta1_slider.max == 180
+    assert theta1_slider.step == 1
+    assert theta1_slider.value == 0
+    assert set(theta1_slider.marks) == {-180, -90, -45, 0, 45, 90, 180}
+    assert theta1_slider.marks[-180] == "-180"
+    assert theta1_slider.marks[0] == "0"
+    assert theta1_slider.tooltip["always_visible"] is False
+    assert isinstance(theta2_slider, dcc.Slider)
+    assert theta2_slider.min == -180
+    assert theta2_slider.max == 180
+    assert theta2_slider.step == 1
+    assert isinstance(omega1_slider, dcc.Slider)
+    assert omega1_slider.min == -720
+    assert omega1_slider.max == 720
+    assert omega1_slider.step == 5
+    assert omega1_slider.value == 0
+    assert isinstance(omega2_slider, dcc.Slider)
+    assert omega2_slider.min == -720
+    assert omega2_slider.max == 720
+    assert omega2_slider.tooltip["always_visible"] is False
+    assert isinstance(time_start_input, dcc.Input)
+    assert time_start_input.value == 0
+    assert time_start_input.style == {"display": "none"}
+    assert isinstance(time_end_slider, dcc.Slider)
+    assert time_end_slider.min == 1
+    assert time_end_slider.max == 60
+    assert time_end_slider.step == 1
+    assert time_end_slider.value == 20
+    assert run_validation is not None
+    assert "Ready" in text_from(run_validation)
     assert isinstance(display_options, dcc.Checklist)
     assert display_options.value == ["axes", "grid"]
     assert {option["value"] for option in display_options.options} == {"axes", "grid"}
@@ -266,6 +320,7 @@ def test_submit_val_remains_registered_run_trigger():
     output_ids = {output.component_id for output in callback_outputs(callback)}
     assert CANVAS_PAYLOAD_STORE_ID in output_ids
     assert RESULT_STATE_STORE_ID in output_ids
+    assert RUN_VALIDATION_MESSAGE_ID in output_ids
     assert LEGACY_PLOTLY_OUTPUT_IDS.isdisjoint(output_ids)
 
 
@@ -325,6 +380,8 @@ def test_successful_run_result_stores_valid_canvas_payload_without_plotly_genera
     assert payload["status"] == "success"
     assert payload["rendering"]["drawable"] is True
     assert result["result_state"]["status"] == "success"
+    assert "simulation-run-validation-success" in result["run_validation_className"]
+    assert "Success" in text_from(result["run_validation_children"])
     assert "animation_phase_children" not in result
     assert "time_graph_children" not in result
     assert "animation_phase_style" not in result
@@ -364,6 +421,8 @@ def test_validation_failure_stores_failed_non_drawable_payload():
     assert payload["status"] == "failed"
     assert payload["rendering"]["drawable"] is False
     assert result["result_state"]["status"] == "failed"
+    assert "simulation-run-validation-invalid" in result["run_validation_className"]
+    assert "requires a numerical value" in text_from(result["run_validation_children"])
     assert result["playback_state"]["playback_state"] == "cancelled"
     assert "time_s" not in payload
     assert "theta1_deg" not in payload
@@ -415,6 +474,8 @@ def test_input_change_marks_success_payload_stale_without_recomputing_physics():
     assert payload["rendering"]["drawable"] is True
     assert payload["rendering"]["autoplay_allowed"] is False
     assert stale_result["result_state"]["status"] == "stale"
+    assert "simulation-run-validation-stale" in stale_result["run_validation_className"]
+    assert "Stale inputs" in text_from(stale_result["run_validation_children"])
     assert stale_result["playback_state"]["playback_state"] == "cancelled"
     assert "Settings changed" in text_from(stale_result["status_children"])
 

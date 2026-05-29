@@ -13,9 +13,6 @@ from app.content.simulation import ModelCard
 
 
 SIMULATION_CONTROL_IDS = {
-    "info-popup",
-    "close-info-button",
-    "info-button",
     "model-type",
     "system-type",
     "g-label",
