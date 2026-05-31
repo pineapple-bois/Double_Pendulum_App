@@ -86,13 +86,14 @@ New or updated tests cover:
 
 ## Remaining Gaps
 
-- Manual UX performance inspection has not yet been completed.
 - Compound-model solver-policy evidence has not yet been gathered.
-- Browser transfer, JSON parse, and Canvas rendering cost still need manual
-  inspection.
 - Production payload schema and result contract should remain aligned as
   callback behavior evolves.
 - Long-duration chaos behavior is out of scope for this pass.
+
+Manual UX and loading-state inspection for the simple-model policies is
+recorded in
+`documentation/phase-8-manual-ux-and-loading-state-inspection.md`.
 
 ## Phase 9 Note
 

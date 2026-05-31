@@ -41,6 +41,7 @@
         "init_cond_omega2",
         "time_start",
         "time_end",
+        "integrator-policy",
         "unity-parameters",
     ];
     const REQUIRED_ARRAYS = [
@@ -117,6 +118,10 @@
             cancelPlayback("cancelled");
             return false;
         }
+        const shellChanged = rendererState.boundShell !== shell;
+        if (shellChanged) {
+            resetRouteScopedState();
+        }
 
         rendererState.shell = shell;
         rendererState.canvases = {
@@ -139,7 +144,7 @@
             return false;
         }
 
-        if (rendererState.boundShell !== shell) {
+        if (shellChanged) {
             bindControls();
             rendererState.boundShell = shell;
         }
@@ -154,6 +159,21 @@
         }
 
         return true;
+    }
+
+    function resetRouteScopedState() {
+        cancelPlayback("cancelled");
+        rendererState.payload = null;
+        rendererState.resultState = null;
+        rendererState.activeRunId = null;
+        rendererState.minimumRunId = 0;
+        rendererState.activePayloadKey = null;
+        rendererState.resultStatus = STATUS.EMPTY;
+        rendererState.selectedFrame = 0;
+        rendererState.playbackState = "idle";
+        rendererState.playbackStartTimestamp = null;
+        rendererState.playbackStartFrame = 0;
+        rendererState.metrics = null;
     }
 
     function bindGlobalEvents() {
@@ -1597,7 +1617,10 @@
             rendererState.observer = new MutationObserver(function () {
                 if (!hasShell()) {
                     cancelPlayback("cancelled");
+                    resetRouteScopedState();
                     rendererState.shell = null;
+                    rendererState.canvases = {};
+                    rendererState.controls = {};
                     rendererState.boundShell = null;
                     return;
                 }

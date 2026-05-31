@@ -35,6 +35,8 @@ and historical decision support. Production code must not import from
 - [Simulation Canvas Architecture](simulation-canvas/)
 - [Development Workflow](development-workflow.md)
 - [Phase 8 Solver Fidelity And Contract Record](phase-8-solver-fidelity-and-contract-record.md)
+- [Phase 8 Callback Routing Stability](phase-8-callback-routing-stability.md)
+- [Phase 8 Manual UX And Loading-State Inspection](phase-8-manual-ux-and-loading-state-inspection.md)
 
 ## Current state
 

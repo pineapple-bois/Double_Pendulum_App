@@ -15,7 +15,15 @@ def register_routing_callbacks(app):
         """
         function(pathname) {
             if (pathname === '/simulation') {
-                initializeHomePage();  // Call the JS function to reinitialize
+                if (typeof initializeHomePage === 'function') {
+                    initializeHomePage();
+                }
+                if (
+                    window.DoublePendulumCanvasRenderer &&
+                    typeof window.DoublePendulumCanvasRenderer.init === 'function'
+                ) {
+                    window.DoublePendulumCanvasRenderer.init();
+                }
             }
             return '';
         }

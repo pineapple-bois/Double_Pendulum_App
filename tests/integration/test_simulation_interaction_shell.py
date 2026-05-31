@@ -215,6 +215,38 @@ def test_simulation_layout_adds_memory_scoped_stores_and_preserves_existing_ids(
     assert playback_store.data["playback_state"] == "idle"
 
 
+def test_route_sequence_remounts_simulation_with_fresh_memory_state():
+    first_simulation_layout = get_layout_for_path("/simulation")
+    equations_layout = get_layout_for_path("/equations")
+    second_simulation_layout = get_layout_for_path("/simulation")
+
+    first_ids = collect_ids(first_simulation_layout)
+    second_ids = collect_ids(second_simulation_layout)
+    assert CALLBACK_SENSITIVE_IDS <= first_ids
+    assert CALLBACK_SENSITIVE_IDS <= second_ids
+    assert SHELL_IDS <= first_ids
+    assert SHELL_IDS <= second_ids
+    assert equations_layout is not None
+    assert find_by_id(equations_layout, CANVAS_PAYLOAD_STORE_ID) is None
+
+    first_canvas_store = find_by_id(first_simulation_layout, CANVAS_PAYLOAD_STORE_ID)
+    second_canvas_store = find_by_id(second_simulation_layout, CANVAS_PAYLOAD_STORE_ID)
+    first_result_store = find_by_id(first_simulation_layout, RESULT_STATE_STORE_ID)
+    second_result_store = find_by_id(second_simulation_layout, RESULT_STATE_STORE_ID)
+    first_integrator_policy = find_by_id(first_simulation_layout, INTEGRATOR_POLICY_ID)
+    second_integrator_policy = find_by_id(second_simulation_layout, INTEGRATOR_POLICY_ID)
+
+    assert first_canvas_store is not second_canvas_store
+    assert first_canvas_store.data["status"] == "empty"
+    assert first_canvas_store.data["run_id"] == 0
+    assert second_canvas_store.data["status"] == "empty"
+    assert second_canvas_store.data["run_id"] == 0
+    assert first_result_store.data["status"] == "empty"
+    assert second_result_store.data["status"] == "empty"
+    assert first_integrator_policy.value == INTEGRATOR_POLICY_DEFAULT
+    assert second_integrator_policy.value == INTEGRATOR_POLICY_DEFAULT
+
+
 def test_simulation_layout_includes_canvas_targets_and_local_controls():
     layout = get_layout_for_path("/simulation")
     classes = collect_class_names(layout)
@@ -524,6 +556,10 @@ def test_validation_failure_stores_failed_non_drawable_payload():
     assert result["result_state"]["render_safe"] is False
     assert "simulation-run-validation-invalid" in result["run_validation_className"]
     assert "requires a numerical value" in text_from(result["run_validation_children"])
+    diagnostics_text = text_from(result["solver_diagnostics_children"])
+    assert "Solver was not run for this state." in diagnostics_text
+    assert "Policy:" not in diagnostics_text
+    assert "Payload validation passed." not in diagnostics_text
     assert result["playback_state"]["playback_state"] == "cancelled"
     assert "time_s" not in payload
     assert "theta1_deg" not in payload
@@ -698,6 +734,11 @@ def test_solver_failure_stores_failed_non_drawable_payload(monkeypatch):
     assert result["result_state"]["failure_reason"] == SimulationResultState.SOLVER_FAILURE.value
     assert result["result_state"]["render_safe"] is False
     assert "simulation-run-validation-failed" in result["run_validation_className"]
+    diagnostics_text = text_from(result["solver_diagnostics_children"])
+    assert "Policy: solve_ivp_default_baseline" in diagnostics_text
+    assert "Solver success: False" in diagnostics_text
+    assert "Policy: simple_default" not in diagnostics_text
+    assert "Payload validation passed." not in diagnostics_text
     assert result["playback_state"]["playback_state"] == "cancelled"
     assert "time_s" not in payload
     assert "theta1_deg" not in payload
@@ -753,6 +794,133 @@ def test_input_change_marks_success_payload_stale_without_recomputing_physics():
     assert "Stale inputs" in text_from(stale_result["run_validation_children"])
     assert stale_result["playback_state"]["playback_state"] == "cancelled"
     assert "Settings changed" in text_from(stale_result["status_children"])
+    diagnostics_text = text_from(stale_result["solver_diagnostics_children"])
+    assert "Diagnostics are stale and describe the previous successful run." in diagnostics_text
+    assert "Rerun to refresh solver metadata for the current controls." in diagnostics_text
+    assert "Policy: simple_default" in diagnostics_text
+    assert "Previous payload validation passed before inputs changed." in diagnostics_text
+    assert "Payload validation passed." not in diagnostics_text
+
+
+def test_integrator_policy_change_marks_diagnostics_stale_until_rerun():
+    success_result = build_simulation_run_result(
+        6,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        integrator_policy_value="simple_default",
+    )
+    stale_result = build_input_change_result(
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        success_result["canvas_payload"],
+        integrator_policy_value="simple_reference",
+        current_playback_state=success_result["playback_state"],
+    )
+    rerun_result = build_simulation_run_result(
+        7,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        integrator_policy_value="simple_reference",
+    )
+
+    stale_diagnostics = text_from(stale_result["solver_diagnostics_children"])
+    rerun_diagnostics = text_from(rerun_result["solver_diagnostics_children"])
+    assert stale_result["canvas_payload"]["status"] == "stale"
+    assert "Diagnostics are stale" in stale_diagnostics
+    assert "Policy: simple_default" in stale_diagnostics
+    assert "Policy: simple_reference" not in stale_diagnostics
+    assert rerun_result["canvas_payload"]["status"] == "success"
+    assert "Diagnostics are stale" not in rerun_diagnostics
+    assert "Policy: simple_reference" in rerun_diagnostics
+    assert "Policy: simple_default" not in rerun_diagnostics
+
+
+def test_validation_error_after_success_does_not_reuse_success_diagnostics():
+    success_result = build_simulation_run_result(
+        8,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        integrator_policy_value="simple_reference",
+    )
+    invalid_result = build_input_change_result(
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        None,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        success_result["canvas_payload"],
+        integrator_policy_value="simple_reference",
+        current_playback_state=success_result["playback_state"],
+    )
+
+    diagnostics_text = text_from(invalid_result["solver_diagnostics_children"])
+    assert invalid_result["canvas_payload"]["status"] == "failed"
+    assert invalid_result["result_state"]["render_safe"] is False
+    assert "Solver was not run for this state." in diagnostics_text
+    assert "Policy: simple_reference" not in diagnostics_text
+    assert "Payload validation passed." not in diagnostics_text
 
 
 def test_empty_and_cleared_payload_states_are_non_drawable():
@@ -807,6 +975,10 @@ def test_renderer_asset_exists_and_stays_within_task_c_boundaries():
     source = asset_path.read_text(encoding="utf-8")
     assert "DoublePendulumCanvasRenderer" in source
     assert "requestAnimationFrame" in source
+    assert "function resetRouteScopedState()" in source
+    assert "rendererState.minimumRunId = 0" in source
+    assert "rendererState.boundShell !== shell" in source
+    assert INTEGRATOR_POLICY_ID in source
     assert CANVAS_MOTION_VIEW_ID in source
     assert CANVAS_TIME_SERIES_VIEW_ID in source
     assert CANVAS_PROJECTION_VIEW_ID in source
@@ -836,3 +1008,11 @@ def test_renderer_asset_exists_and_stays_within_task_c_boundaries():
     assert "sessionstorage" not in lowered
     assert "fetch(" not in lowered
     assert "xmlhttprequest" not in lowered
+
+
+def test_route_clientside_callback_guards_renderer_and_scroll_globals():
+    source = Path("app/callbacks/routing.py").read_text(encoding="utf-8")
+
+    assert "typeof initializeHomePage === 'function'" in source
+    assert "window.DoublePendulumCanvasRenderer" in source
+    assert "typeof window.DoublePendulumCanvasRenderer.init === 'function'" in source

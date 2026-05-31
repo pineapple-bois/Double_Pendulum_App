@@ -60,27 +60,43 @@ open-ended simulation workbench. It is not a new chaos or comparison branch.
 Phase 8 exists to prove that the current app is mathematically credible and
 callback-stable enough to continue.
 
-Scope:
+Completed or substantially completed:
 
-- Strengthen mathematical fidelity tests for representative cases.
-- Strengthen simulation result contract tests.
-- Promote the completed `development/math_fidelity/` simple-model evidence into
-  focused production tests.
-- Use `development/solver_contract/` as the Phase 8 implementation plan for
-  solver-policy and solver-failure hardening.
-- Harden callback and loading-state behavior.
-- Cover stale, failed, empty, cleared, and successful result-state handling.
-- Investigate and eradicate the user-discovered bug, to be defined in a
-  focused follow-up task.
-- Verify that Canvas payloads do not hide numerical failures.
-- Verify that failure states do not leave stale drawable success data behind.
-- Treat `dop853_moderate` (`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as
-  the leading simple-model default candidate, pending production tests and
-  manual UX performance inspection.
-- Use the temporary Simulation integrator-policy selector only for Phase 8
-  manual inspection.
-- Keep implementation documentation aligned with code.
+- Simple-model mathematical fidelity evidence has been promoted into focused
+  production tests.
+- Solver-policy evidence now supports `dop853_moderate`
+  (`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as the leading simple-model
+  default candidate.
+- Production solver-policy scaffolding and tests exist for simple-model runs.
+- Solver failures are represented as first-class non-render-safe states.
+- Canvas/backend payload tests verify that failures do not leave current
+  drawable success arrays behind.
+- The route-remount lifecycle bug was fixed with Canvas renderer route-state
+  reset and guarded routing reinitialization.
+- Manual simple-model UX performance inspection is complete for DOP853 moderate
+  and DOP853 strict across representative systems, durations, and inputs.
+- The stale diagnostics metadata issue has been triaged and fixed: stale
+  diagnostics now identify previous-run metadata until rerun.
+- A temporary Simulation integrator-policy selector exists for Phase 8 manual
+  inspection and remains easy to remove or hide in Phase 9.
+- Durable solver fidelity and result-contract documentation exists at
+  `documentation/phase-8-solver-fidelity-and-contract-record.md`.
+- Durable callback, routing, manual UX, and loading-state notes exist under
+  `documentation/`.
+
+Active current work:
+
+- Keep Phase 8 documentation links current while callback/result contracts are
+  finalized.
 - Keep `ROADMAP.md` concise and usable as project control.
+
+Outstanding before Phase 8 can close:
+
+- Decide whether to remove the temporary integrator-policy selector before
+  Phase 8 closes or defer removal/hiding to Phase 9.
+- Accept or separately address the residual browser-level coverage gap around
+  Canvas pixels/renderer internals across route transitions.
+- Ensure `documentation/` links remain current.
 - Preserve the safe Dash smoke-test workflow and never leave a Codex-started
   Dash development server running.
 
@@ -224,6 +240,13 @@ Durable implementation documentation:
   backend/callback/store/rendering result contract.
 - `documentation/simulation-canvas/callback-rendering-flow.md` records the
   Dash callback and Canvas rendering flow.
+- `documentation/phase-8-solver-fidelity-and-contract-record.md` records the
+  durable Phase 8 solver fidelity and result-contract work.
+- `documentation/phase-8-callback-routing-stability.md` records the focused
+  route-remount and callback lifecycle investigation.
+- `documentation/phase-8-manual-ux-and-loading-state-inspection.md` records the
+  closeout manual UX, stale diagnostics, and loading/interrupted-state
+  inspection.
 
 Evidence and history:
 

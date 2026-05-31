@@ -194,6 +194,14 @@ def _render_solver_diagnostics(payload, validation_problems=None):
         children.append(html.P("Solver has not run for the current state."))
         return children
 
+    if status == "stale":
+        children.append(
+            html.P(
+                "Diagnostics are stale and describe the previous successful run. "
+                "Rerun to refresh solver metadata for the current controls."
+            )
+        )
+
     if not solver.get("integrator"):
         children.append(html.P("Solver was not run for this state."))
     else:
@@ -218,8 +226,10 @@ def _render_solver_diagnostics(payload, validation_problems=None):
     if validation_problems:
         children.append(html.P("Payload validation problems:"))
         children.append(html.Ul([html.Li(problem) for problem in validation_problems]))
-    elif status in ("success", "stale"):
+    elif status == "success":
         children.append(html.P("Payload validation passed."))
+    elif status == "stale":
+        children.append(html.P("Previous payload validation passed before inputs changed."))
 
     return children
 
