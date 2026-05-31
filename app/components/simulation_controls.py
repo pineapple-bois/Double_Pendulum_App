@@ -4,6 +4,10 @@ from app.content.simulation import (
     GRAVITY_LABEL,
     GRAVITY_OPTIONS,
     GRAVITY_PLACEHOLDER,
+    INITIAL_STATE_HELP_LINES,
+    INITIAL_STATE_PRESET_LABEL,
+    INITIAL_STATE_PRESET_OPTIONS,
+    INITIAL_STATE_PRESET_PLACEHOLDER,
     INITIAL_CONDITIONS_TITLE,
     INPUT_PLACEHOLDERS,
     LENGTHS_LABEL,
@@ -15,28 +19,61 @@ from app.content.simulation import (
     RUN_SIMULATION_LABEL,
     RUN_VALIDATION_INITIAL,
     SIMULATION_INTERVAL_TITLE,
-    STOP_LABEL,
     SYSTEM_TYPE_OPTIONS,
-    TIME_CAP_COPY,
     UNITY_PARAMETERS_BUTTON_LABEL,
 )
 
 
+INITIAL_STATE_PRESET_ID = "initial-state-preset"
+INITIAL_STATE_PRESET_APPLY_STORE_ID = "initial-state-preset-apply-store"
 RUN_VALIDATION_MESSAGE_ID = "simulation-run-validation-message"
-LABELLED_ANGLE_VALUES = (-180, -90, -45, 0, 45, 90, 180)
-ANGLE_MARKS = {
-    value: str(value)
-    for value in LABELLED_ANGLE_VALUES
-}
-VELOCITY_MARKS = {
-    value: str(value)
-    for value in (-720, -360, 0, 360, 720)
-}
 TIME_MARKS = {
     value: str(value)
-    for value in (1, 15, 30, 45, 60)
+    for value in (10, 20, 30, 40, 50, 60)
 }
 SLIDER_TOOLTIP = {"always_visible": False, "placement": "bottom"}
+
+
+def build_initial_state_heading():
+    return html.Div(
+        className="initial-state-heading-row",
+        children=[
+            html.H4(INITIAL_CONDITIONS_TITLE, className="inputs-title initial-state-title"),
+            html.Details(
+                className="initial-state-help",
+                open=False,
+                children=[
+                    html.Summary("?", className="initial-state-help-summary", title="Initial state help"),
+                    html.Div(
+                        className="initial-state-help-panel",
+                        children=[
+                            html.P(INITIAL_STATE_HELP_LINES[0]),
+                            html.P(INITIAL_STATE_HELP_LINES[1]),
+                            html.P(INITIAL_STATE_HELP_LINES[2]),
+                            html.P(INITIAL_STATE_HELP_LINES[3]),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+
+def build_initial_state_preset_control():
+    return html.Div(
+        className="initial-state-preset-control",
+        children=[
+            html.Label(INITIAL_STATE_PRESET_LABEL, className="label initial-state-preset-label"),
+            dcc.Dropdown(
+                id=INITIAL_STATE_PRESET_ID,
+                options=list(INITIAL_STATE_PRESET_OPTIONS),
+                placeholder=INITIAL_STATE_PRESET_PLACEHOLDER,
+                clearable=True,
+                searchable=False,
+                className="dropdown initial-state-preset-dropdown",
+            ),
+        ],
+    )
 
 
 def build_model_selector():
@@ -50,6 +87,8 @@ def build_model_selector():
                 value="simple",
                 inline=True,
                 className="binary-choice model-system-choice",
+                labelClassName="system-button",
+                inputClassName="system-button-input",
             ),
             dcc.RadioItems(
                 id="system-type",
@@ -57,6 +96,8 @@ def build_model_selector():
                 value="lagrangian",
                 inline=True,
                 className="binary-choice system-type-choice",
+                labelClassName="system-button",
+                inputClassName="system-button-input",
             ),
             html.Label(GRAVITY_LABEL, id="g-label", className="label g-label"),
             dcc.Dropdown(
@@ -164,81 +205,62 @@ def build_initial_conditions_controls():
     return html.Div(
         className="input-group initial-conditions-group",
         children=[
-            html.H4(INITIAL_CONDITIONS_TITLE, className="inputs-title"),
+            build_initial_state_heading(),
+            build_initial_state_preset_control(),
             html.Div(
-                className="initial-state-slider-stack",
+                className="split-inputs initial-state-input-grid",
                 children=[
-                    html.Section(
-                        className="initial-state-slider-section angle-slider-section",
+                    html.Div(
+                        className="input-columns initial-state-input-column angle-input-column",
                         children=[
-                            html.Div(
-                                className="slider-control angle-slider-control",
-                                children=[
-                                    html.Label("θ₁ (deg)", className="label slider-label"),
-                                    dcc.Slider(
-                                        id="init_cond_theta1",
-                                        min=-180,
-                                        max=180,
-                                        step=1,
-                                        value=0,
-                                        marks=ANGLE_MARKS,
-                                        tooltip=SLIDER_TOOLTIP,
-                                        className="simulation-slider angle-slider",
-                                    ),
-                                ],
+                            html.Label("θ₁ (deg)", className="label initial-state-input-label"),
+                            dcc.Input(
+                                id="init_cond_theta1",
+                                type="number",
+                                placeholder=INPUT_PLACEHOLDERS["theta1"],
+                                value=0,
+                                min=-180,
+                                max=180,
+                                step=1,
+                                className="input initial-state-input angle-input",
                             ),
-                            html.Div(
-                                className="slider-control angle-slider-control",
-                                children=[
-                                    html.Label("θ₂ (deg)", className="label slider-label"),
-                                    dcc.Slider(
-                                        id="init_cond_theta2",
-                                        min=-180,
-                                        max=180,
-                                        step=1,
-                                        value=0,
-                                        marks=ANGLE_MARKS,
-                                        tooltip=SLIDER_TOOLTIP,
-                                        className="simulation-slider angle-slider",
-                                    ),
-                                ],
+                            html.Label("θ₂ (deg)", className="label initial-state-input-label"),
+                            dcc.Input(
+                                id="init_cond_theta2",
+                                type="number",
+                                placeholder=INPUT_PLACEHOLDERS["theta2"],
+                                value=0,
+                                min=-180,
+                                max=180,
+                                step=1,
+                                className="input initial-state-input angle-input",
                             ),
                         ],
                     ),
-                    html.Section(
-                        className="initial-state-slider-section velocity-slider-section",
+                    html.Div(
+                        className="input-columns initial-state-input-column velocity-input-column",
                         children=[
-                            html.Div(
-                                className="slider-control velocity-slider-control",
-                                children=[
-                                    html.Label("ω₁ (deg/s)", className="label slider-label"),
-                                    dcc.Slider(
-                                        id="init_cond_omega1",
-                                        min=-720,
-                                        max=720,
-                                        step=5,
-                                        value=0,
-                                        marks=VELOCITY_MARKS,
-                                        tooltip=SLIDER_TOOLTIP,
-                                        className="simulation-slider velocity-slider",
-                                    ),
-                                ],
+                            html.Label("ω₁ (deg/s)", className="label initial-state-input-label"),
+                            dcc.Input(
+                                id="init_cond_omega1",
+                                type="number",
+                                placeholder=INPUT_PLACEHOLDERS["omega1"],
+                                value=0,
+                                min=-1000,
+                                max=1000,
+                                step=1,
+                                className="input initial-state-input velocity-input",
                             ),
-                            html.Div(
-                                className="slider-control velocity-slider-control",
-                                children=[
-                                    html.Label("ω₂ (deg/s)", className="label slider-label"),
-                                    dcc.Slider(
-                                        id="init_cond_omega2",
-                                        min=-720,
-                                        max=720,
-                                        step=5,
-                                        value=0,
-                                        marks=VELOCITY_MARKS,
-                                        tooltip=SLIDER_TOOLTIP,
-                                        className="simulation-slider velocity-slider",
-                                    ),
-                                ],
+                            html.Label("ω₂ (deg/s)", className="label initial-state-input-label"),
+                            dcc.Input(
+                                id="init_cond_omega2",
+                                type="number",
+                                placeholder=INPUT_PLACEHOLDERS["omega2"],
+                                value=0,
+                                min=-1000,
+                                max=1000,
+                                step=1,
+                                className="input initial-state-input velocity-input",
                             ),
                         ],
                     ),
@@ -253,7 +275,6 @@ def build_time_controls():
         className="input-group time-group",
         children=[
             html.H4(SIMULATION_INTERVAL_TITLE, className="inputs-title time-title"),
-            html.P(TIME_CAP_COPY, className="input-subtext time-cap-copy"),
             html.Div(
                 className="time-start-hidden",
                 children=dcc.Input(
@@ -269,7 +290,6 @@ def build_time_controls():
             html.Div(
                 className="slider-control time-slider-control",
                 children=[
-                    html.Label(f"{STOP_LABEL} (s)", className="label time-vector-label slider-label"),
                     dcc.Slider(
                         id="time_end",
                         min=1,
@@ -313,6 +333,7 @@ def build_simulation_controls():
     return html.Div(
         className="side-bar",
         children=[
+            dcc.Store(id=INITIAL_STATE_PRESET_APPLY_STORE_ID, storage_type="memory"),
             html.Div(
                 className="inputs",
                 children=[

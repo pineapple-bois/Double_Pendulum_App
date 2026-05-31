@@ -61,10 +61,21 @@ UNITY_PARAMETERS_BUTTON_LABEL = "Set Unity Parameters"
 LENGTHS_LABEL = "Lengths"
 MASSES_LABEL = "Masses"
 INITIAL_CONDITIONS_TITLE = "Initial state"
+INITIAL_STATE_HELP_LINES = (
+    "The four initial state values define the starting configuration.",
+    "Angles are measured in degrees. Positive angles rotate counterclockwise; negative angles rotate clockwise.",
+    "A good first experiment is θ₁ = 0, ω₁ = 0, ω₂ = 0, then vary θ₂.",
+    "Good starting values for θ₂ include 30°, 45°, 60°, 90°, 120°, and 150°.",
+)
+INITIAL_STATE_PRESET_LABEL = "Example state"
+INITIAL_STATE_PRESET_PLACEHOLDER = "Choose a preset"
+INITIAL_STATE_PRESET_OPTIONS = (
+    {"label": "Simple start: θ₁ = 0, θ₂ = 60, ω₁ = 0, ω₂ = 0", "value": "simple-start"},
+    {"label": "Quasi-periodic: θ₁ = 45, θ₂ = 45, ω₁ = 0, ω₂ = 0", "value": "quasi-periodic"},
+    {"label": "Wide swing: θ₁ = 0, θ₂ = 120, ω₁ = 0, ω₂ = 0", "value": "wide-swing"},
+    {"label": "Spirograph-like: θ₁ = 90, θ₂ = 0, ω₁ = 572.95, ω₂ = -458.37", "value": "spirograph-like"},
+)
 SIMULATION_INTERVAL_TITLE = "Duration (s)"
-START_LABEL = "Start"
-STOP_LABEL = "Duration"
-TIME_CAP_COPY = "Maximum duration: 60 s."
 
 INPUT_PLACEHOLDERS = {
     "l1": "l1 (length of rod 1)",

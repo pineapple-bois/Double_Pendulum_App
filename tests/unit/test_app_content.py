@@ -342,17 +342,20 @@ def test_simulation_layout_opens_directly_into_workspace():
     assert PARAMETER_TITLE in text
     assert INITIAL_CONDITIONS_TITLE in text
     assert SIMULATION_INTERVAL_TITLE in text
+    assert text.count(SIMULATION_INTERVAL_TITLE) == 1
     assert RUN_SECTION_TITLE in text
     assert RUN_SIMULATION_LABEL in text
+    assert "Example state" in text
+    assert "The four initial state values define the starting configuration." in text
     assert "Start here" not in text
     assert "Set all masses and lengths to 1." not in text
-    assert "Maximum duration: 60 s." in text
+    assert "Maximum duration: 60 s." not in text
     assert "RUN SIMULATION" not in text
     assert "Model and System Selection" not in text
     assert "Parameter Selection" not in text
     assert "Initial Conditions" not in text
     assert "Simulation interval" not in text
-    assert "Angles" not in text
+    assert "Angles are measured in degrees." in text
     assert "Velocities" not in text
     assert {
         "scroll-target",
@@ -373,12 +376,20 @@ def test_simulation_layout_opens_directly_into_workspace():
         "simulation-diagnostics-toggle",
         "simulation-diagnostics-content",
         "simulation-run-validation-message",
+        "initial-state-preset",
+        "initial-state-preset-apply-store",
     } <= ids
+    initial_state_preset = find_by_id(layout, "initial-state-preset")
+    assert isinstance(initial_state_preset, dcc.Dropdown)
+    assert "Simple start: θ₁ = 0, θ₂ = 60, ω₁ = 0, ω₂ = 0" in {
+        option["label"] for option in initial_state_preset.options
+    }
     system_type = find_by_id(layout, "system-type")
     assert isinstance(system_type, dcc.RadioItems)
     assert {option["label"] for option in system_type.options} == {"Euler-Lagrange", "Hamiltonian"}
     assert "container-buttons" not in classnames
     assert "run-simulation-group" not in classnames
+    assert "time-cap-copy" not in classnames
     assert {"site-footer", "site-footer-link"} <= classnames
     assert "footer-bar" not in classnames
     assert {

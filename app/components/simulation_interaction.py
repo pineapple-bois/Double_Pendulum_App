@@ -190,6 +190,7 @@ def build_playback_shell():
                 className="playback-header-status",
                 children=build_status_shell(),
             ),
+            build_summary_diagnostics_shell(),
         ],
     )
 
@@ -272,6 +273,5 @@ def build_simulation_interaction_shell():
             *build_simulation_state_stores(),
             html.Div(id=RENDERER_SYNC_SIGNAL_ID, className="simulation-renderer-sync-signal"),
             build_canvas_workspace_placeholder(),
-            build_summary_diagnostics_shell(),
         ],
     )

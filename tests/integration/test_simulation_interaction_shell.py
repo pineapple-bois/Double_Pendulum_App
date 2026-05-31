@@ -1,9 +1,18 @@
 from pathlib import Path
 
-from dash import dcc, html
+from dash import dcc, html, no_update
 
-from app.callbacks.simulation import build_input_change_result, build_simulation_run_result
-from app.components.simulation_controls import RUN_VALIDATION_MESSAGE_ID
+from app.callbacks.simulation import (
+    build_input_change_result,
+    build_simulation_run_result,
+    selected_initial_state_preset_update,
+    selected_initial_state_preset_values,
+)
+from app.components.simulation_controls import (
+    INITIAL_STATE_PRESET_APPLY_STORE_ID,
+    INITIAL_STATE_PRESET_ID,
+    RUN_VALIDATION_MESSAGE_ID,
+)
 from app.components.simulation_interaction import (
     CANVAS_PAYLOAD_STORE_ID,
     CANVAS_MOTION_VIEW_ID,
@@ -49,6 +58,8 @@ CALLBACK_SENSITIVE_IDS = {
     "init_cond_theta2",
     "init_cond_omega1",
     "init_cond_omega2",
+    INITIAL_STATE_PRESET_ID,
+    INITIAL_STATE_PRESET_APPLY_STORE_ID,
     "time_start",
     "time_end",
     "unity-parameters",
@@ -217,6 +228,9 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     diagnostics_content = find_by_id(layout, DIAGNOSTICS_CONTENT_ID)
     assert diagnostics_content is not None
     assert find_by_id(diagnostics_content, SELECTED_STATE_READOUT_ID) is not None
+    playback_strip = find_by_class(layout, "simulation-playback-strip")
+    assert find_by_id(playback_strip, DIAGNOSTICS_TOGGLE_ID) is diagnostics_toggle
+    assert find_by_id(playback_strip, DIAGNOSTICS_CONTENT_ID) is diagnostics_content
     assert {
         "canvas-panel-motion",
         "canvas-panel-projection",
@@ -232,64 +246,102 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
         "selected-state-diagnostics-area",
         "simulation-diagnostics-toggle",
         "simulation-detail-diagnostics",
-        "initial-state-slider-stack",
-        "initial-state-slider-section",
+        "initial-state-input-grid",
+        "initial-state-input-column",
+        "initial-state-heading-row",
+        "initial-state-help",
+        "initial-state-help-summary",
+        "initial-state-help-panel",
+        "initial-state-preset-control",
         "binary-choice",
         "model-system-choice",
         "system-type-choice",
     } <= classes
     assert "init-cond-split" not in classes
+    assert "initial-state-slider-stack" not in classes
+    assert "initial-state-slider-section" not in classes
     assert "simulation-output-control-layout" not in classes
+    assert "time-cap-copy" not in classes
 
     scrubber = find_by_id(layout, SCRUBBER_ID)
     display_options = find_by_id(layout, DISPLAY_OPTIONS_ID)
     time_selector = find_by_class(layout, "canvas-time-selector")
     playback_status = find_by_class(layout, "playback-header-status")
     playback_display = find_by_class(layout, "playback-header-display")
-    theta1_slider = find_by_id(layout, "init_cond_theta1")
-    theta2_slider = find_by_id(layout, "init_cond_theta2")
-    omega1_slider = find_by_id(layout, "init_cond_omega1")
-    omega2_slider = find_by_id(layout, "init_cond_omega2")
+    initial_state_grid = find_by_class(layout, "initial-state-input-grid")
+    initial_state_help = find_by_class(layout, "initial-state-help")
+    initial_state_preset = find_by_id(layout, INITIAL_STATE_PRESET_ID)
+    angle_column = find_by_class(layout, "angle-input-column")
+    velocity_column = find_by_class(layout, "velocity-input-column")
+    theta1_input = find_by_id(layout, "init_cond_theta1")
+    theta2_input = find_by_id(layout, "init_cond_theta2")
+    omega1_input = find_by_id(layout, "init_cond_omega1")
+    omega2_input = find_by_id(layout, "init_cond_omega2")
     model_type = find_by_id(layout, "model-type")
     system_type = find_by_id(layout, "system-type")
     time_start_input = find_by_id(layout, "time_start")
     time_end_slider = find_by_id(layout, "time_end")
     run_validation = find_by_id(layout, RUN_VALIDATION_MESSAGE_ID)
+    preset_apply_store = find_by_id(layout, INITIAL_STATE_PRESET_APPLY_STORE_ID)
 
     assert isinstance(scrubber, dcc.Input)
     assert scrubber.type == "range"
     assert scrubber.disabled is True
+    assert isinstance(preset_apply_store, dcc.Store)
+    assert preset_apply_store.storage_type == "memory"
     assert find_by_id(time_selector, SCRUBBER_ID) is not None
     assert find_by_id(playback_status, STATUS_MESSAGE_ID) is not None
     assert find_by_id(playback_display, DISPLAY_OPTIONS_ID) is not None
     assert find_by_id(playback_display, FRAME_INDICATOR_ID) is not None
+    assert isinstance(initial_state_help, html.Details)
+    assert initial_state_help.open is False
+    assert "The four initial state values define the starting configuration." in text_from(initial_state_help)
+    assert "Positive angles rotate counterclockwise" in text_from(initial_state_help)
+    assert isinstance(initial_state_preset, dcc.Dropdown)
+    assert initial_state_preset.placeholder == "Choose a preset"
+    assert initial_state_preset.clearable is True
+    assert initial_state_preset.searchable is False
+    assert {option["value"] for option in initial_state_preset.options} == {
+        "simple-start",
+        "quasi-periodic",
+        "wide-swing",
+        "spirograph-like",
+    }
+    assert getattr(initial_state_grid, "children", None) == [angle_column, velocity_column]
+    assert find_by_id(angle_column, "init_cond_theta1") is not None
+    assert find_by_id(angle_column, "init_cond_theta2") is not None
+    assert find_by_id(velocity_column, "init_cond_omega1") is not None
+    assert find_by_id(velocity_column, "init_cond_omega2") is not None
     assert isinstance(model_type, dcc.RadioItems)
     assert {option["value"] for option in model_type.options} == {"simple", "compound"}
+    assert model_type.labelClassName == "system-button"
+    assert model_type.inputClassName == "system-button-input"
     assert isinstance(system_type, dcc.RadioItems)
     assert {option["value"] for option in system_type.options} == {"lagrangian", "hamiltonian"}
     assert {option["label"] for option in system_type.options} == {"Euler-Lagrange", "Hamiltonian"}
-    assert isinstance(theta1_slider, dcc.Slider)
-    assert theta1_slider.min == -180
-    assert theta1_slider.max == 180
-    assert theta1_slider.step == 1
-    assert theta1_slider.value == 0
-    assert set(theta1_slider.marks) == {-180, -90, -45, 0, 45, 90, 180}
-    assert theta1_slider.marks[-180] == "-180"
-    assert theta1_slider.marks[0] == "0"
-    assert theta1_slider.tooltip["always_visible"] is False
-    assert isinstance(theta2_slider, dcc.Slider)
-    assert theta2_slider.min == -180
-    assert theta2_slider.max == 180
-    assert theta2_slider.step == 1
-    assert isinstance(omega1_slider, dcc.Slider)
-    assert omega1_slider.min == -720
-    assert omega1_slider.max == 720
-    assert omega1_slider.step == 5
-    assert omega1_slider.value == 0
-    assert isinstance(omega2_slider, dcc.Slider)
-    assert omega2_slider.min == -720
-    assert omega2_slider.max == 720
-    assert omega2_slider.tooltip["always_visible"] is False
+    assert system_type.labelClassName == "system-button"
+    assert system_type.inputClassName == "system-button-input"
+    assert isinstance(theta1_input, dcc.Input)
+    assert theta1_input.type == "number"
+    assert theta1_input.min == -180
+    assert theta1_input.max == 180
+    assert theta1_input.step == 1
+    assert theta1_input.value == 0
+    assert isinstance(theta2_input, dcc.Input)
+    assert theta2_input.type == "number"
+    assert theta2_input.min == -180
+    assert theta2_input.max == 180
+    assert theta2_input.step == 1
+    assert isinstance(omega1_input, dcc.Input)
+    assert omega1_input.type == "number"
+    assert omega1_input.min == -1000
+    assert omega1_input.max == 1000
+    assert omega1_input.step == 1
+    assert omega1_input.value == 0
+    assert isinstance(omega2_input, dcc.Input)
+    assert omega2_input.type == "number"
+    assert omega2_input.min == -1000
+    assert omega2_input.max == 1000
     assert isinstance(time_start_input, dcc.Input)
     assert time_start_input.value == 0
     assert time_start_input.style == {"display": "none"}
@@ -298,12 +350,33 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert time_end_slider.max == 60
     assert time_end_slider.step == 1
     assert time_end_slider.value == 20
+    assert set(time_end_slider.marks) == {10, 20, 30, 40, 50, 60}
     assert run_validation is not None
     assert "Ready" in text_from(run_validation)
     assert isinstance(display_options, dcc.Checklist)
     assert display_options.value == ["axes", "grid"]
     assert {option["value"] for option in display_options.options} == {"axes", "grid"}
     assert all(option["disabled"] is True for option in display_options.options)
+
+
+def test_initial_state_preset_values_update_only_initial_conditions():
+    assert selected_initial_state_preset_values("simple-start") == (0, 60, 0, 0)
+    assert selected_initial_state_preset_values("quasi-periodic") == (45, 45, 0, 0)
+    assert selected_initial_state_preset_values("wide-swing") == (0, 120, 0, 0)
+    assert selected_initial_state_preset_values("spirograph-like") == (90, 0, 572.95, -458.37)
+
+    cleared = selected_initial_state_preset_values(None)
+    assert all(value is no_update for value in cleared)
+
+    assert selected_initial_state_preset_update("wide-swing") == (
+        0,
+        120,
+        0,
+        0,
+        {"preset": "wide-swing", "values": [0, 120, 0, 0]},
+    )
+    cleared_update = selected_initial_state_preset_update(None)
+    assert all(value is no_update for value in cleared_update)
 
 
 def test_submit_val_remains_registered_run_trigger():

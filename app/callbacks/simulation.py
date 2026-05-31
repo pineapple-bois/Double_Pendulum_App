@@ -16,7 +16,11 @@ from app.components.simulation_interaction import (
     initial_canvas_payload,
     initial_playback_state,
 )
-from app.components.simulation_controls import RUN_VALIDATION_MESSAGE_ID
+from app.components.simulation_controls import (
+    INITIAL_STATE_PRESET_APPLY_STORE_ID,
+    INITIAL_STATE_PRESET_ID,
+    RUN_VALIDATION_MESSAGE_ID,
+)
 from app.serialization import (
     build_canvas_motion_payload,
     estimate_canvas_payload_size,
@@ -28,6 +32,13 @@ from src.double_pendulum.validation.dash import validate_inputs
 
 
 M1, M2, m1, m2, l1, l2, g = sp.symbols("M1, M2, m1, m2, l1, l2, g", positive=True, real=True)
+
+INITIAL_STATE_PRESET_VALUES = {
+    "simple-start": (0, 60, 0, 0),
+    "quasi-periodic": (45, 45, 0, 0),
+    "wide-swing": (0, 120, 0, 0),
+    "spirograph-like": (90, 0, 572.95, -458.37),
+}
 
 
 def _flatten_dash_text(component):
@@ -242,6 +253,35 @@ def _callback_outputs(result):
     )
 
 
+def selected_initial_state_preset_values(preset_key):
+    if not preset_key:
+        return (dash.no_update, dash.no_update, dash.no_update, dash.no_update)
+    return INITIAL_STATE_PRESET_VALUES.get(
+        preset_key,
+        (dash.no_update, dash.no_update, dash.no_update, dash.no_update),
+    )
+
+
+def selected_initial_state_preset_update(preset_key):
+    values = selected_initial_state_preset_values(preset_key)
+    if any(value is dash.no_update for value in values):
+        return (*values, dash.no_update)
+    return (*values, {"preset": preset_key, "values": list(values)})
+
+
+def _matches_preset_application(preset_application, theta1, theta2, omega1, omega2):
+    if not isinstance(preset_application, dict):
+        return False
+    values = preset_application.get("values")
+    if not isinstance(values, list) or len(values) != 4:
+        return False
+    current_values = [theta1, theta2, omega1, omega2]
+    try:
+        return [float(value) for value in values] == [float(value) for value in current_values]
+    except (TypeError, ValueError):
+        return False
+
+
 def _failed_result(
     *,
     run_id,
@@ -446,6 +486,20 @@ def build_simulation_run_result(
 
 def register_simulation_callbacks(app):
     @app.callback(
+        [
+            Output('init_cond_theta1', 'value'),
+            Output('init_cond_theta2', 'value'),
+            Output('init_cond_omega1', 'value'),
+            Output('init_cond_omega2', 'value'),
+            Output(INITIAL_STATE_PRESET_APPLY_STORE_ID, 'data'),
+        ],
+        [Input(INITIAL_STATE_PRESET_ID, 'value')],
+        prevent_initial_call=True,
+    )
+    def apply_initial_state_preset(preset_key):
+        return selected_initial_state_preset_update(preset_key)
+
+    @app.callback(
         [Output('param_l1', 'value'),
          Output('param_l2', 'value'),
          Output('param_m1', 'value'),
@@ -510,13 +564,34 @@ def register_simulation_callbacks(app):
         [
             State(CANVAS_PAYLOAD_STORE_ID, 'data'),
             State(PLAYBACK_STATE_STORE_ID, 'data'),
+            State(INITIAL_STATE_PRESET_APPLY_STORE_ID, 'data'),
         ],
         prevent_initial_call=True
     )
     def mark_output_stale_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
                                           time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1,
                                           param_M2, param_g, model_type, system_type, current_payload,
-                                          current_playback_state):
+                                          current_playback_state, preset_application):
+        triggered_ids = {
+            item["prop_id"].split(".")[0]
+            for item in dash.callback_context.triggered
+            if item.get("prop_id")
+        }
+        initial_state_ids = {
+            "init_cond_theta1",
+            "init_cond_theta2",
+            "init_cond_omega1",
+            "init_cond_omega2",
+        }
+        if triggered_ids <= initial_state_ids and _matches_preset_application(
+            preset_application,
+            init_cond_theta1,
+            init_cond_theta2,
+            init_cond_omega1,
+            init_cond_omega2,
+        ):
+            return tuple(dash.no_update for _ in range(9))
+
         result = build_input_change_result(
             init_cond_theta1,
             init_cond_theta2,
