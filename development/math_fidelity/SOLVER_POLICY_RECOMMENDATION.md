@@ -19,18 +19,20 @@ Lagrangian/Hamiltonian drift under default tolerances, and it failed the
 60-second nonzero-velocity simple case in both solver-cost and app-like
 benchmarks.
 
-Provisional recommendation: keep `rk45_strict`, `dop853_moderate`, and
-`dop853_strict` as candidate simple-model production policies. The strongest
-candidate set is:
+Provisional recommendation: `dop853_moderate` is now the leading simple-model
+production-default candidate for the next hardening phase. It collapses
+Lagrangian/Hamiltonian drift by roughly `1.4e2x` to `3.3e4x` compared with
+default `solve_ivp` in the refreshed drift investigation, while the app-like
+benchmark shows lower local runtime than strict policies.
 
-- `dop853_moderate` as the likely latency/accuracy compromise candidate.
-- `dop853_strict` as the high-fidelity candidate, still apparently affordable
-  for tested simple-model app-like runs.
-- `rk45_strict` as a conservative fallback candidate because it is familiar and
-  performed well, though it was not consistently cheaper than DOP853.
+Provisional recommendation: retain `dop853_strict` as the high-fidelity and
+diagnostic candidate. It produces tighter drift and energy behavior than
+`dop853_moderate`, and remains locally affordable in the tested simple-model
+app-like benchmark.
 
-Unresolved evidence gap: compound-model behavior and production callback
-contract behavior have not been tested in this evidence lab.
+Unresolved evidence gap: compound-model behavior, production payload schema,
+browser/rendering cost, and production callback failure contracts have not been
+hardened yet.
 
 ## 1. Default `solve_ivp` Acceptability
 
@@ -39,81 +41,94 @@ simple-model runs.
 
 Evidence:
 
-- The drift investigation showed that simple Lagrangian/Hamiltonian angular
-  disagreement collapses when tolerances tighten.
+- The drift investigation shows default `solve_ivp` reaches up to about
+  `9.53e-2` radians Lagrangian/Hamiltonian angular drift in the screenshot-like
+  short simple case.
+- The same drift case drops to about `2.87e-6` radians under
+  `dop853_moderate`.
 - The solver-cost benchmark showed default `solve_ivp` failed the 60-second
   `nonzero_velocity_spirograph` case for both formulations.
 - The app-like benchmark reproduced that same default-solver failure for both
   formulations.
-- Default 60-second energy drift was far worse than explicit tolerance policies.
+- Default energy drift is far worse than explicit tolerance policies.
 
 Provisional recommendation: do not rely on bare default `solve_ivp` for
 app-facing simple-model simulations once production code is ready for a solver
 policy change.
 
-## 2. Plausible Simple-Model Solver Policies
+## 2. DOP853 Moderate As Likely Production Default Candidate
 
-Provisional recommendation: consider these candidates for simple-model
-production evaluation:
-
-| Candidate | Why it remains plausible | Concern |
-| --- | --- | --- |
-| `dop853_moderate` | Good runtime profile; energy drift close to moderate RK45; higher-order method. | Needs direct production-schema and callback tests. |
-| `dop853_strict` | Strongest fidelity profile in the evidence gathered so far; still sub-second for tested 60-second app-like simple runs. | More expensive; should be checked against UX latency targets. |
-| `rk45_strict` | Strong fidelity improvement over defaults; familiar SciPy default-family method. | Not always cheaper than DOP853 and sometimes slower than DOP853 moderate. |
-
-High-confidence finding: any production policy should set explicit `method`,
-`rtol`, and `atol` instead of relying on SciPy defaults.
-
-## 3. DOP853 Strict Affordability
-
-Provisional recommendation: keep `dop853_strict` as a live candidate.
+Provisional recommendation: use `dop853_moderate`
+(`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as the leading candidate for the
+first production solver-policy hardening pass.
 
 Evidence:
 
-- In the app-like benchmark, 60-second, 200 Hz median total runtimes were about
-  0.325s for Lagrangian and 0.375s for Hamiltonian.
-- The worst tested 60-second DOP853 strict app-like row was about 0.659s.
-- JSON serialization and diagnostic payload preparation were small compared
-  with model construction and solve time.
+- Refreshed drift logs show maximum angular drift in the `1e-6` to `3e-6`
+  radian range across all four short simple cases.
+- Default-to-moderate drift reduction ranges from about `1.43e2x` to
+  `3.32e4x`.
+- App-like 60-second, 200 Hz median total runtime was about `0.180s`
+  Lagrangian and `0.205s` Hamiltonian.
+- Solver-cost and app-like benchmarks both show DOP853 policies completing the
+  longer nonzero-velocity case where default `solve_ivp` failed.
 
-Unresolved evidence gap: these timings exclude Dash callback overhead, network
-transfer, browser parsing, Canvas rendering, and production payload schema
-differences.
+High-confidence finding: `dop853_moderate` is no longer an unresolved drift
+gap. It has direct Lagrangian/Hamiltonian drift evidence and remains a strong
+latency/fidelity compromise candidate.
 
-## 4. DOP853 Moderate As A Compromise
+Unresolved evidence gap: production callback behavior, production Canvas-schema
+payload size, and browser/rendering cost still need measurement before this can
+become an implemented production default.
 
-Provisional recommendation: `dop853_moderate` may be the best first production
-candidate to compare against `dop853_strict`.
+## 3. DOP853 Strict As High-Fidelity Candidate
 
-Evidence:
-
-- App-like 60-second median total runtime was about 0.180s for Lagrangian and
-  0.205s for Hamiltonian.
-- Solver-cost energy drift was close to `rk45_moderate` and dramatically better
-  than default behavior.
-- It avoids the bare default policy while preserving a lower latency profile
-  than strict policies.
-
-Unresolved evidence gap: the existing drift investigation did not include
-`dop853_moderate` in the Lagrangian/Hamiltonian agreement comparison. Add that
-before finalizing a production default.
-
-## 5. Separate Lagrangian And Hamiltonian Policies
-
-Provisional recommendation: use the same candidate policy for Lagrangian and
-Hamiltonian simple paths unless a targeted follow-up shows a formulation-specific
-failure.
+Provisional recommendation: retain `dop853_strict`
+(`method="DOP853"`, `rtol=1e-9`, `atol=1e-11`) as a high-fidelity and
+diagnostic candidate.
 
 Evidence:
 
-- Both formulations benefited from explicit tolerances.
+- Refreshed drift logs show maximum angular drift around `1e-9` to `1e-8`
+  radians for `dop853_strict`.
+- The app-like benchmark shows 60-second, 200 Hz median total runtime around
+  `0.325s` Lagrangian and `0.375s` Hamiltonian.
+- The worst tested 60-second strict DOP853 app-like row was about `0.659s`.
+
+Interpretation: `dop853_strict` appears affordable enough locally to remain in
+the policy discussion, but the extra accuracy may not be necessary as the
+default app-facing policy if `dop853_moderate` passes production contract tests.
+
+## 4. RK45 Strict Status
+
+Provisional recommendation: keep `rk45_strict` as a fallback and comparison
+candidate, not the leading candidate.
+
+Evidence:
+
+- It strongly improves drift over default behavior.
+- It remains familiar and conservative.
+- Runtime evidence does not show a decisive advantage over DOP853 policies.
+- DOP853 moderate is faster than RK45 strict in the app-like 60-second median
+  results while still reducing drift to the micro-radian scale.
+
+## 5. Shared Lagrangian And Hamiltonian Policy
+
+Provisional recommendation: use the same candidate policy for simple
+Lagrangian and simple Hamiltonian paths unless targeted production tests show a
+formulation-specific failure.
+
+Evidence:
+
+- Both formulations benefit from explicit tolerances.
 - Both formulations failed the same default 60-second nonzero-velocity case.
-- App-like DOP853 strict and DOP853 moderate costs were similar enough that
-  separate policy complexity is not yet justified.
+- Both formulations remain locally affordable under DOP853 policies.
+- The baseline and refreshed drift probes do not point to a simple Hamiltonian
+  state-mapping defect.
 
-Unresolved evidence gap: longer chaotic runs may expose formulation-specific
-behavior. That should be measured before declaring one shared policy final.
+Unresolved evidence gap: long-duration chaotic runs may expose
+formulation-specific behavior. Measure that before declaring the shared policy
+final.
 
 ## 6. Hamiltonian As Future Chaos Backbone
 
@@ -127,45 +142,36 @@ Rationale:
   space, provided canonical momenta are handled explicitly.
 - The baseline review found that the simple Hamiltonian path appears to convert
   user angular velocities to canonical momenta correctly.
-- The evidence does not currently point to a Hamiltonian state-mapping defect in
-  the simple model.
+- The refreshed drift evidence does not point to a Hamiltonian state-mapping
+  error in the simple model.
 
 Unresolved evidence gap: a Hamiltonian-first chaos workflow needs dedicated
 tests for canonical-momentum mapping, omega reconstruction for diagnostics,
-energy behavior, and long-duration sensitivity.
+energy behavior, solver failure status, and long-duration sensitivity.
 
-## 7. Evidence Needed Before Production Changes
+## 7. Production Tests To Add Before Solver Changes
 
-Before changing production solver settings, gather or add:
+Recommended production tests before changing solver settings:
 
-- Drift comparisons that include `dop853_moderate`.
-- Production-schema app-like payload size measurements, not only diagnostic
-  payload measurements.
-- Callback-level behavior when a solver returns failure status.
-- Browser-side timing for JSON parse and Canvas rendering at 60 seconds and
-  200 Hz.
-- Compound-model solver evidence.
-- A long-duration simple-model sensitivity pass with explicit failure criteria.
-
-## 8. Production Tests To Add First
-
-Recommended production tests before solver-policy changes:
-
-- Simple Lagrangian/Hamiltonian agreement tests under the selected policy for
+- Simple Lagrangian/Hamiltonian agreement tests under `dop853_moderate` for
   benign and sensitive initial states.
+- A comparison test or diagnostic fixture for `dop853_strict` as the
+  high-fidelity reference candidate.
 - Hamiltonian initial-state mapping tests verifying angular velocity to
   canonical momentum conversion.
 - Hamiltonian diagnostic omega-reconstruction tests, if angular-velocity output
   remains user-facing.
-- Solver metadata tests asserting success/status/message are captured.
-- Failure-contract tests for a known hard input where the solver cannot complete.
+- Solver metadata tests asserting success/status/message/method/tolerances and
+  `nfev` are captured.
+- Failure-contract tests for a known hard input where default policy failed or
+  where the selected policy cannot complete.
 - Energy drift smoke tests with clear tolerance bands for short deterministic
   runs.
 - Payload shape and finite-value tests for callback outputs.
 - Regression tests for default UI inputs and the screenshot-like `[0, 60, 0, 0]`
   case.
 
-## 9. Solver Failure Contract
+## 8. Solver Failure Contract
 
 High-confidence finding: solver failure must be represented explicitly in the
 callback/result contract before stricter solver policy work is considered done.
@@ -183,3 +189,21 @@ Recommended contract direction:
 Unresolved evidence gap: the current production callback contract has not been
 audited in this pass, because production callback changes are intentionally out
 of scope.
+
+## 9. Remaining Evidence Gaps
+
+Unresolved evidence gap: compound model. None of this should be generalized to
+compound pendulum behavior until compound equations, state mapping, solver
+runtime, and energy diagnostics have their own evidence pass.
+
+Unresolved evidence gap: browser/rendering cost. The app-like benchmark
+measures diagnostic payload construction and JSON serialization, but not Dash
+callback overhead, browser transfer, browser parse time, or Canvas rendering.
+
+Unresolved evidence gap: production payload schema. The diagnostic app-like
+payload is intentionally close to app needs, but it is not the production Canvas
+schema.
+
+Unresolved evidence gap: long-duration chaos behavior. The drift investigation
+uses short focused runs; longer chaotic runs need explicit scientific and UX
+failure criteria.

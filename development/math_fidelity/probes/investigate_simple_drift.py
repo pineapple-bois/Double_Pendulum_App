@@ -458,6 +458,7 @@ def solver_configs() -> list[SolverConfig]:
     return [
         SolverConfig("solve_ivp_default", None, None, None),
         SolverConfig("rk45_strict", "RK45", 1e-8, 1e-10),
+        SolverConfig("dop853_moderate", "DOP853", 1e-6, 1e-8),
         SolverConfig("dop853_strict", "DOP853", 1e-9, 1e-11),
         SolverConfig("dop853_reference", "DOP853", 1e-11, 1e-13),
     ]

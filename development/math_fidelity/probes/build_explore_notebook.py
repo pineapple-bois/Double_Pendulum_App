@@ -76,10 +76,11 @@ LOG_DIR = LAB_ROOT / "logs"
 runs = pd.read_csv(LOG_DIR / "simple_drift_results.csv")
 timeseries = pd.read_csv(LOG_DIR / "timeseries" / "simple_drift_timeseries_long.csv")
 
-SOLVER_ORDER = ["solve_ivp_default", "rk45_strict", "dop853_strict", "dop853_reference"]
+SOLVER_ORDER = ["solve_ivp_default", "rk45_strict", "dop853_moderate", "dop853_strict", "dop853_reference"]
 SOLVER_LABELS = {
     "solve_ivp_default": "default",
     "rk45_strict": "RK45 strict",
+    "dop853_moderate": "DOP853 moderate",
     "dop853_strict": "DOP853 strict",
     "dop853_reference": "DOP853 reference",
 }

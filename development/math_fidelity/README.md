@@ -26,6 +26,8 @@ From the repository root:
 The probe imports the diagnostic source snapshot under
 `development/math_fidelity/snapshots/simple_model_source/` and writes compact
 logs plus notebook-ready time-series CSVs under `development/math_fidelity/logs/`.
+The current drift investigation includes `solve_ivp_default`, `rk45_strict`,
+`dop853_moderate`, `dop853_strict`, and `dop853_reference`.
 
 ## Rerun Solver Cost Benchmark
 
@@ -68,7 +70,8 @@ repository root or `development/math_fidelity/`, and it includes an optional
 section for solver-cost and app-like cost logs when those CSVs exist.
 
 Static PNG figures are not part of the required evidence workflow. The notebook
-displays plots inline, and generated logs are the source of truth.
+displays plots inline, generated logs are the source of truth, and
+`reports/figures/` is intentionally not part of the evidence contract.
 
 ## Notebook Readiness
 
