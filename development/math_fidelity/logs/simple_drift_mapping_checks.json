@@ -1,0 +1,450 @@
+[
+  {
+    "atol": null,
+    "case_name": "low_energy_small_angles",
+    "converted_hamiltonian_state": [
+      0.08726646259971647,
+      0.12217304763960307,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "solve_ivp_default",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": null,
+    "solver_config": "solve_ivp_default",
+    "user_state_degrees": [
+      5.0,
+      7.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": 1e-10,
+    "case_name": "low_energy_small_angles",
+    "converted_hamiltonian_state": [
+      0.08726646259971647,
+      0.12217304763960307,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "RK45",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": 1e-08,
+    "solver_config": "rk45_strict",
+    "user_state_degrees": [
+      5.0,
+      7.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": 1e-11,
+    "case_name": "low_energy_small_angles",
+    "converted_hamiltonian_state": [
+      0.08726646259971647,
+      0.12217304763960307,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": 1e-09,
+    "solver_config": "dop853_strict",
+    "user_state_degrees": [
+      5.0,
+      7.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": 1e-13,
+    "case_name": "low_energy_small_angles",
+    "converted_hamiltonian_state": [
+      0.08726646259971647,
+      0.12217304763960307,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": 1e-11,
+    "solver_config": "dop853_reference",
+    "user_state_degrees": [
+      5.0,
+      7.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": null,
+    "case_name": "screenshot_like_simple_start",
+    "converted_hamiltonian_state": [
+      0.0,
+      1.0471975511965976,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "solve_ivp_default",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": null,
+    "solver_config": "solve_ivp_default",
+    "user_state_degrees": [
+      0.0,
+      60.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": 1e-10,
+    "case_name": "screenshot_like_simple_start",
+    "converted_hamiltonian_state": [
+      0.0,
+      1.0471975511965976,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "RK45",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": 1e-08,
+    "solver_config": "rk45_strict",
+    "user_state_degrees": [
+      0.0,
+      60.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": 1e-11,
+    "case_name": "screenshot_like_simple_start",
+    "converted_hamiltonian_state": [
+      0.0,
+      1.0471975511965976,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": 1e-09,
+    "solver_config": "dop853_strict",
+    "user_state_degrees": [
+      0.0,
+      60.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": 1e-13,
+    "case_name": "screenshot_like_simple_start",
+    "converted_hamiltonian_state": [
+      0.0,
+      1.0471975511965976,
+      0.0,
+      0.0
+    ],
+    "expected_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      0.0,
+      0.0
+    ],
+    "rtol": 1e-11,
+    "solver_config": "dop853_reference",
+    "user_state_degrees": [
+      0.0,
+      60.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "atol": null,
+    "case_name": "nonzero_velocity_spirograph",
+    "converted_hamiltonian_state": [
+      1.5707963267948966,
+      0.0,
+      39.999455797206046,
+      -18.00014780782442
+    ],
+    "expected_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "solve_ivp_default",
+    "reconstructed_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "rtol": null,
+    "solver_config": "solve_ivp_default",
+    "user_state_degrees": [
+      90.0,
+      0.0,
+      572.95,
+      -458.37
+    ]
+  },
+  {
+    "atol": 1e-10,
+    "case_name": "nonzero_velocity_spirograph",
+    "converted_hamiltonian_state": [
+      1.5707963267948966,
+      0.0,
+      39.999455797206046,
+      -18.00014780782442
+    ],
+    "expected_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "RK45",
+    "reconstructed_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "rtol": 1e-08,
+    "solver_config": "rk45_strict",
+    "user_state_degrees": [
+      90.0,
+      0.0,
+      572.95,
+      -458.37
+    ]
+  },
+  {
+    "atol": 1e-11,
+    "case_name": "nonzero_velocity_spirograph",
+    "converted_hamiltonian_state": [
+      1.5707963267948966,
+      0.0,
+      39.999455797206046,
+      -18.00014780782442
+    ],
+    "expected_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "rtol": 1e-09,
+    "solver_config": "dop853_strict",
+    "user_state_degrees": [
+      90.0,
+      0.0,
+      572.95,
+      -458.37
+    ]
+  },
+  {
+    "atol": 1e-13,
+    "case_name": "nonzero_velocity_spirograph",
+    "converted_hamiltonian_state": [
+      1.5707963267948966,
+      0.0,
+      39.999455797206046,
+      -18.00014780782442
+    ],
+    "expected_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "max_abs_reconstructed_omega_error": 0.0,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      9.999863949301512,
+      -8.000065692366409
+    ],
+    "rtol": 1e-11,
+    "solver_config": "dop853_reference",
+    "user_state_degrees": [
+      90.0,
+      0.0,
+      572.95,
+      -458.37
+    ]
+  },
+  {
+    "atol": null,
+    "case_name": "higher_energy_wide_swing",
+    "converted_hamiltonian_state": [
+      2.0943951023931953,
+      -2.0943951023931953,
+      4.97418836818384,
+      -2.617993877991495
+    ],
+    "expected_omega_rad_per_s": [
+      2.0943951023931953,
+      -1.5707963267948966
+    ],
+    "max_abs_reconstructed_omega_error": 4.440892098500626e-16,
+    "method": "solve_ivp_default",
+    "reconstructed_omega_rad_per_s": [
+      2.0943951023931957,
+      -1.5707963267948961
+    ],
+    "rtol": null,
+    "solver_config": "solve_ivp_default",
+    "user_state_degrees": [
+      120.0,
+      -120.0,
+      120.0,
+      -90.0
+    ]
+  },
+  {
+    "atol": 1e-10,
+    "case_name": "higher_energy_wide_swing",
+    "converted_hamiltonian_state": [
+      2.0943951023931953,
+      -2.0943951023931953,
+      4.97418836818384,
+      -2.617993877991495
+    ],
+    "expected_omega_rad_per_s": [
+      2.0943951023931953,
+      -1.5707963267948966
+    ],
+    "max_abs_reconstructed_omega_error": 4.440892098500626e-16,
+    "method": "RK45",
+    "reconstructed_omega_rad_per_s": [
+      2.0943951023931957,
+      -1.5707963267948961
+    ],
+    "rtol": 1e-08,
+    "solver_config": "rk45_strict",
+    "user_state_degrees": [
+      120.0,
+      -120.0,
+      120.0,
+      -90.0
+    ]
+  },
+  {
+    "atol": 1e-11,
+    "case_name": "higher_energy_wide_swing",
+    "converted_hamiltonian_state": [
+      2.0943951023931953,
+      -2.0943951023931953,
+      4.97418836818384,
+      -2.617993877991495
+    ],
+    "expected_omega_rad_per_s": [
+      2.0943951023931953,
+      -1.5707963267948966
+    ],
+    "max_abs_reconstructed_omega_error": 4.440892098500626e-16,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      2.0943951023931957,
+      -1.5707963267948961
+    ],
+    "rtol": 1e-09,
+    "solver_config": "dop853_strict",
+    "user_state_degrees": [
+      120.0,
+      -120.0,
+      120.0,
+      -90.0
+    ]
+  },
+  {
+    "atol": 1e-13,
+    "case_name": "higher_energy_wide_swing",
+    "converted_hamiltonian_state": [
+      2.0943951023931953,
+      -2.0943951023931953,
+      4.97418836818384,
+      -2.617993877991495
+    ],
+    "expected_omega_rad_per_s": [
+      2.0943951023931953,
+      -1.5707963267948966
+    ],
+    "max_abs_reconstructed_omega_error": 4.440892098500626e-16,
+    "method": "DOP853",
+    "reconstructed_omega_rad_per_s": [
+      2.0943951023931957,
+      -1.5707963267948961
+    ],
+    "rtol": 1e-11,
+    "solver_config": "dop853_reference",
+    "user_state_degrees": [
+      120.0,
+      -120.0,
+      120.0,
+      -90.0
+    ]
+  }
+]
