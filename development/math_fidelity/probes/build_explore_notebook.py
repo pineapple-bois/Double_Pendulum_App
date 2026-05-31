@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the drift-evidence exploration notebook and static figures.
+"""Build the drift-evidence exploration notebook and optional static figures.
 
 This utility reads generated logs only. It does not rerun simulations.
 """
@@ -26,6 +26,7 @@ LOG_DIR = LAB_ROOT / "logs"
 TIMESERIES_CSV = LOG_DIR / "timeseries" / "simple_drift_timeseries_long.csv"
 FIGURE_DIR = LAB_ROOT / "reports" / "figures"
 NOTEBOOK_PATH = LAB_ROOT / "explore_drift_evidence.ipynb"
+SAVE_FIGURES = os.environ.get("MATH_FIDELITY_SAVE_FIGURES") == "1"
 
 SOLVER_ORDER = ["solve_ivp_default", "rk45_strict", "dop853_strict", "dop853_reference"]
 SOLVER_LABELS = {
@@ -178,23 +179,49 @@ def build_notebook() -> None:
         md_cell(
             """# Phase 8 Drift Evidence Exploration
 
-This notebook inspects the existing simple-model drift evidence in `development/math_fidelity/logs/`. It treats the generated logs as the source of truth and does not rerun simulations by default."""
+This notebook inspects the existing simple-model drift evidence in `development/math_fidelity/logs/`. It treats the generated logs as the source of truth and does not rerun simulations by default.
+
+Path handling is intentionally portable: the notebook can be run from the repository root or from `development/math_fidelity/`, where the notebook file lives."""
         ),
         md_cell(
             """## 1. Load Generated Logs
 
-Load the compact run-level table and the long-format time-series table with pandas. If this cell fails with `ModuleNotFoundError: pandas`, use a notebook kernel with pandas installed. The production app runtime does not need pandas."""
+Load the compact run-level table and the long-format time-series table with pandas. If this cell fails with `ModuleNotFoundError: pandas`, use a notebook kernel with pandas installed. The production app runtime does not need pandas.
+
+The setup cell below locates the evidence-lab root before constructing log paths; later cells should use `LOG_DIR` rather than hard-coded repository-relative paths."""
         ),
         code_cell(
-            """from pathlib import Path
+            """import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+os.environ.setdefault("MPLCONFIGDIR", "/private/tmp/double_pendulum_math_fidelity_mpl")
+os.environ.setdefault("XDG_CACHE_HOME", "/private/tmp/double_pendulum_math_fidelity_cache")
 import matplotlib.pyplot as plt
 
-LAB_ROOT = Path("development/math_fidelity")
+def find_lab_root(start=None):
+    start = Path.cwd() if start is None else Path(start)
+    candidates = [start, start / "development" / "math_fidelity"]
+    candidates.extend(parent / "development" / "math_fidelity" for parent in start.parents)
+    for candidate in candidates:
+        if (
+            (candidate / "logs").is_dir()
+            and (candidate / "BASELINE_REVIEW.md").is_file()
+            and (candidate / "DRIFT_INVESTIGATION.md").is_file()
+        ):
+            return candidate.resolve()
+    raise FileNotFoundError(
+        "Could not locate development/math_fidelity. Run this notebook from the repository root "
+        "or from the evidence-lab directory."
+    )
+
+LAB_ROOT = find_lab_root()
 LOG_DIR = LAB_ROOT / "logs"
+REPORT_DIR = LAB_ROOT / "reports"
 FIGURE_DIR = LAB_ROOT / "reports" / "figures"
+SAVE_FIGURES = False
 
 runs = pd.read_csv(LOG_DIR / "simple_drift_results.csv")
 timeseries = pd.read_csv(LOG_DIR / "timeseries" / "simple_drift_timeseries_long.csv")
@@ -207,6 +234,7 @@ SOLVER_LABELS = {
     "dop853_reference": "DOP853 reference",
 }
 
+print("evidence lab:", LAB_ROOT)
 print("run-level rows/columns:", runs.shape)
 print("time-series rows/columns:", timeseries.shape)
 runs.head()"""
@@ -405,11 +433,121 @@ display(threshold_table)"""
         md_cell(
             """## 7. Static Figures
 
-A small set of PNG figures has been generated under `development/math_fidelity/reports/figures/` for quick sharing outside the notebook."""
+Static PNG generation is optional and disabled by default. The notebook displays plots inline; committed PNG artifacts are not required evidence."""
         ),
-        code_cell("""sorted(FIGURE_DIR.glob("*.png"))"""),
+        code_cell(
+            """if SAVE_FIGURES:
+    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+    print(f"Figure saving enabled: {FIGURE_DIR}")
+else:
+    print("Figure saving disabled. Use inline notebook plots as the inspection surface.")
+
+sorted(FIGURE_DIR.glob("*.png")) if FIGURE_DIR.exists() else []"""
+        ),
         md_cell(
-            """## 8. Interpretation
+            """## 8. Optional Solver-Cost Benchmark Logs
+
+If `solver_cost_benchmark.csv` exists, inspect it here. If it does not exist, the rest of the notebook still runs because the drift logs remain the source of truth for the drift investigation."""
+        ),
+        code_cell(
+            """BENCHMARK_CSV = LOG_DIR / "solver_cost_benchmark.csv"
+
+if BENCHMARK_CSV.exists():
+    benchmark = pd.read_csv(BENCHMARK_CSV)
+    print("benchmark rows/columns:", benchmark.shape)
+    display(benchmark.head())
+else:
+    benchmark = None
+    print("Benchmark log not found.")
+    print("Generate it from the repository root with:")
+    print(".venv/bin/python development/math_fidelity/probes/benchmark_solver_cost.py")"""
+        ),
+        code_cell(
+            """if benchmark is None:
+    print("No benchmark log loaded.")
+else:
+    runtime_summary = benchmark.pivot_table(
+        index=["duration_s", "formulation"],
+        columns="solver_config",
+        values="median_runtime_s",
+        aggfunc="median",
+    )
+    display(runtime_summary)
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for (formulation, solver_config), group in benchmark.groupby(["formulation", "solver_config"]):
+        grouped = group.groupby("duration_s", as_index=False)["median_runtime_s"].median()
+        ax.plot(grouped["duration_s"], grouped["median_runtime_s"], marker="o", label=f"{formulation} / {solver_config}")
+    ax.set_yscale("log")
+    ax.set_xlabel("duration (s)")
+    ax.set_ylabel("median runtime (s)")
+    ax.set_title("Solver runtime by duration, formulation, and policy")
+    ax.grid(True, which="both", alpha=0.25)
+    ax.legend(fontsize=8, ncols=2)
+    plt.tight_layout();"""
+        ),
+        code_cell(
+            """if benchmark is None:
+    print("No benchmark log loaded.")
+else:
+    tolerant = benchmark.copy()
+    tolerant["rtol_label"] = tolerant["rtol"].fillna("default").astype(str)
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for solver_config, group in tolerant.groupby("solver_config"):
+        grouped = group.groupby("rtol_label", as_index=False)["median_runtime_s"].median()
+        ax.scatter(grouped["rtol_label"], grouped["median_runtime_s"], label=solver_config, s=55)
+    ax.set_yscale("log")
+    ax.set_xlabel("rtol")
+    ax.set_ylabel("median runtime (s)")
+    ax.set_title("Median runtime versus tolerance")
+    ax.grid(True, axis="y", which="both", alpha=0.25)
+    ax.legend(fontsize=8)
+    plt.xticks(rotation=20, ha="right")
+    plt.tight_layout();"""
+        ),
+        code_cell(
+            """if benchmark is None:
+    print("No benchmark log loaded.")
+else:
+    energy_cols = [c for c in benchmark.columns if c in ("median_max_abs_energy_drift", "median_final_abs_energy_drift")]
+    if not energy_cols:
+        print("Benchmark log does not include energy-drift columns.")
+    else:
+        fig, ax = plt.subplots(figsize=(8, 5))
+        metric = energy_cols[0]
+        ax.scatter(benchmark["median_runtime_s"], benchmark[metric], s=45)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_xlabel("median runtime (s)")
+        ax.set_ylabel(metric)
+        ax.set_title("Runtime versus energy drift")
+        ax.grid(True, which="both", alpha=0.25)
+        plt.tight_layout();"""
+        ),
+        code_cell(
+            """if benchmark is None:
+    print("No benchmark log loaded.")
+else:
+    app_relevant = benchmark[
+        (benchmark["duration_s"] == 60)
+        & (benchmark["sample_rate_hz"] == 200)
+        & (benchmark["solver_method"].isin(["RK45", "DOP853"]))
+    ]
+    display(app_relevant[[
+        "case_name", "formulation", "solver_config", "median_runtime_s",
+        "median_nfev", "median_max_abs_energy_drift"
+    ]].sort_values(["case_name", "formulation", "solver_config"]))
+
+    comparison = app_relevant.pivot_table(
+        index=["case_name", "formulation"],
+        columns="solver_config",
+        values="median_runtime_s",
+        aggfunc="median",
+    )
+    display(comparison)"""
+        ),
+        md_cell(
+            """## 9. Interpretation
 
 The plots make the same pattern visible from several angles: default `solve_ivp` can produce substantial Lagrangian/Hamiltonian disagreement for the simple model, while strict RK45 and DOP853 configurations collapse that drift by many orders of magnitude. Position drift and energy drift follow the same broad tolerance pattern.
 
@@ -430,19 +568,23 @@ The evidence remains scoped: these logs cover short simple-model runs only. They
 
 
 def main() -> int:
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
     rows = read_csv(LOG_DIR / "simple_drift_results.csv")
     timeseries = read_csv(TIMESERIES_CSV)
-    cases = case_order(rows)
-    grouped_metric_plot(rows, cases, "max_abs_theta_diff_rad", "max angular drift (rad)", "Max angular drift by case and solver", "max_angular_drift_by_case_solver.png")
-    grouped_metric_plot(rows, cases, "lagrangian_max_abs_energy_drift", "max Lagrangian energy drift", "Lagrangian energy drift by case and solver", "lagrangian_energy_drift_by_case_solver.png")
-    grouped_second_bob_plot(timeseries, cases)
-    cost_vs_accuracy(rows)
-    screenshot_timeseries(timeseries)
+    if SAVE_FIGURES:
+        FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+        cases = case_order(rows)
+        grouped_metric_plot(rows, cases, "max_abs_theta_diff_rad", "max angular drift (rad)", "Max angular drift by case and solver", "max_angular_drift_by_case_solver.png")
+        grouped_metric_plot(rows, cases, "lagrangian_max_abs_energy_drift", "max Lagrangian energy drift", "Lagrangian energy drift by case and solver", "lagrangian_energy_drift_by_case_solver.png")
+        grouped_second_bob_plot(timeseries, cases)
+        cost_vs_accuracy(rows)
+        screenshot_timeseries(timeseries)
     build_notebook()
     print(f"Wrote notebook: {NOTEBOOK_PATH}")
-    for figure in sorted(FIGURE_DIR.glob("*.png")):
-        print(f"Wrote figure: {figure}")
+    if SAVE_FIGURES:
+        for figure in sorted(FIGURE_DIR.glob("*.png")):
+            print(f"Wrote figure: {figure}")
+    else:
+        print("Skipped static figures. Set MATH_FIDELITY_SAVE_FIGURES=1 to generate optional PNGs.")
     return 0
 
 
