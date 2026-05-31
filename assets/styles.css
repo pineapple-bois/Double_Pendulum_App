@@ -865,6 +865,11 @@ body {
 }
 
 .equations-layout {
+    --equations-document-max-width: 1020px;
+    --equations-document-width: min(
+        var(--equations-document-max-width),
+        calc(100% - clamp(32px, 10vw, 120px) - 100px)
+    );
     background: var(--surface-page);
     color: var(--text-primary);
     display: flex;
@@ -879,18 +884,26 @@ body {
     min-width: 0;
 }
 
+.equations-layout .site-nav {
+    box-sizing: border-box;
+    max-width: var(--equations-document-max-width);
+    padding-left: 0;
+    padding-right: 0;
+    width: var(--equations-document-width);
+}
+
 .equations-page {
     background: var(--surface-panel);
     border: 1px solid var(--border-soft);
     box-shadow: 0 18px 42px rgba(10, 31, 82, 0.06);
     box-sizing: border-box;
     margin: 0 auto;
-    max-width: 1120px;
+    max-width: var(--equations-document-max-width);
     min-height: var(--app-content-height);
     min-width: 0;
     overflow-x: clip;
     padding: 56px 64px 72px;
-    width: min(1120px, calc(100% - clamp(32px, 10vw, 120px)));
+    width: var(--equations-document-width);
 }
 
 .equations-hero {
@@ -2367,39 +2380,13 @@ body {
     }
 }
 
-@media (max-width: 2600px) {
-    .model-image {
-        max-width: 70%; /* Adjust max-width for smaller viewports */
-    }
-}
-
 @media (max-width: 2200px) {
     :root {
         font-size: 100% !important;
     }
-
-    .model-image {
-        max-width: 75%; /* Adjust max-width for smaller viewports */
-    }
-
-}
-
-@media (max-width: 1800px) {
-    .model-image {
-        max-width: 80%; /* Adjust max-width for smaller viewports */
-    }
 }
 
 @media (max-width: 1680px) {
-    .model-image {
-        max-width: 85%; /* Adjust max-width for smaller viewports */
-    }
-
-    .models-container {
-        gap: 0;
-        max-width: 100%;
-    }
-
     /* Make the children of the above-graph-container stack vertically */
     .above-graph-container {
         flex-direction: column; /* Stack the children vertically */
@@ -2412,20 +2399,6 @@ body {
 @media (max-width: 1500px) {
     :root {
         font-size: 90% !important;
-    }
-
-    .description {
-        font-size: var(--font-size-small) !important;
-    }
-
-    .model-image {
-        max-width: 90%; /* Adjust max-width for smaller viewports */
-    }
-}
-
-@media (max-width: 1300px) {
-    .model-image {
-        max-width: 95%; /* Adjust max-width for smaller viewports */
     }
 }
 
@@ -2454,38 +2427,15 @@ body {
         margin-top: clamp(28px, 5vh, 56px);
     }
 
-     /*Responsive spacing of description and image section */
-    .description-images-section {
-        flex-direction: column; /* Stack elements vertically */
-        align-items: center; /* Center the children horizontally */
-    }
-
-    .description {
-        max-width: 100% !important;
-        margin-bottom: 20px;
-        font-size: var(--font-size-medium) !important;
-    }
-
-    .models-container {
-        max-width: 100%;
-        gap: 0; /* Remove any gap that might cause spacing issues */
-        margin-top: 0; /* Ensure there's no margin causing extra space */
-        padding-top: 0; /* Set padding-top to 0 to remove any unintended padding */
-    }
-
-    .model-image {
-        max-width: 100%; /* Adjust max-width for smaller viewports */
-    }
-
-    .simple-model, .compound-model {
-        padding-top: 0; /* Remove padding on individual models */
-        max-width: 80%;
-    }
 }
 
 @media (max-width: 900px) {
     :root {
         font-size: 85% !important;
+    }
+
+    .equations-layout {
+        --equations-document-width: calc(100% - clamp(24px, 8vw, 72px));
     }
 
     .site-nav-menu {
@@ -2508,7 +2458,6 @@ body {
 
     .equations-page {
         padding: 40px;
-        width: calc(100% - clamp(24px, 8vw, 72px));
     }
 
     .equations-model-grid,
@@ -2526,11 +2475,6 @@ body {
 
     .equations-model-image {
         height: clamp(260px, 58vw, 340px);
-    }
-
-    /* RUN SIMULATION button should take up 1/3 of space */
-    .run-simulation-group {
-        max-width: 33.33333%;
     }
 
     /* The input bar should be horizontal */
@@ -2617,6 +2561,12 @@ body {
 
     .site-nav {
         padding: 0 16px;
+    }
+
+    .equations-layout .site-nav {
+        padding-left: 16px;
+        padding-right: 16px;
+        width: 100%;
     }
 
     .site-nav-panel {
@@ -2917,242 +2867,4 @@ body {
         row-gap: var(--simulation-sidebar-internal-gap);
     }
 
-    .simulation-layout .footer-bar.main-page {
-        flex-direction: column;
-    }
-
-    .simulation-layout .run-simulation-group {
-        max-width: 100%;
-        width: 100%;
-    }
-
-    .simulation-layout .footer-text-box {
-        justify-content: flex-start;
-        padding: 14px 20px;
-    }
-}
-
-/* ==========================================================================
-   12. Legacy quarantine
-   ========================================================================== */
-
-/* Active or historical selectors with uncertain ownership. Keep here until a later cleanup can remove or re-home them safely. */
-
-.header .navbar {
-    background-color: var(--surface-dark);
-    display: flex;
-    justify-content: start; /* Center the links */
-    align-items: start;
-    position: relative; /* To position the button correctly */
-    margin: 0 !important;
-    box-sizing: border-box;
-}
-
-.header .nav-links-container {
-    display: flex;
-    justify-content: flex-start;
-    align-items: start;
-    padding-left: 32px; /* Use pixels for consistent margin */
-}
-
-.nav-link {
-    text-decoration: none;
-    border-radius: 5px;
-    padding: 4px 6px;
-    margin: 0 16px 4px 6px;
-}
-
-.nav-link:hover {
-    background-color: rgba(215, 230, 244, 0.12);
-    color: var(--text-on-dark);
-    text-decoration: underline;
-}
-
-.description-images-section {
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--surface-panel);
-    padding: 0;
-    margin: 0;
-    gap: 0;
-    width: 100%;
-}
-
-.description {
-    flex: 1;
-    padding: 36px 36px 24px 36px;
-    box-sizing: border-box;
-    background-color: var(--surface-muted);
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    max-width: 25%;
-}
-
-.description-text {
-    font-size: var(--font-size-medium);
-    line-height: 1.2;
-    text-align: left;
-    color: var(--text-primary);
-}
-
-.description-link, .model-link {
-    color: var(--link-color);
-    text-decoration: none;
-}
-
-.description-link:hover, .model-link:hover {
-    text-decoration: underline;
-}
-
-.models-container {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    max-width: 75%;
-    gap: 60px;
-    padding: 0;
-    background-color: var(--surface-panel);
-}
-
-.simple-model {
-    flex: 1;
-    padding: 36px 0 0 0;
-    box-sizing: border-box;
-    margin: 0;
-    flex-direction: column;
-    text-align: left;
-    background-color: var(--surface-panel);
-}
-
-.compound-model {
-    flex: 1;
-    padding: 36px 0 0 0;
-    box-sizing: border-box;
-    margin: 0;
-    flex-direction: column;
-    text-align: left;
-    background-color: var(--surface-panel);
-}
-
-.image-description {
-    max-width: 90%;
-    background-color: var(--surface-panel);
-    padding-left: 32px;
-}
-
-.model-title {
-    font-size: var(--font-size-large);
-    font-weight: 600;
-    margin-bottom: 16px;
-}
-
-.model-description {
-    font-size: var(--font-size-medium);
-    margin-bottom: 30px;
-}
-
-.image-container {
-    max-width: 75%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 40px;
-    padding-left: 32px;
-    background-color: var(--surface-panel);
-}
-
-.model-image {
-    width: 100%; /* Ensure the image takes up the full width of the container */
-    height: auto; /* Maintain aspect ratio */
-}
-
-.footer-bar {
-    background: var(--surface-dark);
-    text-align: left;
-    display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
-    flex-direction: row;
-    padding: 0;
-    margin: 0; /* Ensure no margins around navbar */
-    box-sizing: border-box;
-}
-
-.run-simulation-group {
-    max-width: 25%;
-    flex-grow: 1; /* Allow it to grow if needed */
-    height: 100%; /* Ensure the div takes full height of the footer */
-    display: flex; /* Use flexbox to align the button */
-}
-
-.footer-text-box {
-    display: flex;
-    align-items: center; /* Align items horizontally */
-    justify-content: flex-end; /* Align the whole box to the right */
-    flex-grow: 1;
-}
-
-.footer-bar.other-page {
-    padding-top: 16px;
-    padding-bottom: 16px;
-}
-
-.run-simulation-button {
-    width: 100%;
-    height: 100%;
-    padding: 16px 0;
-    margin: 0;
-    background-color: var(--color-success);
-    color: var(--text-on-dark);
-    font-size: var(--font-size-xlarge);
-    border: none;
-    cursor: pointer;
-    border-radius: 0 !important;
-    transition: background-color 0.3s ease;
-}
-
-.run-simulation-button:hover {
-    background-color: var(--color-success);
-}
-
-.footer-text-box {
-    padding-right: 32px;
-}
-
-.info-image {
-    margin-right: 8px;
-    width: 30px;
-    filter: brightness(0) invert(1);
-}
-
-.info-text, .info-link, .info-footer {
-    color: var(--text-on-dark); /* Match text color with navbar */
-    font-family: var(--font-family-sans);
-}
-
-.info-text {
-    font-size: var(--font-size-xsmall);
-    margin-right: 4px;
-}
-
-.info-link {
-    text-decoration: none;
-    color: var(--color-blue-200);
-    font-size: var(--font-size-xsmall);
-}
-
-.info-link:hover {
-    text-decoration: underline;
-}
-
-.info-footer {
-    font-size: var(--font-size-xxsmall);
-    opacity: 0.7;
-}
-
-.navbar, .footer-section {
-  flex-shrink: 0; /* Do not allow these elements to shrink */
-  margin-bottom: 10px; /* Add margin below each section */
 }

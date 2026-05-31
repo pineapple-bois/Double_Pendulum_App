@@ -1,35 +1,10 @@
-from dataclasses import dataclass
-
 from app.content.shared import read_project_text
 
 
 INFORMATION_MARKDOWN_PATH = "assets/MarkdownScripts/information.txt"
 INFORMATION_TEXT = read_project_text(INFORMATION_MARKDOWN_PATH)
 
-GITHUB_LOGO_SRC = "assets/Images/github-mark.png"
 REPOSITORY_URL = "https://github.com/pineapple-bois/Double_Pendulum_App"
-REPOSITORY_LABEL = "GitHub Repository"
-FOOTER_PREFIX = "The Double Pendulum application was built from this"
-FOOTER_COPYRIGHT = "© pineapple-bois 2024"
-
-
-@dataclass(frozen=True)
-class MarkdownCopy:
-    text: str
-
-
-@dataclass(frozen=True)
-class LinkCopy:
-    text: str
-    href: str
-
-
-@dataclass(frozen=True)
-class ModelCard:
-    title: str
-    markdown: str
-    image_src: str
-    card_class: str
 
 
 MODEL_SYSTEM_TITLE = "System"

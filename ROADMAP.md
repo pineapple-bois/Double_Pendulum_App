@@ -13,7 +13,7 @@ Use this roadmap to answer:
 - what is deferred;
 - where implementation details live.
 
-Last restructured: 2026-05-31.
+Last restructured: 2026-06-01.
 
 ## 1. Project Baseline
 
@@ -41,14 +41,15 @@ Current baseline:
 
 Current known limits:
 
-- The Canvas-backed Simulation runtime has a stronger numerical and callback
-  baseline, but the app still needs styling, production layout, and UX
-  consolidation.
+- The Canvas-backed Simulation runtime has a stronger numerical, callback,
+  layout, and deployment baseline, but the app is not a complete scientific
+  validation project.
 - Existing tests are useful but not a complete scientific validation suite.
-- Energy diagnostics, chaos diagnostics, tolerance sensitivity, solver-method
-  equivalence, and long-duration scientific validity are not proven.
+- Energy diagnostics, chaos diagnostics, tolerance sensitivity,
+  solver-method equivalence, and long-duration scientific validity are not
+  proven.
 
-## 2. Completed Phase: Phase 8
+## 2. Completed Phases: Phase 8 & 9
 
 **Phase 8: Numerical baseline, callback hardening, bug eradication, and
 documentation control**
@@ -75,8 +76,8 @@ Completed:
   and DOP853 strict across representative systems, durations, and inputs.
 - The stale diagnostics metadata issue has been triaged and fixed: stale
   diagnostics now identify previous-run metadata until rerun.
-- A temporary Simulation integrator-policy selector exists for Phase 8 manual
-  inspection and is explicitly deferred to Phase 9 removal or hiding.
+- A temporary Simulation integrator-policy selector supported Phase 8 manual
+  inspection and was deferred to Phase 9 for removal or hiding.
 - Compound-model runs showed no noticeable issue during inspection, so no
   compound-specific action was taken. If a compound issue appears later, handle
   it as a focused evidence/fidelity pass.
@@ -87,84 +88,60 @@ Residual risks accepted or deferred:
 
 - Browser-level coverage does not directly inspect Canvas pixels or renderer
   internals across route transitions.
-- The temporary integrator-policy selector remains visible until Phase 9
-  removes or hides it.
 
-## 3. Active Phase: Phase 9
+**Phase 9: Production layout, deployment hooks, styling, and UX rules**
 
-Phase 9: Production layout, deployment hooks, styling, and UX rules
+Phase 9 is complete at roadmap level. It consolidated the accepted Phase 8
+runtime into a production-presentable app baseline without weakening solver,
+result-state, or Canvas payload protections.
 
-Phase 9 is the active phase.
+Completed:
 
-Phase 9 consolidates the accepted Phase 8 runtime into a production-presentable
-app. It should improve how the app is structured, styled, deployed, and used
-without weakening solver, result-state, or Canvas payload protections.
-
-Scope:
-
-- Add explicit Flask server hooks for deployment concerns.
-- Move HTTPS redirect behaviour behind an environment/config flag such as
-  FORCE_HTTPS.
-- Keep local development free from deployment-specific commenting or manual
-  code changes.
-- Keep pendulum_app.py thin: app creation, server exposure, layout shell,
+- Explicit Flask server hook ownership was added for deployment concerns.
+- HTTPS redirect behaviour was moved behind configuration with the
+  `FORCE_HTTPS` flag.
+- Local development is safe by default and no longer requires commenting
+  deployment code in or out.
+- `pendulum_app.py` remains thin: app creation, server exposure, layout shell,
   callback registration, and server hook registration.
-- Define production layout rules for the app shell and pages.
-- Stabilize the fixed header, normal-flow footer, page shell, sidebar, run
-  action, output workspace, diagnostics placement, and responsive behavior.
-- Do not introduce a fixed footer.
-- Ensure the global footer remains subtle and does not own page-specific
-  actions.
-- Move or confirm the Simulation run action as part of the Simulation page
-  controls rather than the footer.
-- Remove or hide Phase 8 diagnostic controls such as the temporary
-  integrator-policy selector.
-- Consolidate the Simulation page layout around clear ownership for controls,
-  validation, status messaging, playback, output canvases, and diagnostics.
-- Improve user-facing diagnostics and presentation without weakening the
-  solver/result contract.
-- Consolidate styling through assets/styles.css.
-- Define project-level design tokens for colours, spacing, borders,
-  typography, shadows, and layout dimensions.
-- Remove, rationalize, or quarantine ad hoc and legacy styling.
-- Prefer page-scoped and component-scoped selectors over broad global
-  selectors.
-- Define rules for future UI changes.
-- Preserve existing public and legacy routes.
-- Add Initial State help/preset UX only after layout stability is achieved.
-- Use browser smoke checks for UI-facing changes, with strict Dash server
-  cleanup.
-- Add focused tests for deployment hook behaviour where practical.
+- Production layout rules were established for the app shell and pages.
+- Fixed-header and normal-flow footer behaviour were stabilized.
+- The app no longer uses a fixed footer.
+- The Simulation run action is owned by the Simulation controls/sidebar, not by
+  the global footer.
+- Phase 8 diagnostic UI such as the temporary integrator-policy selector was
+  removed from normal UI or hidden behind non-user-facing ownership.
+- The Simulation page layout and responsive behaviour were consolidated around
+  clear control, run, playback, output, status, and diagnostics ownership.
+- User-facing status and diagnostic presentation was improved without weakening
+  solver/result/Canvas contracts.
+- `assets/styles.css` was organized around design tokens, scoped rules, and
+  conservative legacy quarantine/cleanup.
+- Ad hoc and legacy styling was rationalized where safe, with uncertain cleanup
+  captured in maintenance documentation.
+- Browser smoke-check expectations remain part of the UI-facing validation
+  workflow.
+- Focused deployment hook tests were added where implemented.
 
-Gates and non-goals:
+Residual risks accepted or deferred:
 
-- No new simulation outputs.
-- No new chaos diagnostics.
-- No new comparison workspace.
-- No additional analytical Plotly output suites.
-- No new chaos/comparison/product work unless explicitly approved.
-- No broad visual redesigns unrelated to production layout consolidation.
-- No reopening numerical/callback foundations unless a regression appears.
-- No weakening solver/result contract protections.
-- No weakening Canvas payload protections.
-- No reintroducing broad workbench experimentation.
-- No fixed footer.
-- No footer-owned Simulation run action.
+- Browser-level coverage still does not directly inspect Canvas pixels or
+  renderer internals across all responsive layouts.
+- Some legacy and compatibility material remains intentionally deferred for a
+  later manual cleanup decision; see `documentation/maintenance/`.
+- Scientific validation topics remain deferred as listed below.
 
-## 4. Future Phase: Phase 10
+## 3. Active Phase: Phase 10
 
-**Phase 10: New work, to be defined**
+Phase 10 is the active phase.
 
-Phase 10 is intentionally undefined for now.
+Phase 10 represents new product work after the Phase 9 production-layout and
+UX baseline. Its exact product scope is intentionally not yet defined.
+Candidate directions remain deferred until explicitly selected.
 
-It represents new product work after Phase 9 establishes styling/UX stability.
-Phase 10 should be scoped only after that baseline exists.
+## 4. Deferred Work
 
-Possible future directions are listed as deferred candidates, not commitments.
-
-## 5. Deferred Work
-
-Deferred until after Phase 9:
+Deferred until explicitly selected during Phase 10 or later:
 
 - new chaos diagnostics;
 - new comparison workspace;
@@ -172,8 +149,7 @@ Deferred until after Phase 9:
 - new simulation-output galleries;
 - major numerical-method changes;
 - broad workbench experimentation;
-- large visual redesigns unrelated to production layout;
-- Phase 10 product direction.
+- large visual redesigns unrelated to an explicitly selected product scope.
 
 Deferred scientific validation topics:
 
@@ -185,7 +161,7 @@ Deferred scientific validation topics:
 - Hamiltonian angular-velocity reconstruction beyond the current audited
   payload rules.
 
-## 6. Completed And Superseded Phases
+## 5. Completed And Superseded Phases
 
 Earlier phases are complete or superseded at roadmap level. Historical detail
 should not be re-expanded here.
@@ -206,10 +182,10 @@ should not be re-expanded here.
 - Phase 7 substantially promoted the accepted Canvas-backed Simulation
   architecture into the live app.
 
-Remaining cleanup from Phase 6 and Phase 7 was absorbed into Phase 8 and Phase
-9. Durable implementation documentation belongs under `documentation/`.
+Remaining cleanup from Phase 6 and Phase 7 was absorbed into Phase 8 and
+Phase 9. Durable implementation documentation belongs under `documentation/`.
 
-## 7. Documentation Map
+## 6. Documentation Map
 
 Planning:
 
@@ -222,6 +198,8 @@ Durable implementation documentation:
 - `documentation/README.md` explains the production documentation structure.
 - `documentation/development-workflow.md` records safe local development,
   tests, browser smoke checks, and Dash server cleanup rules.
+- `documentation/maintenance/` records maintenance audits and cleanup reports,
+  including the Phase 9 legacy closeout audit.
 - `documentation/simulation-canvas/` documents the current Canvas-backed
   Simulation architecture.
 - `documentation/simulation-canvas/canvas-integration-api.md` records the
