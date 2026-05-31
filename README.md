@@ -183,7 +183,7 @@ Double_Pendulum_App/
   - `app/callbacks/` owns routing and simulation callback registration.
   - `app/serialization/` owns the Canvas payload API used by the Simulation page.
 - The `src/double_pendulum/` package is the home for reusable simulation, symbolic math, validation, and plotting/helper logic.
-- The `documentation/` directory is the durable architecture/workflow reference for production-facing decisions.
+- The `documentation/` directory is the durable architecture/workflow reference for production-facing decisions, including the current Canvas Simulation architecture under [`documentation/simulation-canvas/`](documentation/simulation-canvas/).
 
 ----
 
@@ -193,7 +193,7 @@ The [chaos/non-linear dynamics page](https://www.double-pendulum.net/chaos) is a
 
 The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory contains exploratory/reference work, including `development/simulation_workbench/`, which records the recent Simulation Workbench and Canvas promotion evidence. Code from `development/` should be reviewed, tested, and migrated into the modern source layout before it becomes production app code.
 
-The next modernization direction is consolidation rather than another broad workbench: production Simulation layout, styling consistency, callback stability, Canvas/backend contract tests, browser smoke checks, documentation maintenance, and safe local workflow.
+The active modernization direction is Phase 8: numerical baseline, callback hardening, bug eradication, and documentation control. Styling and UX consolidation are gated until that baseline is established.
 
 Future chaos work aims to:
 

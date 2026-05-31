@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for coding agents working in this repository. Read `README.md` for setup/current usage, `ROADMAP.md` for active modernization direction, and `documentation/` for durable production architecture/workflow notes before substantial edits.
+Guidance for coding agents working in this repository. Read `README.md`, `ROADMAP.md`, and `documentation/README.md` before substantial edits.
 
 ## Project Overview
 
@@ -33,7 +33,7 @@ Guidance for coding agents working in this repository. Read `README.md` for setu
   - `assets/MarkdownScripts/` - markdown/LaTeX content referenced by content modules.
   - `assets/Images/` - tracked app images used by the README and UI.
   - `assets/Heros/` - future visual inspiration for the redesign.
-- `documentation/` - durable production-facing architecture and workflow documentation.
+- `documentation/` - durable production-facing architecture and workflow documentation. Read `documentation/simulation-canvas/` before changing Simulation payloads, callback flow, or Canvas rendering.
 - `development/` - exploratory/prototype/reference work and evidence history. `development/simulation_workbench/` records the Simulation Workbench/Canvas promotion evidence; production code must not import from `development/`.
 - `legacy/` - historical reference material, including the old architecture guide.
 - `tests/unit/` - validation and lightweight symbolic fidelity tests.
@@ -115,7 +115,8 @@ Minimal Dash smoke test before finalizing changes:
 ## Coding Guidelines for Agents
 
 - Keep changes small and repo-specific. Avoid large rewrites unless explicitly requested.
-- Use `ROADMAP.md` to sequence modernization work. Architecture extraction, tests, UI redesign, chaos expansion, and deployment refresh should happen in that order unless the user explicitly redirects.
+- Use `ROADMAP.md` to sequence modernization work. Phase 8 currently gates styling and UX work.
+- Do not start Phase 9 styling/UX work until Phase 8 numerical and callback hardening is complete or explicitly waived by the user.
 - Preserve public routes (`/`, `/lagrangian`, `/hamiltonian`, `/chaos`) unless the task is to change routing.
 - Preserve Dash component IDs used by callbacks unless updating every dependent callback and layout reference together.
 - Preserve Simulation callback-bound IDs and Canvas store/renderer IDs unless all Python callbacks, layouts, JavaScript, tests, and docs are updated together.
@@ -137,7 +138,8 @@ Minimal Dash smoke test before finalizing changes:
 
 ## Agent Workflow
 
-- Read `README.md`, `ROADMAP.md`, and relevant files in `documentation/` first.
+- Read `README.md`, `ROADMAP.md`, and `documentation/README.md` first.
+- Read `documentation/simulation-canvas/` before changing Simulation payloads, callback flow, or Canvas rendering.
 - Inspect the relevant source, layout, asset, dependency, and deployment files before editing.
 - Check `git status --short` before making changes and do not overwrite unrelated user edits.
 - Run the available tests and, for UI changes, perform the Dash smoke test above only when it can be done without leaving a server behind.

@@ -11,11 +11,16 @@ and historical decision support. Production code must not import from
 
 ## Repository roles
 
-- `documentation/` records the current production architecture, contracts, and
+- `documentation/` records durable production architecture, contracts, and
   safe development workflow.
+- `documentation/simulation-canvas/` records the current Canvas-backed
+  Simulation architecture, payload contract, callback/rendering flow, and
+  implementation assumptions.
 - `development/` records exploratory work, including the
   `development/simulation_workbench/` evidence that led to the current Canvas
   integration.
+- `ROADMAP.md` is the active planning document. It should stay concise and
+  point into this directory for implementation detail.
 - `app/` is the Dash application layer: pages, callbacks, content,
   components, and simulation serialization helpers.
 - `src/double_pendulum/` is reusable Python logic for validation, symbolic
@@ -27,9 +32,7 @@ and historical decision support. Production code must not import from
 
 ## Index
 
-- [Canvas Integration API](canvas-integration-api.md)
-- [Simulation Result Contract](simulation-result-contract.md)
-- [Callback Rendering Flow](callback-rendering-flow.md)
+- [Simulation Canvas Architecture](simulation-canvas/)
 - [Development Workflow](development-workflow.md)
 
 ## Current state
@@ -40,7 +43,7 @@ Workbench produced the renderer decision and production promotion evidence, and
 the live Simulation page now uses a Python-built Canvas payload rendered by a
 browser-side Canvas asset.
 
-That state is useful but not polished. The next project work should consolidate
-production layout, styling, callback stability, Canvas/backend contract tests,
-and safe development workflow rather than opening another broad simulation
-workbench or chaos branch.
+That state is useful but not polished. The active Phase 8 work should focus on
+numerical baseline, callback hardening, bug eradication, and documentation
+control rather than styling, new chaos/comparison work, or another broad
+simulation workbench.

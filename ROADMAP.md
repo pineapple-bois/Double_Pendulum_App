@@ -1,1102 +1,217 @@
-# Nonlinear Dynamics / Chaos Companion Roadmap
+# Double Pendulum App Roadmap
 
-This roadmap is the active planning document for modernizing the Double
-Pendulum Dash app into a focused companion app for nonlinear dynamics, chaos,
-numerical simulation, and mathematical explanation. It is intended to evolve as
-the project evolves. It is not a low-level issue tracker.
+This is the active project-control document for the Double Pendulum App. It is
+not an implementation diary, callback reference, renderer API, or workbench
+evidence archive.
 
-## Current status
+Use this roadmap to answer:
 
-Last audited: 2026-05-31.
+- what baseline the project is currently building from;
+- what phase is active;
+- what is gated or blocked;
+- what comes next;
+- what is deferred;
+- where implementation details live.
 
-- Phase 0: Complete.
-  - `ROADMAP.md` exists at the repository root.
-  - `legacy/ARCHITECTURE.md` exists and root `ARCHITECTURE.md` is absent.
-  - `README.md` and `AGENTS.md` identify `ROADMAP.md` as the active
-    modernization/planning source.
-  - Documentation no longer preserves Python 3.9, `env/`, or `runtime.txt` as
-    active setup or deployment guidance.
-- Phase 1: Complete.
-  - `.python-version` exists and declares `3.12`.
-  - `runtime.txt` is absent and documentation says it must not be reintroduced.
-  - `.venv/` is ignored by `.gitignore`.
-  - `requirements.txt` is a top-level application/runtime dependency list:
-    `dash`, `dash-bootstrap-components`, `Flask`, `gunicorn`, `matplotlib`,
-    `numpy`, `plotly`, `scipy`, and `sympy`.
-  - Dash imports use modern `dash` package imports rather than legacy
-    `dash_core_components` or `dash_html_components`.
-  - Validation on 2026-05-26: `source .venv/bin/activate && python -m pip
-    install -r requirements.txt` completed with all requirements already
-    satisfied; `python -m pip check` reported no broken requirements; `python
-    pendulum_app.py` started the Dash development server at
-    `http://127.0.0.1:8050/`; `gunicorn pendulum_app:server` listened at
-    `http://127.0.0.1:8000`.
-  - Note: direct `python` is not available on this machine until `.venv` is
-    activated. Local server binding required running the server commands outside
-    the sandbox, then stopping them after startup was confirmed.
-- Phase 2: Complete.
-  - Test runner is `pytest`, configured by `pytest.ini`.
-  - `requirements-dev.txt` lists test-only dependencies separately from the
-    top-level application/runtime dependencies in `requirements.txt`.
-  - Tests are organized under `tests/unit/`, `tests/integration/`, and
-    `tests/numerical/`.
-  - Validation tests cover representative valid inputs plus invalid time
-    intervals, lengths, masses, gravity, and initial conditions.
-  - App smoke tests import `pendulum_app` without starting a server, verify the
-    Flask `server` object for Gunicorn-style deployment, and check public route
-    layout creation.
-  - Numerical tests cover basic Lagrangian and Hamiltonian simulation output
-    shape, finite values, precomputed position dimensions, and
-    initial-condition consistency.
-  - Lightweight symbolic fidelity tests cross-check the simple Lagrangian and
-    Hamiltonian forms against the reference derivation notebooks. Full
-    derivation audits, compound-equation symbolic checks, energy-conservation
-    tolerances, trajectory regression fixtures, and a Hamiltonian state/input
-    convention audit remain known gaps.
-  - Validation on 2026-05-26: `.venv/bin/python -m pip install -r
-    requirements-dev.txt` installed `pytest`; `.venv/bin/python -m pytest`
-    passed with 50 tests.
-- Phase 3: Complete.
-  - Main reusable root-level modules have been moved into
-    `src/double_pendulum/`: validation logic, symbolic math helpers, Lagrangian
-    and Hamiltonian model classes, and plotting/display helpers.
-  - Root-level `AppFunctions.py`, `MathFunctions.py`,
-    `DoublePendulumLagrangian.py`, and `DoublePendulumHamiltonian.py` initially
-    remained as compatibility wrappers. They were retired during Phase 4g after
-    active imports moved to `src/double_pendulum/`.
-  - `pendulum_app.py` imports the reusable package directly while still
-    exposing the Flask `server` object for Gunicorn-style deployment.
-  - Dash routes, layouts, callbacks, UI, and model equations were not
-    restructured or rewritten. This is the intended stopping point before Phase
-    4 multipage architecture work.
-  - Validation on 2026-05-26: `source .venv/bin/activate && python -m pytest`
-    passed with 54 tests.
-- Phase 4a: Complete.
-  - Introduced a minimal Dash app-layer package with `app/content/` for
-    user-facing copy, page titles, route/navigation metadata, markdown paths,
-    and references.
-  - Introduced `app/pages/` with an explicit route-to-layout registry while
-    preserving the existing pseudo-multipage layout modules and public routes.
-  - Layout files now import structured content rather than owning long-form
-    copy directly. Callbacks, component extraction, and a thinner app entrypoint
-    remain future Phase 4 work.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 57
-    tests.
-- Phase 4b: Complete.
-  - Added `app/callbacks/simulation.py` with `register_simulation_callbacks(app)`
-    for the main simulation-page callbacks.
-  - Moved the info popup, unity-parameter, model-parameter visibility,
-    input-change clearing/validation, and run-simulation graph callbacks out of
-    `pendulum_app.py` without changing callback IDs, inputs, outputs, states,
-    validation, model, numerical, or plotting behavior.
-  - Kept URL routing and the clientside home-page reinitialization callback in
-    `pendulum_app.py` as app-shell wiring.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 58
-    tests.
-- Phase 4c: Complete.
-  - Added shared UI component helpers under `app/components/` for navigation,
-    page shell sections, footer, description/model cards, graph wrappers, and
-    references.
-  - Updated layout modules to import shared components instead of reaching into
-    `layouts/layout_main.py` for navbar, title, footer, reference, and graph
-    helper construction.
-  - Preserved existing routes, copy, CSS classes, Dash component IDs, callback
-    wiring, visual design, numerical behavior, and validation behavior.
-  - Dense simulation input controls remain inline in `layouts/layout_main.py`
-    until a lower-risk page/component extraction step can give them focused
-    ownership.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 61
-    tests.
-- Phase 4d: Complete.
-  - Added `app/components/simulation_controls.py` for the main simulation
-    sidebar controls, grouped into focused helpers for information, model/system
-    selection, physical parameters, initial conditions, and time interval
-    controls.
-  - Updated `layouts/layout_main.py` to call the simulation control component
-    while preserving page composition, copy, CSS classes, and every
-    callback-bound Dash component ID.
-  - `app/callbacks/simulation.py` was not changed; callback inputs, outputs,
-    states, validation behavior, plotting calls, and model logic remain
-    unchanged.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 62
-    tests.
-- Phase 4e: Complete.
-  - Added explicit page modules under `app/pages/` for the main simulation,
-    derivation, chaos, and 404 fallback pages.
-  - Updated `app/pages/registry.py` so `/`, `/lagrangian`, `/hamiltonian`, and
-    `/chaos` resolve directly to `app/pages` layout functions while preserving
-    the existing 404 fallback behavior.
-  - Converted legacy `layouts/layout_main.py`, `layouts/layout_math.py`,
-    `layouts/layout_chaos.py`, and `layouts/layout_404.py` into compatibility
-    wrappers so there is one route-level page source of truth.
-  - Preserved routes, copy, CSS classes, Dash component IDs, callback behavior,
-    validation behavior, graph output wiring, numerical behavior, and model
-    logic.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 64
-    tests.
-- Phase 4f: Complete.
-  - Added `app/callbacks/routing.py` with `register_routing_callbacks(app)` for
-    URL routing and the existing `initializeHomePage()` clientside
-    reinitialization hook.
-  - `pendulum_app.py` now creates and exposes the Dash/Flask app, assigns the
-    top-level layout shell, and calls explicit callback registration functions.
-  - Preserved routes, 404 fallback behavior, clientside startup behavior, copy,
-    CSS classes, Dash component IDs, callback semantics, validation behavior,
-    graph output wiring, numerical behavior, and model logic.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 66
-    tests.
-- Phase 4: Complete.
-  - Page modules now own route-level layouts under `app/pages/`.
-  - User-facing copy and metadata live under `app/content/`.
-  - Shared navigation, shell, footer, card, graph, reference, and simulation
-    control helpers live under `app/components/`.
-  - Simulation and app-shell routing callbacks are registered from
-    `app/callbacks/`.
-  - The app entrypoint is thin while preserving the Gunicorn-facing
-    `pendulum_app:server` contract.
-  - The current four-page route scope is covered by import and route-layout
-    smoke tests.
-- Phase 4g: Complete.
-  - Proved the legacy root compatibility modules and legacy `layouts/` package
-    were no longer active dependencies by repository-wide search and test
-    migration.
-  - Deleted `AppFunctions.py`, `MathFunctions.py`,
-    `DoublePendulumLagrangian.py`, `DoublePendulumHamiltonian.py`, and the
-    legacy `layouts/` package.
-  - Moved the Matplotlib-to-Plotly style helper from
-    `layouts/layout_matplotlib.py` to `app/components/figure_style.py`.
-  - Updated tests and documentation to import from the modern `app/` and
-    `src/double_pendulum/` modules.
-  - Validation on 2026-05-26: `.venv/bin/python -m pytest` passed with 65
-    tests.
-- Phase 5A: Complete.
-  - Converted `/` into the first full-hero landing page for the Double Pendulum
-    Explorer identity.
-  - Removed visible header/navigation chrome from the home page.
-  - Clarified routing so `/` owns the landing page and `/simulation` owns the
-    existing interactive double-pendulum workflow.
-  - Introduced a white/light academic header for non-home pages.
-  - Added hamburger navigation to Home, Simulation, Lagrangian, Hamiltonian,
-    and Chaos.
-  - Simplified the 404 page into a chromeless, sparse home-style error state
-    with links back to Home and Simulation.
-  - Validation on 2026-05-27: focused route/content checks passed.
-- Phase 5B: Complete.
-  - Added the single-page `/equations` route as the accepted Equations of Motion
-    derivation and model-introduction page.
-  - Preserved `/lagrangian` and `/hamiltonian` as public routes while routing
-    the learning journey toward the unified Equations of Motion page.
-  - Promoted Equations of Motion ahead of Simulation in the intended learning
-    journey. Equations of Motion is now the first learning page after Home;
-    Simulation remains page 2.
-  - Rebuilt the derivation content as structured sections and equation blocks:
-    shared modelling trunk, Euler-Lagrange formulation, and Hamiltonian
-    formulation.
-  - Preserved old source markdown, notebook references, image assets, and route
-    behavior for later clean-up rather than deleting superseded material during
-    the redesign phase.
-  - Added project mathematical notation guidance for upright roman
-    `\mathrm{d}` in displayed ordinary derivatives.
-- Phase 6 / Simulation Workbench: Substantially complete and superseded by
-  production consolidation.
-  - `development/simulation_workbench/` now records the Simulation Manifesto,
-    result-contract evidence, output-composition work, Canvas feasibility,
-    renderer decision, and promotion handoff.
-  - Treat that directory as evidence/history, not a production dependency.
-- Phase 7 / Simulation workspace promotion: Largely completed, messy, and in
-  need of consolidation rather than more experimentation.
-  - The live Simulation page now uses a Canvas workspace fed by Python-built
-    payloads from `app/serialization/`.
-  - The Canvas renderer lives in `assets/simulation-canvas-renderer.js`.
-  - Normal Simulation runs no longer generate legacy Plotly figures, though
-    plotting helpers remain in the codebase for fallback/future analytical
-    inspection.
-  - Current limitations are documented in `documentation/`; energy diagnostics,
-    chaos diagnostics, long-run validity, tolerance sensitivity, and
-    solver-method equivalence remain deferred.
-- Next phase: Phase 8, production layout, styling consolidation, callback
-  stability, Canvas/backend contract tests, browser smoke checks, and safe
-  Dash development workflow.
+Last restructured: 2026-05-31.
 
-## 1. Project identity
+## 1. Project Baseline
 
-This project is the **Nonlinear Dynamics / Chaos Companion App**.
+The app is stable enough to build from, but not polished enough to treat as a
+finished production baseline.
 
-The double pendulum is the sole concrete physical system in scope. The app may
-teach broader ideas from nonlinear dynamics and chaos, but it should do so
-through the double pendulum as a rich, concrete case study rather than by
-becoming a generic dynamical-systems catalog.
+Current baseline:
 
-The teaching goal is pedagogical clarity around:
+- The app is a Dash application with a Flask `server` object for
+  Gunicorn/Heroku-style deployment.
+- Public teaching routes remain centered on Home, Equations of Motion,
+  Simulation, and Chaos, with legacy `/lagrangian` and `/hamiltonian` routes
+  preserved.
+- The `/simulation` page now uses the accepted Canvas-backed architecture.
+- Python owns mathematical and numerical truth.
+- Dash callbacks and memory-scoped stores manage app state and payload
+  delivery.
+- Browser-side JavaScript/Canvas handles rendering, playback, resizing, and
+  selected-frame inspection state only.
+- JavaScript must not integrate trajectories, compute physics, infer
+  Hamiltonian angular velocities, or transform solver state conventions.
+- Production code must not import from `development/`.
+- Detailed Simulation Canvas implementation contracts live in
+  `documentation/simulation-canvas/`.
 
-- nonlinear motion and sensitivity to initial conditions
-- Lagrangian and Hamiltonian formulations
-- numerical simulation and approximation error
-- phase-space interpretation
-- qualitative and quantitative chaos indicators
+Current known limits:
 
-The public domain identity remains `double-pendulum`, so the app should not
-become so generic that the double pendulum feels incidental. The broader
-identity should deepen the double-pendulum story, not replace it.
+- The Canvas integration is implemented, but the app still needs numerical and
+  callback hardening.
+- Existing tests are useful but not a complete scientific validation suite.
+- Energy diagnostics, chaos diagnostics, tolerance sensitivity, solver-method
+  equivalence, and long-duration scientific validity are not proven.
 
-## 2. Audience and teaching level
+## 2. Active Phase: Phase 8
 
-The target level is advanced undergraduate mathematics, physics, engineering,
-or scientific-computing study.
+**Phase 8: Numerical baseline, callback hardening, bug eradication, and
+documentation control**
 
-The app should support:
+Phase 8 is the active phase.
 
-- students meeting nonlinear dynamics or chaos for the first time
-- educators who want an interactive teaching aid
-- motivated self-learners
-- portfolio reviewers evaluating technical judgment, pedagogy, and craft
+Phase 8 is not styling. It is not a UX polish phase. It is not another
+open-ended simulation workbench. It is not a new chaos or comparison branch.
 
-The experience should reveal complexity progressively. A user should be able to
-start with motion, parameters, and intuition before being invited into
-derivations, numerical methods, phase-space structure, and chaos diagnostics.
-The app should avoid presenting every detail at once.
+Phase 8 exists to prove that the current app is mathematically credible and
+callback-stable enough to continue.
 
-## 3. Current state summary
+Scope:
 
-The current app is a modernized Dash application with a Flask `server` object
-for Gunicorn/Heroku-style deployment:
+- Strengthen mathematical fidelity tests for representative cases.
+- Strengthen simulation result contract tests.
+- Harden callback and loading-state behavior.
+- Cover stale, failed, empty, cleared, and successful result-state handling.
+- Investigate and eradicate the user-discovered bug, to be defined in a
+  focused follow-up task.
+- Verify that Canvas payloads do not hide numerical failures.
+- Verify that failure states do not leave stale drawable success data behind.
+- Keep implementation documentation aligned with code.
+- Keep `ROADMAP.md` concise and usable as project control.
+- Preserve the safe Dash smoke-test workflow and never leave a Codex-started
+  Dash development server running.
 
-- `pendulum_app.py` creates the Dash app, exposes `server`, defines the
-  top-level shell, and registers app callbacks.
-- `app/content/` contains user-facing page copy, route/navigation metadata,
-  markdown asset paths, and reference lists introduced during Phase 4a.
-- `app/pages/` contains the explicit route-level page modules and route-to-layout
-  registry for the pseudo-multipage app.
-- `app/callbacks/simulation.py` registers the main simulation-page callbacks
-  introduced during Phase 4b.
-- `app/callbacks/routing.py` registers app-shell URL routing and clientside
-  page reinitialization callbacks introduced during Phase 4f.
-- `app/components/` contains shared Dash component helpers for navigation,
-  shell sections, footers, graph wrappers, references, and simple cards
-  introduced during Phase 4c, plus the simulation control panel introduced
-  during Phase 4d, plus the converted Matplotlib/Plotly figure style helper
-  retired from the old `layouts/` package during Phase 4g.
-- `app/serialization/` contains the production Canvas payload API for
-  Simulation rendering.
-- `src/double_pendulum/` contains reusable logic:
-  - `validation/` for input validation, constants, and Dash error rendering.
-  - `math/` for symbolic mechanics helpers.
-  - `models/` for Lagrangian and Hamiltonian model classes.
-  - `plotting/` for shared figure/display helpers.
-- `assets/` contains Dash-served CSS, JavaScript, markdown/LaTeX content,
-  existing app images, newer hero image experiments under `assets/Heros`, and
-  the production Canvas renderer `assets/simulation-canvas-renderer.js`.
-- `documentation/` contains durable production-facing architecture and
-  workflow notes.
-- `tests/` is organized into unit, integration, and numerical coverage from the
-  Phase 2 foundation.
+Gates:
 
-Important modernization context:
-
-- Python 3.12 is the active development runtime.
-- `.venv/` is the local development environment.
-- `.python-version` is the runtime source of truth for future Heroku deployment.
-- `runtime.txt` has intentionally been removed and must not be reintroduced.
-- `requirements.txt` should continue moving toward top-level
-  application/runtime dependencies only, not a full transitive freeze.
-- The old app is still associated with an old Heroku dyno, but the active
-  direction is modernization first and redeployment later.
-- Recent Simulation Workbench and Canvas integration work substantially
-  completed the Phase 6/Phase 7 direction, but the result needs consolidation:
-  production layout, styling, callback stability, Canvas/backend contract
-  tests, documentation maintenance, and safe browser-smoke workflow.
-
-The `development/` directory contains exploratory and reference work rather
-than production app code. In particular:
-
-- `development/math_reference/` preserves earlier derivations, notebooks, and
-  OOP experiments that led toward the app.
-- `development/chaos_branch/` contains prototype work for Poincare sections,
-  ensembles, data collation, integration-cost analysis, and future chaos
-  features.
-- `development/simulation_workbench/` contains the Simulation Workbench
-  evidence and promotion history for the current Canvas-backed Simulation
-  workspace.
-- These files are useful historical and technical references, but production
-  code should not depend on them until relevant pieces are reviewed, tested, and
-  migrated into the modern source layout.
-
-## 4. Target architecture
-
-`legacy/ARCHITECTURE.md` is useful inspiration for separating Dash pages,
-components, content, figures, models, and callbacks. It is not the active source
-of truth for this project and should be adapted to the nonlinear dynamics /
-double-pendulum domain.
-
-Because this app needs reusable mathematical, numerical, plotting, validation,
-and chaos-analysis code, the target architecture should include a proper `src/`
-package as well as a cleaner Dash app package.
-
-A likely future structure is:
-
-```text
-src/
-  double_pendulum/
-    models/
-    math/
-    numerics/
-    chaos/
-    plotting/
-    validation/
-app/
-  pages/
-  components/
-  layouts/
-  callbacks/
-  content/
-  serialization/
-  assets/
-documentation/
-tests/
-  unit/
-  integration/
-  regression/
-development/
-legacy/
-```
-
-This exact structure is a starting point, not a commandment. Names should be
-adapted as code is migrated and real module boundaries become clearer.
-
-The migration should be incremental. The first objective is not to make the tree
-look perfect; it is to make responsibilities clearer while preserving behavior
-and building tests around the physics and app contracts.
-
-## 5. Refactoring principles
-
-- Separate mathematical model code from Dash UI code.
-- Separate simulation and numerical integration from plotting.
-- Separate page layout from callbacks where it improves clarity and testability.
-- Keep user-facing pages pedagogically clean: explanations, controls, plots, and
-  navigation should support learning rather than expose implementation clutter.
-- Preserve `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` initially.
-  They are important behavior anchors while tests are still thin.
-- Treat a future model factory, shared simulator interface, or unified result
-  schema as lower priority until correctness tests exist.
-- Avoid rewriting physics/model code before there are tests for shape,
-  finite-value behavior, parameter handling, and numerical sanity.
-- Keep migration commits behavior-preserving where possible so regressions are
-  easier to isolate.
-
-## 6. Proposed phased roadmap
-
-### Phase 0: Documentation and project direction
-
-Set the new direction before large code movement begins.
-
-Key work:
-
-- Create this roadmap.
-- Move the generic architecture dump to `legacy/ARCHITECTURE.md`.
-- Clean stale deployment/setup guidance from `README.md` and `AGENTS.md`.
-- Clarify that modernization has priority over preserving the old deployed
-  state.
-- Establish `ROADMAP.md` as the active planning document.
+- Phase 9 styling/UX work must not begin until Phase 8 reaches a numerical and
+  callback-stability baseline, unless the user explicitly waives that gate.
+- New chaos/comparison/product work must not begin during Phase 8.
+- Broad workbench experimentation must not resume during Phase 8.
 
 Definition of done:
 
-- `ROADMAP.md` exists at the repository root.
-- `legacy/ARCHITECTURE.md` is historical reference, not active architecture
-  policy.
-- Documentation no longer tells future agents to preserve Python 3.9 or
-  reintroduce `runtime.txt`.
-
-### Phase 1: Stack and dependency modernization
-
-Make the local and future deployment runtime explicit and boring.
-
-Key work:
-
-- Use Python 3.12 locally.
-- Use `.venv/` for local development.
-- Use `.python-version` as the Heroku Python runtime source of truth.
-- Keep `runtime.txt` removed.
-- Keep `requirements.txt` focused on top-level app/runtime dependencies.
-- Continue modernizing Dash imports and compatibility details.
-- Clean `.gitignore` so generated caches, virtual environments, local IDE files,
-  and intentionally ignored prototype assets are handled deliberately.
-
-Definition of done:
-
-- A fresh `.venv/` can install `requirements.txt`.
-- `python pendulum_app.py` starts the app locally.
-- `gunicorn pendulum_app:server` can import and serve the app locally.
-- No docs or deployment files depend on `runtime.txt`.
-- Dependency documentation explains top-level dependencies versus archived
-  historical freezes.
-
-### Phase 2: Test foundation
-
-Build a safety net before deeper extraction or model rewrites.
-
-Key work:
-
-- Establish a clear test layout under `tests/`.
-- Keep or migrate input validation tests.
-- Add tests for app import and startup smoke behavior.
-- Add numerical sanity tests for the model classes.
-- Add tests for simulation output shape and finite values.
-- Add basic parameter validation tests around invalid time intervals, lengths,
-  masses, gravity, and initial conditions.
-
-Definition of done:
-
-- Tests run with one documented command.
-- The test suite imports the app without starting a server.
-- Validation behavior is covered for representative valid and invalid inputs.
-- Lagrangian and Hamiltonian simulations have basic finite-value and shape tests.
-- Known gaps are documented rather than hidden.
-
-### Phase 3: Codebase extraction
-
-Move reusable logic into a source package while keeping behavior equivalent.
-
-Key work:
-
-- Introduce `src/double_pendulum/` or an equivalent package structure.
-- Move reusable math helpers out of root-level modules.
-- Separate model, numerics, plotting, validation, and UI concerns.
-- Keep existing public page behavior stable while moving code.
-- Preserve `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` as
-  compatibility anchors until their responsibilities can be split safely.
-
-Definition of done:
-
-- Core double-pendulum logic can be imported without Dash.
-- Plotting functions can be called independently from page callbacks.
-- Validation logic is testable without constructing Dash pages.
-- Existing simulation workflows still produce time graphs, phase graphs, and
-  animations.
-- Tests cover the moved code paths.
-
-### Phase 4: Multipage app architecture
-
-Give the Dash app a clearer page and callback structure.
-
-Immediate pages in scope:
-
-- landing page
-- main simulation
-- derivation
-- chaos
-
-Key work:
-
-- Establish an app package structure for pages, callbacks, components, layouts,
-  and content.
-- Keep URL routing explicit.
-- Move long explanatory content into content modules or structured markdown
-  assets where appropriate.
-- Keep callbacks close to the page or feature they serve unless shared behavior
-  justifies extraction.
-- Preserve existing routes until a deliberate route migration is planned.
-
-Definition of done:
-
-- Page modules have clear ownership of layout and page-specific callback
-  registration.
-- Shared controls, graph wrappers, and navigation live in reusable components.
-- The app entrypoint is thin and understandable.
-- The current four-page scope works locally.
-
-Status: Complete as of Phase 4g. The page, content, callback, component, and
-route-registry boundaries are explicit, legacy compatibility wrappers have been
-retired, and `.venv/bin/python -m pytest` passed with 66 tests on 2026-05-26.
-
-### Phase 5: Pedagogical UI redesign
-
-Redesign the interface after the architecture can support it.
-
-Key work:
-
-- Complete a visual redesign once model, plotting, validation, and page
-  boundaries are cleaner.
-- Use `assets/Heros` as visual inspiration for the new identity.
-- Assume the color palette may be redesigned completely.
-- Keep the aesthetic restrained, academic, calm, and suitable for nonlinear
-  dynamics and chaos.
-- Use visual fidelity to support mathematical clarity, not to compete with it.
-
-Definition of done:
-
-- The first viewport clearly signals double-pendulum identity.
-- The main simulation workflow is easier to scan and teach from.
-- Mathematical explanations are progressive and readable.
-- Visual assets and palette choices reinforce the app's learning goals.
-- The redesign is validated in browser across practical viewport sizes.
-
-Current status: Phase 5B is complete. `/` is the chromeless full-hero landing
-page and `/equations` is now the first learning page in the intended journey,
-owning the Equations of Motion derivation and model introduction. The active UI
-directions are Phase 5C for Equations-page rendering, reveal behaviour, and
-production layout experiments, and Phase 5D for converting `/simulation` into a
-clean production-style interactive workspace. The intended teaching journey is
-Home, Equations of Motion, Simulation, and Chaos. `/simulation` remains the
-second learning page, but it should now behave as the place where users work
-with controls and outputs rather than where the mechanical model is introduced
-through long explanatory content. The Equations page now lazy-mounts derivation
-branches: `/equations` starts with the overview/shared trunk only, `/lagrangian`
-starts with only the Euler-Lagrange branch mounted, and `/hamiltonian` starts
-with only the Hamiltonian branch mounted. Branch switching is local within the
-Equations page and does not remount the whole page from the top. Non-home
-teaching pages use the fixed dark navy shared header/footer direction, unknown
-routes use a simplified chromeless 404 with links to Home and Simulation, and
-old `/lagrangian` and `/hamiltonian` routes remain preserved.
-
-#### Phase 5C: Progressive disclosure and production layout planning
-
-Planned scope:
-
-- Phase 5C.1 render audit report created at
-  `development/phase_5c_1_equations_render_audit.md`.
-- Phase 5C.2 first-pass Equations lazy-mount optimisation completed.
-  - The optimisation target was scoped to the Equations page, not the Home
-    page or hero image rendering.
-  - `/equations` now renders the lightweight Equations overview only: page
-    orientation, model context, shared derivation trunk, branch choices,
-    references, and footer.
-  - `/lagrangian` preserves the old route while mounting only the
-    Euler-Lagrange derivation branch.
-  - `/hamiltonian` preserves the old route while mounting only the Hamiltonian
-    derivation branch.
-  - The unselected derivation branch is not present in the Dash layout tree,
-    rather than being hidden with CSS, `html.Details`, or collapsed panels.
-  - Component-count check after the change: `/equations` mounts 29
-    `dcc.Markdown` components, down from the Phase 5C.1 full-page baseline of
-    54; `/lagrangian` mounts 42 and `/hamiltonian` mounts 43.
-  - Tests assert branch-only content is absent from unselected routes and that
-    only the selected branch renderer is called.
-- Phase 5C.3 branch-orientation UX pass completed.
-  - This pass addressed spatial continuity after lazy-mounted route changes,
-    not render performance.
-  - Added a stable `#equations-branch` anchor around the branch choice region.
-  - Branch choices now link to `/equations#equations-branch`,
-    `/lagrangian#equations-branch`, and `/hamiltonian#equations-branch`.
-  - The selected branch card receives an active class while unselected branches
-    remain absent from the Dash layout tree.
-  - Native fragment anchors were not sufficient with the Dash route/content
-    update: the URL hash changed, but the viewport stayed at the page top.
-  - Added a minimal clientside scroll helper scoped to `/equations`,
-    `/lagrangian`, and `/hamiltonian` when the hash is `#equations-branch`.
-  - Tests assert branch-link fragments, active branch state, and continued
-    branch absence on unselected routes.
-  - Browser checks covered direct `/equations`, `/lagrangian`, and
-    `/hamiltonian` fragment loads; branch-card clicks between overview,
-    Euler-Lagrange, and Hamiltonian; and back/forward behavior.
-- Phase 5C.4 local branch-switcher pass completed.
-  - Phase 5C.3 improved route orientation, but the user could still see the
-    route change, top-of-page remount, MathJax/typesetting delay, and delayed
-    scroll correction. This was judged worse than an in-page formulation
-    switcher.
-  - Replaced route-link branch cards with two local branch controls:
-    Euler-Lagrange formulation and Hamiltonian formulation. The Overview card
-    was removed because the overview is the shared trunk state rather than a
-    formulation choice.
-  - `/equations` now renders the shared trunk and branch switcher with no full
-    branch mounted initially.
-  - `/lagrangian` still works as a direct entry route and initializes the local
-    switcher with only the Euler-Lagrange branch mounted.
-  - `/hamiltonian` still works as a direct entry route and initializes the local
-    switcher with only the Hamiltonian branch mounted.
-  - Local switching updates only the branch output container and active button
-    state; URL updates during local switching were deferred to preserve smooth
-    in-page behavior and avoid full page remounts.
-  - The Phase 5C.3 delayed scroll helper was removed.
-  - True lazy mounting remains preserved: the unselected branch is not present
-    in the Dash layout tree.
-  - Component-count check after the change: `/equations` mounts 27
-    `dcc.Markdown` components; `/lagrangian` mounts 40; `/hamiltonian` mounts
-    41.
-  - Tests assert the two-choice switcher, direct-route selected state, branch
-    absence for unselected routes, and broad component-count expectations.
-  - Browser checks covered direct `/equations`, `/lagrangian`, and
-    `/hamiltonian`; selecting each formulation from `/equations`; switching
-    Euler-Lagrange to Hamiltonian and back; switching from direct branch routes;
-    stable viewport position near the switcher; and MathJax rendering in the
-    selected branch.
-
-  > User Comment: "Local branch switching preserves lazy mounting and avoids full-page remounts. 
-  > A small click-to-render delay remains when mounting a derivation branch, likely due to Markdown/MathJax rendering. 
-  > This is acceptable for now and should not be optimised further until the production layout is clearer."
-
-#### Shared chrome cohesion completed
-
-- Shared site chrome cohesion completed.
-  - Restyled the shared site header with the Home hero navy academic palette:
-    dark navy surface, pale/white brand and links, pale hamburger bars, and a
-    dark cohesive dropdown panel.
-  - Made `.site-header` fixed and added a reliable top offset for routed page
-    content so titles and first content blocks begin below the header.
-  - Added a minimal dark navy `site-footer` for normal content pages with only
-    the `pineapple-bois` attribution link.
-  - Kept the simulation footer/control path separate from the normal
-    `site-footer`; the `/simulation` Run Simulation button remains in
-    `footer-bar main-page` and remains visible and clickable.
-  - Superseded the old white shared-header styling and removed the legacy
-    green hover from the old nav fallback styling.
-  - Changed files: `assets/styles.css`, `app/components/footer.py`, and
-    `ROADMAP.md`.
-  - Validation on 2026-05-27: `.venv/bin/python -m pytest` passed; browser
-    checks covered `/`, `/simulation`, `/equations`, `/lagrangian`,
-    `/hamiltonian`, `/chaos`, and an unknown route. Manual checks confirmed the
-    header remains fixed while scrolling, content starts below the header,
-    hamburger/dropdown navigation works, normal-page footers are dark and
-    subtle, the simulation Run Simulation button remains usable, and no legacy
-    green/purple nav hover appeared.
-
-- Continue refining branch reveal/progressive disclosure only if needed after
-  the local branch switcher has been used in the browser.
-- Investigate content rendering optimisation for long mathematical sections,
-  including whether equation-heavy blocks can be rendered more efficiently
-  without collapsing the page into a single markdown blob.
-- Add an opt-in production layout mode using `DASH_LAYOUT_MODE=production`.
-- Scope any production-only layout rules under `.app-shell--production` so the
-  existing development/default layout remains stable while the production
-  presentation is tested.
-- Preserve existing content, routes, source markdown, notebooks, and assets
-  throughout Phase 5C. Do not delete superseded material during this phase.
-
-Definition of done:
-
-- The progressive-disclosure experiment is evaluated against readability,
-  accessibility, and route stability.
-- Any rendering optimisation is measured or justified before becoming the
-  default.
-- Production layout mode is opt-in and does not change default local behavior.
-- Existing public routes continue to resolve.
-- Existing derivation content remains preserved.
-
-Remaining follow-up:
-
-- Add browser timing evidence for the lazy-mount change if more optimisation is
-  needed.
-- Decide whether local branch switching should update the URL through a
-  history-only clientside enhancement without triggering route remounts.
-- Keep production layout mode as a separate opt-in pass.
-
-#### Phase 5D: Simulation workspace redesign
-
-Planned scope:
-
-- Redesign `/simulation` as an interactive workspace rather than a
-  documentation page.
-- `/simulation` should open directly into the simulation controls and output
-  workspace.
-- Legacy explanatory copy and model diagrams should be removed from the live
-  page and preserved under `legacy/`.
-- Existing simulation callbacks, component IDs, parameter semantics, and output
-  targets should be preserved.
-- The current footer-anchored "Run Simulation" behavior should be retained until
-  the final simulation UX is redesigned.
-- The page should align visually with the fixed dark navy header/footer
-  direction.
-- The layout should move toward a left control rail/sidebar and main output
-  workspace.
-- This phase is a visual/layout pass, not a simulation engine, callback, or
-  numerical refactor.
-
-Phase 5D.1: Simulation page production workspace pass:
-
-- Remove the old top-of-page simulation introduction, Simple Model card, and
-  Compound Model card from the live `/simulation` route.
-- Preserve that removed explanatory content and the referenced simple/compound
-  model image paths in `legacy/simulation_intro_content.md`.
-- Keep the model type dropdown, system type dropdown, gravity dropdown,
-  parameter controls, initial-condition controls, simulation interval controls,
-  unity-parameter button, footer Run Simulation button, and existing output
-  graph targets intact.
-- Make a conservative visual pass that brings the page closer to the Phase 5
-  dark navy app shell and production workspace direction without inventing major
-  new simulation features.
-
-### Phase 6: Simulation Manifesto and Workbench
-
-Status: substantially complete and superseded by production consolidation.
-The workbench remains valuable as evidence and historical decision support, but
-the project should now move away from open-ended workbench experimentation.
-
-Define what the `/simulation` page is for before filling the cleared workspace
-with plots. Phase 6 is a high-level product, numerical, rendering, and UX
-evidence programme. It is not another Phase 5 styling pass, and it is not a
-detached sandbox outside the app. The Simulation page is the product surface;
-the workbench exists to decide what deserves to appear there.
-
-Core premise:
-
-- `/simulation` is the core interactive instrument of the app.
-- It is not a documentation page and not a gallery of attractive plots.
-- Every output or interaction must earn its place by improving at least one of:
-  interpretability, numerical trust, interaction quality, rendering
-  performance, or maintainability.
-- Exploratory visuals may be prototyped before complete numerical validation,
-  but production acceptance requires explicit evidence for the underlying
-  `DoublePendulum` model outputs.
-
-Key work:
-
-- Create and maintain `development/simulation_workbench/README.md` as the
-  manifesto for the Simulation page.
-- Inventory the current simulation page, callback IDs, output targets, plotting
-  helpers, model classes, tests, and numerical evidence gaps.
-- Define independent workbench tiers so experiments remain focused,
-  documented, and accept/reject-able.
-- Define a simulation-result contract before over-investing in particular
-  plots. Candidate fields include model type, system type, gravity, parameters,
-  initial conditions, time interval, solver metadata, state arrays, position
-  arrays, energy arrays when available, runtime, and validation warnings.
-- Pull the previous math-fidelity and numerical-validation goals into this
-  phase as evidence gates:
-  - output shape and finite-value tests
-  - initial-condition consistency tests
-  - energy sanity checks
-  - numerical drift checks under suitable tolerances
-  - trajectory consistency checks for representative parameter sets
-  - documented solver methods, tolerances, and failure states
-  - Lagrangian/Hamiltonian comparisons only where state definitions make the
-    comparison meaningful
-- Prototype candidate outputs only when their question and evidence requirements
-  are documented. Candidate outputs include physical animation, time-series
-  plots, state-space projections, energy diagnostics, solver/run summaries,
-  comparison runs, and useful empty states before the first run.
-- Measure rendering and callback behaviour before accepting expensive outputs:
-  integration time, figure-build time, callback latency, Plotly JSON size, trace
-  count, point count, frame count, time to first useful visual, and browser
-  responsiveness.
-- Use promotion plans rather than migration plans. Accepted workbench tiers may
-  reshape the live `/simulation` page, but durable code should be promoted into
-  `app/` or `src/double_pendulum/` deliberately, with tests and documented
-  assumptions.
-
-Definition of done:
-
-- `development/simulation_workbench/README.md` exists and states the Simulation
-  Manifesto, guardrails, tier model, evidence gates, and promotion rules.
-- A current inventory of simulation-page controls, callbacks, output IDs,
-  plotting helpers, model classes, and test coverage exists under the
-  workbench.
-- Candidate outputs have decision records explaining the question answered,
-  required data, risks, metrics, and acceptance decision.
-- Representative simulations have documented sanity expectations.
-- Numerical failures are distinguishable from UI/rendering failures.
-- At least one accepted output composition or empty-state direction is supported
-  by numerical, performance, and interpretability evidence.
-
-### Phase 7: Simulation workspace promotion and production hardening
-
-Status: largely completed by recent Canvas integration work, but not polished.
-Production code now contains the Canvas payload API, Canvas workspace, and
-browser renderer. The output needs consolidation through layout, styling,
-callback, documentation, and test hardening rather than another broad
-Simulation Workbench branch.
-
-Promote accepted Phase 6 workbench decisions into the live `/simulation`
-experience. This phase turns evidenced prototypes into maintainable production
-page behavior.
-
-Key work:
-
-- Build the default Simulation workspace around accepted output tiers rather
-  than the historical animation/time-series/phase-graph assumptions.
-- Promote durable non-Dash logic into `src/double_pendulum/` and page/callback
-  code into `app/` only after the workbench evidence supports it.
-- Preserve callback-bound component IDs unless every dependent layout and
-  callback reference is updated together.
-- Keep the left control rail, run action, output workspace, diagnostics, and
-  empty states coherent across practical viewport sizes.
-- Add or update tests for the promoted result contract, figure builders,
-  callback paths, validation behavior, and representative numerical regimes.
-- Keep the footer-anchored Run Simulation workflow only as long as it remains
-  justified by the accepted Simulation page design.
-
-Definition of done:
-
-- The live `/simulation` page exposes only accepted outputs and interactions.
-- The page has a clear pre-run state, run state, result state, and validation
-  failure state.
-- Promoted code has tests and no production dependency on `development/`.
-- Numerical, rendering, and UX limitations are documented rather than hidden.
-- Browser smoke checks confirm the default Simulation workflow remains usable.
-
-### Phase 8: Production layout, styling consolidation, and test hardening
-
-Consolidate the current Simulation page into a stable production workspace.
-This is not another open-ended simulation workbench and not a new
-chaos/comparison branch.
-
-Key work:
-
-- Stabilize the production Simulation page layout around the current Canvas
-  workspace.
-- Keep header, footer, sidebar, run action, output workspace, diagnostics, and
-  responsive behavior consistent.
-- Consolidate styling through the existing `assets/styles.css` direction rather
-  than starting a fresh visual system.
-- Preserve callback-bound IDs unless all dependent callbacks, layouts,
-  JavaScript, tests, and documentation references are updated together.
-- Add comprehensive tests around the Canvas/backend contract, callback result
-  states, stale/failed/empty handling, and Simulation shell IDs.
-- Maintain `documentation/` whenever payload shape, callback flow, or workflow
-  rules change.
-- Use browser smoke checks for UI-facing changes, but never at the cost of
-  leaving a Dash development server running.
-- Make Dash dev-server leakage prevention a standing workflow requirement.
-- Delay additional Initial State help/preset UX until the production layout is
-  stable.
-
-Definition of done:
-
-- `/simulation` has a coherent production layout using the accepted Canvas
-  architecture.
-- Styling is consolidated rather than scattered through one-off additions.
-- Callback-bound IDs and Canvas store/renderer contracts are tested and
-  documented.
-- Failed, empty, stale, and successful states are covered by focused tests.
-- Browser smoke checks confirm the main Simulation workflow without leaving a
-  Codex-started Dash server behind.
-- Documentation reflects the implemented architecture and known gaps.
-
-### Phase 9: Chaos content scaffolding
-
-Develop chaos content carefully after the simulation foundations are stable and
-credible. Phase 9 should build on the accepted Simulation workbench evidence,
-Phase 7 production promotion, and Phase 8 consolidation rather than raw
-exploratory prototypes.
-
-Future content scaffolding:
-
-- sensitivity to initial conditions
-- phase-space interpretation
-- Poincare sections
-- Lyapunov exponents
-- bifurcation-style scans
-- sensitivity experiments and side-by-side trajectories
-- numerical integration error and tolerance demonstrations
-
-These are future teaching modules, not immediate high-priority implementation
-targets. The `development/chaos_branch/` work should inform this phase, but it
-should not be promoted wholesale without tests and review.
-
-Definition of done:
-
-- Chaos concepts are introduced progressively from visible motion to state-space
-  structure to quantitative diagnostics.
-- Prototype chaos code has been reviewed and promoted intentionally.
-- New metrics have tests or clearly documented limitations.
-- Expensive computations have realistic performance boundaries.
-
-### Phase 10: Deployment refresh
-
-Redeploy only after local modernization is stable and the Simulation workspace
-has a tested, credible default experience.
-
-Key work:
-
-- Prepare future Heroku deployment using `.python-version`.
-- Do not reintroduce `runtime.txt`.
-- Validate the production start command after the local architecture and
-  dependencies are modernized.
-- Revisit HTTPS redirect behavior as explicit configuration rather than
-  commented code.
-- Document deployment assumptions once they are verified against the target
-  Heroku stack.
-
-Definition of done:
-
-- Local tests and smoke checks pass.
-- Heroku runtime selection is driven by `.python-version`.
-- `Procfile` and the app entrypoint agree.
-- Deployment instructions are current and reproducible.
-
-## 7. Page scope
-
-Immediate page scope is limited to:
-
-- Home
-- Equations of Motion
-- Simulation
-- Chaos
-
-Additional pages are future work. They should not drive the first refactor.
-The first refactor should make the current teaching flow easier to maintain,
-test, and improve.
-
-The current teaching journey is Home, Equations of Motion, Simulation, and
-Chaos. Simulation should function as the interactive workspace for running and
-reading numerical experiments; the mechanical model introduction belongs on the
-Equations of Motion page or in preserved legacy/reference material, not as long
-introductory content above the live workspace.
-
-## 8. UI and fidelity direction
-
-The current UI may be completely redesigned in a later phase. The app should
-not be constrained by the existing visual treatment once the architecture is
-ready for a redesign.
-
-`assets/Heros` should be treated as visual inspiration for the future identity.
-The likely direction is a complete palette redesign, but the final palette is
-still to be confirmed.
-
-Visual fidelity should support mathematical clarity. Motion, phase-space
-structure, derivation steps, and numerical interpretation should remain the
-center of the experience.
-
-The simulation page should consolidate as a production workspace: a fixed dark
-navy header/footer shell, a restrained left control rail, and a main output
-area built around the accepted Canvas motion, angular displacement, angular
-state projection, playback, and diagnostics flow. Long model-introduction copy
-should not sit above the simulation controls.
-
-## 9. Math/model fidelity goals
-
-The existing `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` classes
-should be preserved initially because they encode the current working behavior.
-
-Priorities:
-
-- tested correctness before premature abstraction
-- energy sanity checks where physically and numerically appropriate
-- numerical stability under documented solver tolerances
-- parameter validation before expensive simulations run
-- trajectory consistency for representative initial conditions
-- clear separation between state definitions for Lagrangian and Hamiltonian
-  formulations
-
-Factory-style model creation, shared simulator interfaces, and unified result
-objects may become useful later. They are lower priority than test coverage and
-behavior-preserving extraction.
-
-## 10. Testing strategy
-
-Testing is still an important project risk, but Phase 2 establishes the first
-reliable safety net. The suite is intentionally foundational rather than a full
-numerical validation project.
-
-Run the suite from the activated Python 3.12 virtual environment with:
-
-```bash
-python -m pytest
-```
-
-Recommended layers:
-
-- Unit tests for validation, parameter conversion, math helpers, and small
-  numerical utilities.
-- Numerical tests for model output shape, finite values, initial-condition
-  consistency, energy sanity, and drift under explicit tolerances.
-- App smoke tests for import, route layout creation, and callback-level behavior
-  where practical.
-- Regression fixtures for selected representative simulations once the model
-  APIs stabilize.
-- Browser smoke checks for the main user flow after UI changes.
-
-Major model rewrites should wait until the core numerical tests exist.
-
-Chaos metrics are harder to test because sensitivity is the point. Early chaos
-work should be scaffolded carefully with tests for invariants, shapes,
-finite-values, deterministic seeds where applicable, and qualitative fixture
-expectations rather than brittle exact trajectories.
-
-## 11. Development directory integration plan
-
-`development/` should be treated as exploratory/prototype/reference material
-unless code is explicitly promoted.
-
-Current classification:
-
-- `development/math_reference/`: historical derivations, notebooks, resource
-  images, and early OOP model work. Useful for explanation, validation ideas,
-  and provenance.
-- `development/chaos_branch/`: future integration work around Poincare maps,
-  ensembles, cost analysis, data collation, and chaos experiments.
-
-Promotion path:
-
-1. Identify one useful prototype capability.
-2. Review the code for dependencies, performance assumptions, and mathematical
-   assumptions.
-3. Write tests around the intended behavior.
-4. Move a small, focused implementation into `src/double_pendulum/`.
-5. Connect it to the Dash app only after the package-level behavior is stable.
-
-Production app code should not import unstable prototype modules from
-`development/`. Prototype notebooks and scripts can inform implementation, but
-they should not become hidden runtime dependencies.
-
-## 12. Documentation alignment
-
-`README.md`, `AGENTS.md`, `ROADMAP.md`, and `documentation/` should agree
-about:
-
-- project identity
-- supported Python version
-- local environment setup
-- deployment source of truth
-- active page scope
-- testing expectations
-- the role of `development/` and `legacy/`
-
-`legacy/ARCHITECTURE.md` is historical inspiration from another multipage Dash
-app. It may contain language from a different domain and should not be treated
-as active architecture policy.
-
-`ROADMAP.md` is the active planning document.
-
-## 13. Risks and sequencing notes
-
-- Avoid UI redesign before architecture extraction; otherwise visual work will
-  be coupled to unstable module boundaries.
-- Avoid model rewrites before tests; otherwise regressions in physics and
-  numerics will be hard to detect.
-- Avoid chaos feature expansion before simulation foundations are stable.
-- Avoid deployment work until local modernization is stable.
-- Avoid importing from `development/` in production code without review and
-  tests.
-- Avoid allowing the companion-app identity to become too generic; the double
-  pendulum remains the concrete system.
-
-## 14. Definition of done by phase
-
-Phase 0 is done when the roadmap exists, the old architecture guide lives under
-`legacy/`, and stale deployment-preservation language has been cleaned.
-
-Phase 1 is done when Python 3.12, `.venv/`, `.python-version`, top-level
-dependencies, modern imports, and ignored/generated files are documented and
-locally verified.
-
-Phase 2 is done when validation, app import/startup, and basic numerical sanity
-tests run reliably with a documented command.
-
-Phase 3 is done when reusable math, model, numerics, plotting, and validation
-logic can be imported from a source package without Dash and existing behavior
-is still covered.
-
-Phase 4 is done when the landing, main simulation, derivation, and chaos pages
-live in a clean multipage Dash architecture with explicit routing and callback
-ownership.
-
-Phase 5 is done when the redesigned UI supports the teaching flow, uses the new
-visual direction deliberately, and has been browser-checked across relevant
-viewports.
-
-Phase 6 is done when the Simulation Workbench has captured the manifesto,
-evidence, renderer decision, result-contract foundations, and promotion plan
-needed to decide what belongs in the production Simulation workspace.
-
-Phase 7 is done when accepted Simulation Workbench decisions have been promoted
-into production code without a runtime dependency on `development/`, with
-limitations documented rather than hidden.
-
-Phase 8 is done when the production Simulation page layout, styling, callback
-state contract, Canvas/backend contract tests, browser-smoke workflow, and
-documentation are consolidated.
-
-Phase 9 is done when chaos teaching modules are scaffolded from reviewed and
-tested code rather than raw prototypes.
-
-Phase 10 is done when future deployment is verified using `.python-version`,
-without `runtime.txt`, after local modernization and smoke checks are stable.
+- The user-discovered bug is reproduced, understood, fixed, or explicitly
+  documented if deferred.
+- Mathematical fidelity expectations are tested for representative cases.
+- Callback and loading-state behavior is tested.
+- Canvas/backend payload assumptions are covered by focused tests.
+- Failed, stale, empty, cleared, and successful states are distinguishable in
+  tests and documentation.
+- Failure states do not leave current drawable success arrays behind.
+- `documentation/` is organized and links are current.
+- `ROADMAP.md` remains concise and usable as a planning document.
+- Dash smoke checks, if run, do not leave a Codex-started server running.
+
+## 3. Next Phase: Phase 9
+
+**Phase 9: Styling, production layout, and UX rules**
+
+Phase 9 is next, but it is gated by Phase 8. Do not start Phase 9 styling or
+UX work until Phase 8 establishes the numerical and callback-stability
+baseline, unless the user explicitly redirects.
+
+Scope:
+
+- Define production layout rules.
+- Consolidate the Simulation page layout.
+- Stabilize header, footer, sidebar, run action, output workspace, diagnostics
+  placement, and responsive behavior.
+- Consolidate styling through `assets/styles.css`.
+- Remove or rationalize ad hoc styling.
+- Define rules for future UI changes.
+- Add Initial State help/preset UX only after layout stability is achieved.
+- Use browser smoke checks for UI-facing changes, with strict Dash server
+  cleanup.
+
+Out of scope:
+
+- New simulation outputs.
+- New chaos diagnostics.
+- New comparison workspace.
+- Additional analytical Plotly output suites.
+- Broad visual redesigns unrelated to production layout consolidation.
+
+## 4. Future Phase: Phase 10
+
+**Phase 10: New work, to be defined**
+
+Phase 10 is intentionally undefined for now.
+
+It represents new product work after Phase 8 establishes numerical/callback
+stability and Phase 9 establishes styling/UX stability. Phase 10 should be
+scoped only after those baselines exist.
+
+Possible future directions are listed as deferred candidates, not commitments.
+
+## 5. Deferred Work
+
+Deferred until after Phase 8 and Phase 9:
+
+- new chaos diagnostics;
+- new comparison workspace;
+- additional analytical Plotly output suite;
+- new simulation-output galleries;
+- major numerical-method changes;
+- broad workbench experimentation;
+- large visual redesigns unrelated to production layout;
+- Phase 10 product direction.
+
+Deferred scientific validation topics:
+
+- energy diagnostics and drift thresholds;
+- chaos metrics;
+- tolerance sensitivity;
+- solver-method equivalence;
+- long-duration scientific validity;
+- Hamiltonian angular-velocity reconstruction beyond the current audited
+  payload rules.
+
+## 6. Completed And Superseded Phases
+
+Earlier phases are complete or superseded at roadmap level. Historical detail
+should not be re-expanded here.
+
+- Phase 0 established the root roadmap direction and moved old architecture
+  material into `legacy/`.
+- Phase 1 modernized the Python/runtime/dependency baseline around Python 3.12,
+  `.python-version`, and top-level runtime requirements.
+- Phase 2 established the first pytest safety net.
+- Phase 3 moved reusable math, model, plotting, and validation code under
+  `src/double_pendulum/`.
+- Phase 4 split the Dash app into clearer page, callback, component, content,
+  and routing ownership.
+- Phase 5 moved the app toward the current teaching journey and redesigned
+  page structure.
+- Phase 6 substantially completed the Simulation Manifesto and Workbench
+  evidence programme.
+- Phase 7 substantially promoted the accepted Canvas-backed Simulation
+  architecture into the live app.
+
+Remaining cleanup from Phase 6 and Phase 7 is absorbed into Phase 8 and Phase
+9. Detailed workbench evidence remains under `development/simulation_workbench/`.
+Durable implementation documentation belongs under
+`documentation/simulation-canvas/`.
+
+## 7. Documentation Map
+
+Planning:
+
+- `ROADMAP.md` is the active planning and phase-control document.
+- `AGENTS.md` is the coding-agent operating guide.
+- `README.md` is the high-level project overview, setup, and usage guide.
+
+Durable implementation documentation:
+
+- `documentation/README.md` explains the production documentation structure.
+- `documentation/development-workflow.md` records safe local development,
+  tests, browser smoke checks, and Dash server cleanup rules.
+- `documentation/simulation-canvas/` documents the current Canvas-backed
+  Simulation architecture.
+- `documentation/simulation-canvas/canvas-integration-api.md` records the
+  Python/JavaScript responsibility boundary and payload API.
+- `documentation/simulation-canvas/simulation-result-contract.md` records the
+  backend/callback/store/rendering result contract.
+- `documentation/simulation-canvas/callback-rendering-flow.md` records the
+  Dash callback and Canvas rendering flow.
+
+Evidence and history:
+
+- `development/simulation_workbench/` contains Simulation Workbench evidence,
+  renderer decisions, promotion notes, and historical implementation support.
+- `development/` more broadly is exploratory/reference material and must not
+  become a production runtime dependency.
+- `legacy/` contains historical reference material.
