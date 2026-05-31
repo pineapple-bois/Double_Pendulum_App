@@ -92,42 +92,64 @@ Residual risks accepted or deferred:
 
 ## 3. Active Phase: Phase 9
 
-**Phase 9: Styling, production layout, and UX rules**
+Phase 9: Production layout, deployment hooks, styling, and UX rules
 
 Phase 9 is the active phase.
 
-Phase 9 is styling, production layout, and UX consolidation. It should improve
-how the app presents the accepted runtime contract without weakening solver,
-result-state, or Canvas payload protections.
+Phase 9 consolidates the accepted Phase 8 runtime into a production-presentable
+app. It should improve how the app is structured, styled, deployed, and used
+without weakening solver, result-state, or Canvas payload protections.
 
 Scope:
 
-- Define production layout rules.
+- Add explicit Flask server hooks for deployment concerns.
+- Move HTTPS redirect behaviour behind an environment/config flag such as
+  FORCE_HTTPS.
+- Keep local development free from deployment-specific commenting or manual
+  code changes.
+- Keep pendulum_app.py thin: app creation, server exposure, layout shell,
+  callback registration, and server hook registration.
+- Define production layout rules for the app shell and pages.
+- Stabilize the fixed header, normal-flow footer, page shell, sidebar, run
+  action, output workspace, diagnostics placement, and responsive behavior.
+- Do not introduce a fixed footer.
+- Ensure the global footer remains subtle and does not own page-specific
+  actions.
+- Move or confirm the Simulation run action as part of the Simulation page
+  controls rather than the footer.
 - Remove or hide Phase 8 diagnostic controls such as the temporary
   integrator-policy selector.
-- Consolidate the Simulation page layout.
-- Stabilize header, footer, sidebar, run action, output workspace, diagnostics
-  placement, and responsive behavior.
-- Improve user-facing diagnostics/presentation without weakening the
+- Consolidate the Simulation page layout around clear ownership for controls,
+  validation, status messaging, playback, output canvases, and diagnostics.
+- Improve user-facing diagnostics and presentation without weakening the
   solver/result contract.
-- Consolidate styling through `assets/styles.css`.
-- Remove or rationalize ad hoc styling.
+- Consolidate styling through assets/styles.css.
+- Define project-level design tokens for colours, spacing, borders,
+  typography, shadows, and layout dimensions.
+- Remove, rationalize, or quarantine ad hoc and legacy styling.
+- Prefer page-scoped and component-scoped selectors over broad global
+  selectors.
 - Define rules for future UI changes.
+- Preserve existing public and legacy routes.
 - Add Initial State help/preset UX only after layout stability is achieved.
 - Use browser smoke checks for UI-facing changes, with strict Dash server
   cleanup.
+- Add focused tests for deployment hook behaviour where practical.
 
 Gates and non-goals:
 
-- New simulation outputs.
-- New chaos diagnostics.
-- New comparison workspace.
-- Additional analytical Plotly output suites.
-- New chaos/comparison/product work unless explicitly approved.
-- Broad visual redesigns unrelated to production layout consolidation.
-- Reopening numerical/callback foundations unless a regression appears.
-- Weakening solver/result contract protections.
-- Reintroducing broad workbench experimentation.
+- No new simulation outputs.
+- No new chaos diagnostics.
+- No new comparison workspace.
+- No additional analytical Plotly output suites.
+- No new chaos/comparison/product work unless explicitly approved.
+- No broad visual redesigns unrelated to production layout consolidation.
+- No reopening numerical/callback foundations unless a regression appears.
+- No weakening solver/result contract protections.
+- No weakening Canvas payload protections.
+- No reintroducing broad workbench experimentation.
+- No fixed footer.
+- No footer-owned Simulation run action.
 
 ## 4. Future Phase: Phase 10
 
