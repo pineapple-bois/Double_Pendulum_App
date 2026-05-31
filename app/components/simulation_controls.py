@@ -359,10 +359,20 @@ def build_simulation_controls():
             html.Div(
                 className="inputs",
                 children=[
-                    build_model_selector(),
-                    build_physical_parameters_controls(),
-                    build_initial_conditions_controls(),
-                    build_time_controls(),
+                    html.Div(
+                        className="simulation-config-column simulation-config-system-column",
+                        children=[
+                            build_model_selector(),
+                            build_physical_parameters_controls(),
+                        ],
+                    ),
+                    html.Div(
+                        className="simulation-config-column simulation-config-state-column",
+                        children=[
+                            build_initial_conditions_controls(),
+                            build_time_controls(),
+                        ],
+                    ),
                     build_run_controls(),
                 ],
             )

@@ -343,7 +343,7 @@ def test_simulation_layout_opens_directly_into_workspace():
     assert text.count(SIMULATION_INTERVAL_TITLE) == 1
     assert RUN_SIMULATION_LABEL in text
     assert "Run and inspect the simulation" in text
-    assert "Configure the system in the sidebar" in text
+    assert "Choose the system configuration" in text
     assert "Use playback, guide toggles, and the time slider" in text
     assert "Show diagnostics" not in text
     assert "Integrator policy" not in text

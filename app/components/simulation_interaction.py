@@ -158,8 +158,8 @@ def build_playback_shell():
                 children=[
                     html.H3("Run and inspect the simulation", className="simulation-panel-heading playback-panel-heading"),
                     html.P(
-                        "Configure the system in the sidebar, then run the solver to prepare playback, "
-                        "state projection, time-series plots, and diagnostics.",
+                        "Choose the system configuration, then run the solver to prepare playback, "
+                        "state projection, and time-series plots.",
                         className="playback-panel-text",
                     ),
                     html.P(

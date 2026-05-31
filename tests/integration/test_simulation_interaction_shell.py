@@ -277,7 +277,7 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert find_by_id(hidden_runtime_targets, STATUS_MESSAGE_ID) is not None
     assert "Show diagnostics" not in text_from(run_dock)
     assert "Run and inspect the simulation" in text_from(playback_strip)
-    assert "Configure the system in the sidebar" in text_from(playback_strip)
+    assert "Choose the system configuration" in text_from(playback_strip)
     assert "Use playback, guide toggles, and the time slider" in text_from(playback_strip)
     assert {
         "canvas-panel-motion",
@@ -308,6 +308,9 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
         "system-type-choice",
         "quiet-gravity-dropdown",
         "integrator-policy-hidden",
+        "simulation-config-column",
+        "simulation-config-system-column",
+        "simulation-config-state-column",
         "simulation-run-dock",
         "parameter-stepper",
         "parameter-stepper-button",
@@ -323,6 +326,8 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     display_options = find_by_id(layout, DISPLAY_OPTIONS_ID)
     time_selector = find_by_class(layout, "canvas-time-selector")
     playback_display = find_by_class(layout, "playback-header-display")
+    system_column = find_by_class(layout, "simulation-config-system-column")
+    state_column = find_by_class(layout, "simulation-config-state-column")
     initial_state_grid = find_by_class(layout, "initial-state-input-grid")
     initial_state_help = find_by_class(layout, "initial-state-help")
     initial_state_preset_hidden = find_by_class(layout, "initial-state-preset-hidden")
@@ -354,6 +359,12 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert scrubber.disabled is True
     assert isinstance(preset_apply_store, dcc.Store)
     assert preset_apply_store.storage_type == "memory"
+    assert find_by_id(system_column, "model-type") is model_type
+    assert find_by_id(system_column, "param_l1") is param_l1
+    assert find_by_id(state_column, "init_cond_theta1") is theta1_input
+    assert find_by_id(state_column, "time_end") is time_end_slider
+    assert find_by_id(system_column, "init_cond_theta1") is None
+    assert find_by_id(state_column, "param_l1") is None
     assert find_by_id(time_selector, SCRUBBER_ID) is not None
     assert find_by_id(playback_display, DISPLAY_OPTIONS_ID) is not None
     assert find_by_id(playback_strip, FRAME_INDICATOR_ID) is not None
