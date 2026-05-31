@@ -7,7 +7,7 @@ the project evolves. It is not a low-level issue tracker.
 
 ## Current status
 
-Last audited: 2026-05-27.
+Last audited: 2026-05-31.
 
 - Phase 0: Complete.
   - `ROADMAP.md` exists at the repository root.
@@ -197,6 +197,26 @@ Last audited: 2026-05-27.
     the redesign phase.
   - Added project mathematical notation guidance for upright roman
     `\mathrm{d}` in displayed ordinary derivatives.
+- Phase 6 / Simulation Workbench: Substantially complete and superseded by
+  production consolidation.
+  - `development/simulation_workbench/` now records the Simulation Manifesto,
+    result-contract evidence, output-composition work, Canvas feasibility,
+    renderer decision, and promotion handoff.
+  - Treat that directory as evidence/history, not a production dependency.
+- Phase 7 / Simulation workspace promotion: Largely completed, messy, and in
+  need of consolidation rather than more experimentation.
+  - The live Simulation page now uses a Canvas workspace fed by Python-built
+    payloads from `app/serialization/`.
+  - The Canvas renderer lives in `assets/simulation-canvas-renderer.js`.
+  - Normal Simulation runs no longer generate legacy Plotly figures, though
+    plotting helpers remain in the codebase for fallback/future analytical
+    inspection.
+  - Current limitations are documented in `documentation/`; energy diagnostics,
+    chaos diagnostics, long-run validity, tolerance sensitivity, and
+    solver-method equivalence remain deferred.
+- Next phase: Phase 8, production layout, styling consolidation, callback
+  stability, Canvas/backend contract tests, browser smoke checks, and safe
+  Dash development workflow.
 
 ## 1. Project identity
 
@@ -256,13 +276,18 @@ for Gunicorn/Heroku-style deployment:
   introduced during Phase 4c, plus the simulation control panel introduced
   during Phase 4d, plus the converted Matplotlib/Plotly figure style helper
   retired from the old `layouts/` package during Phase 4g.
+- `app/serialization/` contains the production Canvas payload API for
+  Simulation rendering.
 - `src/double_pendulum/` contains reusable logic:
   - `validation/` for input validation, constants, and Dash error rendering.
   - `math/` for symbolic mechanics helpers.
   - `models/` for Lagrangian and Hamiltonian model classes.
   - `plotting/` for shared figure/display helpers.
 - `assets/` contains Dash-served CSS, JavaScript, markdown/LaTeX content,
-  existing app images, and newer hero image experiments under `assets/Heros`.
+  existing app images, newer hero image experiments under `assets/Heros`, and
+  the production Canvas renderer `assets/simulation-canvas-renderer.js`.
+- `documentation/` contains durable production-facing architecture and
+  workflow notes.
 - `tests/` is organized into unit, integration, and numerical coverage from the
   Phase 2 foundation.
 
@@ -276,6 +301,10 @@ Important modernization context:
   application/runtime dependencies only, not a full transitive freeze.
 - The old app is still associated with an old Heroku dyno, but the active
   direction is modernization first and redeployment later.
+- Recent Simulation Workbench and Canvas integration work substantially
+  completed the Phase 6/Phase 7 direction, but the result needs consolidation:
+  production layout, styling, callback stability, Canvas/backend contract
+  tests, documentation maintenance, and safe browser-smoke workflow.
 
 The `development/` directory contains exploratory and reference work rather
 than production app code. In particular:
@@ -285,6 +314,9 @@ than production app code. In particular:
 - `development/chaos_branch/` contains prototype work for Poincare sections,
   ensembles, data collation, integration-cost analysis, and future chaos
   features.
+- `development/simulation_workbench/` contains the Simulation Workbench
+  evidence and promotion history for the current Canvas-backed Simulation
+  workspace.
 - These files are useful historical and technical references, but production
   code should not depend on them until relevant pieces are reviewed, tested, and
   migrated into the modern source layout.
@@ -317,7 +349,9 @@ app/
   layouts/
   callbacks/
   content/
+  serialization/
   assets/
+documentation/
 tests/
   unit/
   integration/
@@ -682,6 +716,10 @@ Phase 5D.1: Simulation page production workspace pass:
 
 ### Phase 6: Simulation Manifesto and Workbench
 
+Status: substantially complete and superseded by production consolidation.
+The workbench remains valuable as evidence and historical decision support, but
+the project should now move away from open-ended workbench experimentation.
+
 Define what the `/simulation` page is for before filling the cleared workspace
 with plots. Phase 6 is a high-level product, numerical, rendering, and UX
 evidence programme. It is not another Phase 5 styling pass, and it is not a
@@ -750,6 +788,12 @@ Definition of done:
 
 ### Phase 7: Simulation workspace promotion and production hardening
 
+Status: largely completed by recent Canvas integration work, but not polished.
+Production code now contains the Canvas payload API, Canvas workspace, and
+browser renderer. The output needs consolidation through layout, styling,
+callback, documentation, and test hardening rather than another broad
+Simulation Workbench branch.
+
 Promote accepted Phase 6 workbench decisions into the live `/simulation`
 experience. This phase turns evidenced prototypes into maintainable production
 page behavior.
@@ -778,11 +822,50 @@ Definition of done:
 - Numerical, rendering, and UX limitations are documented rather than hidden.
 - Browser smoke checks confirm the default Simulation workflow remains usable.
 
-### Phase 8: Chaos content scaffolding
+### Phase 8: Production layout, styling consolidation, and test hardening
+
+Consolidate the current Simulation page into a stable production workspace.
+This is not another open-ended simulation workbench and not a new
+chaos/comparison branch.
+
+Key work:
+
+- Stabilize the production Simulation page layout around the current Canvas
+  workspace.
+- Keep header, footer, sidebar, run action, output workspace, diagnostics, and
+  responsive behavior consistent.
+- Consolidate styling through the existing `assets/styles.css` direction rather
+  than starting a fresh visual system.
+- Preserve callback-bound IDs unless all dependent callbacks, layouts,
+  JavaScript, tests, and documentation references are updated together.
+- Add comprehensive tests around the Canvas/backend contract, callback result
+  states, stale/failed/empty handling, and Simulation shell IDs.
+- Maintain `documentation/` whenever payload shape, callback flow, or workflow
+  rules change.
+- Use browser smoke checks for UI-facing changes, but never at the cost of
+  leaving a Dash development server running.
+- Make Dash dev-server leakage prevention a standing workflow requirement.
+- Delay additional Initial State help/preset UX until the production layout is
+  stable.
+
+Definition of done:
+
+- `/simulation` has a coherent production layout using the accepted Canvas
+  architecture.
+- Styling is consolidated rather than scattered through one-off additions.
+- Callback-bound IDs and Canvas store/renderer contracts are tested and
+  documented.
+- Failed, empty, stale, and successful states are covered by focused tests.
+- Browser smoke checks confirm the main Simulation workflow without leaving a
+  Codex-started Dash server behind.
+- Documentation reflects the implemented architecture and known gaps.
+
+### Phase 9: Chaos content scaffolding
 
 Develop chaos content carefully after the simulation foundations are stable and
-credible. Phase 8 should build on the accepted Simulation workbench evidence and
-Phase 7 production-hardening decisions rather than raw exploratory prototypes.
+credible. Phase 9 should build on the accepted Simulation workbench evidence,
+Phase 7 production promotion, and Phase 8 consolidation rather than raw
+exploratory prototypes.
 
 Future content scaffolding:
 
@@ -806,7 +889,7 @@ Definition of done:
 - New metrics have tests or clearly documented limitations.
 - Expensive computations have realistic performance boundaries.
 
-### Phase 9: Deployment refresh
+### Phase 10: Deployment refresh
 
 Redeploy only after local modernization is stable and the Simulation workspace
 has a tested, credible default experience.
@@ -862,9 +945,10 @@ Visual fidelity should support mathematical clarity. Motion, phase-space
 structure, derivation steps, and numerical interpretation should remain the
 center of the experience.
 
-The simulation page should move toward a production workspace: a fixed dark navy
-header/footer shell, a restrained left control rail, and a main output area for
-animation, phase portrait, and time graph results. Long model-introduction copy
+The simulation page should consolidate as a production workspace: a fixed dark
+navy header/footer shell, a restrained left control rail, and a main output
+area built around the accepted Canvas motion, angular displacement, angular
+state projection, playback, and diagnostics flow. Long model-introduction copy
 should not sit above the simulation controls.
 
 ## 9. Math/model fidelity goals
@@ -945,7 +1029,8 @@ they should not become hidden runtime dependencies.
 
 ## 12. Documentation alignment
 
-`README.md`, `AGENTS.md`, and `ROADMAP.md` should eventually agree about:
+`README.md`, `AGENTS.md`, `ROADMAP.md`, and `documentation/` should agree
+about:
 
 - project identity
 - supported Python version
@@ -998,12 +1083,20 @@ Phase 5 is done when the redesigned UI supports the teaching flow, uses the new
 visual direction deliberately, and has been browser-checked across relevant
 viewports.
 
-Phase 6 is done when representative simulations have shape, finite-value,
-initial-condition, energy, drift, and trajectory consistency checks under
-documented tolerances.
+Phase 6 is done when the Simulation Workbench has captured the manifesto,
+evidence, renderer decision, result-contract foundations, and promotion plan
+needed to decide what belongs in the production Simulation workspace.
 
-Phase 7 is done when chaos teaching modules are scaffolded from reviewed and
+Phase 7 is done when accepted Simulation Workbench decisions have been promoted
+into production code without a runtime dependency on `development/`, with
+limitations documented rather than hidden.
+
+Phase 8 is done when the production Simulation page layout, styling, callback
+state contract, Canvas/backend contract tests, browser-smoke workflow, and
+documentation are consolidated.
+
+Phase 9 is done when chaos teaching modules are scaffolded from reviewed and
 tested code rather than raw prototypes.
 
-Phase 8 is done when future deployment is verified using `.python-version`,
+Phase 10 is done when future deployment is verified using `.python-version`,
 without `runtime.txt`, after local modernization and smoke checks are stable.

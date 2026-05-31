@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for coding agents working in this repository. Read `README.md` for setup/current usage and `ROADMAP.md` for active modernization direction before editing.
+Guidance for coding agents working in this repository. Read `README.md` for setup/current usage, `ROADMAP.md` for active modernization direction, and `documentation/` for durable production architecture/workflow notes before substantial edits.
 
 ## Project Overview
 
@@ -19,6 +19,7 @@ Guidance for coding agents working in this repository. Read `README.md` for setu
   - `components/` - shared UI shell, footer, graph, reference, figure-style, card, and simulation-control helpers.
   - `content/` - page metadata, labels, copy, markdown paths, and reference data.
   - `pages/` - route-level page layout ownership and route registry.
+  - `serialization/` - Python-built Canvas payload API for Simulation rendering.
 - `src/double_pendulum/` - reusable non-Dash logic extracted from root modules.
   - `validation/` - input validation sections, constants, and Dash error rendering wrapper.
   - `math/` - symbolic mechanics helpers used by pendulum model classes.
@@ -27,11 +28,13 @@ Guidance for coding agents working in this repository. Read `README.md` for setu
 - `assets/` - Dash-served static assets:
   - `assets/styles.css` - primary app styling.
   - `assets/nav-bar.js` and `assets/scroll.js` - client-side behavior.
+  - `assets/simulation-canvas-renderer.js` - Canvas renderer for the current Simulation workspace; JavaScript renders and inspects Python-built payloads but must not compute physics.
   - `assets/custom-header.html` - loaded by `pendulum_app.py` as `app.index_string`.
   - `assets/MarkdownScripts/` - markdown/LaTeX content referenced by content modules.
   - `assets/Images/` - tracked app images used by the README and UI.
   - `assets/Heros/` - future visual inspiration for the redesign.
-- `development/` - exploratory/prototype/reference work for chaos features and earlier double-pendulum model development; do not import from it in production code without review and tests.
+- `documentation/` - durable production-facing architecture and workflow documentation.
+- `development/` - exploratory/prototype/reference work and evidence history. `development/simulation_workbench/` records the Simulation Workbench/Canvas promotion evidence; production code must not import from `development/`.
 - `legacy/` - historical reference material, including the old architecture guide.
 - `tests/unit/` - validation and lightweight symbolic fidelity tests.
 - `tests/integration/` - Dash app import, public route layout smoke, and Flask `server` tests.
@@ -89,11 +92,14 @@ Current validation note: top-level dependencies and `requirements-dev.txt` insta
 Minimal Dash smoke test before finalizing changes:
 
 - Install dependencies from `requirements.txt`.
-- Start the app with `python pendulum_app.py`.
-- Open `/`, `/lagrangian`, `/hamiltonian`, and `/chaos`.
-- Run a simple simulation and confirm the time graph, phase graph, and animation render.
+- Before starting the app, check whether port `8050` is already occupied.
+- If port `8050` is already occupied, do not blindly kill the process; identify/report it or use a clearly documented temporary port if appropriate.
+- If you start the app with `python pendulum_app.py`, capture the exact process ID.
+- Open `/`, `/simulation`, `/equations`, `/lagrangian`, `/hamiltonian`, and `/chaos` as relevant.
+- Run a simple simulation and confirm the Canvas motion, angular displacement, angular state projection, playback controls, and diagnostics render.
 - Try invalid inputs and confirm validation messages appear instead of a server error.
 - Check browser console for missing asset or JavaScript errors.
+- Stop the exact Dash process you started and verify you did not leave a Codex-started Flask/Dash server running. A clean environment is more important than completing a browser smoke check.
 
 ## Deployment Notes
 
@@ -112,11 +118,13 @@ Minimal Dash smoke test before finalizing changes:
 - Use `ROADMAP.md` to sequence modernization work. Architecture extraction, tests, UI redesign, chaos expansion, and deployment refresh should happen in that order unless the user explicitly redirects.
 - Preserve public routes (`/`, `/lagrangian`, `/hamiltonian`, `/chaos`) unless the task is to change routing.
 - Preserve Dash component IDs used by callbacks unless updating every dependent callback and layout reference together.
+- Preserve Simulation callback-bound IDs and Canvas store/renderer IDs unless all Python callbacks, layouts, JavaScript, tests, and docs are updated together.
 - Be careful with Dash callback dependencies, `suppress_callback_exceptions=True`, and pseudo-multipage layouts; missing IDs may only fail at runtime.
 - Watch for circular imports between `pendulum_app.py`, `app/pages/`, `app/components/`, and callback modules.
 - Keep UI changes compatible with the existing app style in `assets/styles.css`.
 - Preserve data schemas, markdown file paths, image paths, and environment-variable names if any are added later.
 - Prefer adding reusable non-Dash logic under `src/double_pendulum/`; root-level compatibility wrappers have been retired.
+- Treat `development/simulation_workbench/` as evidence/history. Do not wire production imports to it.
 - Preserve existing `DoublePendulumLagrangian` and `DoublePendulumHamiltonian` behavior initially. Avoid model rewrites before meaningful numerical tests exist.
 - In mathematical markdown, render ordinary differential operators with upright roman `\mathrm{d}` in displayed equations, for example `\frac{\mathrm{d}}{\mathrm{d}t}` rather than `\frac{d}{dt}`. Preserve standard `\partial` notation for partial derivatives.
 
@@ -129,8 +137,8 @@ Minimal Dash smoke test before finalizing changes:
 
 ## Agent Workflow
 
-- Read `README.md` and `ROADMAP.md` first.
+- Read `README.md`, `ROADMAP.md`, and relevant files in `documentation/` first.
 - Inspect the relevant source, layout, asset, dependency, and deployment files before editing.
 - Check `git status --short` before making changes and do not overwrite unrelated user edits.
-- Run the available tests and, for UI changes, perform the Dash smoke test above.
+- Run the available tests and, for UI changes, perform the Dash smoke test above only when it can be done without leaving a server behind.
 - In the final response, summarize changed files and validation performed. Mark unknowns explicitly rather than guessing.

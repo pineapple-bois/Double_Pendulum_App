@@ -8,7 +8,9 @@
 
 The application is an extension of [Double_Pendulum](https://github.com/pineapple-bois/Double_Pendulum), which derived the symbolic equations of motion.
 
-For the current modernization direction, see [`ROADMAP.md`](ROADMAP.md).
+For the current modernization direction, see [`ROADMAP.md`](ROADMAP.md). For
+durable production architecture and workflow notes, see
+[`documentation/`](documentation/).
 
 ----
 
@@ -90,7 +92,10 @@ Closed-form, analytical solutions of the double pendulum system are not known to
 
 ## The Application
 
-This application represents a hybrid of web-development and dashboard engineering all written in Python. CSS code handles the styling of elements.
+This application represents a hybrid of web-development and dashboard
+engineering. The active architecture is a Dash application shell with
+callback-owned interaction state, Python backend simulation/model code, and a
+Canvas-based Simulation renderer fed by Python-built payloads.
 
 #### Main Features
 
@@ -112,6 +117,11 @@ This application represents a hybrid of web-development and dashboard engineerin
 - **Error Handling**: 
   - Robust validation of user inputs, ensures computational load is never too high.
 
+The Canvas integration does not imply that the numerical science is fully
+validated. Energy diagnostics, chaos diagnostics, tolerance sensitivity,
+solver-method equivalence, and long-duration scientific validity remain
+deferred modernization work.
+
 #### Directory Structure
 
 ```
@@ -130,12 +140,15 @@ Double_Pendulum_App/
 │   ├── custom-header.html
 │   ├── nav-bar.js
 │   ├── scroll.js
+│   ├── simulation-canvas-renderer.js
 │   └── styles.css
 ├── app/
 │   ├── callbacks/
 │   ├── components/
 │   ├── content/
-│   └── pages/
+│   ├── pages/
+│   └── serialization/
+├── documentation/
 ├── src/
 │   └── double_pendulum/
 │       ├── math/
@@ -161,13 +174,16 @@ Double_Pendulum_App/
   - `custom-header.html` - Defines the page meta-data.
   - `nav-bar.js` - Script to scroll to the top of the math pages.
   - `scroll.js` - Script triggered by the "Run Simulation" button scrolls to the input/figures section of the page.
+  - `simulation-canvas-renderer.js` - Browser-side Canvas rendering, playback, and selected-frame inspection for Python-built simulation payloads.
   - `styles.css` - Handles app styles such as fonts, colours, media queries, and layout structure.
 - The `app/` package contains Dash-facing application code:
   - `app/pages/` owns route-level page layouts.
   - `app/components/` owns reusable UI shell, controls, graph wrappers, references, and figure styling.
   - `app/content/` owns user-facing copy, page metadata, markdown paths, and reference data.
   - `app/callbacks/` owns routing and simulation callback registration.
+  - `app/serialization/` owns the Canvas payload API used by the Simulation page.
 - The `src/double_pendulum/` package is the home for reusable simulation, symbolic math, validation, and plotting/helper logic.
+- The `documentation/` directory is the durable architecture/workflow reference for production-facing decisions.
 
 ----
 
@@ -175,7 +191,9 @@ Double_Pendulum_App/
 
 The [chaos/non-linear dynamics page](https://www.double-pendulum.net/chaos) is a work in progress. 
 
-The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory contains exploratory/reference work for chaos features and earlier double-pendulum model development. Code from `development/` should be reviewed, tested, and migrated into the modern source layout before it becomes production app code.
+The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory contains exploratory/reference work, including `development/simulation_workbench/`, which records the recent Simulation Workbench and Canvas promotion evidence. Code from `development/` should be reviewed, tested, and migrated into the modern source layout before it becomes production app code.
+
+The next modernization direction is consolidation rather than another broad workbench: production Simulation layout, styling consistency, callback stability, Canvas/backend contract tests, browser smoke checks, documentation maintenance, and safe local workflow.
 
 Future chaos work aims to:
 
@@ -216,30 +234,33 @@ pip install -r requirements.txt
 
 #### 4. Stage For Development
 
-- In the [`pendulum_app.py`](pendulum_app.py) file;
+The HTTPS redirect block in [`pendulum_app.py`](pendulum_app.py) is currently
+commented for local development. Keep local-only behavior explicit and verify
+the current file state before changing deployment-related code.
 
-```python
-# Comment out all below (from line 43)
-
-@server.before_request
-def before_request():
-    if not request.is_secure:
-        url = request.url.replace('http://', 'https://', 1)
-        return redirect(url, code=301)
-```
-```python
-# Optionally set debug=True below (line 320)
-
-if __name__ == '__main__':
-    app.run(debug=False)
-```
-#### 5. Run the Application
+#### 5. Run the Application Safely
 
 ```bash
 python pendulum_app.py
 ```
 
 #### 6. Access the app at http://127.0.0.1:8050/ (The development server)
+
+Before starting the Dash app for a smoke check, confirm port `8050` is not
+already occupied:
+
+```bash
+lsof -nP -iTCP:8050 -sTCP:LISTEN
+```
+
+If port `8050` is already occupied, do not blindly kill the process. Identify
+it if possible, or choose a clearly documented temporary port only when
+appropriate.
+
+If you start the Dash development server, capture the process ID, stop that
+exact process after testing, and verify you did not leave a Flask/Dash process
+running. This cleanup rule is more important than completing a browser smoke
+check.
 
 ----
 
@@ -257,6 +278,12 @@ Run the full test suite with:
 ```bash
 python -m pytest
 ```
+
+For Simulation UI work, a manual/browser smoke check should cover a simple
+valid run, Canvas rendering, playback controls, stale state after input changes,
+and invalid-input validation. See
+[`documentation/development-workflow.md`](documentation/development-workflow.md)
+for the full safe smoke-test procedure.
 
 The current test layout is organized by purpose:
 
