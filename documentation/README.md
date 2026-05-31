@@ -16,9 +16,14 @@ and historical decision support. Production code must not import from
 - `documentation/simulation-canvas/` records the current Canvas-backed
   Simulation architecture, payload contract, callback/rendering flow, and
   implementation assumptions.
+- `documentation/simulation-runtime/` records Simulation runtime stability
+  work: solver policy, solver/result contracts, callback routing/remount
+  behavior, loading state, diagnostics, and manual UX inspection.
 - `development/` records exploratory work, including the
   `development/simulation_workbench/` evidence that led to the current Canvas
-  integration.
+  integration. Some detailed evidence directories, including
+  `development/math_fidelity/`, `development/simulation_workbench/`, and
+  `development/solver_contract/`, may be local-only and ignored.
 - `ROADMAP.md` is the active planning document. It should stay concise and
   point into this directory for implementation detail.
 - `app/` is the Dash application layer: pages, callbacks, content,
@@ -33,10 +38,8 @@ and historical decision support. Production code must not import from
 ## Index
 
 - [Simulation Canvas Architecture](simulation-canvas/)
+- [Simulation Runtime Stability](simulation-runtime/)
 - [Development Workflow](development-workflow.md)
-- [Phase 8 Solver Fidelity And Contract Record](phase-8-solver-fidelity-and-contract-record.md)
-- [Phase 8 Callback Routing Stability](phase-8-callback-routing-stability.md)
-- [Phase 8 Manual UX And Loading-State Inspection](phase-8-manual-ux-and-loading-state-inspection.md)
 
 ## Current state
 
@@ -46,7 +49,7 @@ Workbench produced the renderer decision and production promotion evidence, and
 the live Simulation page now uses a Python-built Canvas payload rendered by a
 browser-side Canvas asset.
 
-That state is useful but not polished. The active Phase 8 work should focus on
-numerical baseline, callback hardening, bug eradication, and documentation
-control rather than styling, new chaos/comparison work, or another broad
-simulation workbench.
+That state is useful but not polished. Phase 8 established the numerical,
+solver-policy, callback-routing, diagnostics, and manual UX inspection baseline.
+The active roadmap phase is now Phase 9: styling, production layout, and UX
+consolidation without weakening the accepted solver/result contracts.

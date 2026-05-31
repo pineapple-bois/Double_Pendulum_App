@@ -29,6 +29,7 @@ resize behavior, and selected-frame inspection only.
 JavaScript must not integrate trajectories, compute physics, infer Hamiltonian
 angular velocities, or transform solver state conventions.
 
-Historical evidence for why this architecture was accepted remains under
-`../../development/simulation_workbench/`. Active phase planning lives in
-`../../ROADMAP.md`.
+Historical evidence for why this architecture was accepted may exist locally
+under ignored workbench directories such as `../../development/simulation_workbench/`.
+Durable accepted records live under `../simulation-runtime/`. Active phase
+planning lives in `../../ROADMAP.md`.

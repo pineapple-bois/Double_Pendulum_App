@@ -191,9 +191,9 @@ Double_Pendulum_App/
 
 The [chaos/non-linear dynamics page](https://www.double-pendulum.net/chaos) is a work in progress. 
 
-The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory contains exploratory/reference work, including `development/simulation_workbench/`, which records the recent Simulation Workbench and Canvas promotion evidence. Code from `development/` should be reviewed, tested, and migrated into the modern source layout before it becomes production app code.
+The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory may contain ignored exploratory/reference work, including Simulation Workbench, math-fidelity, and solver-contract evidence. Durable summaries live under [`documentation/`](documentation/), and accepted findings should be encoded in production code and tracked tests.
 
-The active modernization direction is Phase 8: numerical baseline, callback hardening, bug eradication, and documentation control. Styling and UX consolidation are gated until that baseline is established.
+The active modernization direction is Phase 9: styling, production layout, and UX consolidation. Phase 8 established the numerical, solver-policy, callback-routing, and loading/diagnostics baseline that Phase 9 should preserve.
 
 Future chaos work aims to:
 

@@ -1,7 +1,7 @@
-# Phase 8 Callback Routing Stability
+# Simulation Callback Routing Stability
 
-This note records the focused Phase 8 investigation into Simulation page
-remount behavior after navigating between Dash routes.
+This note records the Simulation page remount investigation completed during
+Phase 8 after navigating between Dash routes.
 
 ## Bug Scenario
 
@@ -51,7 +51,7 @@ runs correctly until a hard page reload.
 - `tests/integration/test_simulation_interaction_shell.py`
 - `tests/numerical/test_canvas_payload.py`
 - `documentation/simulation-canvas/`
-- `documentation/phase-8-solver-fidelity-and-contract-record.md`
+- `documentation/simulation-runtime/solver-fidelity-and-contract-record.md`
 
 ## Fix Applied
 
@@ -93,7 +93,7 @@ runs correctly until a hard page reload.
   loading state remained after stale, failed, interrupted, or successful runs.
 
 Related durable contract record:
-[Phase 8 Solver Fidelity And Contract Record](phase-8-solver-fidelity-and-contract-record.md).
+[Simulation Solver Fidelity And Contract Record](solver-fidelity-and-contract-record.md).
 
 Related closeout record:
-[Phase 8 Manual UX And Loading-State Inspection](phase-8-manual-ux-and-loading-state-inspection.md).
+[Simulation Manual UX And Loading-State Inspection](manual-ux-and-loading-state-inspection.md).

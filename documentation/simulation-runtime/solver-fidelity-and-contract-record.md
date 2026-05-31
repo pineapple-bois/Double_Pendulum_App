@@ -1,4 +1,4 @@
-# Phase 8 Solver Fidelity And Contract Record
+# Simulation Solver Fidelity And Contract Record
 
 Date: 2026-05-31
 
@@ -12,6 +12,9 @@ for explicit solver policy, solver metadata, and non-render-safe failed
 results.
 
 ## Evidence Locations
+
+These local evidence paths may be ignored and absent from a fresh tracked
+checkout. This document is the durable summary.
 
 - `development/math_fidelity/BASELINE_REVIEW.md`
 - `development/math_fidelity/DRIFT_INVESTIGATION.md`
@@ -93,7 +96,7 @@ New or updated tests cover:
 
 Manual UX and loading-state inspection for the simple-model policies is
 recorded in
-`documentation/phase-8-manual-ux-and-loading-state-inspection.md`.
+`documentation/simulation-runtime/manual-ux-and-loading-state-inspection.md`.
 
 ## Phase 9 Note
 

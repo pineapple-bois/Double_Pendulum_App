@@ -41,32 +41,30 @@ Current baseline:
 
 Current known limits:
 
-- The Canvas integration is implemented, but the app still needs numerical and
-  callback hardening.
+- The Canvas-backed Simulation runtime has a stronger numerical and callback
+  baseline, but the app still needs styling, production layout, and UX
+  consolidation.
 - Existing tests are useful but not a complete scientific validation suite.
 - Energy diagnostics, chaos diagnostics, tolerance sensitivity, solver-method
   equivalence, and long-duration scientific validity are not proven.
 
-## 2. Active Phase: Phase 8
+## 2. Completed Phase: Phase 8
 
 **Phase 8: Numerical baseline, callback hardening, bug eradication, and
 documentation control**
 
-Phase 8 is the active phase.
+Phase 8 is complete at roadmap level. It established the runtime baseline
+needed before styling and layout consolidation.
 
-Phase 8 is not styling. It is not a UX polish phase. It is not another
-open-ended simulation workbench. It is not a new chaos or comparison branch.
-
-Phase 8 exists to prove that the current app is mathematically credible and
-callback-stable enough to continue.
-
-Completed or substantially completed:
+Completed:
 
 - Simple-model mathematical fidelity evidence has been promoted into focused
   production tests.
-- Solver-policy evidence now supports `dop853_moderate`
+- The simple-model numerical fidelity baseline is established.
+- Solver-policy evidence supports `dop853_moderate`
   (`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as the leading simple-model
   default candidate.
+- `dop853_strict` remains the high-fidelity/reference candidate.
 - Production solver-policy scaffolding and tests exist for simple-model runs.
 - Solver failures are represented as first-class non-render-safe states.
 - Canvas/backend payload tests verify that failures do not leave current
@@ -78,62 +76,29 @@ Completed or substantially completed:
 - The stale diagnostics metadata issue has been triaged and fixed: stale
   diagnostics now identify previous-run metadata until rerun.
 - A temporary Simulation integrator-policy selector exists for Phase 8 manual
-  inspection and remains easy to remove or hide in Phase 9.
-- Durable solver fidelity and result-contract documentation exists at
-  `documentation/phase-8-solver-fidelity-and-contract-record.md`.
-- Durable callback, routing, manual UX, and loading-state notes exist under
-  `documentation/`.
+  inspection and is explicitly deferred to Phase 9 removal or hiding.
+- Compound-model runs showed no noticeable issue during inspection, so no
+  compound-specific action was taken. If a compound issue appears later, handle
+  it as a focused evidence/fidelity pass.
+- Durable runtime stability documentation lives under
+  `documentation/simulation-runtime/`.
 
-Active current work:
+Residual risks accepted or deferred:
 
-- Keep Phase 8 documentation links current while callback/result contracts are
-  finalized.
-- Keep `ROADMAP.md` concise and usable as project control.
+- Browser-level coverage does not directly inspect Canvas pixels or renderer
+  internals across route transitions.
+- The temporary integrator-policy selector remains visible until Phase 9
+  removes or hides it.
 
-Outstanding before Phase 8 can close:
-
-- Decide whether to remove the temporary integrator-policy selector before
-  Phase 8 closes or defer removal/hiding to Phase 9.
-- Accept or separately address the residual browser-level coverage gap around
-  Canvas pixels/renderer internals across route transitions.
-- Ensure `documentation/` links remain current.
-- Preserve the safe Dash smoke-test workflow and never leave a Codex-started
-  Dash development server running.
-
-Gates:
-
-- Phase 9 styling/UX work must not begin until Phase 8 reaches a numerical and
-  callback-stability baseline, unless the user explicitly waives that gate.
-- New chaos/comparison/product work must not begin during Phase 8.
-- Broad workbench experimentation must not resume during Phase 8.
-
-Definition of done:
-
-- The user-discovered bug is reproduced, understood, fixed, or explicitly
-  documented if deferred.
-- Mathematical fidelity expectations are tested for representative cases.
-- Explicit simple-model solver policy is covered by production tests.
-- Callback and loading-state behavior is tested.
-- Canvas/backend payload assumptions are covered by focused tests.
-- Solver failures are represented as first-class non-render-safe states.
-- Failed, stale, empty, cleared, and successful states are distinguishable in
-  tests and documentation.
-- Failure states do not leave current drawable success arrays behind.
-- Manual UX performance inspection is completed for representative simple
-  Lagrangian and Hamiltonian runs.
-- The temporary integrator-policy selector is either explicitly deferred to
-  Phase 9 removal/hiding or removed before Phase 8 closes.
-- `documentation/` is organized and links are current.
-- `ROADMAP.md` remains concise and usable as a planning document.
-- Dash smoke checks, if run, do not leave a Codex-started server running.
-
-## 3. Next Phase: Phase 9
+## 3. Active Phase: Phase 9
 
 **Phase 9: Styling, production layout, and UX rules**
 
-Phase 9 is next, but it is gated by Phase 8. Do not start Phase 9 styling or
-UX work until Phase 8 establishes the numerical and callback-stability
-baseline, unless the user explicitly redirects.
+Phase 9 is the active phase.
+
+Phase 9 is styling, production layout, and UX consolidation. It should improve
+how the app presents the accepted runtime contract without weakening solver,
+result-state, or Canvas payload protections.
 
 Scope:
 
@@ -143,6 +108,8 @@ Scope:
 - Consolidate the Simulation page layout.
 - Stabilize header, footer, sidebar, run action, output workspace, diagnostics
   placement, and responsive behavior.
+- Improve user-facing diagnostics/presentation without weakening the
+  solver/result contract.
 - Consolidate styling through `assets/styles.css`.
 - Remove or rationalize ad hoc styling.
 - Define rules for future UI changes.
@@ -150,13 +117,17 @@ Scope:
 - Use browser smoke checks for UI-facing changes, with strict Dash server
   cleanup.
 
-Out of scope:
+Gates and non-goals:
 
 - New simulation outputs.
 - New chaos diagnostics.
 - New comparison workspace.
 - Additional analytical Plotly output suites.
+- New chaos/comparison/product work unless explicitly approved.
 - Broad visual redesigns unrelated to production layout consolidation.
+- Reopening numerical/callback foundations unless a regression appears.
+- Weakening solver/result contract protections.
+- Reintroducing broad workbench experimentation.
 
 ## 4. Future Phase: Phase 10
 
@@ -164,15 +135,14 @@ Out of scope:
 
 Phase 10 is intentionally undefined for now.
 
-It represents new product work after Phase 8 establishes numerical/callback
-stability and Phase 9 establishes styling/UX stability. Phase 10 should be
-scoped only after those baselines exist.
+It represents new product work after Phase 9 establishes styling/UX stability.
+Phase 10 should be scoped only after that baseline exists.
 
 Possible future directions are listed as deferred candidates, not commitments.
 
 ## 5. Deferred Work
 
-Deferred until after Phase 8 and Phase 9:
+Deferred until after Phase 9:
 
 - new chaos diagnostics;
 - new comparison workspace;
@@ -214,10 +184,8 @@ should not be re-expanded here.
 - Phase 7 substantially promoted the accepted Canvas-backed Simulation
   architecture into the live app.
 
-Remaining cleanup from Phase 6 and Phase 7 is absorbed into Phase 8 and Phase
-9. Detailed workbench evidence remains under `development/simulation_workbench/`.
-Durable implementation documentation belongs under
-`documentation/simulation-canvas/`.
+Remaining cleanup from Phase 6 and Phase 7 was absorbed into Phase 8 and Phase
+9. Durable implementation documentation belongs under `documentation/`.
 
 ## 7. Documentation Map
 
@@ -240,18 +208,17 @@ Durable implementation documentation:
   backend/callback/store/rendering result contract.
 - `documentation/simulation-canvas/callback-rendering-flow.md` records the
   Dash callback and Canvas rendering flow.
-- `documentation/phase-8-solver-fidelity-and-contract-record.md` records the
-  durable Phase 8 solver fidelity and result-contract work.
-- `documentation/phase-8-callback-routing-stability.md` records the focused
-  route-remount and callback lifecycle investigation.
-- `documentation/phase-8-manual-ux-and-loading-state-inspection.md` records the
-  closeout manual UX, stale diagnostics, and loading/interrupted-state
-  inspection.
+- `documentation/simulation-runtime/` records durable Simulation runtime
+  stability work, including solver fidelity, callback routing, loading state,
+  diagnostics, and manual UX inspection.
 
 Evidence and history:
 
-- `development/simulation_workbench/` contains Simulation Workbench evidence,
-  renderer decisions, promotion notes, and historical implementation support.
+- Local ignored directories such as `development/math_fidelity/`,
+  `development/simulation_workbench/`, and `development/solver_contract/` may
+  contain exploratory evidence, workbench notes, and historical implementation
+  support. They are not required in the tracked repo.
 - `development/` more broadly is exploratory/reference material and must not
-  become a production runtime dependency.
+  become a production runtime dependency. Accepted findings belong in
+  production code, tracked tests, or `documentation/`.
 - `legacy/` contains historical reference material.

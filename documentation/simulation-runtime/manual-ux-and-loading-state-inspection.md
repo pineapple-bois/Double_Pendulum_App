@@ -1,9 +1,10 @@
-# Phase 8 Manual UX And Loading-State Inspection
+# Simulation Manual UX And Loading-State Inspection
 
 Date: 2026-05-31
 
-This note records the closeout-oriented Phase 8 manual inspection for simple
-solver policies, diagnostics freshness, and route/loading lifecycle behavior.
+This note records the closeout-oriented manual inspection completed during
+Phase 8 for simple solver policies, diagnostics freshness, and route/loading
+lifecycle behavior.
 The detailed `development/solver_contract/` evidence directory is local-only
 and ignored; this tracked note is the durable project record.
 
