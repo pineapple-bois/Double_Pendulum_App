@@ -1,15 +1,14 @@
 import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
-from flask import Flask, redirect, request
 from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
 from app.content.routes import APP_TITLE, HOME_PAGE
 from app.pages.registry import get_layout_for_path
+from app.server_hooks import configure_server
 
 
-server = Flask(__name__)
 app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,  # May not be warned about genuine mistakes like typos in component IDs
@@ -20,17 +19,10 @@ app = dash.Dash(
     external_stylesheets=[
         dbc.themes.BOOTSTRAP,
         "https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
-    ],
-    server=server
+    ]
 )
-
-
-# Comment out to launch locally (development)
-# @server.before_request
-# def before_request():
-#     if not request.is_secure:
-#         url = request.url.replace('http://', 'https://', 1)
-#         return redirect(url, code=301)
+server = app.server
+configure_server(server)
 
 
 # App set up

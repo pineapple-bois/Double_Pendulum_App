@@ -68,8 +68,8 @@ python3 pendulum_app.py
 - `requirements.txt` intentionally lists only top-level application/runtime dependencies. It is not a full freeze.
 - The previous frozen dependency list is preserved in `legacy/requirements-old-freeze.txt`; do not edit it unless explicitly asked to refresh that backup.
 - Development/test-only dependencies are listed separately in `requirements-dev.txt`.
-- No required environment variables, `.env` file, database config, or credential files were found in tracked repo files.
-- The README notes that the HTTPS redirect block in `pendulum_app.py` should be commented out for local development. Verify the current state before changing it.
+- No required environment variables, `.env` file, database config, or credential files were found in tracked repo files. Optional deployment flags are owned by `app/config.py`.
+- `FORCE_HTTPS` defaults to false. Local HTTP development must not redirect unless that environment flag is explicitly enabled.
 
 ## Testing and Validation
 
@@ -110,7 +110,7 @@ Minimal Dash smoke test before finalizing changes:
 - No `Dockerfile`, `heroku.yml`, `app.json`, or CI/CD config was found in tracked files.
 - Do not rename `pendulum_app.py` or the Flask `server` object without also updating `Procfile`.
 - Do not restore `runtime.txt`. Validate deployment with `.python-version` after local modernization is stable.
-- Be cautious with local-only changes such as debug mode and HTTPS redirects; move them toward explicit configuration rather than commented code when that work is in scope.
+- Be cautious with local-only changes such as debug mode and HTTPS redirects; keep deployment behaviour behind explicit configuration rather than commented code.
 
 ## Coding Guidelines for Agents
 

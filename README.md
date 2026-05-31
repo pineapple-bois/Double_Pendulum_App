@@ -234,9 +234,10 @@ pip install -r requirements.txt
 
 #### 4. Stage For Development
 
-The HTTPS redirect block in [`pendulum_app.py`](pendulum_app.py) is currently
-commented for local development. Keep local-only behavior explicit and verify
-the current file state before changing deployment-related code.
+Local HTTP development does not redirect by default. Deployment-specific HTTPS
+redirects are controlled by the `FORCE_HTTPS` environment flag in
+[`app/config.py`](app/config.py); set `FORCE_HTTPS=true` only when the server
+should redirect plain HTTP requests to HTTPS.
 
 #### 5. Run the Application Safely
 
