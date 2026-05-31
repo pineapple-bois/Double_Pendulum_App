@@ -10,9 +10,7 @@ from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLI
 from app.content.simulation import (
     INFORMATION_TEXT,
     INITIAL_CONDITIONS_TITLE,
-    MODEL_SYSTEM_TITLE,
     PARAMETER_TITLE,
-    RUN_SECTION_TITLE,
     RUN_SIMULATION_LABEL,
     SIMULATION_INTERVAL_TITLE,
 )
@@ -338,14 +336,20 @@ def test_simulation_layout_opens_directly_into_workspace():
     assert "simulation-workspace" in classnames
     assert "side-bar" in classnames
     assert "simulation-output-workspace" in classnames
-    assert MODEL_SYSTEM_TITLE in text
+    assert "System" not in text
     assert PARAMETER_TITLE in text
     assert INITIAL_CONDITIONS_TITLE in text
     assert SIMULATION_INTERVAL_TITLE in text
     assert text.count(SIMULATION_INTERVAL_TITLE) == 1
-    assert RUN_SECTION_TITLE in text
     assert RUN_SIMULATION_LABEL in text
-    assert "Example state" in text
+    assert "Run and inspect the simulation" in text
+    assert "Configure the system in the sidebar" in text
+    assert "Use playback, guide toggles, and the time slider" in text
+    assert "Show diagnostics" not in text
+    assert "Integrator policy" not in text
+    assert "Gravity" not in text
+    assert "Example state" not in text
+    assert "Choose a preset" not in text
     assert "The four initial state values define the starting configuration." in text
     assert "Start here" not in text
     assert "Set all masses and lengths to 1." not in text

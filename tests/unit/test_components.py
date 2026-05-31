@@ -15,7 +15,6 @@ from app.content.simulation import ModelCard
 SIMULATION_CONTROL_IDS = {
     "model-type",
     "system-type",
-    "g-label",
     "param_g",
     "unity-parameters",
     "lengths-label",

@@ -20,7 +20,10 @@ from app.components.simulation_controls import (
     INITIAL_STATE_PRESET_APPLY_STORE_ID,
     INITIAL_STATE_PRESET_ID,
     INTEGRATOR_POLICY_ID,
+    PARAMETER_INPUT_IDS,
     RUN_VALIDATION_MESSAGE_ID,
+    parameter_control_id,
+    parameter_stepper_id,
 )
 from app.serialization import (
     build_canvas_motion_payload,
@@ -53,6 +56,19 @@ INTEGRATOR_POLICY_BY_VALUE = {
     SIMPLE_REFERENCE_SOLVER_POLICY.name: SIMPLE_REFERENCE_SOLVER_POLICY,
     SOLVE_IVP_DEFAULT_BASELINE_POLICY.name: SOLVE_IVP_DEFAULT_BASELINE_POLICY,
 }
+PARAMETER_MINIMUM = 1
+PARAMETER_MAXIMUM = 10
+
+
+def _clamp_integer_parameter(value):
+    if value is None or not isinstance(value, (int, float)):
+        return PARAMETER_MINIMUM
+    return max(PARAMETER_MINIMUM, min(PARAMETER_MAXIMUM, int(round(value))))
+
+
+def _stepped_parameter_value(current_value, direction):
+    delta = -1 if direction == "decrement" else 1
+    return max(PARAMETER_MINIMUM, min(PARAMETER_MAXIMUM, _clamp_integer_parameter(current_value) + delta))
 
 
 def _flatten_dash_text(component):
@@ -602,21 +618,50 @@ def register_simulation_callbacks(app):
         return dash.no_update  # Prevents updating before button click
 
     @app.callback(
-        [Output('param_m1', 'style'),
-         Output('param_m2', 'style'),
-         Output('param_M1', 'style'),
-         Output('param_M2', 'style')],
+        [Output(parameter_control_id('param_m1'), 'style'),
+         Output(parameter_control_id('param_m2'), 'style'),
+         Output(parameter_control_id('param_M1'), 'style'),
+         Output(parameter_control_id('param_M2'), 'style')],
         [Input('model-type', 'value')]
     )
     def adjust_parameters_visibility(model_type):
         if model_type == 'simple':
             # Hide M1 and M2 for the simple model
-            return ({'display': 'block'}, {'display': 'block'},
+            return ({}, {},
                     {'display': 'none'}, {'display': 'none'})
         elif model_type == 'compound':
             # Show M1 and M2 for the compound model
             return ({'display': 'none'}, {'display': 'none'},
-                    {'display': 'block'}, {'display': 'block'})
+                    {}, {})
+
+    @app.callback(
+        [Output(parameter_id, 'value', allow_duplicate=True) for parameter_id in PARAMETER_INPUT_IDS],
+        [
+            Input(parameter_stepper_id(parameter_id, direction), 'n_clicks')
+            for parameter_id in PARAMETER_INPUT_IDS
+            for direction in ("decrement", "increment")
+        ],
+        [State(parameter_id, 'value') for parameter_id in PARAMETER_INPUT_IDS],
+        prevent_initial_call=True,
+    )
+    def step_parameter_value(*callback_values):
+        triggered_id = dash.callback_context.triggered_id
+        if not triggered_id:
+            return tuple(dash.no_update for _ in PARAMETER_INPUT_IDS)
+
+        current_values = callback_values[len(PARAMETER_INPUT_IDS) * 2:]
+        next_values = [dash.no_update for _ in PARAMETER_INPUT_IDS]
+        for index, parameter_id in enumerate(PARAMETER_INPUT_IDS):
+            decrement_id = parameter_stepper_id(parameter_id, "decrement")
+            increment_id = parameter_stepper_id(parameter_id, "increment")
+            if triggered_id == decrement_id:
+                next_values[index] = _stepped_parameter_value(current_values[index], "decrement")
+                break
+            if triggered_id == increment_id:
+                next_values[index] = _stepped_parameter_value(current_values[index], "increment")
+                break
+
+        return tuple(next_values)
 
     @app.callback(
         [

@@ -1,21 +1,17 @@
 from dash import dcc, html
 
+from app.components.simulation_interaction import build_status_shell, build_summary_diagnostics_shell
 from app.content.simulation import (
-    GRAVITY_LABEL,
     GRAVITY_OPTIONS,
     GRAVITY_PLACEHOLDER,
     INITIAL_STATE_HELP_LINES,
-    INITIAL_STATE_PRESET_LABEL,
     INITIAL_STATE_PRESET_OPTIONS,
-    INITIAL_STATE_PRESET_PLACEHOLDER,
     INITIAL_CONDITIONS_TITLE,
     INPUT_PLACEHOLDERS,
     LENGTHS_LABEL,
     MASSES_LABEL,
-    MODEL_SYSTEM_TITLE,
     MODEL_TYPE_OPTIONS,
     PARAMETER_TITLE,
-    RUN_SECTION_TITLE,
     RUN_SIMULATION_LABEL,
     RUN_VALIDATION_INITIAL,
     SIMULATION_INTERVAL_TITLE,
@@ -39,6 +35,62 @@ TIME_MARKS = {
     for value in (10, 20, 30, 40, 50, 60)
 }
 SLIDER_TOOLTIP = {"always_visible": False, "placement": "bottom"}
+PARAMETER_INPUT_IDS = ("param_l1", "param_l2", "param_m1", "param_m2", "param_M1", "param_M2")
+PARAMETER_INPUT_PLACEHOLDER_KEYS = {
+    "param_l1": "l1",
+    "param_l2": "l2",
+    "param_m1": "m1",
+    "param_m2": "m2",
+    "param_M1": "M1",
+    "param_M2": "M2",
+}
+
+
+def parameter_stepper_id(parameter_id, direction):
+    return f"{parameter_id}-{direction}"
+
+
+def parameter_control_id(parameter_id):
+    return f"{parameter_id}-control"
+
+
+def build_parameter_stepper(parameter_id, visible=True):
+    style = None if visible else {"display": "none"}
+    placeholder_key = PARAMETER_INPUT_PLACEHOLDER_KEYS[parameter_id]
+    return html.Div(
+        id=parameter_control_id(parameter_id),
+        className="parameter-stepper",
+        style=style,
+        children=[
+            html.Button(
+                "-",
+                id=parameter_stepper_id(parameter_id, "decrement"),
+                n_clicks=0,
+                className="parameter-stepper-button parameter-stepper-decrement",
+                type="button",
+                title=f"Decrease {INPUT_PLACEHOLDERS[placeholder_key]}",
+            ),
+            dcc.Input(
+                id=parameter_id,
+                type="text",
+                inputMode="numeric",
+                placeholder=INPUT_PLACEHOLDERS[placeholder_key],
+                min=1,
+                max=10,
+                readOnly=True,
+                step=1,
+                className="input parameters-input parameter-stepper-input",
+            ),
+            html.Button(
+                "+",
+                id=parameter_stepper_id(parameter_id, "increment"),
+                n_clicks=0,
+                className="parameter-stepper-button parameter-stepper-increment",
+                type="button",
+                title=f"Increase {INPUT_PLACEHOLDERS[placeholder_key]}",
+            ),
+        ],
+    )
 
 
 def build_initial_state_heading():
@@ -68,13 +120,11 @@ def build_initial_state_heading():
 
 def build_initial_state_preset_control():
     return html.Div(
-        className="initial-state-preset-control",
+        className="initial-state-preset-hidden",
         children=[
-            html.Label(INITIAL_STATE_PRESET_LABEL, className="label initial-state-preset-label"),
             dcc.Dropdown(
                 id=INITIAL_STATE_PRESET_ID,
                 options=list(INITIAL_STATE_PRESET_OPTIONS),
-                placeholder=INITIAL_STATE_PRESET_PLACEHOLDER,
                 clearable=True,
                 searchable=False,
                 className="dropdown initial-state-preset-dropdown",
@@ -87,7 +137,6 @@ def build_model_selector():
     return html.Div(
         className="input-group model-system-group",
         children=[
-            html.H4(MODEL_SYSTEM_TITLE, className="inputs-title"),
             dcc.RadioItems(
                 id="model-type",
                 options=list(MODEL_TYPE_OPTIONS),
@@ -106,7 +155,6 @@ def build_model_selector():
                 labelClassName="system-button",
                 inputClassName="system-button-input",
             ),
-            html.Label(GRAVITY_LABEL, id="g-label", className="label g-label"),
             dcc.Dropdown(
                 id="param_g",
                 options=list(GRAVITY_OPTIONS),
@@ -114,17 +162,18 @@ def build_model_selector():
                 placeholder=GRAVITY_PLACEHOLDER,
                 clearable=False,
                 searchable=False,
-                className="dropdown gravity-dropdown",
+                className="dropdown gravity-dropdown quiet-gravity-dropdown",
             ),
-            # Phase 8 diagnostic control; remove or hide during Phase 9 production layout.
-            html.Label("Integrator policy (temporary Phase 8 diagnostic)", className="label integrator-policy-label"),
-            dcc.Dropdown(
-                id=INTEGRATOR_POLICY_ID,
-                options=list(INTEGRATOR_POLICY_OPTIONS),
-                value=INTEGRATOR_POLICY_DEFAULT,
-                clearable=False,
-                searchable=False,
-                className="dropdown integrator-policy-dropdown",
+            html.Div(
+                className="integrator-policy-hidden",
+                children=dcc.Dropdown(
+                    id=INTEGRATOR_POLICY_ID,
+                    options=list(INTEGRATOR_POLICY_OPTIONS),
+                    value=INTEGRATOR_POLICY_DEFAULT,
+                    clearable=False,
+                    searchable=False,
+                    className="dropdown integrator-policy-dropdown",
+                ),
             ),
         ],
     )
@@ -148,68 +197,18 @@ def build_physical_parameters_controls():
                         className="input-columns parameter-column",
                         children=[
                             html.Label(LENGTHS_LABEL, id="lengths-label", className="label lengths-label"),
-                            dcc.Input(
-                                id="param_l1",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["l1"],
-                                min=0.1,
-                                max=10,
-                                step=0.1,
-                                className="input parameters-input",
-                            ),
-                            dcc.Input(
-                                id="param_l2",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["l2"],
-                                min=0.1,
-                                max=10,
-                                step=0.1,
-                                className="input parameters-input",
-                            ),
+                            build_parameter_stepper("param_l1"),
+                            build_parameter_stepper("param_l2"),
                         ],
                     ),
                     html.Div(
                         className="input-columns parameter-column",
                         children=[
                             html.Label(MASSES_LABEL, id="masses-label", className="label masses-label"),
-                            dcc.Input(
-                                id="param_m1",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["m1"],
-                                min=0.1,
-                                max=1000,
-                                step=0.1,
-                                className="input parameters-input",
-                            ),
-                            dcc.Input(
-                                id="param_m2",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["m2"],
-                                min=0.1,
-                                max=1000,
-                                step=0.1,
-                                className="input parameters-input",
-                            ),
-                            dcc.Input(
-                                id="param_M1",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["M1"],
-                                min=0.1,
-                                max=1000,
-                                step=0.1,
-                                className="input parameters-input",
-                                style={"display": "none"},
-                            ),
-                            dcc.Input(
-                                id="param_M2",
-                                type="number",
-                                placeholder=INPUT_PLACEHOLDERS["M2"],
-                                min=0.1,
-                                max=1000,
-                                step=0.1,
-                                className="input parameters-input",
-                                style={"display": "none"},
-                            ),
+                            build_parameter_stepper("param_m1"),
+                            build_parameter_stepper("param_m2"),
+                            build_parameter_stepper("param_M1", visible=False),
+                            build_parameter_stepper("param_M2", visible=False),
                         ],
                     ),
                 ],
@@ -325,9 +324,8 @@ def build_time_controls():
 
 def build_run_controls():
     return html.Div(
-        className="input-group run-group simulation-run-action",
+        className="input-group run-group simulation-run-dock simulation-run-action",
         children=[
-            html.H4(RUN_SECTION_TITLE, className="inputs-title run-title"),
             html.Div(
                 id=RUN_VALIDATION_MESSAGE_ID,
                 className="simulation-run-validation-message simulation-run-validation-ready",
@@ -341,6 +339,13 @@ def build_run_controls():
                 id="submit-val",
                 n_clicks=0,
                 className="button run-simulation-button simulation-sidebar-run-button",
+            ),
+            html.Div(
+                className="simulation-hidden-runtime-targets",
+                children=[
+                    build_status_shell(),
+                    build_summary_diagnostics_shell(visible=False),
+                ],
             ),
         ],
     )

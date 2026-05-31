@@ -78,12 +78,12 @@ INITIAL_STATE_PRESET_OPTIONS = (
 SIMULATION_INTERVAL_TITLE = "Duration (s)"
 
 INPUT_PLACEHOLDERS = {
-    "l1": "l1 (length of rod 1)",
-    "l2": "l2 (length of rod 2)",
-    "m1": "m1 (mass of bob 1)",
-    "m2": "m2 (mass of bob 2)",
-    "M1": "M1 (mass of rod 1)",
-    "M2": "M2 (mass of rod 2)",
+    "l1": "Length 1",
+    "l2": "Length 2",
+    "m1": "Mass 1",
+    "m2": "Mass 2",
+    "M1": "Mass 1",
+    "M2": "Mass 2",
     "theta1": "θ1 (Angle 1)",
     "theta2": "θ2 (Angle 2)",
     "omega1": "ω1 (Angular velocity 1)",

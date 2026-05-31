@@ -259,15 +259,26 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert "t =" in text_from(frame_indicator)
     assert "Frame" not in text_from(frame_indicator)
     diagnostics_toggle = find_by_id(layout, DIAGNOSTICS_TOGGLE_ID)
-    assert isinstance(diagnostics_toggle, html.Details)
-    assert diagnostics_toggle.open is False
-    assert "Show diagnostics" in text_from(diagnostics_toggle)
+    assert isinstance(diagnostics_toggle, html.Div)
+    assert "simulation-hidden-runtime-targets" in diagnostics_toggle.className
+    assert "Show diagnostics" not in text_from(diagnostics_toggle)
     diagnostics_content = find_by_id(layout, DIAGNOSTICS_CONTENT_ID)
     assert diagnostics_content is not None
     assert find_by_id(diagnostics_content, SELECTED_STATE_READOUT_ID) is not None
     playback_strip = find_by_class(layout, "simulation-playback-strip")
-    assert find_by_id(playback_strip, DIAGNOSTICS_TOGGLE_ID) is diagnostics_toggle
-    assert find_by_id(playback_strip, DIAGNOSTICS_CONTENT_ID) is diagnostics_content
+    run_dock = find_by_class(layout, "simulation-run-dock")
+    hidden_runtime_targets = find_by_class(run_dock, "simulation-hidden-runtime-targets")
+    assert find_by_id(playback_strip, DIAGNOSTICS_TOGGLE_ID) is None
+    assert find_by_id(playback_strip, DIAGNOSTICS_CONTENT_ID) is None
+    assert find_by_id(playback_strip, STATUS_MESSAGE_ID) is None
+    assert find_by_id(run_dock, DIAGNOSTICS_TOGGLE_ID) is diagnostics_toggle
+    assert find_by_id(run_dock, DIAGNOSTICS_CONTENT_ID) is diagnostics_content
+    assert hidden_runtime_targets is not None
+    assert find_by_id(hidden_runtime_targets, STATUS_MESSAGE_ID) is not None
+    assert "Show diagnostics" not in text_from(run_dock)
+    assert "Run and inspect the simulation" in text_from(playback_strip)
+    assert "Configure the system in the sidebar" in text_from(playback_strip)
+    assert "Use playback, guide toggles, and the time slider" in text_from(playback_strip)
     assert {
         "canvas-panel-motion",
         "canvas-panel-projection",
@@ -275,24 +286,32 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
         "simulation-output-header-row",
         "simulation-playback-strip",
         "simulation-playback-header",
+        "playback-panel-copy",
+        "playback-panel-controls-row",
         "canvas-time-selector",
         "playback-control-row",
         "playback-header-controls",
         "playback-header-display",
-        "playback-header-status",
         "selected-state-diagnostics-area",
         "simulation-diagnostics-toggle",
         "simulation-detail-diagnostics",
+        "simulation-hidden-runtime-targets",
         "initial-state-input-grid",
         "initial-state-input-column",
         "initial-state-heading-row",
         "initial-state-help",
         "initial-state-help-summary",
         "initial-state-help-panel",
-        "initial-state-preset-control",
+        "initial-state-preset-hidden",
         "binary-choice",
         "model-system-choice",
         "system-type-choice",
+        "quiet-gravity-dropdown",
+        "integrator-policy-hidden",
+        "simulation-run-dock",
+        "parameter-stepper",
+        "parameter-stepper-button",
+        "parameter-stepper-input",
     } <= classes
     assert "init-cond-split" not in classes
     assert "initial-state-slider-stack" not in classes
@@ -303,10 +322,10 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     scrubber = find_by_id(layout, SCRUBBER_ID)
     display_options = find_by_id(layout, DISPLAY_OPTIONS_ID)
     time_selector = find_by_class(layout, "canvas-time-selector")
-    playback_status = find_by_class(layout, "playback-header-status")
     playback_display = find_by_class(layout, "playback-header-display")
     initial_state_grid = find_by_class(layout, "initial-state-input-grid")
     initial_state_help = find_by_class(layout, "initial-state-help")
+    initial_state_preset_hidden = find_by_class(layout, "initial-state-preset-hidden")
     initial_state_preset = find_by_id(layout, INITIAL_STATE_PRESET_ID)
     angle_column = find_by_class(layout, "angle-input-column")
     velocity_column = find_by_class(layout, "velocity-input-column")
@@ -317,6 +336,14 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     model_type = find_by_id(layout, "model-type")
     system_type = find_by_id(layout, "system-type")
     integrator_policy = find_by_id(layout, INTEGRATOR_POLICY_ID)
+    param_l1 = find_by_id(layout, "param_l1")
+    param_l2 = find_by_id(layout, "param_l2")
+    param_m1 = find_by_id(layout, "param_m1")
+    param_m2 = find_by_id(layout, "param_m2")
+    param_M1 = find_by_id(layout, "param_M1")
+    param_M2 = find_by_id(layout, "param_M2")
+    param_m1_control = find_by_id(layout, "param_m1-control")
+    param_M1_control = find_by_id(layout, "param_M1-control")
     time_start_input = find_by_id(layout, "time_start")
     time_end_slider = find_by_id(layout, "time_end")
     run_validation = find_by_id(layout, RUN_VALIDATION_MESSAGE_ID)
@@ -328,15 +355,16 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert isinstance(preset_apply_store, dcc.Store)
     assert preset_apply_store.storage_type == "memory"
     assert find_by_id(time_selector, SCRUBBER_ID) is not None
-    assert find_by_id(playback_status, STATUS_MESSAGE_ID) is not None
     assert find_by_id(playback_display, DISPLAY_OPTIONS_ID) is not None
-    assert find_by_id(playback_display, FRAME_INDICATOR_ID) is not None
+    assert find_by_id(playback_strip, FRAME_INDICATOR_ID) is not None
     assert isinstance(initial_state_help, html.Details)
     assert initial_state_help.open is False
     assert "The four initial state values define the starting configuration." in text_from(initial_state_help)
     assert "Positive angles rotate counterclockwise" in text_from(initial_state_help)
+    assert "Example state" not in text_from(find_by_class(layout, "initial-conditions-group"))
+    assert "Choose a preset" not in text_from(find_by_class(layout, "initial-conditions-group"))
+    assert find_by_id(initial_state_preset_hidden, INITIAL_STATE_PRESET_ID) is initial_state_preset
     assert isinstance(initial_state_preset, dcc.Dropdown)
-    assert initial_state_preset.placeholder == "Choose a preset"
     assert initial_state_preset.clearable is True
     assert initial_state_preset.searchable is False
     assert {option["value"] for option in initial_state_preset.options} == {
@@ -369,7 +397,32 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
         "simple_reference",
         "solve_ivp_default_baseline",
     }
-    assert "Integrator policy" in text_from(find_by_class(layout, "model-system-group"))
+    assert "Integrator policy" not in text_from(find_by_class(layout, "model-system-group"))
+    assert "System" not in text_from(find_by_class(layout, "model-system-group"))
+    assert "Gravity" not in text_from(find_by_class(layout, "model-system-group"))
+    assert param_m1_control.style is None
+    assert param_M1_control.style == {"display": "none"}
+    assert find_by_id(layout, "param_l1-decrement") is not None
+    assert find_by_id(layout, "param_l1-increment") is not None
+    assert find_by_id(layout, "param_m1-decrement") is not None
+    assert find_by_id(layout, "param_m1-increment") is not None
+    expected_placeholders = (
+        (param_l1, "Length 1"),
+        (param_l2, "Length 2"),
+        (param_m1, "Mass 1"),
+        (param_m2, "Mass 2"),
+        (param_M1, "Mass 1"),
+        (param_M2, "Mass 2"),
+    )
+    for parameter_input, placeholder in expected_placeholders:
+        assert isinstance(parameter_input, dcc.Input)
+        assert parameter_input.type == "text"
+        assert parameter_input.inputMode == "numeric"
+        assert parameter_input.readOnly is True
+        assert parameter_input.placeholder == placeholder
+        assert parameter_input.min == 1
+        assert parameter_input.max == 10
+        assert parameter_input.step == 1
     assert isinstance(theta1_input, dcc.Input)
     assert theta1_input.type == "number"
     assert theta1_input.min == -180

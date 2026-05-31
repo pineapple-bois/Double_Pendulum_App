@@ -154,30 +154,51 @@ def build_playback_shell():
         ),
         children=[
             html.Div(
-                className="playback-control-row playback-header-controls",
+                className="playback-panel-copy",
                 children=[
-                    html.Div(
-                        className="playback-controls playback-button-group",
-                        children=[
-                            html.Button("Play", id=PLAY_BUTTON_ID, className="button", disabled=True),
-                            html.Button("Pause", id=PAUSE_BUTTON_ID, className="button", disabled=True),
-                            html.Button("Reset", id=RESET_BUTTON_ID, className="button", disabled=True),
-                        ],
+                    html.H3("Run and inspect the simulation", className="simulation-panel-heading playback-panel-heading"),
+                    html.P(
+                        "Configure the system in the sidebar, then run the solver to prepare playback, "
+                        "state projection, time-series plots, and diagnostics.",
+                        className="playback-panel-text",
+                    ),
+                    html.P(
+                        "Use playback, guide toggles, and the time slider to inspect the computed "
+                        "trajectory across the linked visualisations.",
+                        className="playback-panel-text",
                     ),
                 ],
             ),
             html.Div(
-                className="playback-options-row playback-header-display",
+                className="playback-controls-row playback-panel-controls-row",
                 children=[
-                    dcc.Checklist(
-                        id=DISPLAY_OPTIONS_ID,
-                        options=[
-                            {"label": "Axes", "value": "axes", "disabled": True},
-                            {"label": "Grid", "value": "grid", "disabled": True},
+                    html.Div(
+                        className="playback-control-row playback-header-controls",
+                        children=[
+                            html.Div(
+                                className="playback-controls playback-button-group",
+                                children=[
+                                    html.Button("Play", id=PLAY_BUTTON_ID, className="button", disabled=True),
+                                    html.Button("Pause", id=PAUSE_BUTTON_ID, className="button", disabled=True),
+                                    html.Button("Reset", id=RESET_BUTTON_ID, className="button", disabled=True),
+                                ],
+                            ),
                         ],
-                        value=["axes", "grid"],
-                        inline=True,
-                        className="display-options-toggle",
+                    ),
+                    html.Div(
+                        className="playback-options-row playback-header-display",
+                        children=[
+                            dcc.Checklist(
+                                id=DISPLAY_OPTIONS_ID,
+                                options=[
+                                    {"label": "Axes", "value": "axes", "disabled": True},
+                                    {"label": "Grid", "value": "grid", "disabled": True},
+                                ],
+                                value=["axes", "grid"],
+                                inline=True,
+                                className="display-options-toggle",
+                            ),
+                        ],
                     ),
                     html.Div(
                         id=FRAME_INDICATOR_ID,
@@ -186,11 +207,6 @@ def build_playback_shell():
                     ),
                 ],
             ),
-            html.Div(
-                className="playback-header-status",
-                children=build_status_shell(),
-            ),
-            build_summary_diagnostics_shell(),
         ],
     )
 
@@ -221,46 +237,55 @@ def build_status_shell():
     )
 
 
-def build_summary_diagnostics_shell():
+def build_summary_diagnostics_shell(visible=True):
+    diagnostics_content = html.Div(
+        id=DIAGNOSTICS_CONTENT_ID,
+        className="simulation-summary-diagnostics simulation-detail-diagnostics",
+        children=[
+            html.Section(
+                className="simulation-panel selected-state-diagnostics-area",
+                children=[
+                    html.H3("Selected State", className="simulation-panel-heading"),
+                    html.Div(
+                        id=SELECTED_STATE_READOUT_ID,
+                        className="selected-state-readout",
+                        children="Selected frame: 0",
+                    ),
+                ],
+            ),
+            html.Section(
+                id=RUN_SUMMARY_AREA_ID,
+                className="simulation-panel run-summary-area",
+                children=[
+                    html.H3("Run Summary", className="simulation-panel-heading"),
+                    html.P("Awaiting a simulation run."),
+                ],
+            ),
+            html.Section(
+                id=SOLVER_DIAGNOSTICS_AREA_ID,
+                className="simulation-panel solver-diagnostics-area",
+                children=[
+                    html.H3("Solver Diagnostics", className="simulation-panel-heading"),
+                    html.P("Solver has not run yet."),
+                ],
+            ),
+        ],
+    )
+
+    if not visible:
+        return html.Div(
+            id=DIAGNOSTICS_TOGGLE_ID,
+            className="simulation-diagnostics-toggle simulation-hidden-runtime-targets",
+            children=diagnostics_content,
+        )
+
     return html.Details(
         id=DIAGNOSTICS_TOGGLE_ID,
         className="simulation-diagnostics-toggle",
         open=False,
         children=[
             html.Summary("Show diagnostics", className="simulation-diagnostics-summary"),
-            html.Div(
-                id=DIAGNOSTICS_CONTENT_ID,
-                className="simulation-summary-diagnostics simulation-detail-diagnostics",
-                children=[
-                    html.Section(
-                        className="simulation-panel selected-state-diagnostics-area",
-                        children=[
-                            html.H3("Selected State", className="simulation-panel-heading"),
-                            html.Div(
-                                id=SELECTED_STATE_READOUT_ID,
-                                className="selected-state-readout",
-                                children="Selected frame: 0",
-                            ),
-                        ],
-                    ),
-                    html.Section(
-                        id=RUN_SUMMARY_AREA_ID,
-                        className="simulation-panel run-summary-area",
-                        children=[
-                            html.H3("Run Summary", className="simulation-panel-heading"),
-                            html.P("Awaiting a simulation run."),
-                        ],
-                    ),
-                    html.Section(
-                        id=SOLVER_DIAGNOSTICS_AREA_ID,
-                        className="simulation-panel solver-diagnostics-area",
-                        children=[
-                            html.H3("Solver Diagnostics", className="simulation-panel-heading"),
-                            html.P("Solver has not run yet."),
-                        ],
-                    ),
-                ],
-            ),
+            diagnostics_content,
         ],
     )
 
