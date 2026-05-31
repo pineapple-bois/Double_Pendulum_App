@@ -14,7 +14,7 @@ def get_navbar(current_path):
             html.Div(
                 className="site-brand-block",
                 children=[
-                    dcc.Link("Double Pendulum Explorer", href="/", className="site-brand"),
+                    html.Span("Double Pendulum Explorer", className="site-brand"),
                     html.Span(subtitle, className="site-page-subtitle"),
                 ],
             ),
