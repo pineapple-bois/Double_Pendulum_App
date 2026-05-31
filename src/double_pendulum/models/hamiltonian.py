@@ -16,6 +16,7 @@ from .initial_conditions import (
     user_initial_conditions_to_radians,
 )
 from .metadata import SolverMetadata
+from .solver_policy import SolverPolicy, merge_solver_policy_kwargs
 
 p_theta_1 = sp.Function('p_theta_1')(t)
 p_theta_2 = sp.Function('p_theta_2')(t)
@@ -62,9 +63,14 @@ class DoublePendulumHamiltonian:
         return cls._cache[model]
 
     def __init__(self, parameters, initial_conditions, time_vector,
-                 model='simple', integrator=solve_ivp, **integrator_args):
+                 model='simple', integrator=solve_ivp, solver_policy: SolverPolicy | None = None,
+                 **integrator_args):
+        if solver_policy is not None and integrator != solve_ivp:
+            raise ValueError("SolverPolicy is only supported with solve_ivp.")
+
         self.parameters = parameters
         self.model = model
+        self.solver_policy = solver_policy
         self.user_initial_conditions_degrees = np.asarray(initial_conditions, dtype=float)
         self.user_initial_conditions_radians = user_initial_conditions_to_radians(initial_conditions)
         self.user_initial_condition_names = list(USER_INITIAL_CONDITION_NAMES)
@@ -100,7 +106,8 @@ class DoublePendulumHamiltonian:
         self.eqn4_func = sp.lambdify((theta1, theta2, p_theta_1, p_theta_2, t), eq4_subst, 'numpy')
 
         # Run the solver
-        self.sol = self._solve_ode(integrator, **integrator_args)
+        effective_integrator_args = merge_solver_policy_kwargs(solver_policy, integrator_args)
+        self.sol = self._solve_ode(integrator, solver_policy=solver_policy, **effective_integrator_args)
 
     def _system(self, y, t):
         th1, th2, p_th1, p_th2 = y
@@ -112,7 +119,7 @@ class DoublePendulumHamiltonian:
         ]
         return system
 
-    def _solve_ode(self, integrator, **integrator_args):
+    def _solve_ode(self, integrator, solver_policy=None, **integrator_args):
         """
         Solve the system of ODEs using the specified integrator.
 
@@ -129,6 +136,7 @@ class DoublePendulumHamiltonian:
                 self.time,
                 sol,
                 integrator_args,
+                solver_policy=solver_policy,
             )
         elif integrator == solve_ivp:
             t_span = (self.time[0], self.time[-1])
@@ -142,6 +150,7 @@ class DoublePendulumHamiltonian:
                 self.time,
                 sol,
                 integrator_args,
+                solver_policy=solver_policy,
             )
         else:
             raise ValueError("Unsupported integrator")

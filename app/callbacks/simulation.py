@@ -19,6 +19,7 @@ from app.components.simulation_interaction import (
 from app.components.simulation_controls import (
     INITIAL_STATE_PRESET_APPLY_STORE_ID,
     INITIAL_STATE_PRESET_ID,
+    INTEGRATOR_POLICY_ID,
     RUN_VALIDATION_MESSAGE_ID,
 )
 from app.serialization import (
@@ -27,7 +28,14 @@ from app.serialization import (
     summarise_canvas_payload,
     validate_canvas_motion_payload,
 )
-from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
+from src.double_pendulum.models import (
+    DoublePendulumHamiltonian,
+    DoublePendulumLagrangian,
+    SIMPLE_DEFAULT_SOLVER_POLICY,
+    SIMPLE_REFERENCE_SOLVER_POLICY,
+    SOLVE_IVP_DEFAULT_BASELINE_POLICY,
+    SimulationResultState,
+)
 from src.double_pendulum.validation.dash import validate_inputs
 
 
@@ -38,6 +46,12 @@ INITIAL_STATE_PRESET_VALUES = {
     "quasi-periodic": (45, 45, 0, 0),
     "wide-swing": (0, 120, 0, 0),
     "spirograph-like": (90, 0, 572.95, -458.37),
+}
+
+INTEGRATOR_POLICY_BY_VALUE = {
+    SIMPLE_DEFAULT_SOLVER_POLICY.name: SIMPLE_DEFAULT_SOLVER_POLICY,
+    SIMPLE_REFERENCE_SOLVER_POLICY.name: SIMPLE_REFERENCE_SOLVER_POLICY,
+    SOLVE_IVP_DEFAULT_BASELINE_POLICY.name: SOLVE_IVP_DEFAULT_BASELINE_POLICY,
 }
 
 
@@ -68,19 +82,26 @@ def _status_message_class(status):
 def _run_validation_class(status, payload):
     if status == "empty":
         state = "ready"
-    elif status == "failed" and isinstance(payload, dict) and payload.get("errors"):
+    elif (
+        status == "failed"
+        and isinstance(payload, dict)
+        and payload.get("failure_reason") == SimulationResultState.VALIDATION_ERROR.value
+    ):
         state = "invalid"
     else:
         state = status
     return f"simulation-run-validation-message simulation-run-validation-{state}"
 
 
-def _result_state(status, payload, message, playback_state="idle"):
+def _result_state(status, payload, message, playback_state="idle", failure_reason=None):
+    rendering = payload.get("rendering", {}) if isinstance(payload, dict) else {}
     return {
         "status": status,
+        "failure_reason": failure_reason,
         "run_id": payload.get("run_id", 0) if isinstance(payload, dict) else 0,
         "playback_state": playback_state,
         "message": message,
+        "render_safe": bool(rendering.get("drawable", False)) and status in ("success", "stale"),
     }
 
 
@@ -125,6 +146,12 @@ def _parameter_values(model_type, param_l1, param_l2, param_m1, param_m2, param_
     else:
         weights = {M1: param_M1, M2: param_M2}
     return {l1: param_l1, l2: param_l2, g: param_g, **weights}
+
+
+def _solver_policy_for_run(model_type, integrator_policy_value):
+    if model_type != "simple":
+        return None
+    return INTEGRATOR_POLICY_BY_VALUE.get(integrator_policy_value, SIMPLE_DEFAULT_SOLVER_POLICY)
 
 
 def _render_run_summary(payload):
@@ -173,9 +200,14 @@ def _render_solver_diagnostics(payload, validation_problems=None):
         children.append(
             html.Ul(
                 [
+                    html.Li(f"Policy: {solver.get('policy_name') or 'not set'}"),
                     html.Li(f"Integrator: {solver.get('integrator')}"),
+                    html.Li(f"Method: {solver.get('method') or 'default'}"),
+                    html.Li(f"rtol: {solver.get('rtol') if solver.get('rtol') is not None else 'default'}"),
+                    html.Li(f"atol: {solver.get('atol') if solver.get('atol') is not None else 'default'}"),
                     html.Li(f"Solver success: {solver.get('success')}"),
                     html.Li(f"Solver status: {solver.get('status')}"),
+                    html.Li(f"Function evaluations: {solver.get('nfev')}"),
                     html.Li(f"Requested samples: {solver.get('requested_time_count')}"),
                     html.Li(f"Returned samples: {solver.get('returned_time_count')}"),
                     html.Li(f"Returned samples match request: {solver.get('returned_time_matches_requested')}"),
@@ -203,10 +235,11 @@ def _status_children(status, message):
 
 
 def _run_validation_children(status, message, payload):
+    failure_reason = payload.get("failure_reason") if isinstance(payload, dict) else None
     label_by_status = {
         "empty": "Ready",
         "stale": "Stale inputs",
-        "failed": "Invalid input" if isinstance(payload, dict) and payload.get("errors") else "Failed",
+        "failed": "Invalid input" if failure_reason == SimulationResultState.VALIDATION_ERROR.value else "Failed",
         "success": "Success",
         "cleared": "Cleared",
         "running": "Running",
@@ -214,7 +247,12 @@ def _run_validation_children(status, message, payload):
     detail = message
     if status == "empty":
         detail = "Complete setup and run simulation."
-    elif status == "failed" and isinstance(payload, dict) and payload.get("errors"):
+    elif (
+        status == "failed"
+        and failure_reason == SimulationResultState.VALIDATION_ERROR.value
+        and isinstance(payload, dict)
+        and payload.get("errors")
+    ):
         detail = payload["errors"][0]
 
     return html.Div(
@@ -225,10 +263,24 @@ def _run_validation_children(status, message, payload):
     )
 
 
-def _state_outputs(payload, status, message, playback_state="idle", previous_playback_state=None, validation_problems=None):
+def _state_outputs(
+    payload,
+    status,
+    message,
+    playback_state="idle",
+    previous_playback_state=None,
+    validation_problems=None,
+    failure_reason=None,
+):
     return {
         "canvas_payload": payload,
-        "result_state": _result_state(status, payload, message, playback_state=playback_state),
+        "result_state": _result_state(
+            status,
+            payload,
+            message,
+            playback_state=playback_state,
+            failure_reason=failure_reason,
+        ),
         "playback_state": _playback_state(payload, playback_state=playback_state, previous_state=previous_playback_state),
         "status_children": _status_children(status, message),
         "status_className": _status_message_class(status),
@@ -289,6 +341,7 @@ def _failed_result(
     system_type,
     message,
     errors=None,
+    failure_reason=None,
     solver_metadata=None,
     previous_playback_state=None,
 ):
@@ -300,6 +353,7 @@ def _failed_result(
         system_type=system_type,
         message=message,
         errors=errors or [],
+        failure_reason=failure_reason,
         solver_metadata=solver_metadata,
     )
     return _state_outputs(
@@ -308,6 +362,7 @@ def _failed_result(
         message,
         playback_state="cancelled",
         previous_playback_state=previous_playback_state,
+        failure_reason=failure_reason,
     )
 
 
@@ -328,6 +383,7 @@ def build_input_change_result(
     model_type,
     system_type,
     current_payload,
+    integrator_policy_value=None,
     current_playback_state=None,
 ):
     initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
@@ -342,6 +398,7 @@ def build_input_change_result(
             system_type=system_type,
             message=message,
             errors=[_flatten_dash_text(new_error_message) or "Validation failed."],
+            failure_reason=SimulationResultState.VALIDATION_ERROR.value,
             previous_playback_state=current_playback_state,
         )
 
@@ -383,6 +440,7 @@ def build_simulation_run_result(
     model_type,
     system_type,
     current_playback_state=None,
+    integrator_policy_value=None,
 ):
     run_id = int(n_clicks or 0)
     if run_id <= 0:
@@ -407,18 +465,32 @@ def build_simulation_run_result(
             system_type=system_type,
             message=message,
             errors=[_flatten_dash_text(error_message) or "Validation failed."],
+            failure_reason=SimulationResultState.VALIDATION_ERROR.value,
             previous_playback_state=current_playback_state,
         )
 
     time_steps = int((time_end - time_start) * 200)
     time_vector = [time_start, time_end, time_steps]
     parameters = _parameter_values(model_type, param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g)
+    solver_policy = _solver_policy_for_run(model_type, integrator_policy_value)
 
     try:
         if system_type == "lagrangian":
-            pendulum = DoublePendulumLagrangian(parameters, initial_conditions, time_vector, model=model_type)
+            pendulum = DoublePendulumLagrangian(
+                parameters,
+                initial_conditions,
+                time_vector,
+                model=model_type,
+                solver_policy=solver_policy,
+            )
         else:
-            pendulum = DoublePendulumHamiltonian(parameters, initial_conditions, time_vector, model=model_type)
+            pendulum = DoublePendulumHamiltonian(
+                parameters,
+                initial_conditions,
+                time_vector,
+                model=model_type,
+                solver_policy=solver_policy,
+            )
     except Exception as exc:
         return _failed_result(
             run_id=run_id,
@@ -426,6 +498,7 @@ def build_simulation_run_result(
             system_type=system_type,
             message="Solver setup failed before a drawable payload could be created.",
             errors=[str(exc)],
+            failure_reason=SimulationResultState.SOLVER_FAILURE.value,
             previous_playback_state=current_playback_state,
         )
 
@@ -438,6 +511,7 @@ def build_simulation_run_result(
             system_type=system_type,
             message="Solver failed before a drawable payload could be accepted.",
             errors=[solver_metadata.message or "Solver reported failure."],
+            failure_reason=SimulationResultState.SOLVER_FAILURE.value,
             solver_metadata=solver_metadata_dict,
             previous_playback_state=current_playback_state,
         )
@@ -460,6 +534,7 @@ def build_simulation_run_result(
             system_type=system_type,
             message="Output payload generation failed.",
             errors=[str(exc)],
+            failure_reason=SimulationResultState.SOLVER_FAILURE.value,
             solver_metadata=solver_metadata_dict,
             previous_playback_state=current_playback_state,
         )
@@ -471,6 +546,7 @@ def build_simulation_run_result(
             system_type=system_type,
             message="Output payload validation failed.",
             errors=payload_problems,
+            failure_reason=SimulationResultState.SOLVER_FAILURE.value,
             solver_metadata=solver_metadata_dict,
             previous_playback_state=current_playback_state,
         )
@@ -558,6 +634,7 @@ def register_simulation_callbacks(app):
             Input('param_M1', 'value'),
             Input('param_M2', 'value'),
             Input('param_g', 'value'),
+            Input(INTEGRATOR_POLICY_ID, 'value'),
             Input('model-type', 'value'),
             Input('system-type', 'value')
         ],
@@ -570,8 +647,8 @@ def register_simulation_callbacks(app):
     )
     def mark_output_stale_on_input_change(init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
                                           time_start, time_end, param_l1, param_l2, param_m1, param_m2, param_M1,
-                                          param_M2, param_g, model_type, system_type, current_payload,
-                                          current_playback_state, preset_application):
+                                          param_M2, param_g, integrator_policy_value, model_type, system_type,
+                                          current_payload, current_playback_state, preset_application):
         triggered_ids = {
             item["prop_id"].split(".")[0]
             for item in dash.callback_context.triggered
@@ -609,6 +686,7 @@ def register_simulation_callbacks(app):
             model_type,
             system_type,
             current_payload,
+            integrator_policy_value=integrator_policy_value,
             current_playback_state=current_playback_state,
         )
         return _callback_outputs(result)
@@ -637,6 +715,7 @@ def register_simulation_callbacks(app):
          State('param_M1', 'value'),
          State('param_M2', 'value'),
          State('param_g', 'value'),
+         State(INTEGRATOR_POLICY_ID, 'value'),
          State('model-type', 'value'),
          State('system-type', 'value'),
          State(PLAYBACK_STATE_STORE_ID, 'data')]
@@ -644,7 +723,7 @@ def register_simulation_callbacks(app):
     def update_graphs(n_clicks, init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2,
                       time_start, time_end,
                       param_l1, param_l2, param_m1, param_m2, param_M1, param_M2, param_g,
-                      model_type, system_type, current_playback_state):
+                      integrator_policy_value, model_type, system_type, current_playback_state):
         result = build_simulation_run_result(
             n_clicks,
             init_cond_theta1,
@@ -663,6 +742,7 @@ def register_simulation_callbacks(app):
             model_type,
             system_type,
             current_playback_state=current_playback_state,
+            integrator_policy_value=integrator_policy_value,
         )
         return _callback_outputs(result)
 

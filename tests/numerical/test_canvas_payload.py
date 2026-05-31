@@ -12,6 +12,7 @@ from app.serialization import (
 )
 from src.double_pendulum.math.functions import M1, M2, g, l1, l2, m1, m2
 from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
+from src.double_pendulum.models.solver_policy import SIMPLE_DEFAULT_SOLVER_POLICY
 
 
 SIMPLE_PARAMETERS = {l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0, g: 9.81}
@@ -243,6 +244,52 @@ def test_payload_validation_rejects_bad_lengths_nonfinite_values_and_energy_keys
     assert "theta1_deg length must equal sample_count." in problems
     assert "x1 must contain only finite values." in problems
     assert "payload must not include energy diagnostics." in problems
+
+
+def test_drawable_payload_rejects_failed_solver_metadata():
+    pendulum = _build_pendulum("simple", DoublePendulumLagrangian, SIMPLE_PARAMETERS, [10.0, 20.0, 0.0, 0.0])
+    failed_metadata = pendulum.solver_metadata.to_dict()
+    failed_metadata["success"] = False
+    failed_metadata["status"] = -1
+    failed_metadata["message"] = "forced failure"
+    pendulum.solver_metadata = failed_metadata
+
+    with pytest.raises(ValueError, match="requires successful solver metadata"):
+        build_canvas_motion_payload(
+            pendulum,
+            run_id=402,
+            status="success",
+            model_type="simple",
+            system_type="lagrangian",
+        )
+
+
+def test_policy_metadata_survives_canvas_payload_summary():
+    pendulum = DoublePendulumLagrangian(
+        SIMPLE_PARAMETERS,
+        [10.0, 20.0, 0.0, 0.0],
+        TIME_VECTOR,
+        model="simple",
+        solver_policy=SIMPLE_DEFAULT_SOLVER_POLICY,
+    )
+    payload = build_canvas_motion_payload(
+        pendulum,
+        run_id=403,
+        model_type="simple",
+        system_type="lagrangian",
+    )
+    summary = summarise_canvas_payload(payload)
+
+    assert validate_canvas_motion_payload(payload) == []
+    assert payload["solver_metadata"]["policy_name"] == "simple_default"
+    assert payload["solver_metadata"]["method"] == "DOP853"
+    assert payload["solver_metadata"]["rtol"] == 1e-6
+    assert payload["solver_metadata"]["atol"] == 1e-8
+    assert summary["solver"]["policy_name"] == "simple_default"
+    assert summary["solver"]["method"] == "DOP853"
+    assert summary["solver"]["rtol"] == 1e-6
+    assert summary["solver"]["atol"] == 1e-8
+    assert isinstance(summary["solver"]["nfev"], int)
 
 
 def test_longer_sample_payload_summary_is_compact_and_size_aware():

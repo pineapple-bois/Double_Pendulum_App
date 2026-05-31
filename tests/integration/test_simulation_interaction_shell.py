@@ -11,6 +11,9 @@ from app.callbacks.simulation import (
 from app.components.simulation_controls import (
     INITIAL_STATE_PRESET_APPLY_STORE_ID,
     INITIAL_STATE_PRESET_ID,
+    INTEGRATOR_POLICY_DEFAULT,
+    INTEGRATOR_POLICY_ID,
+    INTEGRATOR_POLICY_OPTIONS,
     RUN_VALIDATION_MESSAGE_ID,
 )
 from app.components.simulation_interaction import (
@@ -38,6 +41,7 @@ from app.components.simulation_interaction import (
 )
 from app.pages.registry import get_layout_for_path
 from app.serialization import build_canvas_motion_payload, validate_canvas_motion_payload
+from src.double_pendulum.models import SimulationResultState
 from tests.helpers import extract_dash_text
 
 
@@ -47,6 +51,7 @@ CALLBACK_SENSITIVE_IDS = {
     "scroll-target",
     "model-type",
     "system-type",
+    INTEGRATOR_POLICY_ID,
     "param_g",
     "param_l1",
     "param_l2",
@@ -279,6 +284,7 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     omega2_input = find_by_id(layout, "init_cond_omega2")
     model_type = find_by_id(layout, "model-type")
     system_type = find_by_id(layout, "system-type")
+    integrator_policy = find_by_id(layout, INTEGRATOR_POLICY_ID)
     time_start_input = find_by_id(layout, "time_start")
     time_end_slider = find_by_id(layout, "time_end")
     run_validation = find_by_id(layout, RUN_VALIDATION_MESSAGE_ID)
@@ -321,6 +327,17 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert {option["label"] for option in system_type.options} == {"Euler-Lagrange", "Hamiltonian"}
     assert system_type.labelClassName == "system-button"
     assert system_type.inputClassName == "system-button-input"
+    assert isinstance(integrator_policy, dcc.Dropdown)
+    assert integrator_policy.value == INTEGRATOR_POLICY_DEFAULT
+    assert integrator_policy.clearable is False
+    assert integrator_policy.searchable is False
+    assert integrator_policy.options == list(INTEGRATOR_POLICY_OPTIONS)
+    assert {option["value"] for option in integrator_policy.options} == {
+        "simple_default",
+        "simple_reference",
+        "solve_ivp_default_baseline",
+    }
+    assert "Integrator policy" in text_from(find_by_class(layout, "model-system-group"))
     assert isinstance(theta1_input, dcc.Input)
     assert theta1_input.type == "number"
     assert theta1_input.min == -180
@@ -453,6 +470,8 @@ def test_successful_run_result_stores_valid_canvas_payload_without_plotly_genera
     assert payload["status"] == "success"
     assert payload["rendering"]["drawable"] is True
     assert result["result_state"]["status"] == "success"
+    assert result["result_state"]["failure_reason"] is None
+    assert result["result_state"]["render_safe"] is True
     assert "simulation-run-validation-success" in result["run_validation_className"]
     assert "Success" in text_from(result["run_validation_children"])
     assert "animation_phase_children" not in result
@@ -462,7 +481,13 @@ def test_successful_run_result_stores_valid_canvas_payload_without_plotly_genera
     summary_text = text_from(result["run_summary_children"])
     diagnostics_text = text_from(result["solver_diagnostics_children"])
     assert "State: success" in summary_text
+    assert payload["solver_metadata"]["policy_name"] == "simple_default"
+    assert payload["solver_metadata"]["method"] == "DOP853"
+    assert payload["solver_metadata"]["rtol"] == 1e-6
+    assert payload["solver_metadata"]["atol"] == 1e-8
+    assert "Policy: simple_default" in diagnostics_text
     assert "Integrator: solve_ivp" in diagnostics_text
+    assert "Method: DOP853" in diagnostics_text
     assert "Payload validation passed." in diagnostics_text
     forbidden_text = f"{summary_text} {diagnostics_text}".lower()
     assert "energy" not in forbidden_text
@@ -492,10 +517,187 @@ def test_validation_failure_stores_failed_non_drawable_payload():
     payload = result["canvas_payload"]
     assert validate_canvas_motion_payload(payload) == []
     assert payload["status"] == "failed"
+    assert payload["failure_reason"] == SimulationResultState.VALIDATION_ERROR.value
     assert payload["rendering"]["drawable"] is False
     assert result["result_state"]["status"] == "failed"
+    assert result["result_state"]["failure_reason"] == SimulationResultState.VALIDATION_ERROR.value
+    assert result["result_state"]["render_safe"] is False
     assert "simulation-run-validation-invalid" in result["run_validation_className"]
     assert "requires a numerical value" in text_from(result["run_validation_children"])
+    assert result["playback_state"]["playback_state"] == "cancelled"
+    assert "time_s" not in payload
+    assert "theta1_deg" not in payload
+
+
+def test_simple_policy_selector_values_are_reflected_in_solver_metadata():
+    expected = {
+        "simple_default": ("simple_default", "DOP853", 1e-6, 1e-8),
+        "simple_reference": ("simple_reference", "DOP853", 1e-9, 1e-11),
+        "solve_ivp_default_baseline": ("solve_ivp_default_baseline", None, None, None),
+        "unknown-policy": ("simple_default", "DOP853", 1e-6, 1e-8),
+        None: ("simple_default", "DOP853", 1e-6, 1e-8),
+    }
+
+    for selected_value, (policy_name, method, rtol, atol) in expected.items():
+        result = build_simulation_run_result(
+            11,
+            10.0,
+            20.0,
+            0.0,
+            0.0,
+            0.0,
+            0.02,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            None,
+            None,
+            9.81,
+            "simple",
+            "lagrangian",
+            integrator_policy_value=selected_value,
+        )
+        metadata = result["canvas_payload"]["solver_metadata"]
+        assert result["canvas_payload"]["status"] == "success"
+        assert metadata["policy_name"] == policy_name
+        assert metadata["method"] == method
+        assert metadata["rtol"] == rtol
+        assert metadata["atol"] == atol
+
+
+def test_simple_hamiltonian_receives_selected_integrator_policy():
+    result = build_simulation_run_result(
+        12,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "hamiltonian",
+        integrator_policy_value="simple_reference",
+    )
+
+    metadata = result["canvas_payload"]["solver_metadata"]
+    assert result["canvas_payload"]["status"] == "success"
+    assert metadata["policy_name"] == "simple_reference"
+    assert metadata["method"] == "DOP853"
+    assert metadata["rtol"] == 1e-9
+    assert metadata["atol"] == 1e-11
+
+
+def test_compound_runs_do_not_claim_simple_solver_policy_validation():
+    result = build_simulation_run_result(
+        13,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        None,
+        None,
+        1.0,
+        1.0,
+        9.81,
+        "compound",
+        "lagrangian",
+        integrator_policy_value="simple_reference",
+    )
+
+    metadata = result["canvas_payload"]["solver_metadata"]
+    assert result["canvas_payload"]["status"] == "success"
+    assert metadata["policy_name"] is None
+    assert metadata["method"] is None
+    assert metadata["rtol"] is None
+    assert metadata["atol"] is None
+
+
+def test_solver_failure_stores_failed_non_drawable_payload(monkeypatch):
+    class FailedSolverMetadata:
+        def __init__(self, solver_policy):
+            self.policy_name = solver_policy.name
+            self.method = solver_policy.method
+            self.rtol = solver_policy.rtol
+            self.atol = solver_policy.atol
+
+        success = False
+        message = "forced callback solver failure"
+
+        def to_dict(self):
+            return {
+                "policy_name": self.policy_name,
+                "integrator": "solve_ivp",
+                "method": self.method,
+                "rtol": self.rtol,
+                "atol": self.atol,
+                "success": False,
+                "status": -1,
+                "message": self.message,
+                "nfev": 7,
+                "njev": 0,
+                "nlu": 0,
+                "requested_time_count": 4,
+                "returned_time_count": 2,
+                "requested_time_start": 0.0,
+                "requested_time_end": 0.02,
+                "returned_time_start": 0.0,
+                "returned_time_end": 0.01,
+                "returned_time_matches_requested": False,
+                "solution_shape": [2, 4],
+                "solver_kwargs": {"method": "'DOP853'", "rtol": "1e-06", "atol": "1e-08"},
+            }
+
+    class FailedPendulum:
+        def __init__(self, *args, **kwargs):
+            self.solver_metadata = FailedSolverMetadata(kwargs["solver_policy"])
+
+    monkeypatch.setattr("app.callbacks.simulation.DoublePendulumLagrangian", FailedPendulum)
+
+    result = build_simulation_run_result(
+        22,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        integrator_policy_value="solve_ivp_default_baseline",
+    )
+
+    payload = result["canvas_payload"]
+    assert validate_canvas_motion_payload(payload) == []
+    assert payload["status"] == "failed"
+    assert payload["failure_reason"] == SimulationResultState.SOLVER_FAILURE.value
+    assert payload["rendering"]["drawable"] is False
+    assert payload["solver_metadata"]["policy_name"] == "solve_ivp_default_baseline"
+    assert payload["solver_metadata"]["method"] is None
+    assert payload["solver_metadata"]["success"] is False
+    assert payload["solver_metadata"]["message"] == "forced callback solver failure"
+    assert result["result_state"]["status"] == "failed"
+    assert result["result_state"]["failure_reason"] == SimulationResultState.SOLVER_FAILURE.value
+    assert result["result_state"]["render_safe"] is False
+    assert "simulation-run-validation-failed" in result["run_validation_className"]
     assert result["playback_state"]["playback_state"] == "cancelled"
     assert "time_s" not in payload
     assert "theta1_deg" not in payload

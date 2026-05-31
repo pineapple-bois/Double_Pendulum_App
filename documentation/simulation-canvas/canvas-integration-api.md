@@ -165,7 +165,11 @@ The current payload includes `solver_metadata` from
 
 Current metadata fields include:
 
+- `policy_name`
 - `integrator`
+- `method`
+- `rtol`
+- `atol`
 - `success`
 - `status`
 - `message`

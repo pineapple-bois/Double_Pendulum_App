@@ -12,6 +12,7 @@ from .initial_conditions import (
     user_initial_conditions_to_radians,
 )
 from .metadata import SolverMetadata
+from .solver_policy import SolverPolicy, merge_solver_policy_kwargs
 
 omega1 = sp.Function('omega1')(t)
 omega2 = sp.Function('omega2')(t)
@@ -86,7 +87,11 @@ class DoublePendulumLagrangian:
         return cls._cache[model]
 
     def __init__(self, parameters, initial_conditions, time_vector,
-                 model='simple', integrator=solve_ivp, **integrator_args):
+                 model='simple', integrator=solve_ivp, solver_policy: SolverPolicy | None = None,
+                 **integrator_args):
+        if solver_policy is not None and integrator != solve_ivp:
+            raise ValueError("SolverPolicy is only supported with solve_ivp.")
+
         self.user_initial_conditions_degrees = np.asarray(initial_conditions, dtype=float)
         self.user_initial_conditions_radians = user_initial_conditions_to_radians(initial_conditions)
         self.user_initial_condition_names = list(USER_INITIAL_CONDITION_NAMES)
@@ -97,6 +102,7 @@ class DoublePendulumLagrangian:
         self.time = np.linspace(time_vector[0], time_vector[1], time_vector[2])
         self.parameters = parameters
         self.model = model
+        self.solver_policy = solver_policy
 
         # Get equations for the specified model
         MAT_EQ, eqn1, eqn2, eqn3, eqn4 = self._compute_and_cache_equations(model)
@@ -116,7 +122,8 @@ class DoublePendulumLagrangian:
         self.eqn3_func = sp.lambdify((theta1, theta2, omega1, omega2, t), eq3_subst, 'numpy')
         self.eqn4_func = sp.lambdify((theta1, theta2, omega1, omega2, t), eq4_subst, 'numpy')
 
-        self.sol = self._solve_ode(integrator, **integrator_args)
+        effective_integrator_args = merge_solver_policy_kwargs(solver_policy, integrator_args)
+        self.sol = self._solve_ode(integrator, solver_policy=solver_policy, **effective_integrator_args)
 
     def _system(self, y, t):
         th1, th2, w1, w2 = y
@@ -128,7 +135,7 @@ class DoublePendulumLagrangian:
         ]
         return system
 
-    def _solve_ode(self, integrator, **integrator_args):
+    def _solve_ode(self, integrator, solver_policy=None, **integrator_args):
         """
         Solve the system of ODEs using the specified integrator.
 
@@ -145,6 +152,7 @@ class DoublePendulumLagrangian:
                 self.time,
                 sol,
                 integrator_args,
+                solver_policy=solver_policy,
             )
         elif integrator == solve_ivp:
             t_span = (self.time[0], self.time[-1])
@@ -158,6 +166,7 @@ class DoublePendulumLagrangian:
                 self.time,
                 sol,
                 integrator_args,
+                solver_policy=solver_policy,
             )
         else:
             raise ValueError("Unsupported integrator")

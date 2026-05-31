@@ -64,12 +64,21 @@ Scope:
 
 - Strengthen mathematical fidelity tests for representative cases.
 - Strengthen simulation result contract tests.
+- Promote the completed `development/math_fidelity/` simple-model evidence into
+  focused production tests.
+- Use `development/solver_contract/` as the Phase 8 implementation plan for
+  solver-policy and solver-failure hardening.
 - Harden callback and loading-state behavior.
 - Cover stale, failed, empty, cleared, and successful result-state handling.
 - Investigate and eradicate the user-discovered bug, to be defined in a
   focused follow-up task.
 - Verify that Canvas payloads do not hide numerical failures.
 - Verify that failure states do not leave stale drawable success data behind.
+- Treat `dop853_moderate` (`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as
+  the leading simple-model default candidate, pending production tests and
+  manual UX performance inspection.
+- Use the temporary Simulation integrator-policy selector only for Phase 8
+  manual inspection.
 - Keep implementation documentation aligned with code.
 - Keep `ROADMAP.md` concise and usable as project control.
 - Preserve the safe Dash smoke-test workflow and never leave a Codex-started
@@ -87,11 +96,17 @@ Definition of done:
 - The user-discovered bug is reproduced, understood, fixed, or explicitly
   documented if deferred.
 - Mathematical fidelity expectations are tested for representative cases.
+- Explicit simple-model solver policy is covered by production tests.
 - Callback and loading-state behavior is tested.
 - Canvas/backend payload assumptions are covered by focused tests.
+- Solver failures are represented as first-class non-render-safe states.
 - Failed, stale, empty, cleared, and successful states are distinguishable in
   tests and documentation.
 - Failure states do not leave current drawable success arrays behind.
+- Manual UX performance inspection is completed for representative simple
+  Lagrangian and Hamiltonian runs.
+- The temporary integrator-policy selector is either explicitly deferred to
+  Phase 9 removal/hiding or removed before Phase 8 closes.
 - `documentation/` is organized and links are current.
 - `ROADMAP.md` remains concise and usable as a planning document.
 - Dash smoke checks, if run, do not leave a Codex-started server running.
@@ -107,6 +122,8 @@ baseline, unless the user explicitly redirects.
 Scope:
 
 - Define production layout rules.
+- Remove or hide Phase 8 diagnostic controls such as the temporary
+  integrator-policy selector.
 - Consolidate the Simulation page layout.
 - Stabilize header, footer, sidebar, run action, output workspace, diagnostics
   placement, and responsive behavior.

@@ -3,7 +3,11 @@ import pytest
 from scipy.integrate import odeint
 
 from src.double_pendulum.math.functions import M1, M2, g, l1, l2, m1, m2
-from src.double_pendulum.models import DoublePendulumHamiltonian, DoublePendulumLagrangian
+from src.double_pendulum.models import (
+    SIMPLE_DEFAULT_SOLVER_POLICY,
+    DoublePendulumHamiltonian,
+    DoublePendulumLagrangian,
+)
 
 
 SIMPLE_PARAMETERS = {l1: 1.0, l2: 1.0, m1: 1.0, m2: 1.0, g: 9.81}
@@ -85,3 +89,42 @@ def test_odeint_path_exposes_partial_metadata_without_solver_status_claims():
     assert metadata.returned_time_count == TIME_VECTOR[2]
     assert metadata.returned_time_matches_requested is True
     assert metadata.solution_shape == pendulum.sol.shape
+
+
+@pytest.mark.parametrize(
+    ("model_class", "model_type", "parameters"),
+    [
+        (DoublePendulumLagrangian, "simple", SIMPLE_PARAMETERS),
+        (DoublePendulumHamiltonian, "simple", SIMPLE_PARAMETERS),
+    ],
+)
+def test_policy_metadata_is_captured_for_successful_simple_runs(model_class, model_type, parameters):
+    pendulum = model_class(
+        parameters,
+        INITIAL_CONDITIONS_DEGREES,
+        TIME_VECTOR,
+        model=model_type,
+        solver_policy=SIMPLE_DEFAULT_SOLVER_POLICY,
+    )
+    metadata = pendulum.solver_metadata
+
+    assert metadata.policy_name == "simple_default"
+    assert metadata.integrator == "solve_ivp"
+    assert metadata.method == "DOP853"
+    assert metadata.rtol == 1e-6
+    assert metadata.atol == 1e-8
+    assert metadata.success is True
+    assert metadata.status == 0
+    assert metadata.message
+    assert isinstance(metadata.nfev, int)
+    assert metadata.nfev > 0
+    assert metadata.requested_time_count == TIME_VECTOR[2]
+    assert metadata.returned_time_count == TIME_VECTOR[2]
+    assert metadata.returned_time_matches_requested is True
+    assert metadata.solution_shape == pendulum.sol.shape
+
+    metadata_dict = metadata.to_dict()
+    assert metadata_dict["policy_name"] == "simple_default"
+    assert metadata_dict["method"] == "DOP853"
+    assert metadata_dict["rtol"] == 1e-6
+    assert metadata_dict["atol"] == 1e-8

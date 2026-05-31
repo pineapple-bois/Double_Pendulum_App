@@ -42,6 +42,7 @@ def build_canvas_motion_payload(
     message: str | None = None,
     warnings: Iterable[str] | None = None,
     errors: Iterable[str] | None = None,
+    failure_reason: str | None = None,
     solver_metadata: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a JSON-serializable Canvas motion payload.
@@ -73,6 +74,7 @@ def build_canvas_motion_payload(
         "solver_metadata": _solver_metadata_to_dict(simulation_result, solver_metadata),
         "warnings": warnings_list,
         "errors": errors_list,
+        "failure_reason": failure_reason,
         "message": message,
         "bounds": {},
         "rendering": {
@@ -91,6 +93,9 @@ def build_canvas_motion_payload(
         payload["rendering"]["drawable"] = False
         payload["rendering"]["autoplay_allowed"] = False
         return _set_payload_size(payload)
+
+    if _solver_metadata_reports_failure(payload["solver_metadata"]):
+        raise ValueError("Drawable Canvas payload requires successful solver metadata.")
 
     time_samples = _time_samples_for_solution(simulation_result)
     state = np.asarray(simulation_result.sol, dtype=float)
@@ -204,9 +209,15 @@ def summarise_canvas_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "position_units": payload.get("position_units"),
         "bounds": dict(payload.get("bounds") or {}),
         "solver": {
+            "policy_name": solver_metadata.get("policy_name"),
             "integrator": solver_metadata.get("integrator"),
+            "method": solver_metadata.get("method"),
+            "rtol": solver_metadata.get("rtol"),
+            "atol": solver_metadata.get("atol"),
             "success": solver_metadata.get("success"),
             "status": solver_metadata.get("status"),
+            "message": solver_metadata.get("message"),
+            "nfev": solver_metadata.get("nfev"),
             "requested_time_count": solver_metadata.get("requested_time_count"),
             "returned_time_count": solver_metadata.get("returned_time_count"),
             "returned_time_matches_requested": solver_metadata.get("returned_time_matches_requested"),
@@ -244,6 +255,10 @@ def _solver_metadata_to_dict(
     if hasattr(metadata, "to_dict"):
         return metadata.to_dict()
     return dict(metadata)
+
+
+def _solver_metadata_reports_failure(metadata: Mapping[str, Any] | None) -> bool:
+    return bool(metadata) and metadata.get("success") is False
 
 
 def _time_samples_for_solution(simulation_result: Any) -> np.ndarray:
@@ -395,6 +410,8 @@ def _validate_drawable_payload(payload: dict[str, Any], problems: list[str]) -> 
 
     _validate_units(payload, problems)
     _validate_solver_metadata(payload, problems)
+    if _solver_metadata_reports_failure(payload.get("solver_metadata")):
+        problems.append("drawable payload requires successful solver metadata.")
     _validate_initial_state(payload, problems)
 
 
@@ -442,7 +459,11 @@ def _validate_units(payload: dict[str, Any], problems: list[str]) -> None:
 def _validate_solver_metadata(payload: dict[str, Any], problems: list[str]) -> None:
     metadata = payload.get("solver_metadata") or {}
     for field in (
+        "policy_name",
         "integrator",
+        "method",
+        "rtol",
+        "atol",
         "success",
         "status",
         "message",

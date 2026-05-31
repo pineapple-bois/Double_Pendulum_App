@@ -43,6 +43,12 @@ Failed payloads use `status: failed`, include no drawable success arrays, set
 `sample_count` to `0`, and set `rendering.drawable` and
 `rendering.autoplay_allowed` to false.
 
+The result-state layer distinguishes validation failures from solver failures
+with a failure reason. Solver failures are non-render-safe: partial solver
+output and failed solver metadata may be retained for diagnostics, but failed
+or partial trajectories must not be serialized as drawable Canvas success
+payloads.
+
 Cleared and empty states follow the same non-drawable-array rule.
 
 ## Stale result
@@ -80,6 +86,7 @@ Rendering-required fields:
 Diagnostic fields:
 
 - `solver_metadata`
+- `failure_reason`
 - `warnings`
 - `errors`
 - `message`
@@ -128,6 +135,26 @@ solving.
 Hamiltonian payloads must not serialize canonical momenta as angular velocity
 series. If angular velocity series are needed for Hamiltonian inspection later,
 they require an explicit audited backend calculation and tests.
+
+## Solver policy and metadata
+
+Production model metadata now has fields for explicit solver policy inspection:
+
+- `policy_name`
+- `integrator`
+- `method`
+- `rtol`
+- `atol`
+- `success`
+- `status`
+- `message`
+- `nfev`
+- requested and returned sample counts;
+- returned-time match flag;
+- solution shape.
+
+Drawable success payloads require solver metadata that does not report
+`success=False`.
 
 ## Validation warnings
 

@@ -26,6 +26,13 @@ from app.content.simulation import (
 
 INITIAL_STATE_PRESET_ID = "initial-state-preset"
 INITIAL_STATE_PRESET_APPLY_STORE_ID = "initial-state-preset-apply-store"
+INTEGRATOR_POLICY_ID = "integrator-policy"
+INTEGRATOR_POLICY_DEFAULT = "simple_default"
+INTEGRATOR_POLICY_OPTIONS = (
+    {"label": "DOP853 moderate - default candidate", "value": "simple_default"},
+    {"label": "DOP853 strict - high fidelity", "value": "simple_reference"},
+    {"label": "SciPy default - baseline/risky", "value": "solve_ivp_default_baseline"},
+)
 RUN_VALIDATION_MESSAGE_ID = "simulation-run-validation-message"
 TIME_MARKS = {
     value: str(value)
@@ -108,6 +115,16 @@ def build_model_selector():
                 clearable=False,
                 searchable=False,
                 className="dropdown gravity-dropdown",
+            ),
+            # Phase 8 diagnostic control; remove or hide during Phase 9 production layout.
+            html.Label("Integrator policy (temporary Phase 8 diagnostic)", className="label integrator-policy-label"),
+            dcc.Dropdown(
+                id=INTEGRATOR_POLICY_ID,
+                options=list(INTEGRATOR_POLICY_OPTIONS),
+                value=INTEGRATOR_POLICY_DEFAULT,
+                clearable=False,
+                searchable=False,
+                className="dropdown integrator-policy-dropdown",
             ),
         ],
     )

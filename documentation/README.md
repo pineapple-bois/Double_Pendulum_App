@@ -34,6 +34,7 @@ and historical decision support. Production code must not import from
 
 - [Simulation Canvas Architecture](simulation-canvas/)
 - [Development Workflow](development-workflow.md)
+- [Phase 8 Solver Fidelity And Contract Record](phase-8-solver-fidelity-and-contract-record.md)
 
 ## Current state
 
