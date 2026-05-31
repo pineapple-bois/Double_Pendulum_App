@@ -1,163 +1,18 @@
 #!/usr/bin/env python3
-"""Build the drift-evidence exploration notebook and optional static figures.
+"""Build the drift-evidence exploration notebook.
 
-This utility reads generated logs only. It does not rerun simulations.
+This utility reads generated logs only. It does not rerun simulations and does
+not generate static figure artifacts.
 """
 
 from __future__ import annotations
 
-import csv
 import json
-import math
-import os
 from pathlib import Path
-
-os.environ.setdefault("MPLCONFIGDIR", "/private/tmp/double_pendulum_math_fidelity_mpl")
-os.environ.setdefault("XDG_CACHE_HOME", "/private/tmp/double_pendulum_math_fidelity_cache")
-
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 
 LAB_ROOT = Path("development/math_fidelity")
-LOG_DIR = LAB_ROOT / "logs"
-TIMESERIES_CSV = LOG_DIR / "timeseries" / "simple_drift_timeseries_long.csv"
-FIGURE_DIR = LAB_ROOT / "reports" / "figures"
 NOTEBOOK_PATH = LAB_ROOT / "explore_drift_evidence.ipynb"
-SAVE_FIGURES = os.environ.get("MATH_FIDELITY_SAVE_FIGURES") == "1"
-
-SOLVER_ORDER = ["solve_ivp_default", "rk45_strict", "dop853_strict", "dop853_reference"]
-SOLVER_LABELS = {
-    "solve_ivp_default": "default",
-    "rk45_strict": "RK45 strict",
-    "dop853_strict": "DOP853 strict",
-    "dop853_reference": "DOP853 ref",
-}
-SOLVER_COLORS = {
-    "solve_ivp_default": "#6b7280",
-    "rk45_strict": "#2563eb",
-    "dop853_strict": "#059669",
-    "dop853_reference": "#dc2626",
-}
-
-
-def read_csv(path: Path) -> list[dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as handle:
-        return list(csv.DictReader(handle))
-
-
-def as_float(value: str | None) -> float:
-    if value in (None, ""):
-        return math.nan
-    return float(value)
-
-
-def case_order(rows: list[dict[str, str]]) -> list[str]:
-    cases: list[str] = []
-    for row in rows:
-        if row["case_name"] not in cases:
-            cases.append(row["case_name"])
-    return cases
-
-
-def grouped_metric_plot(rows: list[dict[str, str]], cases: list[str], metric: str, ylabel: str, title: str, filename: str) -> None:
-    fig, ax = plt.subplots(figsize=(11, 5.5))
-    x_values = list(range(len(cases)))
-    width = 0.18
-    offsets = [-1.5 * width, -0.5 * width, 0.5 * width, 1.5 * width]
-    for solver, offset in zip(SOLVER_ORDER, offsets):
-        values = []
-        for case in cases:
-            match = next(row for row in rows if row["case_name"] == case and row["solver_config"] == solver)
-            values.append(as_float(match[metric]))
-        ax.bar([x + offset for x in x_values], values, width=width, label=SOLVER_LABELS[solver], color=SOLVER_COLORS[solver])
-    ax.set_yscale("log")
-    ax.set_xticks(x_values)
-    ax.set_xticklabels(cases, rotation=18, ha="right")
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.grid(True, axis="y", which="both", alpha=0.25)
-    ax.legend(ncols=2)
-    fig.tight_layout()
-    fig.savefig(FIGURE_DIR / filename, dpi=160)
-    plt.close(fig)
-
-
-def grouped_second_bob_plot(timeseries: list[dict[str, str]], cases: list[str]) -> None:
-    values_by_run: dict[tuple[str, str], float] = {}
-    for row in timeseries:
-        key = (row["case_name"], row["solver_config"])
-        values_by_run[key] = max(values_by_run.get(key, 0.0), as_float(row["second_bob_position_diff"]))
-
-    fig, ax = plt.subplots(figsize=(11, 5.5))
-    x_values = list(range(len(cases)))
-    width = 0.18
-    offsets = [-1.5 * width, -0.5 * width, 0.5 * width, 1.5 * width]
-    for solver, offset in zip(SOLVER_ORDER, offsets):
-        values = [values_by_run[(case, solver)] for case in cases]
-        ax.bar([x + offset for x in x_values], values, width=width, label=SOLVER_LABELS[solver], color=SOLVER_COLORS[solver])
-    ax.set_yscale("log")
-    ax.set_xticks(x_values)
-    ax.set_xticklabels(cases, rotation=18, ha="right")
-    ax.set_ylabel("max second-bob position drift")
-    ax.set_title("Max second-bob position drift by case and solver")
-    ax.grid(True, axis="y", which="both", alpha=0.25)
-    ax.legend(ncols=2)
-    fig.tight_layout()
-    fig.savefig(FIGURE_DIR / "max_second_bob_position_drift.png", dpi=160)
-    plt.close(fig)
-
-
-def cost_vs_accuracy(rows: list[dict[str, str]]) -> None:
-    fig, ax = plt.subplots(figsize=(8, 5.5))
-    for solver in SOLVER_ORDER:
-        x_values = []
-        y_values = []
-        for row in rows:
-            if row["solver_config"] == solver:
-                x_values.append(as_float(row["lagrangian_nfev"]) + as_float(row["hamiltonian_nfev"]))
-                y_values.append(as_float(row["max_abs_theta_diff_rad"]))
-        ax.scatter(x_values, y_values, label=SOLVER_LABELS[solver], color=SOLVER_COLORS[solver], s=48)
-    ax.set_xscale("log")
-    ax.set_yscale("log")
-    ax.set_xlabel("total function evaluations (Lagrangian + Hamiltonian)")
-    ax.set_ylabel("max angular drift (rad)")
-    ax.set_title("Solver cost versus Lagrangian/Hamiltonian agreement")
-    ax.grid(True, which="both", alpha=0.25)
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(FIGURE_DIR / "solver_cost_vs_accuracy.png", dpi=160)
-    plt.close(fig)
-
-
-def screenshot_timeseries(timeseries: list[dict[str, str]]) -> None:
-    rows = [
-        row for row in timeseries
-        if row["case_name"] == "screenshot_like_simple_start"
-        and row["solver_config"] in ("solve_ivp_default", "dop853_reference")
-    ]
-    fig, axes = plt.subplots(2, 1, figsize=(10, 7), sharex=True)
-    for solver in ("solve_ivp_default", "dop853_reference"):
-        solver_rows = [row for row in rows if row["solver_config"] == solver]
-        t_values = [as_float(row["t"]) for row in solver_rows]
-        theta = [as_float(row["max_abs_theta_diff_rad"]) for row in solver_rows]
-        position = [as_float(row["second_bob_position_diff"]) for row in solver_rows]
-        axes[0].plot(t_values, theta, label=SOLVER_LABELS[solver], color=SOLVER_COLORS[solver])
-        axes[1].plot(t_values, position, label=SOLVER_LABELS[solver], color=SOLVER_COLORS[solver])
-    axes[0].set_yscale("log")
-    axes[1].set_yscale("log")
-    axes[0].set_ylabel("max angular drift (rad)")
-    axes[1].set_ylabel("second-bob drift")
-    axes[1].set_xlabel("time (s)")
-    axes[0].set_title("Screenshot-like simple case: default vs tight DOP853 reference")
-    for ax in axes:
-        ax.grid(True, which="both", alpha=0.25)
-        ax.legend()
-    fig.tight_layout()
-    fig.savefig(FIGURE_DIR / "screenshot_like_default_vs_reference_timeseries.png", dpi=160)
-    plt.close(fig)
 
 
 def md_cell(source: str) -> dict[str, object]:
@@ -179,16 +34,14 @@ def build_notebook() -> None:
         md_cell(
             """# Phase 8 Drift Evidence Exploration
 
-This notebook inspects the existing simple-model drift evidence in `development/math_fidelity/logs/`. It treats the generated logs as the source of truth and does not rerun simulations by default.
+This notebook inspects the existing simple-model drift evidence in `development/math_fidelity/logs/`. It treats generated logs as the source of truth and does not rerun simulations by default.
 
-Path handling is intentionally portable: the notebook can be run from the repository root or from `development/math_fidelity/`, where the notebook file lives."""
+Path handling is intentionally portable: the notebook can be run from the repository root or from `development/math_fidelity/`, where the notebook file lives. Inline notebook plots are the inspection surface; static PNG generation is intentionally out of scope for this evidence workflow."""
         ),
         md_cell(
             """## 1. Load Generated Logs
 
-Load the compact run-level table and the long-format time-series table with pandas. If this cell fails with `ModuleNotFoundError: pandas`, use a notebook kernel with pandas installed. The production app runtime does not need pandas.
-
-The setup cell below locates the evidence-lab root before constructing log paths; later cells should use `LOG_DIR` rather than hard-coded repository-relative paths."""
+Load the compact run-level table and the long-format time-series table with pandas. The setup cell locates the evidence-lab root before constructing log paths; later cells use `LOG_DIR` rather than hard-coded repository-relative paths."""
         ),
         code_cell(
             """import os
@@ -219,9 +72,6 @@ def find_lab_root(start=None):
 
 LAB_ROOT = find_lab_root()
 LOG_DIR = LAB_ROOT / "logs"
-REPORT_DIR = LAB_ROOT / "reports"
-FIGURE_DIR = LAB_ROOT / "reports" / "figures"
-SAVE_FIGURES = False
 
 runs = pd.read_csv(LOG_DIR / "simple_drift_results.csv")
 timeseries = pd.read_csv(LOG_DIR / "timeseries" / "simple_drift_timeseries_long.csv")
@@ -270,9 +120,9 @@ print("Time-series rows per run:")
 display(timeseries.groupby(["case_name", "solver_config"]).size().unstack(fill_value=0))"""
         ),
         md_cell(
-            """## 3. Summary Visualisations
+            """## 3. Drift Summary Visualisations
 
-These plots summarize the run-level evidence. Log-scaled y-axes make the tolerance-driven collapse in drift easier to see."""
+These plots summarize the run-level evidence. Log-scaled axes make the tolerance-driven collapse in drift easier to see."""
         ),
         code_cell(
             """def ordered_bar(metric, ylabel, title):
@@ -431,40 +281,26 @@ threshold_table = pd.DataFrame(rows).sort_values(["case_name", "solver_config"])
 display(threshold_table)"""
         ),
         md_cell(
-            """## 7. Static Figures
-
-Static PNG generation is optional and disabled by default. The notebook displays plots inline; committed PNG artifacts are not required evidence."""
-        ),
-        code_cell(
-            """if SAVE_FIGURES:
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"Figure saving enabled: {FIGURE_DIR}")
-else:
-    print("Figure saving disabled. Use inline notebook plots as the inspection surface.")
-
-sorted(FIGURE_DIR.glob("*.png")) if FIGURE_DIR.exists() else []"""
-        ),
-        md_cell(
-            """## 8. Optional Solver-Cost Benchmark Logs
+            """## 7. Optional Solver-Cost Benchmark Logs
 
 If `solver_cost_benchmark.csv` exists, inspect it here. If it does not exist, the rest of the notebook still runs because the drift logs remain the source of truth for the drift investigation."""
         ),
         code_cell(
-            """BENCHMARK_CSV = LOG_DIR / "solver_cost_benchmark.csv"
+            """SOLVER_BENCHMARK_CSV = LOG_DIR / "solver_cost_benchmark.csv"
 
-if BENCHMARK_CSV.exists():
-    benchmark = pd.read_csv(BENCHMARK_CSV)
-    print("benchmark rows/columns:", benchmark.shape)
+if SOLVER_BENCHMARK_CSV.exists():
+    benchmark = pd.read_csv(SOLVER_BENCHMARK_CSV)
+    print("solver benchmark rows/columns:", benchmark.shape)
     display(benchmark.head())
 else:
     benchmark = None
-    print("Benchmark log not found.")
+    print("Solver-cost benchmark log not found.")
     print("Generate it from the repository root with:")
     print(".venv/bin/python development/math_fidelity/probes/benchmark_solver_cost.py")"""
         ),
         code_cell(
             """if benchmark is None:
-    print("No benchmark log loaded.")
+    print("No solver-cost benchmark log loaded.")
 else:
     runtime_summary = benchmark.pivot_table(
         index=["duration_s", "formulation"],
@@ -486,72 +322,76 @@ else:
     ax.legend(fontsize=8, ncols=2)
     plt.tight_layout();"""
         ),
+        md_cell(
+            """## 8. Optional App-Like Cost Benchmark Logs
+
+If `app_like_cost_benchmark.csv` exists, inspect end-to-end model construction, position reconstruction, payload preparation, JSON serialization, and payload-size evidence here."""
+        ),
         code_cell(
-            """if benchmark is None:
-    print("No benchmark log loaded.")
+            """APP_LIKE_CSV = LOG_DIR / "app_like_cost_benchmark.csv"
+
+if APP_LIKE_CSV.exists():
+    app_like = pd.read_csv(APP_LIKE_CSV)
+    print("app-like benchmark rows/columns:", app_like.shape)
+    display(app_like.head())
 else:
-    tolerant = benchmark.copy()
-    tolerant["rtol_label"] = tolerant["rtol"].fillna("default").astype(str)
+    app_like = None
+    print("App-like benchmark log not found.")
+    print("Generate it from the repository root with:")
+    print(".venv/bin/python development/math_fidelity/probes/benchmark_app_like_cost.py")"""
+        ),
+        code_cell(
+            """if app_like is None:
+    print("No app-like benchmark log loaded.")
+else:
+    app_runtime = app_like.pivot_table(
+        index=["duration_s", "formulation"],
+        columns="solver_config",
+        values="median_total_runtime_s",
+        aggfunc="median",
+    )
+    display(app_runtime)
+
     fig, ax = plt.subplots(figsize=(10, 5))
-    for solver_config, group in tolerant.groupby("solver_config"):
-        grouped = group.groupby("rtol_label", as_index=False)["median_runtime_s"].median()
-        ax.scatter(grouped["rtol_label"], grouped["median_runtime_s"], label=solver_config, s=55)
+    for (formulation, solver_config), group in app_like.groupby(["formulation", "solver_config"]):
+        grouped = group.groupby("duration_s", as_index=False)["median_total_runtime_s"].median()
+        ax.plot(grouped["duration_s"], grouped["median_total_runtime_s"], marker="o", label=f"{formulation} / {solver_config}")
     ax.set_yscale("log")
-    ax.set_xlabel("rtol")
-    ax.set_ylabel("median runtime (s)")
-    ax.set_title("Median runtime versus tolerance")
-    ax.grid(True, axis="y", which="both", alpha=0.25)
-    ax.legend(fontsize=8)
-    plt.xticks(rotation=20, ha="right")
+    ax.set_xlabel("duration (s)")
+    ax.set_ylabel("median total runtime (s)")
+    ax.set_title("App-like runtime by duration, formulation, and solver policy")
+    ax.grid(True, which="both", alpha=0.25)
+    ax.legend(fontsize=8, ncols=2)
     plt.tight_layout();"""
         ),
         code_cell(
-            """if benchmark is None:
-    print("No benchmark log loaded.")
+            """if app_like is None:
+    print("No app-like benchmark log loaded.")
 else:
-    energy_cols = [c for c in benchmark.columns if c in ("median_max_abs_energy_drift", "median_final_abs_energy_drift")]
-    if not energy_cols:
-        print("Benchmark log does not include energy-drift columns.")
-    else:
-        fig, ax = plt.subplots(figsize=(8, 5))
-        metric = energy_cols[0]
-        ax.scatter(benchmark["median_runtime_s"], benchmark[metric], s=45)
-        ax.set_xscale("log")
-        ax.set_yscale("log")
-        ax.set_xlabel("median runtime (s)")
-        ax.set_ylabel(metric)
-        ax.set_title("Runtime versus energy drift")
-        ax.grid(True, which="both", alpha=0.25)
-        plt.tight_layout();"""
-        ),
-        code_cell(
-            """if benchmark is None:
-    print("No benchmark log loaded.")
-else:
-    app_relevant = benchmark[
-        (benchmark["duration_s"] == 60)
-        & (benchmark["sample_rate_hz"] == 200)
-        & (benchmark["solver_method"].isin(["RK45", "DOP853"]))
-    ]
-    display(app_relevant[[
-        "case_name", "formulation", "solver_config", "median_runtime_s",
-        "median_nfev", "median_max_abs_energy_drift"
-    ]].sort_values(["case_name", "formulation", "solver_config"]))
-
-    comparison = app_relevant.pivot_table(
-        index=["case_name", "formulation"],
+    payload_summary = app_like.pivot_table(
+        index=["duration_s", "formulation"],
         columns="solver_config",
-        values="median_runtime_s",
+        values="median_json_payload_bytes",
         aggfunc="median",
     )
-    display(comparison)"""
+    display(payload_summary)
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    ax.scatter(app_like["median_total_runtime_s"], app_like["median_json_payload_bytes"], s=45)
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlabel("median total runtime (s)")
+    ax.set_ylabel("JSON payload size (bytes)")
+    ax.set_title("App-like runtime versus serialized payload size")
+    ax.grid(True, which="both", alpha=0.25)
+    plt.tight_layout();"""
         ),
         md_cell(
             """## 9. Interpretation
 
-The plots make the same pattern visible from several angles: default `solve_ivp` can produce substantial Lagrangian/Hamiltonian disagreement for the simple model, while strict RK45 and DOP853 configurations collapse that drift by many orders of magnitude. Position drift and energy drift follow the same broad tolerance pattern.
+The drift plots show that default `solve_ivp` can produce substantial Lagrangian/Hamiltonian disagreement for the simple model, while stricter RK45 and DOP853 configurations collapse that drift by many orders of magnitude. Position drift and energy drift follow the same broad tolerance pattern.
 
-The evidence remains scoped: these logs cover short simple-model runs only. They support solver/tolerance sensitivity as the main explanation for the observed simple-model drift, but they do not settle compound-model fidelity, long-duration chaotic validity, or production solver-policy decisions."""
+The benchmark sections are optional evidence layers. They help compare solver and app-like costs, but the generated CSV logs remain the source of truth. The evidence remains scoped to simple-model runs and does not settle compound-model fidelity or production callback contracts."""
         ),
     ]
 
@@ -568,23 +408,9 @@ The evidence remains scoped: these logs cover short simple-model runs only. They
 
 
 def main() -> int:
-    rows = read_csv(LOG_DIR / "simple_drift_results.csv")
-    timeseries = read_csv(TIMESERIES_CSV)
-    if SAVE_FIGURES:
-        FIGURE_DIR.mkdir(parents=True, exist_ok=True)
-        cases = case_order(rows)
-        grouped_metric_plot(rows, cases, "max_abs_theta_diff_rad", "max angular drift (rad)", "Max angular drift by case and solver", "max_angular_drift_by_case_solver.png")
-        grouped_metric_plot(rows, cases, "lagrangian_max_abs_energy_drift", "max Lagrangian energy drift", "Lagrangian energy drift by case and solver", "lagrangian_energy_drift_by_case_solver.png")
-        grouped_second_bob_plot(timeseries, cases)
-        cost_vs_accuracy(rows)
-        screenshot_timeseries(timeseries)
     build_notebook()
     print(f"Wrote notebook: {NOTEBOOK_PATH}")
-    if SAVE_FIGURES:
-        for figure in sorted(FIGURE_DIR.glob("*.png")):
-            print(f"Wrote figure: {figure}")
-    else:
-        print("Skipped static figures. Set MATH_FIDELITY_SAVE_FIGURES=1 to generate optional PNGs.")
+    print("Static figure generation is intentionally out of scope.")
     return 0
 
 

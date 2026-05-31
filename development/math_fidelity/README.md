@@ -7,6 +7,8 @@ not become a runtime dependency of the Dash app.
 - [Baseline review](BASELINE_REVIEW.md)
 - [Drift investigation](DRIFT_INVESTIGATION.md)
 - [Solver cost benchmark](SOLVER_COST_BENCHMARK.md)
+- [App-like cost benchmark](APP_LIKE_COST_BENCHMARK.md)
+- [Solver policy recommendation](SOLVER_POLICY_RECOMMENDATION.md)
 - [Source snapshot manifest](snapshots/SNAPSHOT_MANIFEST.md)
 - [Probe scripts](probes/)
 - [Generated logs](logs/)
@@ -41,17 +43,32 @@ The benchmark imports the same diagnostic source snapshot and writes:
 See [Solver cost benchmark](SOLVER_COST_BENCHMARK.md) for design notes,
 headline findings, limitations, and recommended next actions.
 
+## Rerun App-Like Cost Benchmark
+
+From the repository root:
+
+```bash
+.venv/bin/python development/math_fidelity/probes/benchmark_app_like_cost.py
+```
+
+The app-like benchmark imports the diagnostic source snapshot and writes:
+
+- `development/math_fidelity/logs/app_like_cost_benchmark.csv`
+- `development/math_fidelity/logs/app_like_cost_benchmark.json`
+
+See [App-like cost benchmark](APP_LIKE_COST_BENCHMARK.md) for payload-size,
+serialization, and app-like timing observations.
+
 ## Interactive Inspection
 
 Open `development/math_fidelity/explore_drift_evidence.ipynb` for the current
 interactive inspection entry point. It loads existing CSV logs with pandas and
 does not rerun simulations by default. The notebook can be run from either the
 repository root or `development/math_fidelity/`, and it includes an optional
-section for solver-cost logs when `solver_cost_benchmark.csv` exists.
+section for solver-cost and app-like cost logs when those CSVs exist.
 
-Static PNG figures are not required evidence artifacts. The notebook displays
-plots inline; optional PNG generation is disabled by default in
-`development/math_fidelity/probes/build_explore_notebook.py`.
+Static PNG figures are not part of the required evidence workflow. The notebook
+displays plots inline, and generated logs are the source of truth.
 
 ## Notebook Readiness
 
@@ -68,8 +85,17 @@ timeseries = pd.read_csv(
 benchmark = pd.read_csv(
     "development/math_fidelity/logs/solver_cost_benchmark.csv"
 )
+app_like = pd.read_csv(
+    "development/math_fidelity/logs/app_like_cost_benchmark.csv"
+)
 ```
 
 If running from inside `development/math_fidelity/`, use paths relative to that
 directory or reuse the `LAB_ROOT` detection cell from
 `explore_drift_evidence.ipynb`.
+
+## Evidence Boundary
+
+All code in this directory is diagnostic and self-contained. Production app
+code, Canvas payload code, callbacks, UI, and solver defaults must not import
+from `development/math_fidelity/`.

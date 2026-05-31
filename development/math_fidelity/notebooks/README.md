@@ -16,10 +16,14 @@ Notebook workflow:
 3. Use compact CSV/JSON files for summary tables and run filtering.
 4. Use `logs/solver_cost_benchmark.csv` for solver-cost inspection when it
    exists.
-5. Rerun `development/math_fidelity/probes/investigate_simple_drift.py` only
+5. Use `logs/app_like_cost_benchmark.csv` for app-like timing and payload-size
+   inspection when it exists.
+6. Rerun `development/math_fidelity/probes/investigate_simple_drift.py` only
    when intentionally refreshing the evidence after code or probe changes.
-6. Rerun `development/math_fidelity/probes/benchmark_solver_cost.py` only when
+7. Rerun `development/math_fidelity/probes/benchmark_solver_cost.py` only when
    intentionally refreshing local solver-cost evidence.
+8. Rerun `development/math_fidelity/probes/benchmark_app_like_cost.py` only when
+   intentionally refreshing local app-like cost evidence.
 
 Additional notebooks can live here if the evidence lab grows beyond the main
 root-level notebook.
