@@ -54,5 +54,9 @@ logs/
 /legacy/old_references.md
 /development/*
 !/development/phase_5c_1_equations_render_audit.md
+!/development/math_fidelity/
+!/development/math_fidelity/**
+/development/math_fidelity/**/__pycache__/
+/development/math_fidelity/**/*.pyc
 !/development/simulation_workbench
 /reference/
