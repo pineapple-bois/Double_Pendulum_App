@@ -15,6 +15,9 @@ Rules for future code:
 - Do not present any metric, dataset, plot, or API as production-ready without
   mathematical fidelity review.
 
-No executable experiment code was added during the initial Phase 10 discovery
-task.
+## Current Experiments
+
+- `hamiltonian_poincare/` - a minimal, self-contained simple-Hamiltonian
+  Poincare-section experiment with explicit state, section, solver, and
+  energy-drift conventions.
 
