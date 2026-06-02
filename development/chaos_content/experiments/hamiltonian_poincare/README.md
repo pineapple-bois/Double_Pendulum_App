@@ -10,10 +10,10 @@ It is not production code and is not imported by the Dash app.
 
 The experiment integrates one simple double-pendulum trajectory in canonical
 Hamiltonian coordinates and extracts section points when the trajectory crosses
-the section
+the angular section
 
 ```text
-theta1 = 0, with theta1 increasing.
+theta1 mod 2*pi = 0, with theta1 increasing.
 ```
 
 At each accepted crossing it records:
@@ -42,17 +42,16 @@ This explicitly fixes the momentum-pairing ambiguity found in the historic
 - Momenta: canonical Hamiltonian momenta derived from `p = B(q) * qdot`.
 - Energy: unshifted Hamiltonian `H = 0.5 * p.T * B(q)^-1 * p + V(q)`.
 - Energy drift: `abs(H(t) - H0) / max(abs(H0), 1.0)`.
-- Section condition: `h(state) = theta1 = 0`.
-- Crossing direction: increasing section coordinate only, checked by
-  `theta1_dot > 0` at the interpolated crossing.
-- Section fidelity note: this is the raw section `theta1 = 0`, not a wrapped
-  `theta1 mod 2*pi = 0` section. Whether the production Chaos page should use
-  a wrapped section remains an open Phase 10 fidelity question.
+- Section event: `sin(theta1) = 0`.
+- Crossing filter: accept only event states where `cos(theta1) > 0`,
+  `theta1_dot > 0`, and `time >= discard_before`.
+- Section condition after filtering: `theta1 mod 2*pi = 0` with increasing
+  `theta1`.
 - Interpolation: `solve_ivp` event root finding locates the crossing time and
   returns the event state from the solver's dense interpolation rather than
   linearly blending sampled states.
 - Solver policy: `scipy.integrate.solve_ivp`, `method="DOP853"`,
-  `rtol=1e-10`, `atol=1e-12`, with explicit `t_eval`.
+  `rtol=1e-11`, `atol=1e-13`, with explicit `t_eval`.
 - Failure handling: solver failure, non-finite state values, excessive energy
   drift, or no detected section points are reported explicitly. Failed runs do
   not produce padded points.
@@ -60,6 +59,8 @@ This explicitly fixes the momentum-pairing ambiguity found in the historic
 ## How To Run
 
 From the repository root:
+
+Smoke-test run:
 
 ```bash
 python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py
@@ -71,10 +72,20 @@ Run the built-in smoke check:
 python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --self-check
 ```
 
-Write a small local output bundle:
+Write a small smoke-test output bundle:
 
 ```bash
-python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/example_run --plots
+python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
+```
+
+The default 30-second run is intentionally conservative for validation. Its
+Poincare plot should be treated as a smoke test if it only produces a small
+number of section points.
+
+Write a longer diagnostic bundle for a structurally meaningful plot:
+
+```bash
+python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
 ```
 
 With `--output-dir`, the experiment writes `manifest.json`, `summary.json`, and
@@ -88,6 +99,11 @@ Generated outputs are exploratory diagnostics, are ignored under
 `development/chaos_content/outputs/`, and should not be committed unless a
 future task explicitly asks for a tiny documented artifact.
 
+The output manifest classifies a bundle as `smoke_test_output` when accepted
+crossings are below `min_crossings_for_plot`, or `long_run_diagnostic` when the
+threshold is met. The plot command also emits a warning for sparse smoke-test
+plots.
+
 ## What Remains Unresolved
 
 - This has not been cross-validated against a separate symbolic derivation or a
@@ -99,4 +115,5 @@ future task explicitly asks for a tiny documented artifact.
 - Long-duration scientific validity is not established.
 - The section convention may be pedagogically useful, but it has not yet been
   chosen as the production Chaos page convention.
-- The current section is raw `theta1 = 0`, not `theta1 mod 2*pi = 0`.
+- The current wrapped event/filter implementation should still be reviewed
+  against an independent reference before production use.

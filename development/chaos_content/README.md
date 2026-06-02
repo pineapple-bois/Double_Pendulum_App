@@ -57,7 +57,13 @@ python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamilt
 Write a local diagnostic bundle:
 
 ```bash
-python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/example_run --plots
+python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
+```
+
+Write a longer diagnostic bundle with more section points:
+
+```bash
+python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
 ```
 
 Generated output bundles are ignored by git and are not production assets.

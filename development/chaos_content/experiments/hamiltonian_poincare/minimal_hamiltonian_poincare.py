@@ -8,7 +8,7 @@ The experiment is fidelity-first rather than feature-rich:
 
 - simple double pendulum only;
 - canonical Hamiltonian state: (theta1, theta2, p_theta1, p_theta2);
-- Poincare section: theta1 = 0 with theta1 increasing;
+- Poincare section: theta1 mod 2*pi = 0 with theta1 increasing;
 - section point: (wrapped theta2, p_theta2);
 - solver and energy-drift failures are explicit.
 """
@@ -23,6 +23,7 @@ import os
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+import sys
 from typing import Iterable
 
 import numpy as np
@@ -45,8 +46,8 @@ class SolverPolicy:
     """Numerical integration policy for this sandbox experiment."""
 
     method: str = "DOP853"
-    rtol: float = 1e-10
-    atol: float = 1e-12
+    rtol: float = 1e-11
+    atol: float = 1e-13
     t_start: float = 0.0
     t_stop: float = 30.0
     sample_count: int = 3001
@@ -69,7 +70,11 @@ class PoincareSectionPolicy:
 
     section_coordinate: str = "theta1"
     section_value: float = 0.0
+    event_function: str = "sin(theta1)"
+    angular_filter: str = "cos(theta1) > 0"
     crossing_direction: str = "increasing"
+    discard_before: float = 0.0
+    min_crossings_for_plot: int = 50
     plotted_coordinate: str = "theta2_wrapped"
     plotted_momentum: str = "p_theta2"
 
@@ -99,6 +104,8 @@ class ExperimentResult:
     initial_energy: float
     max_relative_energy_drift: float | None
     accepted_crossing_count: int
+    rejected_crossing_count: int
+    raw_event_count: int
     first_points: list[dict[str, float]]
 
 
@@ -112,6 +119,9 @@ class ExperimentRun:
     energies: np.ndarray
     relative_energy_drifts: np.ndarray
     poincare_points: list[PoincarePoint]
+    raw_event_count: int
+    rejected_crossing_count: int
+    plot_met_minimum_crossing_threshold: bool
 
 
 def inertia_matrix(theta1: float, theta2: float, params: SimplePendulumParameters) -> np.ndarray:
@@ -238,19 +248,29 @@ def extract_poincare_points(
     params: SimplePendulumParameters,
     section_policy: PoincareSectionPolicy,
     initial_energy: float,
-) -> list[PoincarePoint]:
-    """Convert solver-located theta1=0 events into Poincare points."""
+) -> tuple[list[PoincarePoint], int]:
+    """Convert solver-located sin(theta1)=0 events into Poincare points."""
 
     if section_policy.section_coordinate != "theta1":
         raise ValueError("Only theta1 section extraction is implemented.")
     if section_policy.crossing_direction != "increasing":
         raise ValueError("Only increasing crossings are implemented.")
+    if section_policy.event_function != "sin(theta1)":
+        raise ValueError("Only sin(theta1) section events are implemented.")
 
     points: list[PoincarePoint] = []
+    rejected_count = 0
 
     for crossing_time, crossing_state in zip(crossing_times, crossing_states):
         theta1_dot, _theta2_dot = angular_velocities(crossing_state, params)
+        if crossing_time < section_policy.discard_before:
+            rejected_count += 1
+            continue
+        if math.cos(float(crossing_state[0])) <= 0.0:
+            rejected_count += 1
+            continue
         if theta1_dot <= 0.0:
+            rejected_count += 1
             continue
 
         energy = hamiltonian(crossing_state, params)
@@ -264,7 +284,7 @@ def extract_poincare_points(
             )
         )
 
-    return points
+    return points, rejected_count
 
 
 def _empty_series() -> tuple[np.ndarray, np.ndarray]:
@@ -279,6 +299,8 @@ def _summary(
     failure_reason: str | None,
     max_relative_energy_drift: float | None,
     points: list[PoincarePoint],
+    rejected_crossing_count: int,
+    raw_event_count: int,
     base_result: dict[str, object],
 ) -> ExperimentResult:
     """Build the compact public result summary."""
@@ -288,6 +310,8 @@ def _summary(
         failure_reason=failure_reason,
         max_relative_energy_drift=max_relative_energy_drift,
         accepted_crossing_count=len(points) if success else 0,
+        rejected_crossing_count=rejected_crossing_count,
+        raw_event_count=raw_event_count,
         first_points=[asdict(point) for point in points[:5]] if success else [],
         **base_result,
     )
@@ -311,10 +335,10 @@ def run_experiment_data(
     times = np.linspace(solver_policy.t_start, solver_policy.t_stop, solver_policy.sample_count)
 
     def section_event(_time: float, state: np.ndarray) -> float:
-        return float(state[0] - section_policy.section_value)
+        return math.sin(float(state[0] - section_policy.section_value))
 
     section_event.terminal = False
-    section_event.direction = 1.0
+    section_event.direction = 0.0
 
     solution = solve_ivp(
         fun=lambda time, state: hamiltonian_rhs(time, state, params),
@@ -345,6 +369,8 @@ def run_experiment_data(
                 failure_reason=f"solver_failed: {solution.message}",
                 max_relative_energy_drift=None,
                 points=[],
+                rejected_crossing_count=0,
+                raw_event_count=0,
                 base_result=base_result,
             ),
             times=solution.t,
@@ -352,6 +378,9 @@ def run_experiment_data(
             energies=energies,
             relative_energy_drifts=drifts,
             poincare_points=[],
+            raw_event_count=0,
+            rejected_crossing_count=0,
+            plot_met_minimum_crossing_threshold=False,
         )
 
     if not np.all(np.isfinite(states)):
@@ -362,6 +391,8 @@ def run_experiment_data(
                 failure_reason="non_finite_state_values",
                 max_relative_energy_drift=None,
                 points=[],
+                rejected_crossing_count=0,
+                raw_event_count=0,
                 base_result=base_result,
             ),
             times=solution.t,
@@ -369,6 +400,9 @@ def run_experiment_data(
             energies=energies,
             relative_energy_drifts=drifts,
             poincare_points=[],
+            raw_event_count=0,
+            rejected_crossing_count=0,
+            plot_met_minimum_crossing_threshold=False,
         )
 
     energies = np.array([hamiltonian(state, params) for state in states], dtype=float)
@@ -377,7 +411,8 @@ def run_experiment_data(
 
     crossing_times = solution.t_events[0] if solution.t_events else np.array([], dtype=float)
     crossing_states = solution.y_events[0] if solution.y_events else np.empty((0, 4), dtype=float)
-    points = extract_poincare_points(
+    raw_event_count = int(len(crossing_times))
+    points, rejected_crossing_count = extract_poincare_points(
         crossing_times,
         crossing_states,
         params,
@@ -387,6 +422,7 @@ def run_experiment_data(
     point_drifts = [point.relative_energy_drift for point in points]
     max_point_drift = max(point_drifts) if point_drifts else 0.0
     max_drift = max(max_drift, float(max_point_drift))
+    plot_met_minimum = len(points) >= section_policy.min_crossings_for_plot
 
     if max_drift > solver_policy.max_relative_energy_drift:
         return ExperimentRun(
@@ -398,6 +434,8 @@ def run_experiment_data(
                 ),
                 max_relative_energy_drift=max_drift,
                 points=points,
+                rejected_crossing_count=rejected_crossing_count,
+                raw_event_count=raw_event_count,
                 base_result=base_result,
             ),
             times=solution.t,
@@ -405,6 +443,9 @@ def run_experiment_data(
             energies=energies,
             relative_energy_drifts=drifts,
             poincare_points=points,
+            raw_event_count=raw_event_count,
+            rejected_crossing_count=rejected_crossing_count,
+            plot_met_minimum_crossing_threshold=plot_met_minimum,
         )
 
     if not points:
@@ -414,6 +455,8 @@ def run_experiment_data(
                 failure_reason="no_accepted_poincare_crossings",
                 max_relative_energy_drift=max_drift,
                 points=[],
+                rejected_crossing_count=rejected_crossing_count,
+                raw_event_count=raw_event_count,
                 base_result=base_result,
             ),
             times=solution.t,
@@ -421,6 +464,9 @@ def run_experiment_data(
             energies=energies,
             relative_energy_drifts=drifts,
             poincare_points=[],
+            raw_event_count=raw_event_count,
+            rejected_crossing_count=rejected_crossing_count,
+            plot_met_minimum_crossing_threshold=False,
         )
 
     return ExperimentRun(
@@ -429,6 +475,8 @@ def run_experiment_data(
             failure_reason=None,
             max_relative_energy_drift=max_drift,
             points=points,
+            rejected_crossing_count=rejected_crossing_count,
+            raw_event_count=raw_event_count,
             base_result=base_result,
         ),
         times=solution.t,
@@ -436,6 +484,9 @@ def run_experiment_data(
         energies=energies,
         relative_energy_drifts=drifts,
         poincare_points=points,
+        raw_event_count=raw_event_count,
+        rejected_crossing_count=rejected_crossing_count,
+        plot_met_minimum_crossing_threshold=plot_met_minimum,
     )
 
 
@@ -493,10 +544,11 @@ def _write_poincare_plot(path: Path, run: ExperimentRun) -> None:
     p_theta2 = [point.p_theta2 for point in run.poincare_points]
 
     fig, ax = plt.subplots(figsize=(5, 4))
-    ax.scatter(theta2, p_theta2, s=12)
+    ax.scatter(theta2, p_theta2, s=4, alpha=0.75, linewidths=0)
     ax.set_xlabel("theta2 wrapped / radians")
     ax.set_ylabel("p_theta2")
-    ax.set_title("Sandbox diagnostic: Poincare section")
+    plot_kind = "long-run" if run.plot_met_minimum_crossing_threshold else "smoke-test"
+    ax.set_title(f"Sandbox diagnostic: {plot_kind} Poincare section")
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -550,6 +602,15 @@ def write_output_bundle(run: ExperimentRun, output_dir: Path, include_plots: boo
     created_files.append(csv_path)
 
     if include_plots:
+        if not run.plot_met_minimum_crossing_threshold:
+            print(
+                "WARNING: accepted Poincare crossings "
+                f"({run.summary.accepted_crossing_count}) are below min_crossings_for_plot "
+                f"({run.summary.section_policy['min_crossings_for_plot']}); "
+                "plots are smoke-test diagnostics only.",
+                file=sys.stderr,
+            )
+
         mpl_config_dir = output_dir / ".matplotlib"
         xdg_cache_dir = output_dir / ".cache"
         mpl_config_dir.mkdir(exist_ok=True)
@@ -573,6 +634,18 @@ def write_output_bundle(run: ExperimentRun, output_dir: Path, include_plots: boo
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "run_succeeded": run.summary.success,
         "failure_reason": run.summary.failure_reason,
+        "run_classification": (
+            "long_run_diagnostic"
+            if run.plot_met_minimum_crossing_threshold
+            else "smoke_test_output"
+        ),
+        "accepted_crossing_count": run.summary.accepted_crossing_count,
+        "rejected_crossing_count": run.rejected_crossing_count,
+        "raw_event_count": run.raw_event_count,
+        "discard_before": run.summary.section_policy["discard_before"],
+        "max_relative_energy_drift": run.summary.max_relative_energy_drift,
+        "min_crossings_for_plot": run.summary.section_policy["min_crossings_for_plot"],
+        "plot_met_minimum_crossing_threshold": run.plot_met_minimum_crossing_threshold,
         "created_files": [path.name for path in [manifest_path, *created_files]],
         "policies": {
             "parameters": run.summary.parameters,
@@ -584,11 +657,10 @@ def write_output_bundle(run: ExperimentRun, output_dir: Path, include_plots: boo
             "state": "(theta1, theta2, p_theta1, p_theta2)",
             "angles": "raw radians from downward vertical; theta2 is wrapped only for section output",
             "momenta": "canonical Hamiltonian momenta from p = B(q) qdot",
-            "section": "raw theta1 = 0 with theta1 increasing",
-            "section_fidelity_note": (
-                "This is not yet a wrapped theta1 mod 2*pi = 0 section; "
-                "that remains a Phase 10 fidelity question."
-            ),
+            "event_convention": "sin(theta1 - section_value) = 0",
+            "crossing_filter": "cos(theta1 - section_value) > 0 and theta1_dot > 0",
+            "section": "theta1 mod 2*pi = 0 with theta1 increasing",
+            "transient_discard": "events with time < discard_before are rejected before plotting",
             "energy_drift": "abs(H(t) - H0) / max(abs(H0), 1.0)",
         },
         "notes": [
@@ -630,12 +702,43 @@ def main() -> int:
     parser.add_argument("--self-check", action="store_true", help="run lightweight assertions")
     parser.add_argument("--output-dir", type=Path, help="optional directory for a sandbox output bundle")
     parser.add_argument("--plots", action="store_true", help="write diagnostic PNG plots with --output-dir")
+    parser.add_argument("--t-stop", type=float, default=SolverPolicy.t_stop, help="integration stop time")
+    parser.add_argument("--sample-count", type=int, default=SolverPolicy.sample_count, help="number of solver samples")
+    parser.add_argument(
+        "--discard-before",
+        type=float,
+        default=PoincareSectionPolicy.discard_before,
+        help="discard accepted section events before this time",
+    )
+    parser.add_argument(
+        "--min-crossings-for-plot",
+        type=int,
+        default=PoincareSectionPolicy.min_crossings_for_plot,
+        help="minimum accepted crossings before plot is classified as long-run diagnostic",
+    )
     args = parser.parse_args()
 
     if args.plots and not args.output_dir:
         parser.error("--plots requires --output-dir")
 
-    run = run_experiment_data()
+    if args.t_stop <= 0:
+        parser.error("--t-stop must be positive")
+    if args.sample_count < 2:
+        parser.error("--sample-count must be at least 2")
+    if args.discard_before < 0:
+        parser.error("--discard-before must be non-negative")
+    if args.discard_before >= args.t_stop:
+        parser.error("--discard-before must be less than --t-stop")
+    if args.min_crossings_for_plot < 1:
+        parser.error("--min-crossings-for-plot must be at least 1")
+
+    solver_policy = SolverPolicy(t_stop=args.t_stop, sample_count=args.sample_count)
+    section_policy = PoincareSectionPolicy(
+        discard_before=args.discard_before,
+        min_crossings_for_plot=args.min_crossings_for_plot,
+    )
+
+    run = run_experiment_data(solver_policy=solver_policy, section_policy=section_policy)
     if args.self_check:
         _assert_self_check(run)
     if args.output_dir:
