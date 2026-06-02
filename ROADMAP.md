@@ -13,7 +13,7 @@ Use this roadmap to answer:
 - what is deferred;
 - where implementation details live.
 
-Last restructured: 2026-06-01.
+Last restructured: 2026-06-02.
 
 ## 1. Project Baseline
 
@@ -135,28 +135,85 @@ Residual risks accepted or deferred:
 
 Phase 10 is the active phase.
 
-Phase 10 represents new product work after the Phase 9 production-layout and
-UX baseline. Its exact product scope is intentionally not yet defined.
-Candidate directions remain deferred until explicitly selected.
+**Phase 10: Chaos mathematical framework, high-resolution diagnostics, and
+interactive-output foundations**
+
+Phase 10 is not a quick plotting pass and not a production `/chaos` page
+redesign. The goal is to build a mathematically trustworthy chaos diagnostics
+foundation for the double pendulum before any production Chaos page
+implementation begins.
+
+Initial Phase 10 sandbox work under `development/chaos_content/` inspected the
+historic untracked `development/chaos_branch/` material and produced a minimal
+Hamiltonian Poincare-section experiment. That work showed that short-run plot
+generation is useful as a smoke test, but nowhere near sufficient for the
+intended Chaos page. The project now needs systematic mathematical conventions,
+long-duration numerical policies, and reproducible diagnostics before visual or
+interactive outputs can be treated as meaningful.
+
+Phase 10 scope:
+
+- Systematically define chaos-analysis conventions for the app.
+- Build from the accepted existing `DoublePendulum` model classes where
+  appropriate, rather than maintaining isolated or stale duplicate mechanics.
+- Establish canonical state, angle, velocity, and momentum conventions.
+- Define valid Poincare-section conventions, including wrapped-angle sections,
+  crossing direction, interpolation/event handling, transient discard policy,
+  and plotted coordinate/momentum pairs.
+- Define solver policies for long-duration chaos diagnostics.
+- Define energy-drift, failure, rejection, and non-renderable-result policies
+  for long runs.
+- Create reproducible high-resolution diagnostic data-generation pipelines.
+- Keep generated diagnostic outputs out of accidental commits.
+- Support eventual interactive outputs, while avoiding premature production UI
+  wiring.
+- Treat high-resolution plots and interactive visualisations as products of a
+  validated framework, not as standalone experiments.
+- Preserve the rule that production code must not import from `development/`.
+
+Phase 10 non-goals:
+
+- No immediate `/chaos` page redesign.
+- No production UI integration until the mathematical framework is accepted.
+- No promotion of historic `development/chaos_branch/` code, generated data,
+  images, CSVs, or JSON structures.
+- No broad data collation without fidelity checks.
+- No large generated datasets committed to the repository.
+- No weakening of the existing Simulation runtime, solver/result, or Canvas
+  contracts.
+
+Phase 10 gates:
+
+- A documented chaos-state convention exists.
+- Poincare-section definitions are mathematically explicit and tested.
+- Long-duration solver policies are documented and validated against
+  energy-drift criteria.
+- The framework integrates cleanly with the existing double-pendulum model
+  classes, or clearly documents why a separate experimental implementation is
+  temporarily required.
+- Generated diagnostic outputs are reproducible and excluded from accidental
+  commits.
+- At least one high-resolution diagnostic artifact is accepted as
+  mathematically meaningful before any production Chaos UI work begins.
 
 ## 4. Deferred Work
 
-Deferred until explicitly selected during Phase 10 or later:
+Deferred until the Phase 10 framework gates have passed:
 
-- new chaos diagnostics;
+- production `/chaos` page implementation or redesign;
 - new comparison workspace;
 - additional analytical Plotly output suite;
 - new simulation-output galleries;
 - major numerical-method changes;
-- broad workbench experimentation;
-- large visual redesigns unrelated to an explicitly selected product scope.
+- broad product/UI experimentation;
+- large visual redesigns unrelated to accepted Phase 10 framework outputs.
 
-Deferred scientific validation topics:
+Scientific validation topics not yet accepted by Phase 10 remain unresolved:
 
-- energy diagnostics and drift thresholds;
-- chaos metrics;
 - tolerance sensitivity;
 - solver-method equivalence;
+- Lyapunov exponents and other quantitative chaos metrics;
+- bifurcation analysis;
 - long-duration scientific validity;
 - Hamiltonian angular-velocity reconstruction beyond the current audited
   payload rules.
@@ -214,11 +271,16 @@ Durable implementation documentation:
 
 Evidence and history:
 
+- `development/chaos_content/` is the Phase 10 chaos diagnostics sandbox and
+  evidence area. It records discovery from the historic chaos branch and houses
+  controlled, reproducible chaos-content experiments and ignored diagnostic
+  outputs.
 - Local ignored directories such as `development/math_fidelity/`,
   `development/simulation_workbench/`, and `development/solver_contract/` may
   contain exploratory evidence, workbench notes, and historical implementation
   support. They are not required in the tracked repo.
 - `development/` more broadly is exploratory/reference material and must not
-  become a production runtime dependency. Accepted findings belong in
-  production code, tracked tests, or `documentation/`.
+  become a production runtime dependency. Accepted Phase 10 findings may later
+  move deliberately into `src/double_pendulum/`, tracked tests, or durable
+  `documentation/`.
 - `legacy/` contains historical reference material.
