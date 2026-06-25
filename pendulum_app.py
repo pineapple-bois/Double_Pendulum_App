@@ -1,6 +1,7 @@
 import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+from app import config
 from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
@@ -42,4 +43,4 @@ register_equations_callbacks(app)
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=config.DASH_DEBUG)

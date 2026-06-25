@@ -1,6 +1,6 @@
 # Double Pendulum App
 
-#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/). It is currently associated with an older [`Heroku`](https://www.heroku.com) deployment, but active development is now focused on modernization first and redeployment later.
+#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/) and deployed on [`Heroku`](https://www.heroku.com) from GitHub. Active development is modernizing the app while preserving the current public deployment path.
 
 ![img](assets/Images/Screenshot.png)
 
@@ -165,9 +165,9 @@ Double_Pendulum_App/
 └── .python-version
 ```
 
-- For Dash applications, several key files are often required to ensure proper deployment and operation:
+- Deployment/runtime files:
   - `Procfile` specifies the command to run the app.
-  - `.python-version` defines the Python version for future Heroku deployment.
+  - `.python-version` defines the Python runtime for Heroku deployment.
   - `requirements.txt` lists necessary dependencies.
   - `runtime.txt` has intentionally been removed and should not be reintroduced.
 - Dash applications automatically read and serve files located in the root of the assets/ directory:
@@ -193,7 +193,9 @@ The [chaos/non-linear dynamics page](https://www.double-pendulum.net/chaos) is a
 
 The active product and architecture direction is tracked in [`ROADMAP.md`](ROADMAP.md). The local `development/` directory may contain ignored exploratory/reference work, including Simulation Workbench, math-fidelity, and solver-contract evidence. Durable summaries live under [`documentation/`](documentation/), and accepted findings should be encoded in production code and tracked tests.
 
-The active modernization direction is Phase 9: styling, production layout, and UX consolidation. Phase 8 established the numerical, solver-policy, callback-routing, and loading/diagnostics baseline that Phase 9 should preserve.
+The current roadmap continues from the deployed Simulation baseline. Phase 9
+established the production layout and deployment hooks; Phase 10 is focused on
+the chaos-analysis framework before any production Chaos page redesign.
 
 Future chaos work aims to:
 
@@ -232,17 +234,39 @@ source .venv/bin/activate   # On macOS/Linux
 pip install -r requirements.txt
 ```
 
-#### 4. Stage For Development
+#### 4. Configure Local and Deployment Flags
 
 Local HTTP development does not redirect by default. Deployment-specific HTTPS
 redirects are controlled by the `FORCE_HTTPS` environment flag in
 [`app/config.py`](app/config.py); set `FORCE_HTTPS=true` only when the server
-should redirect plain HTTP requests to HTTPS.
+should redirect plain HTTP requests to HTTPS. The direct local run debug flag is
+controlled separately with `DASH_DEBUG`; leave it false for deployment-style
+checks and set `DASH_DEBUG=true` only for local development.
+
+For the existing Heroku deployment, keep using the tracked `Procfile`:
+
+```bash
+web: gunicorn pendulum_app:server
+```
+
+Set deployment config through Heroku config vars rather than editing
+`pendulum_app.py`:
+
+```bash
+heroku config:set FORCE_HTTPS=true
+heroku config:unset DASH_DEBUG
+```
 
 #### 5. Run the Application Safely
 
 ```bash
 python pendulum_app.py
+```
+
+For Dash debug mode during local development:
+
+```bash
+DASH_DEBUG=true python pendulum_app.py
 ```
 
 #### 6. Access the app at http://127.0.0.1:8050/ (The development server)
@@ -292,7 +316,11 @@ The current test layout is organized by purpose:
 - `tests/integration/` covers app import, route layout smoke behavior, and the Flask `server` object used by Gunicorn.
 - `tests/numerical/` covers basic Lagrangian and Hamiltonian simulation shape, finite values, and initial-condition consistency.
 
-Known Phase 2 limits: these tests are a foundation, not a complete numerical validation project. Full derivation audits, compound-equation symbolic checks, energy-conservation tolerances, trajectory regression fixtures, and a Hamiltonian state/input convention audit are still future work.
+Validation scope note: these tests support deployment and modernization work,
+but they are not a complete numerical validation project. Full derivation
+audits, compound-equation symbolic checks, energy-conservation tolerances,
+trajectory regression fixtures, and a Hamiltonian state/input convention audit
+remain scientific-validation work rather than deployment blockers.
 
 ----
 

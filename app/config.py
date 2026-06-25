@@ -13,3 +13,4 @@ def env_bool(name: str, default: bool = False) -> bool:
 
 
 FORCE_HTTPS = env_bool("FORCE_HTTPS", default=False)
+DASH_DEBUG = env_bool("DASH_DEBUG", default=False)

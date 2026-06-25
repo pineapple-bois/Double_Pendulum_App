@@ -68,6 +68,16 @@ If starting the app for a smoke check:
 python pendulum_app.py
 ```
 
+For local Dash debug mode, run:
+
+```bash
+DASH_DEBUG=true python pendulum_app.py
+```
+
+Deployment-only HTTPS redirects are controlled by `FORCE_HTTPS=true`. Keep
+that flag disabled for local HTTP checks unless the redirect itself is under
+test.
+
 or run Dash on a deliberate temporary port only when the app entrypoint and
 local command support it.
 
