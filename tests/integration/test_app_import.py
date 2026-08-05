@@ -1,5 +1,7 @@
 from flask import Flask
-from app.content.routes import APP_TITLE
+import pytest
+
+from app.content.routes import APP_TITLE, PUBLIC_ROUTE_ITEMS
 from app.pages.registry import get_layout_for_path
 
 
@@ -23,3 +25,77 @@ def test_public_routes_return_layout_components():
         layout = get_layout_for_path(pathname)
         assert layout is not None
         assert hasattr(layout, "children")
+
+
+@pytest.fixture
+def client():
+    import pendulum_app
+
+    return pendulum_app.server.test_client()
+
+
+@pytest.mark.parametrize("pathname", [page.path for page in PUBLIC_ROUTE_ITEMS])
+def test_public_http_routes_return_dash_shell(client, pathname):
+    response = client.get(pathname, base_url="https://double-pendulum.test")
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/html"
+
+
+@pytest.mark.parametrize(
+    "pathname",
+    [
+        "/.env",
+        "/shell.php",
+        "/wp-login.php",
+        "/wordpress/wp-includes/wlwmanifest.xml",
+        "/definitely-not-a-route",
+    ],
+)
+def test_unknown_and_scanner_paths_return_404(client, pathname):
+    response = client.get(pathname, base_url="https://double-pendulum.test")
+
+    assert response.status_code == 404
+
+
+@pytest.mark.parametrize("pathname", ["/_dash-layout", "/_dash-dependencies"])
+def test_dash_framework_get_endpoints_remain_available(client, pathname):
+    response = client.get(pathname, base_url="https://double-pendulum.test")
+
+    assert response.status_code == 200
+    assert response.mimetype == "application/json"
+
+
+def test_dash_callback_post_remains_available(client):
+    response = client.post(
+        "/_dash-update-component",
+        base_url="https://double-pendulum.test",
+        json={
+            "output": "page-content.children",
+            "outputs": {"id": "page-content", "property": "children"},
+            "inputs": [{"id": "url", "property": "pathname", "value": "/"}],
+            "changedPropIds": ["url.pathname"],
+            "state": [],
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.mimetype == "application/json"
+
+
+def test_dash_asset_remains_available(client):
+    response = client.get(
+        "/assets/styles.css",
+        base_url="https://double-pendulum.test",
+    )
+
+    assert response.status_code == 200
+    assert response.mimetype == "text/css"
+
+
+def test_application_responses_include_security_headers(client):
+    response = client.get("/", base_url="https://double-pendulum.test")
+
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+    assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
