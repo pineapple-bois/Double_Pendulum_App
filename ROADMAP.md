@@ -8,241 +8,259 @@ Use this roadmap to answer:
 
 - what baseline the project is currently building from;
 - what phase is active;
-- what is gated or blocked;
 - what comes next;
 - what is deferred;
 - where implementation details live.
 
-Last restructured: 2026-06-02.
+Last restructured: 2026-08-17.
 
 ## 1. Project Baseline
 
-The app is stable enough to build from, but not polished enough to treat as a
-finished production baseline.
+The app is stable enough to restyle without a broad application rewrite. Its
+runtime, numerical-result handling, Canvas-backed Simulation architecture,
+deployment hooks, and production layout are established foundations.
 
-Current baseline:
+Current application baseline:
 
 - The app is a Dash application with a Flask `server` object for
   Gunicorn/Heroku-style deployment.
+- Python 3.12, `.python-version`, `requirements.txt`, and the tracked
+  `Procfile` define the supported runtime and deployment path.
+- `pendulum_app.py` remains thin: app creation, server exposure, layout shell,
+  callback registration, and server-hook registration.
+- Deployment-specific HTTPS behaviour is owned by the `FORCE_HTTPS`
+  configuration flag. Local HTTP development is safe by default.
 - Public teaching routes remain centered on Home, Equations of Motion,
-  Simulation, and Chaos, with legacy `/lagrangian` and `/hamiltonian` routes
-  preserved.
-- The `/simulation` page now uses the accepted Canvas-backed architecture.
-- Python owns mathematical and numerical truth.
-- Dash callbacks and memory-scoped stores manage app state and payload
-  delivery.
-- Browser-side JavaScript/Canvas handles rendering, playback, resizing, and
-  selected-frame inspection state only.
-- JavaScript must not integrate trajectories, compute physics, infer
-  Hamiltonian angular velocities, or transform solver state conventions.
+  Simulation, and Chaos, with legacy `/lagrangian` and `/hamiltonian`
+  routes preserved.
+- The app shell uses a fixed header and a normal-flow footer. The Simulation
+  run action is owned by the Simulation controls, not the global footer.
 - Production code must not import from `development/`.
-- Detailed Simulation Canvas implementation contracts live in
-  `documentation/simulation-canvas/`.
+
+Current Simulation and numerical baseline:
+
+- The `/simulation` page uses the accepted Canvas-backed architecture.
+- Python owns mathematical and numerical truth.
+- Dash callbacks and memory-scoped stores manage interaction state, solver
+  results, and renderer payload delivery.
+- Browser-side JavaScript/Canvas handles rendering, playback, resizing, and
+  selected-frame inspection only.
+- JavaScript must not integrate trajectories, compute physics, infer
+  Hamiltonian angular velocities, or transform solver-state conventions.
+- Solver failures are represented as non-render-safe results and cannot leave
+  current drawable success arrays behind.
+- The simple-model solver-policy baseline supports `dop853_moderate`
+  (`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as the normal policy and
+  `dop853_strict` as the high-fidelity/reference policy.
+- Route remounting, loading state, stale diagnostics, and result-state
+  behaviour have focused regression coverage.
+- The Simulation workspace has established desktop and responsive ownership
+  for controls, run state, playback, outputs, status, and diagnostics.
+- Detailed Simulation contracts live in `documentation/simulation-canvas/`
+  and `documentation/simulation-runtime/`.
+
+Current styling baseline:
+
+- `assets/styles.css` has a semantic token layer, page-scoped production
+  rules, responsive breakpoints, and a conservatively retained compatibility
+  layer.
+- Some legacy selectors and compatibility material remain. They should only be
+  removed through evidence-based cleanup alongside the components that own
+  them.
+- The active Canvas renderer has its own display palette outside CSS.
+- Retained Plotly and Matplotlib helpers are not part of the normal Simulation
+  rendering path, but they still contain independent visual defaults.
 
 Current known limits:
 
-- The Canvas-backed Simulation runtime has a stronger numerical, callback,
-  layout, and deployment baseline, but the app is not a complete scientific
-  validation project.
-- Existing tests are useful but not a complete scientific validation suite.
+- Existing tests establish a useful runtime baseline but are not a complete
+  scientific validation suite.
+- Browser coverage does not directly inspect every Canvas pixel or renderer
+  state across all route transitions and responsive layouts.
 - Energy diagnostics, chaos diagnostics, tolerance sensitivity,
-  solver-method equivalence, and long-duration scientific validity are not
-  proven.
+  solver-method equivalence, Lyapunov exponents, and long-duration scientific
+  validity are not yet established.
 
-## 2. Completed Phases: Phase 8 & 9
+## 2. Restyle
 
-**Phase 8: Numerical baseline, callback hardening, bug eradication, and
-documentation control**
+### Goal
 
-Phase 8 is complete at roadmap level. It established the runtime baseline
-needed before styling and layout consolidation.
+Give the Double Pendulum App the same recognisable interactive-textbook look as
+the Population Dynamics App while preserving the double pendulum's subject
+identity and the existing application architecture.
 
-Completed:
+Population Dynamics is the visual reference implementation. The intended shared
+language is:
 
-- Simple-model mathematical fidelity evidence has been promoted into focused
-  production tests.
-- The simple-model numerical fidelity baseline is established.
-- Solver-policy evidence supports `dop853_moderate`
-  (`method="DOP853"`, `rtol=1e-6`, `atol=1e-8`) as the leading simple-model
-  default candidate.
-- `dop853_strict` remains the high-fidelity/reference candidate.
-- Production solver-policy scaffolding and tests exist for simple-model runs.
-- Solver failures are represented as first-class non-render-safe states.
-- Canvas/backend payload tests verify that failures do not leave current
-  drawable success arrays behind.
-- The route-remount lifecycle bug was fixed with Canvas renderer route-state
-  reset and guarded routing reinitialization.
-- Manual simple-model UX performance inspection is complete for DOP853 moderate
-  and DOP853 strict across representative systems, durations, and inputs.
-- The stale diagnostics metadata issue has been triaged and fixed: stale
-  diagnostics now identify previous-run metadata until rerun.
-- A temporary Simulation integrator-policy selector supported Phase 8 manual
-  inspection and was deferred to Phase 9 for removal or hiding.
-- Compound-model runs showed no noticeable issue during inspection, so no
-  compound-specific action was taken. If a compound issue appears later, handle
-  it as a focused evidence/fidelity pass.
-- Durable runtime stability documentation lives under
-  `documentation/simulation-runtime/`.
+- a warm off-white page background;
+- white content surfaces;
+- charcoal primary text;
+- deep green accents with pale green secondary surfaces;
+- a Helvetica Neue/system font stack;
+- a 16px base type scale with restrained, fluid headings;
+- 8px and 12px corner radii;
+- quiet borders and shadows;
+- generous document spacing;
+- consistent white headers, footers, cards, controls, and plotting surfaces.
 
-Residual risks accepted or deferred:
+The objective is not to copy the complete Population Dynamics stylesheet or
+force both apps into identical page structures. The shared theme should be
+semantic and reusable; subject-specific teaching layouts remain app-owned.
 
-- Browser-level coverage does not directly inspect Canvas pixels or renderer
-  internals across route transitions.
+### Restyle workstreams
 
-**Phase 9: Production layout, deployment hooks, styling, and UX rules**
+#### 1. Establish the shared theme contract
 
-Phase 9 is complete at roadmap level. It consolidated the accepted Phase 8
-runtime into a production-presentable app baseline without weakening solver,
-result-state, or Canvas payload protections.
+- Treat the Population Dynamics palette, typography, spacing, radii, borders,
+  shadows, content width, and header height as the source design.
+- Introduce neutral interactive-textbook token names and map existing
+  Double Pendulum role tokens onto them.
+- Retain semantic roles such as page, surface, text, muted text, accent,
+  border, success, warning, and danger rather than using raw colours in
+  components.
+- Use the Helvetica Neue/system stack and remove the current responsive
+  root-font downscaling.
+- Do not replace either application's complete stylesheet wholesale.
 
-Completed:
+#### 2. Restyle the shared application shell
 
-- Explicit Flask server hook ownership was added for deployment concerns.
-- HTTPS redirect behaviour was moved behind configuration with the
-  `FORCE_HTTPS` flag.
-- Local development is safe by default and no longer requires commenting
-  deployment code in or out.
-- `pendulum_app.py` remains thin: app creation, server exposure, layout shell,
-  callback registration, and server hook registration.
-- Production layout rules were established for the app shell and pages.
-- Fixed-header and normal-flow footer behaviour were stabilized.
-- The app no longer uses a fixed footer.
-- The Simulation run action is owned by the Simulation controls/sidebar, not by
-  the global footer.
-- Phase 8 diagnostic UI such as the temporary integrator-policy selector was
-  removed from normal UI or hidden behind non-user-facing ownership.
-- The Simulation page layout and responsive behaviour were consolidated around
-  clear control, run, playback, output, status, and diagnostics ownership.
-- User-facing status and diagnostic presentation was improved without weakening
-  solver/result/Canvas contracts.
-- `assets/styles.css` was organized around design tokens, scoped rules, and
-  conservative legacy quarantine/cleanup.
-- Ad hoc and legacy styling was rationalized where safe, with uncertain cleanup
-  captured in maintenance documentation.
-- Browser smoke-check expectations remain part of the UI-facing validation
-  workflow.
-- Focused deployment hook tests were added where implemented.
+- Align the header, navigation menu, footer, page background, content width,
+  headings, links, focus states, cards, controls, and document surfaces with
+  the shared theme.
+- Preserve public routes, callback-bound component IDs, store IDs, and Canvas
+  renderer IDs.
+- Keep the Equations page as a readable mathematical document rather than
+  turning it into a dashboard.
+- Keep the Simulation page's sidebar, playback area, Canvas grid, status, and
+  diagnostics ownership while applying the shared visual language.
+- Standardise generated Dash controls, including sliders, dropdowns, radio
+  controls, checklists, and tooltips, so framework defaults do not leak into
+  the theme.
 
-Residual risks accepted or deferred:
+#### 3. Promote the new home hero
 
-- Browser-level coverage still does not directly inspect Canvas pixels or
-  renderer internals across all responsive layouts.
-- Some legacy and compatibility material remains intentionally deferred for a
-  later manual cleanup decision; see `documentation/maintenance/`.
-- Scientific validation topics remain deferred as listed below.
+- Use `assets/Heros/double_pend_hero1_green.png` as the intended Restyle home
+  hero.
+- Preserve the current full-height home composition: introduction on the left,
+  Explore rail on the right, and reading/attribution content below.
+- Replace the dark navy overlay treatment with the lighter Population
+  Dynamics-style wash and readable charcoal/green typography.
+- Verify text contrast across desktop and mobile crops.
+- Keep hero artwork subject-specific; only its palette, visual weight, and
+  composition belong to the shared template.
 
-## 3. Active Phase: Phase 10
+#### 4. Theme non-CSS visual surfaces
 
-Phase 10 is the active phase.
+- Update the Canvas renderer's display-only palette to use the shared charcoal,
+  green, muted, grid, status, and surface colours.
+- Do not change renderer physics boundaries, payload schemas, playback
+  behaviour, or solver/result contracts.
+- Centralise any retained Plotly styling so fonts, paper backgrounds, grids,
+  axes, traces, and modebar presentation follow the shared theme.
+- Review dormant Matplotlib/Plotly model helpers separately; do not allow their
+  legacy colours to drive production architecture.
 
-**Phase 10: Chaos mathematical framework, high-resolution diagnostics, and
-interactive-output foundations**
+#### 5. Simplify global styling dependencies
 
-Phase 10 is not a quick plotting pass and not a production `/chaos` page
-redesign. The goal is to build a mathematically trustworthy chaos diagnostics
-foundation for the double pendulum before any production Chaos page
-implementation begins.
+- Audit the Bootstrap stylesheet after the theme base and resets are in place.
+- If browser and test evidence confirms that production markup does not depend
+  on it, remove the unused Bootstrap theme and
+  `dash-bootstrap-components` dependency.
+- Remove the external Red Hat Display font request after the system font stack
+  is active.
+- Own base element styling explicitly so removing global dependencies does not
+  introduce browser-default drift.
 
-Initial Phase 10 sandbox work under `development/chaos_content/` inspected the
-historic untracked `development/chaos_branch/` material and produced a minimal
-Hamiltonian Poincare-section experiment. That work showed that short-run plot
-generation is useful as a smoke test, but nowhere near sufficient for the
-intended Chaos page. The project now needs systematic mathematical conventions,
-long-duration numerical policies, and reproducible diagnostics before visual or
-interactive outputs can be treated as meaningful.
+#### 6. Create the reusable interactive-textbook starting point
 
-Phase 10 scope:
+- Separate shared theme rules from app-specific Simulation, Equations, Chaos,
+  and home-content rules.
+- Keep a vendored, version-labelled shared theme asset in each app initially.
+- Define reusable shell patterns for the app frame, header, footer, page
+  header, hero, teaching card, control band, plot card, status message, and
+  reading list.
+- Document which tokens and components are shared and which are deliberately
+  subject-specific.
+- Use the accepted result as the basis of a GitHub template repository for
+  future interactive textbooks.
+- Consider a versioned shared package only after the theme has been exercised
+  successfully in multiple apps and regular cross-app updates justify the
+  added release overhead.
 
-- Systematically define chaos-analysis conventions for the app.
-- Build from the accepted existing `DoublePendulum` model classes where
-  appropriate, rather than maintaining isolated or stale duplicate mechanics.
-- Establish canonical state, angle, velocity, and momentum conventions.
-- Define valid Poincare-section conventions, including wrapped-angle sections,
-  crossing direction, interpolation/event handling, transient discard policy,
-  and plotted coordinate/momentum pairs.
-- Define solver policies for long-duration chaos diagnostics.
-- Define energy-drift, failure, rejection, and non-renderable-result policies
-  for long runs.
-- Create reproducible high-resolution diagnostic data-generation pipelines.
-- Keep generated diagnostic outputs out of accidental commits.
-- Support eventual interactive outputs, while avoiding premature production UI
-  wiring.
-- Treat high-resolution plots and interactive visualisations as products of a
-  validated framework, not as standalone experiments.
-- Preserve the rule that production code must not import from `development/`.
+### Implementation sequence
 
-Phase 10 non-goals:
+1. Adopt the shared tokens, base typography, and explicit resets.
+2. Restyle the header, footer, page surfaces, and shared controls.
+3. Activate and tune the new green home hero.
+4. Restyle the Equations and Simulation layouts without changing behaviour.
+5. Update the Canvas and retained plotting palettes.
+6. Remove confirmed-unused global styling dependencies.
+7. Extract and document the reusable interactive-textbook theme boundary.
 
-- No immediate `/chaos` page redesign.
-- No production UI integration until the mathematical framework is accepted.
-- No promotion of historic `development/chaos_branch/` code, generated data,
-  images, CSVs, or JSON structures.
-- No broad data collation without fidelity checks.
-- No large generated datasets committed to the repository.
-- No weakening of the existing Simulation runtime, solver/result, or Canvas
-  contracts.
+### Restyle acceptance gates
 
-Phase 10 gates:
+- Home, Equations, Simulation, Chaos, `/lagrangian`, and `/hamiltonian`
+  retain their route behaviour.
+- Simulation callbacks, result-state protections, Canvas payloads, playback,
+  diagnostics, and validation behaviour remain unchanged.
+- The full automated test suite passes.
+- Desktop, tablet, and mobile layouts have no unintended overflow or clipped
+  controls.
+- The new hero remains legible at representative crops and breakpoints.
+- Dash controls and Canvas outputs use the shared palette without unthemed
+  framework defaults.
+- Text, controls, links, focus indicators, and status states retain accessible
+  contrast.
+- Browser smoke checks report no missing assets or JavaScript errors.
+- Any locally started Dash process is stopped explicitly after validation.
 
-- A documented chaos-state convention exists.
-- Poincare-section definitions are mathematically explicit and tested.
-- Long-duration solver policies are documented and validated against
-  energy-drift criteria.
-- The framework integrates cleanly with the existing double-pendulum model
-  classes, or clearly documents why a separate experimental implementation is
-  temporarily required.
-- Generated diagnostic outputs are reproducible and excluded from accidental
-  commits.
-- At least one high-resolution diagnostic artifact is accepted as
-  mathematically meaningful before any production Chaos UI work begins.
+## 3. Active Phase and Deferred Work
 
-## 4. Deferred Work
+### Active phase
 
-Deferred until the Phase 10 framework gates have passed:
+**Restyle is the active phase.**
 
-- production `/chaos` page implementation or redesign;
-- new comparison workspace;
-- additional analytical Plotly output suite;
-- new simulation-output galleries;
+The initial feasibility review is complete and the light green double-pendulum
+hero is available at `assets/Heros/double_pend_hero1_green.png`. Work should
+follow the sequence and gates in Section 2.
+
+The Restyle must not weaken the numerical, callback, result-state, Canvas,
+routing, or deployment baseline described in Section 1.
+
+### Deferred work
+
+The chaos-analysis framework remains important, but is deferred until the
+Restyle reaches its acceptance gates. When resumed, it should:
+
+- establish canonical chaos state, angle, velocity, and momentum conventions;
+- define mathematically explicit Poincare-section conventions, including
+  wrapped-angle sections, crossing direction, interpolation/event handling,
+  transient discard policy, and plotted coordinate/momentum pairs;
+- define solver, energy-drift, failure, rejection, and non-renderable-result
+  policies for long-duration runs;
+- create reproducible high-resolution diagnostic data-generation pipelines;
+- integrate with the accepted double-pendulum model classes where appropriate;
+- keep generated diagnostic outputs out of accidental commits;
+- accept at least one high-resolution diagnostic artifact as mathematically
+  meaningful before production Chaos UI work begins.
+
+Also deferred:
+
+- production `/chaos` implementation or redesign;
+- Lyapunov exponents, bifurcation analysis, and other quantitative chaos
+  metrics;
+- tolerance-sensitivity and solver-method-equivalence studies;
+- long-duration scientific-validity claims;
+- a new comparison workspace;
+- additional analytical output galleries;
 - major numerical-method changes;
-- broad product/UI experimentation;
-- large visual redesigns unrelated to accepted Phase 10 framework outputs.
+- broad legacy removal unrelated to the Restyle;
+- promotion of historic `development/chaos_branch/` code or generated data;
+- large generated datasets in the repository;
+- a packaged cross-app theme dependency before a vendored theme has proved
+  stable across multiple apps.
 
-Scientific validation topics not yet accepted by Phase 10 remain unresolved:
-
-- tolerance sensitivity;
-- solver-method equivalence;
-- Lyapunov exponents and other quantitative chaos metrics;
-- bifurcation analysis;
-- long-duration scientific validity;
-- Hamiltonian angular-velocity reconstruction beyond the current audited
-  payload rules.
-
-## 5. Completed And Superseded Phases
-
-Earlier phases are complete or superseded at roadmap level. Historical detail
-should not be re-expanded here.
-
-- Phase 0 established the root roadmap direction and moved old architecture
-  material into `legacy/`.
-- Phase 1 modernized the Python/runtime/dependency baseline around Python 3.12,
-  `.python-version`, and top-level runtime requirements.
-- Phase 2 established the first pytest safety net.
-- Phase 3 moved reusable math, model, plotting, and validation code under
-  `src/double_pendulum/`.
-- Phase 4 split the Dash app into clearer page, callback, component, content,
-  and routing ownership.
-- Phase 5 moved the app toward the current teaching journey and redesigned
-  page structure.
-- Phase 6 substantially completed the Simulation Manifesto and Workbench
-  evidence programme.
-- Phase 7 substantially promoted the accepted Canvas-backed Simulation
-  architecture into the live app.
-
-Remaining cleanup from Phase 6 and Phase 7 was absorbed into Phase 8 and
-Phase 9. Durable implementation documentation belongs under `documentation/`.
-
-## 6. Documentation Map
+## 4. Documentation Map
 
 Planning:
 
@@ -271,16 +289,17 @@ Durable implementation documentation:
 
 Evidence and history:
 
-- `development/chaos_content/` is the Phase 10 chaos diagnostics sandbox and
-  evidence area. It records discovery from the historic chaos branch and houses
+- `development/chaos_content/` is the chaos diagnostics sandbox and evidence
+  area. It records discovery from the historic chaos branch and houses
   controlled, reproducible chaos-content experiments and ignored diagnostic
   outputs.
 - Local ignored directories such as `development/math_fidelity/`,
-  `development/simulation_workbench/`, and `development/solver_contract/` may
-  contain exploratory evidence, workbench notes, and historical implementation
-  support. They are not required in the tracked repo.
+  `development/simulation_workbench/`, and
+  `development/solver_contract/` may contain exploratory evidence, workbench
+  notes, and historical implementation support. They are not required in the
+  tracked repository.
 - `development/` more broadly is exploratory/reference material and must not
-  become a production runtime dependency. Accepted Phase 10 findings may later
-  move deliberately into `src/double_pendulum/`, tracked tests, or durable
+  become a production runtime dependency. Accepted findings may later move
+  deliberately into `src/double_pendulum/`, tracked tests, or durable
   `documentation/`.
 - `legacy/` contains historical reference material.
