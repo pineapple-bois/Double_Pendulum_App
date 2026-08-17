@@ -12,62 +12,80 @@ CSS governance:
 */
 
 :root {
-    /* Raw palette: keep compact and add variants only for named roles. */
-    --color-navy-950: #041843;
-    --color-navy-900: #0a1f52;
-    --color-blue-600: #2d5a9f;
-    --color-blue-200: #c5d9f2;
-    --color-slate-700: #3d4b5c;
-    --color-slate-500: #6b7a8f;
-    --color-slate-200: #d8dfe8;
-    --color-slate-100: #e8ecf2;
-    --color-paper: #f5f7fa;
+    /*
+    Interactive-textbook palette.
+
+    Neutral and green roles are the active theme foundation. The retained navy
+    values remain available only for dark surfaces that are deliberately left
+    to the shared-shell and home-page workstreams.
+    */
+    --color-charcoal-900: #1f2933;
+    --color-green-900: #004c47;
+    --color-green-700: #00635d;
+    --color-green-100: #e9f1ef;
+    --color-sage-700: #5f6b6b;
+    --color-sage-500: #82908e;
+    --color-stone-300: #ddd8d0;
+    --color-stone-100: #f3f2ef;
+    --color-paper: #f8f7f6;
     --color-white: #ffffff;
 
-    --color-success: #2e8b7e;
-    --color-success-light: #d4ede9;
-    --color-warning: #a67c3d;
-    --color-warning-light: #f5e8d6;
-    --color-danger: #a3424f;
-    --color-danger-light: #f5dde1;
+    /* Retained dark-shell palette and temporary compatibility aliases. */
+    --color-navy-950: #041843;
+    --color-navy-900: #0a1f52;
+    --color-blue-600: var(--color-green-700);
+    --color-blue-200: var(--color-green-100);
+    --color-slate-700: #3f4f4f;
+    --color-slate-500: var(--color-sage-700);
+    --color-slate-200: var(--color-stone-300);
+    --color-slate-100: var(--color-stone-100);
+
+    --color-success: #2f7d57;
+    --color-success-light: #e8f3ed;
+    --color-warning: #b7791f;
+    --color-warning-light: #f8edd9;
+    --color-danger: #b94a48;
+    --color-danger-light: #f8e6e5;
 
     /* Role tokens: component styles should use these before raw palette values. */
     --surface-page: var(--color-paper);
     --surface-panel: var(--color-white);
-    --surface-panel-subtle: #fbfcfe;
+    --surface-panel-subtle: #fcfbfa;
     --surface-muted: var(--color-slate-100);
     --surface-dark: var(--color-navy-950);
     --surface-dark-soft: var(--color-navy-900);
     --surface-dark-panel: rgba(49, 73, 110, 0.72);
     --surface-dark-strong: rgba(10, 31, 82, 0.9);
-    --text-primary: var(--color-navy-900);
+    --text-primary: var(--color-charcoal-900);
     --text-secondary: var(--color-slate-700);
     --text-muted: var(--color-slate-500);
     --text-on-dark: var(--color-white);
     --text-on-dark-muted: var(--color-blue-200);
     --border-soft: var(--color-slate-200);
-    --border-control: var(--color-blue-200);
-    --border-emphasis: var(--color-slate-500);
+    --border-control: #b8cbc7;
+    --border-emphasis: #8e9a98;
     --link-color: var(--color-blue-600);
     --link-on-dark: var(--color-blue-200);
-    --focus-ring: rgba(45, 90, 159, 0.22);
+    --focus-outline: var(--color-green-700);
+    --focus-ring: rgba(0, 99, 93, 0.22);
     --accent-color: var(--color-blue-600);
-    --accent-hover: var(--color-blue-600);
+    --accent-hover: var(--color-green-900);
     --header-surface: var(--surface-dark);
     --header-text: var(--text-on-dark);
-    --header-border: rgba(197, 217, 242, 0.18);
+    --header-border: rgba(233, 241, 239, 0.18);
     --footer-surface: var(--surface-dark);
     --footer-text: var(--text-on-dark);
 
-    --font-family-sans: 'Red Hat Display', sans-serif;
-    --base-font-size: 14px;
-    --font-size-title: 3.2857rem;
-    --font-size-xlarge: 1.5714rem;
-    --font-size-large: 1.2857rem;
+    --font-family-sans: "Helvetica Neue", Helvetica, Arial, system-ui,
+        -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --base-font-size: 16px;
+    --font-size-title: 2.2rem;
+    --font-size-xlarge: 1.5rem;
+    --font-size-large: 1.125rem;
     --font-size-medium: 1rem;
     --font-size-small: 0.875rem;
-    --font-size-xsmall: 0.75rem;
-    --font-size-xxsmall: 0.6429rem;
+    --font-size-xsmall: 0.8125rem;
+    --font-size-xxsmall: 0.75rem;
 
     --space-1: 4px;
     --space-2: 8px;
@@ -77,13 +95,13 @@ CSS governance:
     --space-6: 24px;
     --space-8: 32px;
     --space-9: 36px;
-    --radius-sm: 6px;
-    --radius-md: 8px;
-    --radius-lg: 10px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 12px;
     --radius-pill: 999px;
     --border-width: 1px;
-    --shadow-panel: 0 18px 42px rgba(10, 31, 82, 0.08);
-    --shadow-floating: 0 18px 40px rgba(2, 10, 28, 0.34);
+    --shadow-panel: 0 1px 2px rgba(16, 24, 40, 0.06);
+    --shadow-floating: 0 16px 36px rgba(16, 24, 40, 0.12);
 
     --header-height: 64px;
     --footer-height: 56px;
@@ -113,20 +131,116 @@ CSS governance:
    02. Base elements and resets
    ========================================================================== */
 
+html {
+    background: var(--surface-page);
+    box-sizing: border-box;
+    color-scheme: light;
+    font-size: var(--base-font-size);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
 body {
-  font-family: var(--font-family-sans);
-  font-size: var(--font-size-medium);
-  margin: 0;
+    background: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-medium);
+    line-height: 1.5;
+    margin: 0;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+h1 {
+    font-size: var(--font-size-title);
+}
+
+h2 {
+    font-size: var(--font-size-xlarge);
+}
+
+h3 {
+    font-size: var(--font-size-large);
+}
+
+h4,
+h5,
+h6 {
+    font-size: var(--font-size-medium);
+}
+
+p,
+li {
+    line-height: 1.55;
+}
+
+a {
+    color: var(--link-color);
+    text-decoration-color: currentColor;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    transition:
+        color var(--transition-fast),
+        text-decoration-color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
+}
+
+:where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [role="button"],
+    [tabindex]
+):focus-visible {
+    box-shadow: 0 0 0 4px var(--focus-ring);
+    outline: 3px solid var(--focus-outline) !important;
+    outline-offset: 3px;
 }
 
 ::selection {
-    background: var(--color-blue-200);
-    color: var(--color-navy-950);
+    background: var(--color-green-100);
+    color: var(--text-primary);
 }
 
 ::-moz-selection {
-    background: var(--color-blue-200);
-    color: var(--color-navy-950);
+    background: var(--color-green-100);
+    color: var(--text-primary);
 }
 
 /* ==========================================================================
@@ -468,8 +582,7 @@ body {
 }
 
 .input:focus, .dropdown:focus {
-    border-color: var(--accent-color); /* Darker purple border on focus */
-    outline: none; /* Remove the default outline */
+    border-color: var(--accent-color);
 }
 
 .content-container {
@@ -2386,12 +2499,6 @@ body {
     }
 }
 
-@media (max-width: 2200px) {
-    :root {
-        font-size: 100% !important;
-    }
-}
-
 @media (max-width: 1680px) {
     /* Make the children of the above-graph-container stack vertically */
     .above-graph-container {
@@ -2399,12 +2506,6 @@ body {
         align-items: center; /* Optionally center the stacked items */
         padding-top: 18px;
         gap: 18px;
-    }
-}
-
-@media (max-width: 1500px) {
-    :root {
-        font-size: 90% !important;
     }
 }
 
@@ -2436,10 +2537,6 @@ body {
 }
 
 @media (max-width: 900px) {
-    :root {
-        font-size: 85% !important;
-    }
-
     .equations-layout {
         --equations-document-width: calc(100% - clamp(24px, 8vw, 72px));
     }
@@ -2561,10 +2658,6 @@ body {
 }
 
 @media (max-width: 650px) {
-    :root {
-        font-size: 65% !important;
-    }
-
     .site-nav {
         padding: 0 16px;
     }

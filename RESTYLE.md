@@ -161,8 +161,10 @@ Complete this section before the first production-style change.
 
 ### 6.1 Source and deployment baseline
 
-- [ ] Record the starting branch SHA:
-- [ ] Record `origin/main` SHA:
+- [x] Record the starting branch SHA:
+      `50cb7ed59080b73d9057685f1762813e78f83b26`
+- [x] Record `origin/main` SHA:
+      `8a9f7e5914a4e2a64b11589552b29604b450f4e1`
 - [ ] Record the exact currently deployed commit or platform release:
 - [ ] Record the deployment mechanism and authorised operator:
 - [ ] Record the previous known-good release/tag/SHA for rollback:
@@ -171,12 +173,12 @@ Complete this section before the first production-style change.
 
 ### 6.2 Automated baseline
 
-- [ ] Run the full test suite with the supported Python 3.12 environment.
-- [ ] Record test command:
-- [ ] Record pass/fail count:
-- [ ] Record duration:
-- [ ] Record any warnings or pre-existing failures:
-- [ ] Run `git diff --check`.
+- [x] Run the full test suite with the supported Python 3.12 environment.
+- [x] Record test command: `.venv/bin/python -m pytest`
+- [x] Record pass/fail count: 174 passed
+- [x] Record duration: 9.61 seconds
+- [x] Record any warnings or pre-existing failures: none
+- [x] Run `git diff --check`.
 
 ### 6.3 Visual and interaction baseline
 
@@ -234,21 +236,26 @@ Likely owners:
 
 Tasks:
 
-- [ ] Add or adapt semantic interactive-textbook tokens.
-- [ ] Map existing page, panel, text, border, link, focus, and status roles.
-- [ ] Adopt the system font stack.
-- [ ] Establish explicit body background, text, line-height, selection, and
+- [x] Add or adapt semantic interactive-textbook tokens.
+- [x] Map existing page, panel, text, border, link, focus, and status roles.
+- [x] Adopt the system font stack.
+- [x] Establish explicit body background, text, line-height, selection, and
       box-sizing rules.
-- [ ] Remove responsive root-font downscaling.
-- [ ] Preserve current component layouts during the token transition.
-- [ ] Search for remaining active navy/blue role leaks.
+- [x] Remove responsive root-font downscaling.
+- [x] Preserve current component layouts during the token transition.
+- [x] Search for remaining active navy/blue role leaks.
 
 Validation:
 
-- [ ] All routes render with readable typography.
+- [ ] All routes render with readable typography. The requested Home,
+      Equations, and Simulation routes pass; the complete route matrix remains
+      a closeout gate.
 - [ ] No control loses focus, disabled, error, stale, or success distinction.
-- [ ] No new horizontal overflow.
-- [ ] Targeted tests pass.
+      The Run action's keyboard focus treatment was verified; full state
+      coverage remains a later Simulation check.
+- [x] No new horizontal overflow on Home, Equations, or Simulation at the
+      inspected 1280px and 390px widths.
+- [x] Targeted tests pass: 59 passed in 5.76 seconds.
 
 Rollback:
 
@@ -659,6 +666,7 @@ has remained stable through the agreed observation period.
 | 2026-08-17 | Use the new light green double-pendulum hero | Match the family palette while preserving subject identity | Home content/assets |
 | 2026-08-17 | Keep a vendored theme before packaging | Minimise deployment and release coupling during validation | Theme documentation |
 | 2026-08-17 | Keep this plan temporary | Prevent a branch checklist from becoming stale architecture documentation | Restyle closeout |
+| 2026-08-18 | Retain dark shell, home overlays, Canvas, Plotly, markup, and dependencies during Workstream 1 | Keep the token/base slice independently reviewable and respect later workstream ownership | This plan and later workstream commits |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -669,6 +677,10 @@ rollback.
 | --- | --- | --- | --- | --- |
 | 2026-08-17 | Planning | Branch check | `feat_restyle` at `8a9f7e5` | Worktree clean before creating this file |
 | 2026-08-17 | Planning | Green hero inspection | 1536 × 1024 PNG; visually suitable | Activation remains an implementation task |
+| 2026-08-18 | Pre-change baseline | `.venv/bin/python -m pytest` | 174 passed in 9.61s | No inherited failures |
+| 2026-08-18 | Workstream 1 | Focused content/import/Simulation tests | 59 passed in 5.76s | No failures |
+| 2026-08-18 | Workstream 1 | Full suite | 174 passed in 7.94s | No failures |
+| 2026-08-18 | Workstream 1 | Home, Equations, and Simulation at 1280px and 390px | No horizontal overflow; green focus outline verified; no browser warnings/errors | Page-specific legacy styling remains for later workstreams |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -680,9 +692,9 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Work isolated on `feat_restyle`.
 - [x] Temporary execution and rollback plan created.
 - [ ] Pre-change source, deployment, test, and visual baseline recorded.
-- [ ] Theme tokens implemented.
+- [x] Theme tokens implemented.
 - [ ] Shared shell restyled.
-- [ ] Green hero activated.
+- [x] Green hero activated.
 - [ ] Equations restyled.
 - [ ] Simulation HTML/CSS surfaces restyled.
 - [ ] Canvas/plotting palette updated.
