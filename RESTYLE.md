@@ -275,20 +275,22 @@ Likely owners:
 
 Tasks:
 
-- [ ] Restyle the header to a white surface with green navigation affordances.
-- [ ] Align header height, content width, gutters, borders, and menu panel.
-- [ ] Restyle the footer to the shared light treatment.
-- [ ] Align page backgrounds, page headers, links, focus states, and cards.
-- [ ] Preserve navigation labels, routes, and menu behaviour.
-- [ ] Verify fixed-header offsets on every non-home route.
+- [x] Restyle the header to a white surface with green navigation affordances.
+- [x] Align header height, content width, gutters, borders, and menu panel.
+- [x] Restyle the footer to the shared light treatment.
+- [x] Align shared page backgrounds, links, focus states, and reusable surface
+      roles. Page-specific headers, cards, typography, and layout remain owned
+      by later page workstreams.
+- [x] Preserve navigation labels, routes, and menu behaviour.
+- [x] Verify fixed-header offsets on every non-home route.
 
 Validation:
 
-- [ ] Navigation opens, closes, and identifies the current page.
-- [ ] Escape/click-outside behaviour remains intact.
-- [ ] Footer remains in normal document flow.
-- [ ] Route changes do not create header overlap.
-- [ ] Targeted shell and route tests pass.
+- [x] Navigation opens, closes, and identifies the current page.
+- [x] Escape/click-outside behaviour remains intact.
+- [x] Footer remains in normal document flow.
+- [x] Route changes do not create header overlap.
+- [x] Targeted shell and route tests pass.
 
 Rollback:
 
@@ -667,6 +669,7 @@ has remained stable through the agreed observation period.
 | 2026-08-17 | Keep a vendored theme before packaging | Minimise deployment and release coupling during validation | Theme documentation |
 | 2026-08-17 | Keep this plan temporary | Prevent a branch checklist from becoming stale architecture documentation | Restyle closeout |
 | 2026-08-18 | Retain dark shell, home overlays, Canvas, Plotly, markup, and dependencies during Workstream 1 | Keep the token/base slice independently reviewable and respect later workstream ownership | This plan and later workstream commits |
+| 2026-08-18 | Complete the shared-shell restyle in CSS without markup changes | Existing semantic classes and native `details`/`summary` behaviour already provide the required structure and accessibility hooks | Shared shell CSS |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -681,6 +684,10 @@ rollback.
 | 2026-08-18 | Workstream 1 | Focused content/import/Simulation tests | 59 passed in 5.76s | No failures |
 | 2026-08-18 | Workstream 1 | Full suite | 174 passed in 7.94s | No failures |
 | 2026-08-18 | Workstream 1 | Home, Equations, and Simulation at 1280px and 390px | No horizontal overflow; green focus outline verified; no browser warnings/errors | Page-specific legacy styling remains for later workstreams |
+| 2026-08-18 | Workstream 2 | Focused component/content/route tests | 45 passed in 0.97s | No failures |
+| 2026-08-18 | Workstream 2 | Full suite | 174 passed in 8.06s | No failures |
+| 2026-08-18 | Workstream 2 | Home, Equations, and Simulation at 1280px and 390px | Exact 72px header/body alignment; no horizontal overflow or brand/menu collision; menu and active states verified | Home remains deliberately outside the persistent shell; one existing informational `scroll.js` retry log and no new browser warnings/errors |
+| 2026-08-18 | Workstream 2 | Non-home route shell sweep | `/equations`, `/lagrangian`, `/hamiltonian`, `/simulation`, and `/chaos` have no header overlap | Footer remains static/in normal flow on every inspected shell route |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -693,7 +700,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Temporary execution and rollback plan created.
 - [ ] Pre-change source, deployment, test, and visual baseline recorded.
 - [x] Theme tokens implemented.
-- [ ] Shared shell restyled.
+- [x] Shared shell restyled.
 - [x] Green hero activated.
 - [ ] Equations restyled.
 - [ ] Simulation HTML/CSS surfaces restyled.
