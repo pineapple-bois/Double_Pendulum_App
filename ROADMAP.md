@@ -24,9 +24,11 @@ theme are established foundations for Chaos work.
 Current application baseline:
 
 - The app is a Dash application with a Flask `server` object for
-  Gunicorn/Heroku-style deployment.
-- Python 3.12, `.python-version`, `requirements.txt`, and the tracked
-  `Procfile` define the supported runtime and deployment path.
+  the production Gunicorn process deployed on Railway.
+- Python 3.12 and `.python-version` define the supported runtime;
+  `pyproject.toml` declares dependencies, `uv.lock` is the authoritative
+  resolved environment, and the tracked `Procfile` declares the production
+  process.
 - `pendulum_app.py` remains thin: app creation, server exposure, layout shell,
   callback registration, and server-hook registration.
 - Deployment-specific HTTPS behaviour is owned by the `FORCE_HTTPS`

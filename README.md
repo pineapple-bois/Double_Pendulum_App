@@ -1,6 +1,6 @@
 # Double Pendulum App
 
-#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/) and deployed on [`Heroku`](https://www.heroku.com) from GitHub. Active development is modernizing the app while preserving the current public deployment path.
+#### This repo serves a [`Plotly Dash`](https://dash.plotly.com) application built on [`Flask`](https://flask.palletsprojects.com/en/3.0.x/) and deployed on Railway. Active development is modernizing the app while preserving the current public deployment path.
 
 ![img](assets/Images/Screenshot.png)
 
@@ -160,15 +160,17 @@ Double_Pendulum_App/
 ├── ROADMAP.md
 ├── pendulum_app.py
 ├── Procfile
+├── pyproject.toml
 ├── README.md
-├── requirements.txt
+├── uv.lock
 └── .python-version
 ```
 
 - Deployment/runtime files:
-  - `Procfile` specifies the command to run the app.
-  - `.python-version` defines the Python runtime for Heroku deployment.
-  - `requirements.txt` lists necessary dependencies.
+  - `Procfile` declares the production process command.
+  - `.python-version` defines the supported Python runtime.
+  - `pyproject.toml` declares runtime and development dependencies.
+  - `uv.lock` is the authoritative resolved dependency lockfile.
   - `runtime.txt` has intentionally been removed and should not be reintroduced.
 - Dash applications automatically read and serve files located in the root of the assets/ directory:
   - `custom-header.html` - Defines the page meta-data.
@@ -220,21 +222,17 @@ Future chaos work aims to:
   cd Double_Pendulum_App
 ```
 
-#### 2. Set Up a Virtual Environment
+#### 2. Install the Managed Environment
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate   # On macOS/Linux
-.\.venv\Scripts\activate    # On Windows
+uv sync
 ```
 
-#### 3. Install Dependencies
+`uv` reads Python 3.12 from `.python-version`, creates the project environment,
+and installs the exact dependency versions recorded in `uv.lock`, including the
+development dependency group.
 
-```bash
-pip install -r requirements.txt
-```
-
-#### 4. Configure Local and Deployment Flags
+#### 3. Configure Local and Deployment Flags
 
 Local HTTP development does not redirect by default. Deployment-specific HTTPS
 redirects are controlled by the `FORCE_HTTPS` environment flag in
@@ -243,33 +241,28 @@ should redirect plain HTTP requests to HTTPS. The direct local run debug flag is
 controlled separately with `DASH_DEBUG`; leave it false for deployment-style
 checks and set `DASH_DEBUG=true` only for local development.
 
-For the existing Heroku deployment, keep using the tracked `Procfile`:
+Railway uses the tracked production process declaration:
 
 ```bash
 web: gunicorn pendulum_app:server
 ```
 
-Set deployment config through Heroku config vars rather than editing
-`pendulum_app.py`:
+Set deployment environment variables in Railway rather than editing
+`pendulum_app.py`.
+
+#### 4. Run the Application Safely
 
 ```bash
-heroku config:set FORCE_HTTPS=true
-heroku config:unset DASH_DEBUG
-```
-
-#### 5. Run the Application Safely
-
-```bash
-python pendulum_app.py
+uv run python pendulum_app.py
 ```
 
 For Dash debug mode during local development:
 
 ```bash
-DASH_DEBUG=true python pendulum_app.py
+DASH_DEBUG=true uv run python pendulum_app.py
 ```
 
-#### 6. Access the app at http://127.0.0.1:8050/ (The development server)
+#### 5. Access the app at http://127.0.0.1:8050/ (The development server)
 
 Before starting the Dash app for a smoke check, confirm port `8050` is not
 already occupied:
@@ -291,17 +284,16 @@ check.
 
 ### Running the Test Suite
 
-Install the app and test dependencies in the Python 3.12 virtual environment:
+Synchronize the locked runtime and development dependencies:
 
 ```bash
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+uv sync
 ```
 
 Run the full test suite with:
 
 ```bash
-python -m pytest
+uv run pytest
 ```
 
 For Simulation UI work, a manual/browser smoke check should cover a simple
@@ -342,9 +334,14 @@ remain scientific-validation work rather than deployment blockers.
 - `matplotlib`
 - `plotly`
 
-The [`requirements.txt`](requirements.txt) file intentionally lists only top-level application/runtime dependencies. The old fully frozen dependency list is preserved in [`requirements-old-freeze.txt`](legacy/requirements-old-freeze.txt) for reference.
+[`pyproject.toml`](pyproject.toml) declares top-level runtime dependencies and a
+development dependency group. [`uv.lock`](uv.lock) is the authoritative resolved
+environment used for local development, tests, and deployment. Update the lock
+with `uv lock` after changing dependency declarations.
 
-Development and test-only dependencies are listed separately in [`requirements-dev.txt`](requirements-dev.txt).
+The old fully frozen dependency list is preserved in
+[`requirements-old-freeze.txt`](legacy/requirements-old-freeze.txt) as historical
+reference only; it is not an active dependency source.
 
 ----
 

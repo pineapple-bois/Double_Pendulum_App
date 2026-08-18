@@ -28,6 +28,9 @@ and historical decision support. Production code must not import from
   `development/solver_contract/`, may be local-only and ignored.
 - `ROADMAP.md` is the active planning document. It should stay concise and
   point into this directory for implementation detail.
+- `.python-version` selects Python 3.12, `pyproject.toml` declares runtime and
+  development dependencies, and `uv.lock` is the authoritative resolved
+  environment.
 - `app/` is the Dash application layer: pages, callbacks, content,
   components, and simulation serialization helpers.
 - `src/double_pendulum/` is reusable Python logic for validation, symbolic

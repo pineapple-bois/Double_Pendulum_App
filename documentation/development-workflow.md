@@ -5,24 +5,22 @@ app.
 
 ## Setup
 
-Use Python 3.12.
+Use `uv` with the Python 3.12 runtime selected by `.python-version`.
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+uv sync
 ```
 
-If `python` is not available until the virtual environment is active, use
-`.venv/bin/python` or `python3`.
+`pyproject.toml` declares runtime and development dependencies. `uv.lock` is
+the authoritative resolved environment and should be updated with `uv lock`
+whenever those declarations change.
 
 ## Tests
 
 Run the full suite with:
 
 ```bash
-python -m pytest
+uv run pytest
 ```
 
 Current test layers:
@@ -65,13 +63,13 @@ If the port is already occupied:
 If starting the app for a smoke check:
 
 ```bash
-python pendulum_app.py
+uv run python pendulum_app.py
 ```
 
 For local Dash debug mode, run:
 
 ```bash
-DASH_DEBUG=true python pendulum_app.py
+DASH_DEBUG=true uv run python pendulum_app.py
 ```
 
 Deployment-only HTTPS redirects are controlled by `FORCE_HTTPS=true`. Keep

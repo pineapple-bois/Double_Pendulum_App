@@ -1,3 +1,4 @@
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -18,10 +19,14 @@ def test_app_owns_global_styles_without_bootstrap_or_external_webfont():
     import pendulum_app
 
     project_root = Path(__file__).resolve().parents[2]
-    requirements = (project_root / "requirements.txt").read_text()
+    with (project_root / "pyproject.toml").open("rb") as project_file:
+        project_dependencies = tomllib.load(project_file)["project"]["dependencies"]
 
     assert pendulum_app.app.config.external_stylesheets == []
-    assert "dash-bootstrap-components" not in requirements
+    assert not any(
+        "dash-bootstrap-components" in dependency.lower()
+        for dependency in project_dependencies
+    )
 
     response = pendulum_app.server.test_client().get(
         "/", base_url="https://double-pendulum.test"
@@ -33,7 +38,7 @@ def test_app_owns_global_styles_without_bootstrap_or_external_webfont():
     assert "Red+Hat+Display" not in index
 
 
-def test_flask_server_is_available_for_gunicorn_style_import():
+def test_flask_server_is_available_for_gunicorn_import():
     import pendulum_app
 
     assert isinstance(pendulum_app.server, Flask)

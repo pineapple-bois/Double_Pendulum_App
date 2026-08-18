@@ -7,8 +7,8 @@ Guidance for coding agents working in this repository. Read `README.md`, `ROADMA
 - This repository serves a legacy Plotly Dash app built on Flask for simulating and visualizing double pendulum motion.
 - The public app is documented as `http://www.double-pendulum.net`.
 - The app models simple and compound double pendulums, derives equations with `SymPy`, numerically integrates with `SciPy`, and renders graphs/animations with Plotly and Matplotlib.
-- Main runtime: Python Dash app with a Flask `server` object for Gunicorn/Heroku deployment.
-- The active direction is modernization first and redeployment later. Do not optimize for preserving an old Heroku dyno at the expense of the roadmap.
+- Main runtime: Python Dash app with a Flask `server` object served by Gunicorn and deployed on Railway.
+- The active direction is continued modernization on the Railway deployment baseline.
 - Project identity is now the Nonlinear Dynamics / Chaos Companion App, with the double pendulum as the only concrete physical system in scope.
 
 ## Repository Structure
@@ -40,34 +40,27 @@ Guidance for coding agents working in this repository. Read `README.md`, `ROADMA
 - `tests/integration/` - Dash app import, public route layout smoke, and Flask `server` tests.
 - `tests/numerical/` - basic Lagrangian/Hamiltonian simulation shape, finite-value, position, and initial-condition tests.
 - `pytest.ini` - pytest discovery/configuration for the test suite.
-- `requirements-dev.txt` - test-only dependencies such as `pytest`.
+- `pyproject.toml` - project metadata plus runtime and development dependency declarations.
+- `uv.lock` - authoritative resolved dependency environment.
 - `ROADMAP.md` - active modernization and product/architecture planning document.
 - `legacy/requirements-old-freeze.txt` - backup of the previous fully frozen dependency set.
-- Deployment/runtime files: `Procfile`, `.python-version`, `requirements.txt`.
+- Deployment/runtime files: `Procfile`, `.python-version`, `pyproject.toml`, `uv.lock`.
 
 ## Setup and Local Development
 
 Current supported setup from the README:
 
 ```bash
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python pendulum_app.py
-```
-
-On systems where `python` is not available, use the activated venv's Python or `python3`:
-
-```bash
-python3 pendulum_app.py
+uv sync
+uv run python pendulum_app.py
 ```
 
 - Local URL: `http://127.0.0.1:8050/`.
-- Python 3.12 is the active development runtime. `.python-version` is the Python runtime source of truth for future Heroku deployment.
+- Python 3.12 is the active development and deployment runtime. `.python-version` is the runtime source of truth.
 - `runtime.txt` has intentionally been removed and must not be reintroduced.
-- `requirements.txt` intentionally lists only top-level application/runtime dependencies. It is not a full freeze.
+- `pyproject.toml` declares top-level application/runtime dependencies and development dependency groups.
+- `uv.lock` is the authoritative resolved dependency environment and must be committed after dependency changes.
 - The previous frozen dependency list is preserved in `legacy/requirements-old-freeze.txt`; do not edit it unless explicitly asked to refresh that backup.
-- Development/test-only dependencies are listed separately in `requirements-dev.txt`.
 - No required environment variables, `.env` file, database config, or credential files were found in tracked repo files. Optional deployment flags are owned by `app/config.py`.
 - `FORCE_HTTPS` defaults to false. Local HTTP development must not redirect unless that environment flag is explicitly enabled.
 
@@ -75,26 +68,26 @@ python3 pendulum_app.py
 
 There is no Makefile, lint config, formatter config, or type-check config in the tracked repo.
 
-Install test-only dependencies into the activated Python 3.12 `.venv/` when needed:
+Synchronize the locked runtime and development dependencies:
 
 ```bash
-pip install -r requirements-dev.txt
+uv sync
 ```
 
 Run the full test suite with:
 
 ```bash
-python -m pytest
+uv run pytest
 ```
 
-Current validation note: top-level dependencies and `requirements-dev.txt` install into the Python 3.12 `.venv/`; `python -m pytest` passes with the Phase 2 test foundation. Coverage is still foundational and should not be treated as a complete numerical validation project.
+Current validation note: `uv sync` installs the Python 3.12 environment from `uv.lock`; `uv run pytest` exercises the test foundation. Coverage is still foundational and should not be treated as a complete numerical validation project.
 
 Minimal Dash smoke test before finalizing changes:
 
-- Install dependencies from `requirements.txt`.
+- Synchronize dependencies with `uv sync`.
 - Before starting the app, check whether port `8050` is already occupied.
 - If port `8050` is already occupied, do not blindly kill the process; identify/report it or use a clearly documented temporary port if appropriate.
-- If you start the app with `python pendulum_app.py`, capture the exact process ID.
+- If you start the app with `uv run python pendulum_app.py`, capture the exact process ID.
 - Open `/`, `/simulation`, `/equations`, `/lagrangian`, `/hamiltonian`, and `/chaos` as relevant.
 - Run a simple simulation and confirm the Canvas motion, angular displacement, angular state projection, playback controls, and diagnostics render.
 - Try invalid inputs and confirm validation messages appear instead of a server error.
@@ -103,13 +96,12 @@ Minimal Dash smoke test before finalizing changes:
 
 ## Deployment Notes
 
-- Future deployment is expected to remain Heroku-style based on:
-  - `Procfile`: `web: gunicorn pendulum_app:server`
-  - `.python-version`: Python runtime source of truth
-  - `requirements.txt`: top-level Python dependencies including `gunicorn`.
-- No `Dockerfile`, `heroku.yml`, `app.json`, or CI/CD config was found in tracked files.
+- Railway is the active deployment platform.
+- `Procfile` declares the production process: `web: gunicorn pendulum_app:server`.
+- `.python-version` selects Python 3.12; `pyproject.toml` and `uv.lock` define the locked dependency environment, including `gunicorn`.
+- No `Dockerfile` or CI/CD config was found in tracked files.
 - Do not rename `pendulum_app.py` or the Flask `server` object without also updating `Procfile`.
-- Do not restore `runtime.txt`. Validate deployment with `.python-version` after local modernization is stable.
+- Do not restore `runtime.txt`.
 - Be cautious with local-only changes such as debug mode and HTTPS redirects; keep deployment behaviour behind explicit configuration rather than commented code.
 
 ## Coding Guidelines for Agents

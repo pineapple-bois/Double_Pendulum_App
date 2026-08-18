@@ -1,0 +1,24 @@
+[project]
+name = "double-pendulum-app"
+version = "0.1.0"
+description = "Dash application for simulating and visualizing double-pendulum dynamics"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "dash",
+    "flask",
+    "gunicorn",
+    "matplotlib",
+    "numpy",
+    "plotly",
+    "scipy",
+    "sympy",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+package = false
