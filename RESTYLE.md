@@ -823,6 +823,12 @@ Rollback:
 
 ### Workstream 6 — Canvas and plotting palette
 
+Status: complete on 2026-08-18. The active Canvas renderer and retained
+central Plotly layout now use the interactive-textbook palette and system font.
+Renderer contracts and numerical/data drawing behaviour are unchanged; the
+stale-state label was repositioned to avoid axis-label collision, and dormant
+model plotting helpers remain explicitly deferred.
+
 Goal: align rendered outputs while keeping rendering contracts unchanged.
 
 Likely owners:
@@ -833,22 +839,22 @@ Likely owners:
 
 Tasks:
 
-- [ ] Replace display-only Canvas navy/blue colours with semantic charcoal,
+- [x] Replace display-only Canvas navy/blue colours with semantic charcoal,
       green, muted, grid, trace, marker, stale, and surface values.
-- [ ] Do not alter payload parsing, frame selection, drawing geometry,
+- [x] Do not alter payload parsing, frame selection, drawing geometry,
       playback, resize, or state logic.
-- [ ] Align active Plotly fonts, backgrounds, grids, axes, and traces.
-- [ ] Confirm whether retained model plotting helpers are active, dormant, or
+- [x] Align active Plotly fonts, backgrounds, grids, axes, and traces.
+- [x] Confirm whether retained model plotting helpers are active, dormant, or
       separately deferred.
 
 Validation:
 
-- [ ] Motion, angular projection, and displacement views remain distinct.
-- [ ] Axes, grid, traces, markers, selected frames, and stale states remain
+- [x] Motion, angular projection, and displacement views remain distinct.
+- [x] Axes, grid, traces, markers, selected frames, and stale states remain
       readable.
-- [ ] Canvas behaviour is checked after running a real simulation.
-- [ ] Browser console has no renderer errors.
-- [ ] Canvas payload and renderer-text tests pass.
+- [x] Canvas behaviour is checked after running a real simulation.
+- [x] Browser console has no renderer errors.
+- [x] Canvas payload and renderer-text tests pass.
 
 Rollback:
 
@@ -1099,6 +1105,8 @@ has remained stable through the agreed observation period.
 | 2026-08-18 | Keep the Equations lesson hero single-column and omit an equation-summary panel | The route is a long derivation and its governing equations are too complex to abbreviate honestly without competing with the chapter itself | Equations content/layout and teaching-surface documentation |
 | 2026-08-18 | Complete Workstream 5 through Simulation-scoped CSS without component or renderer changes | Existing semantic classes and generated Dash selectors are sufficient to establish the new control language while preserving every callback and payload contract | Simulation CSS; Canvas and Plotly remain owned by Workstream 6 |
 | 2026-08-18 | Refine the Workstream 5 output into unboxed white figure regions and one compact control centre | Figure cards and explanatory playback copy reduced usable visualisation space and duplicated self-evident control meaning; grouping the existing controls and scrubber requires only non-ID markup movement | Simulation interaction markup/tests and scoped CSS; renderer behaviour remains untouched |
+| 2026-08-18 | Theme the active Canvas renderer and retained central Plotly layout, but defer model plotting helpers | Production Simulation has no Plotly-generation callers; `app/components/figure_style.py` is the retained central contract, while model animation, phase-path, time-graph, and Matplotlib conversion helpers are dormant compatibility surfaces | Canvas palette and central Plotly style now; dormant model plotting helpers require a separately scoped audit before reuse |
+| 2026-08-18 | Use muted plum `#76546f` for the Canvas secondary-series role | The earlier sage secondary trace did not separate clearly enough from green; plum adds hue contrast while remaining restrained within the textbook palette | Canvas θ₂/P₂ line, legend, motion trail/marker, and selected projection marker; previous values retained as comments during review |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -1142,6 +1150,11 @@ rollback.
 | 2026-08-18 | Workstream 5 responsive correction | Focused Simulation interaction/layout tests | 21 passed in 5.71s | Full-width labelled control centre and retained callback-bound structure covered |
 | 2026-08-18 | Workstream 5 responsive correction | Full suite | 179 passed, 2 failed in 8.32s | Both failures are current Equations-content expectation mismatches unrelated to this slice; all Simulation tests pass and the Equations content was not changed here |
 | 2026-08-18 | Workstream 5 responsive correction | `/simulation` at 800 × 900 and 600 × 900 | The 980px grid now names the existing `controls` area rather than the removed `scrubber` area; Motion/Projection canvases measure 718 × 718 and 568 × 568 respectively; control centre spans the full figure width with left-aligned controls; no document overflow | Presentation-only grid correction; renderer and payload behaviour unchanged |
+| 2026-08-18 | Workstream 6 | Focused Simulation interaction, Canvas payload, renderer-text, and Plotly-layout tests | 41 passed in 6.69s | New assertions reject the retired navy/blue and Red Hat renderer defaults and lock the semantic green/charcoal/stone palette |
+| 2026-08-18 | Workstream 6 | Full suite | 179 passed, 2 failed in 8.26s | Both failures remain current Equations-content expectation mismatches unrelated to this slice; all Canvas, numerical, Simulation, and Plotly-style tests pass |
+| 2026-08-18 | Workstream 6 | Real simple Euler–Lagrange run at 1280 × 900 and 600 × 900 | Motion, angular projection, and angular displacement retain distinct green/charcoal traces, markers, axes, and grids; playback advanced to a selected frame; stale wash and message remained readable; responsive Canvas sizes were 568 × 568, 568 × 568, and 568 × 260 with no overflow | No renderer warnings/errors; only the existing informational `scroll.js` retry log appeared; generated scrubber purple default was corrected to the semantic green/stone treatment |
+| 2026-08-18 | Workstream 6 plum refinement | Renderer boundary and Canvas payload tests | 16 passed in 6.13s | Active plum series/marker/trace roles are asserted while the commented prior values remain available for review |
+| 2026-08-18 | Workstream 6 plum refinement | Real simple Euler–Lagrange run at 1280 × 900 | θ₁/P₁ remains green and θ₂/P₂ resolves in muted plum across the displacement trace, legend, motion marker/trail, and selected projection point; selected-frame contrast remains clear | Playback and Canvas state remained successful with no horizontal overflow |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -1161,7 +1174,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Workstream 4 Population Dynamics teaching-surface inventory recorded.
 - [x] Equations restyled.
 - [x] Simulation HTML/CSS surfaces restyled.
-- [ ] Canvas/plotting palette updated.
+- [x] Canvas/plotting palette updated.
 - [ ] Styling dependencies audited.
 - [ ] Reusable theme boundary documented.
 - [ ] Full validation completed.

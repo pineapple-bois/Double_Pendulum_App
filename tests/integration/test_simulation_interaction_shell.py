@@ -1066,6 +1066,21 @@ def test_renderer_asset_exists_and_stays_within_task_c_boundaries():
     assert "formatNumber(payload.time_s[frame], 1)" in source
     assert "formatNumber(payload.time_s[payload.sample_count - 1], 1)" in source
     assert "PALETTE" in source
+    assert "FONT_FAMILY" in source
+    assert 'accent: "#00635d"' in source
+    assert 'seriesSecondary: "#76546f"' in source
+    assert 'markerSecondary: "#76546f"' in source
+    assert 'selectedMarker: "#76546f"' in source
+    assert 'traceSecondary: "rgba(118, 84, 111, 0.28)"' in source
+    assert 'surface: "#ffffff"' in source
+    assert 'text: "#1f2933"' in source
+    assert 'grid: "rgba(221, 216, 208, 0.72)"' in source
+    assert "'Helvetica Neue', Helvetica, Arial, sans-serif" in source
+    assert "Red Hat Display" not in source
+    assert "#0d295a" not in source
+    assert "#041843" not in source
+    assert "#244a7d" not in source
+    assert "rgba(13, 41, 90" not in source
 
     lowered = source.lower()
     assert "energy" not in lowered

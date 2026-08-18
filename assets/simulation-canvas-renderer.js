@@ -55,24 +55,27 @@
     ];
     const PLOTLY_FRAME_DURATION_MS = 33;
     const PLOTLY_FRAME_SAMPLE_STEP = 10;
+    const FONT_FAMILY = "'Helvetica Neue', Helvetica, Arial, sans-serif";
     const PALETTE = {
-        ink: "#0d295a",
-        navy: "#041843",
-        slate: "#496284",
-        muted: "#73859c",
-        blue: "#244a7d",
-        blueSoft: "#5f83a5",
-        teal: "#2f7d7b",
-        tealSoft: "#76aaa7",
-        grid: "rgba(183, 197, 214, 0.38)",
-        gridFine: "rgba(183, 197, 214, 0.22)",
-        axis: "rgba(13, 41, 90, 0.72)",
-        trace: "rgba(47, 125, 123, 0.28)",
-        traceSoft: "rgba(95, 131, 165, 0.18)",
-        marker: "#2f7d5c",
-        staleFill: "rgba(184, 135, 46, 0.12)",
-        staleText: "#6f4a12",
-        white: "#ffffff",
+        surface: "#ffffff",
+        text: "#1f2933",
+        secondary: "#3f4f4f",
+        muted: "#5f6b6b",
+        accent: "#00635d",
+        accentDark: "#004c47",
+        seriesSecondary: "#76546f",
+        markerSecondary: "#76546f",
+        selectedMarker: "#76546f",
+        grid: "rgba(221, 216, 208, 0.72)",
+        gridFine: "rgba(221, 216, 208, 0.44)",
+        axis: "rgba(31, 41, 51, 0.68)",
+        zeroAxis: "rgba(31, 41, 51, 0.36)",
+        cursor: "rgba(0, 76, 71, 0.82)",
+        tracePrimary: "rgba(0, 99, 93, 0.2)",
+        traceSecondary: "rgba(118, 84, 111, 0.28)",
+        staleFill: "rgba(183, 121, 31, 0.12)",
+        staleText: "#7a4f13",
+        stampSurface: "rgba(255, 255, 255, 0.9)",
     };
 
     const rendererState = {
@@ -803,21 +806,21 @@
 
         ctx.lineCap = "round";
         ctx.lineWidth = 2.4;
-        ctx.strokeStyle = PALETTE.ink;
+        ctx.strokeStyle = PALETTE.text;
         ctx.beginPath();
         ctx.moveTo(p0.x, p0.y);
         ctx.lineTo(p1.x, p1.y);
         ctx.stroke();
 
-        ctx.strokeStyle = PALETTE.slate;
+        ctx.strokeStyle = PALETTE.secondary;
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
         ctx.stroke();
 
-        drawBob(ctx, p0.x, p0.y, 3.5, PALETTE.slate, PALETTE.white);
-        drawBob(ctx, p1.x, p1.y, 5.5, PALETTE.blueSoft, PALETTE.ink);
-        drawBob(ctx, p2.x, p2.y, 6.25, PALETTE.teal, PALETTE.ink);
+        drawBob(ctx, p0.x, p0.y, 3.5, PALETTE.secondary, PALETTE.surface);
+        drawBob(ctx, p1.x, p1.y, 5.5, PALETTE.accent, PALETTE.text);
+        drawBob(ctx, p2.x, p2.y, 6.25, PALETTE.markerSecondary, PALETTE.text);
         drawStaleOverlay(ctx, width, height);
     }
 
@@ -846,16 +849,16 @@
         if (rendererState.options.axes) {
             drawPlotAxes(ctx, plot);
         }
-        drawLineSeries(ctx, payload.time_s, payload.theta1_deg, mapX, mapY, PALETTE.blue);
-        drawLineSeries(ctx, payload.time_s, payload.theta2_deg, mapX, mapY, PALETTE.teal);
+        drawLineSeries(ctx, payload.time_s, payload.theta1_deg, mapX, mapY, PALETTE.accent);
+        drawLineSeries(ctx, payload.time_s, payload.theta2_deg, mapX, mapY, PALETTE.seriesSecondary);
 
         const cursorX = mapX(Number(payload.time_s[frame]));
         drawCursor(ctx, cursorX, plot.top, plot.bottom);
-        drawBob(ctx, cursorX, mapY(Number(payload.theta1_deg[frame])), 4.25, PALETTE.blue, PALETTE.white);
-        drawBob(ctx, cursorX, mapY(Number(payload.theta2_deg[frame])), 4.25, PALETTE.teal, PALETTE.white);
+        drawBob(ctx, cursorX, mapY(Number(payload.theta1_deg[frame])), 4.25, PALETTE.accent, PALETTE.surface);
+        drawBob(ctx, cursorX, mapY(Number(payload.theta2_deg[frame])), 4.25, PALETTE.seriesSecondary, PALETTE.surface);
         drawLegend(ctx, plot.left, 18, [
-            ["θ₁", PALETTE.blue],
-            ["θ₂", PALETTE.teal],
+            ["θ₁", PALETTE.accent],
+            ["θ₂", PALETTE.seriesSecondary],
         ]);
         drawStaleOverlay(ctx, width, height);
     }
@@ -888,7 +891,7 @@
         }
 
         ctx.save();
-        ctx.strokeStyle = "rgba(36, 74, 125, 0.72)";
+        ctx.strokeStyle = PALETTE.accentDark;
         ctx.lineWidth = 1.8;
         ctx.beginPath();
         for (let index = 0; index < payload.theta1_deg.length; index += 1) {
@@ -908,8 +911,8 @@
             mapX(Number(payload.theta1_deg[frame])),
             mapY(Number(payload.theta2_deg[frame])),
             5.25,
-            PALETTE.marker,
-            PALETTE.white
+            PALETTE.selectedMarker,
+            PALETTE.surface
         );
         drawStaleOverlay(ctx, width, height);
     }
@@ -1126,7 +1129,7 @@
     }
 
     function drawPanelBackground(ctx, width, height) {
-        ctx.fillStyle = PALETTE.white;
+        ctx.fillStyle = PALETTE.surface;
         ctx.fillRect(0, 0, width, height);
     }
 
@@ -1165,7 +1168,7 @@
     function drawBob(ctx, x, y, radius, fillStyle, strokeStyle) {
         ctx.save();
         ctx.fillStyle = fillStyle;
-        ctx.strokeStyle = strokeStyle || "rgba(255, 255, 255, 0.92)";
+        ctx.strokeStyle = strokeStyle || PALETTE.surface;
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -1176,23 +1179,23 @@
 
     function drawCanvasLabel(ctx, text, x, y) {
         ctx.save();
-        ctx.fillStyle = PALETTE.ink;
-        ctx.font = "600 13px 'Red Hat Display', Arial, sans-serif";
+        ctx.fillStyle = PALETTE.text;
+        ctx.font = "600 13px " + FONT_FAMILY;
         ctx.fillText(text, x, y);
         ctx.restore();
     }
 
     function drawFrameStamp(ctx, width, height) {
         ctx.save();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.88)";
+        ctx.fillStyle = PALETTE.stampSurface;
         ctx.strokeStyle = PALETTE.grid;
         ctx.lineWidth = 1;
         const text = "Frame " + String(rendererState.selectedFrame + 1) + "/" + String(rendererState.metrics.sampleCount);
-        ctx.font = "600 12px 'Red Hat Display', Arial, sans-serif";
+        ctx.font = "600 12px " + FONT_FAMILY;
         const textWidth = ctx.measureText(text).width;
         ctx.fillRect(width - textWidth - 24, height - 34, textWidth + 14, 22);
         ctx.strokeRect(width - textWidth - 24, height - 34, textWidth + 14, 22);
-        ctx.fillStyle = PALETTE.ink;
+        ctx.fillStyle = PALETTE.text;
         ctx.fillText(text, width - textWidth - 17, height - 19);
         ctx.restore();
     }
@@ -1205,8 +1208,10 @@
         ctx.fillStyle = PALETTE.staleFill;
         ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = PALETTE.staleText;
-        ctx.font = "700 13px 'Red Hat Display', Arial, sans-serif";
-        ctx.fillText("Stale output - rerun to play current result", 14, height - 16);
+        ctx.font = "700 13px " + FONT_FAMILY;
+        const message = "Stale output - rerun to play current result";
+        const messageX = Math.max(14, width - ctx.measureText(message).width - 14);
+        ctx.fillText(message, messageX, 22);
         ctx.restore();
     }
 
@@ -1319,7 +1324,7 @@
         ctx.stroke();
 
         ctx.fillStyle = PALETTE.muted;
-        ctx.font = "500 10.5px 'Red Hat Display', Arial, sans-serif";
+        ctx.font = "500 10.5px " + FONT_FAMILY;
         ctx.textAlign = "center";
         ticks.forEach(function (tick) {
             const xTick = map(tick, 0);
@@ -1334,8 +1339,8 @@
             }
         });
 
-        ctx.fillStyle = PALETTE.ink;
-        ctx.font = "700 12px 'Red Hat Display', Arial, sans-serif";
+        ctx.fillStyle = PALETTE.text;
+        ctx.font = "700 12px " + FONT_FAMILY;
         ctx.fillText("x", (plot.left + plot.right) / 2, plot.bottom + 30);
         ctx.save();
         ctx.translate(plot.left - 28, (plot.top + plot.bottom) / 2);
@@ -1370,8 +1375,8 @@
             ctx.restore();
         };
 
-        drawTrace(payload.x1, payload.y1, PALETTE.traceSoft, 1.2);
-        drawTrace(payload.x2, payload.y2, PALETTE.trace, 1.5);
+        drawTrace(payload.x1, payload.y1, PALETTE.tracePrimary, 1.2);
+        drawTrace(payload.x2, payload.y2, PALETTE.traceSecondary, 1.5);
     }
 
     function scaleLinear(domain, range) {
@@ -1386,8 +1391,8 @@
         const xOffset = options && Number.isFinite(Number(options.xOffset)) ? Number(options.xOffset) : 28;
         const yOffset = options && Number.isFinite(Number(options.yOffset)) ? Number(options.yOffset) : 32;
         ctx.save();
-        ctx.fillStyle = PALETTE.ink;
-        ctx.font = "600 12px 'Red Hat Display', Arial, sans-serif";
+        ctx.fillStyle = PALETTE.text;
+        ctx.font = "600 12px " + FONT_FAMILY;
         ctx.textAlign = "center";
         ctx.fillText(xLabel, (plot.left + plot.right) / 2, plot.bottom + xOffset);
         ctx.save();
@@ -1433,7 +1438,7 @@
 
     function drawZeroAxes(ctx, plot, xRange, yRange, mapX, mapY) {
         ctx.save();
-        ctx.strokeStyle = "rgba(13, 41, 90, 0.42)";
+        ctx.strokeStyle = PALETTE.zeroAxis;
         ctx.lineWidth = 1;
         ctx.beginPath();
         if (xRange.min < 0 && xRange.max > 0) {
@@ -1458,7 +1463,7 @@
         ctx.strokeStyle = PALETTE.grid;
         ctx.fillStyle = PALETTE.muted;
         ctx.lineWidth = 1;
-        ctx.font = "500 10.5px 'Red Hat Display', Arial, sans-serif";
+        ctx.font = "500 10.5px " + FONT_FAMILY;
 
         ctx.beginPath();
         xTicks.forEach(function (tick) {
@@ -1517,7 +1522,7 @@
 
     function drawCursor(ctx, x, top, bottom) {
         ctx.save();
-        ctx.strokeStyle = "rgba(13, 41, 90, 0.82)";
+        ctx.strokeStyle = PALETTE.cursor;
         ctx.lineWidth = 1.5;
         ctx.setLineDash([5, 4]);
         ctx.beginPath();
@@ -1529,14 +1534,14 @@
 
     function drawLegend(ctx, x, y, items) {
         ctx.save();
-        ctx.font = "600 12px 'Red Hat Display', Arial, sans-serif";
+        ctx.font = "600 12px " + FONT_FAMILY;
         let offset = 0;
         items.forEach(function (item) {
             const label = item[0];
             const color = item[1];
             ctx.fillStyle = color;
             ctx.fillRect(x + offset, y - 9, 18, 3);
-            ctx.fillStyle = PALETTE.ink;
+            ctx.fillStyle = PALETTE.text;
             ctx.fillText(label, x + offset + 24, y - 5);
             offset += 78;
         });
@@ -1555,10 +1560,10 @@
         drawPanelBackground(ctx, width, height);
         drawGrid(ctx, width, height, 42);
         ctx.save();
-        ctx.fillStyle = PALETTE.ink;
-        ctx.font = "700 15px 'Red Hat Display', Arial, sans-serif";
+        ctx.fillStyle = PALETTE.text;
+        ctx.font = "700 15px " + FONT_FAMILY;
         ctx.fillText(title, 18, 34);
-        ctx.font = "500 13px 'Red Hat Display', Arial, sans-serif";
+        ctx.font = "500 13px " + FONT_FAMILY;
         wrapText(ctx, body || "", 18, 62, width - 36, 18);
         ctx.restore();
     }

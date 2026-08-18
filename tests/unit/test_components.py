@@ -125,7 +125,14 @@ def test_derivation_components_return_dash_components():
 
 
 def test_matplotlib_plotly_style_helper_is_available():
-    assert mpl_layout.paper_bgcolor == "white"
+    assert mpl_layout.paper_bgcolor == "#ffffff"
+    assert mpl_layout.plot_bgcolor == "#ffffff"
+    assert mpl_layout.font.family.startswith('"Helvetica Neue"')
+    assert mpl_layout.font.color == "#1f2933"
+    assert mpl_layout.xaxis.gridcolor == "#ddd8d0"
+    assert mpl_layout.xaxis.linecolor == "#82908e"
+    assert mpl_layout.colorway[:2] == ("#00635d", "#5f6b6b")
+    assert mpl_layout.modebar.activecolor == "#00635d"
     assert mpl_layout.dragmode is False
 
 

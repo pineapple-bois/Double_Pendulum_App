@@ -2450,15 +2450,27 @@ a:hover {
 }
 
 .simulation-scrubber {
-    appearance: none;
-    accent-color: var(--accent-color);
-    background: var(--border-soft);
-    border-radius: var(--radius-pill);
-    height: 6px;
+    align-items: center;
+    background: transparent;
+    display: flex;
+    height: 18px;
     width: 100%;
 }
 
-.simulation-scrubber::-webkit-slider-thumb {
+.simulation-scrubber .dash-input-element {
+    -webkit-appearance: none;
+    appearance: none;
+    accent-color: var(--accent-color);
+    background: var(--border-soft);
+    border: 0;
+    border-radius: var(--radius-pill);
+    height: 6px;
+    min-height: 6px;
+    padding: 0;
+    width: 100%;
+}
+
+.simulation-scrubber .dash-input-element::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     background: var(--surface-panel);
@@ -2469,7 +2481,7 @@ a:hover {
     width: 18px;
 }
 
-.simulation-scrubber::-moz-range-thumb {
+.simulation-scrubber .dash-input-element::-moz-range-thumb {
     background: var(--surface-panel);
     border: 2px solid var(--accent-color);
     border-radius: 50%;
@@ -2478,13 +2490,13 @@ a:hover {
     width: 16px;
 }
 
-.simulation-scrubber:focus-visible {
+.simulation-scrubber .dash-input-element:focus-visible {
     box-shadow: 0 0 0 3px var(--focus-ring);
     outline: 2px solid var(--focus-outline);
     outline-offset: 3px;
 }
 
-.simulation-scrubber:disabled {
+.simulation-scrubber .dash-input-element:disabled {
     opacity: 0.55;
 }
 
