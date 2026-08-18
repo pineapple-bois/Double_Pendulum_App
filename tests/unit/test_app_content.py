@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from dash import dcc
+from dash import dcc, html
 
 from app.content.chaos import CHAOS_UNDER_DEVELOPMENT_TEXT
 from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE, REPOSITORY_URL
@@ -15,7 +15,7 @@ from app.content.simulation import (
     RUN_SIMULATION_LABEL,
     SIMULATION_INTERVAL_TITLE,
 )
-from app.callbacks.equations import register_equations_callbacks
+from app.callbacks.equations import _branch_children, register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
 from app.pages import chaos, equations, home, math, not_found, simulation
@@ -220,6 +220,43 @@ def test_equations_route_lazy_mounts_overview_without_branches():
     assert "Physical assumptions" in text
     assert "General Euler-Lagrange equation" not in text
     assert "Why introduce momenta?" not in text
+
+
+def test_equations_route_uses_route_title_and_single_column_teaching_hero():
+    page = equations.layout().children[1].children[0]
+    route_title, hero = page.children[:2]
+    hero_copy = hero.children[0]
+
+    assert isinstance(route_title, html.H1)
+    assert route_title.children == "Equations of Motion"
+    assert isinstance(hero_copy.children[1], html.H2)
+    assert hero_copy.children[1].children == "From geometry and energy to equations of motion"
+    assert "equations-hero-equation" not in collect_classnames(hero)
+
+
+def test_mounted_equations_branches_end_with_references_and_progression():
+    expected = {
+        equations.EULER_LAGRANGE_BRANCH: ("Continue to Hamiltonian", "/hamiltonian"),
+        equations.HAMILTONIAN_BRANCH: ("Continue to Simulation", "/simulation"),
+    }
+
+    for branch, (label, href) in expected.items():
+        branch_children = equations.render_selected_branch(branch)
+        reference_section, progression = branch_children[-2:]
+
+        assert reference_section.className == "references-section"
+        assert progression.className == "equations-chapter-navigation"
+        assert progression.children[1].children == label
+        assert progression.children[1].href == href
+
+
+def test_equations_branch_callback_mounts_complete_teaching_chapter():
+    children = _branch_children(equations.EULER_LAGRANGE_BRANCH)
+
+    assert children[0].id == "euler-lagrange-formulation"
+    assert children[-2].className == "references-section"
+    assert children[-1].className == "equations-chapter-navigation"
+    assert _branch_children(equations.OVERVIEW_BRANCH) == []
 
 
 def test_lagrangian_route_mounts_only_euler_lagrange_branch():

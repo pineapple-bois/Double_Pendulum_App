@@ -2,20 +2,24 @@ from dash import html
 
 from app.components.derivation import (
     render_branch_card,
+    render_chapter_navigation,
     render_derivation_section,
     render_markdown,
     render_model_summary,
 )
 from app.components.footer import get_footer_section
+from app.components.references import get_references_section
 from app.components.shell import get_body_section, get_footer_wrapper, get_header_section
 from app.content.equations import (
     BRANCH_CARDS,
     DERIVATION_SECTIONS,
+    EQUATIONS_HERO_HEADLINE,
     INTRODUCTION_PARAGRAPHS,
     MECHANICAL_MODEL_LEAD,
     MODEL_SUMMARIES,
 )
-from app.content.routes import EQUATIONS_PAGE
+from app.content.math import MATH_PAGES
+from app.content.routes import EQUATIONS_PAGE, HAMILTONIAN_PAGE, SIMULATION_PAGE
 
 
 OVERVIEW_BRANCH = "overview"
@@ -27,6 +31,24 @@ BRANCH_SECTIONS = {
     HAMILTONIAN_BRANCH: DERIVATION_SECTIONS[2],
 }
 
+BRANCH_REFERENCES = {
+    EULER_LAGRANGE_BRANCH: MATH_PAGES["lagrangian"].references,
+    HAMILTONIAN_BRANCH: MATH_PAGES["hamiltonian"].references,
+}
+
+BRANCH_PROGRESSION = {
+    EULER_LAGRANGE_BRANCH: (
+        "Continue with the equivalent phase-space description of the same mechanical system.",
+        HAMILTONIAN_PAGE.path,
+        "Continue to Hamiltonian",
+    ),
+    HAMILTONIAN_BRANCH: (
+        "Put the derived first-order systems to work in the interactive numerical model.",
+        SIMULATION_PAGE.path,
+        "Continue to Simulation",
+    ),
+}
+
 
 def _hero_section():
     return html.Section(
@@ -36,7 +58,7 @@ def _hero_section():
                 className="equations-hero-copy",
                 children=[
                     html.P("Classical mechanics derivation", className="equations-eyebrow"),
-                    html.H1(EQUATIONS_PAGE.title, className="equations-hero-title"),
+                    html.H2(EQUATIONS_HERO_HEADLINE, className="equations-hero-title"),
                     *[
                         render_markdown(paragraph, "equations-hero-text")
                         for paragraph in INTRODUCTION_PARAGRAPHS
@@ -97,11 +119,21 @@ def _branching_section(selected_branch):
     )
 
 
-def _selected_branch_section(selected_branch):
+def render_selected_branch(selected_branch):
     section = BRANCH_SECTIONS.get(selected_branch)
     if section is None:
         return []
-    return [render_derivation_section(section)]
+
+    progression_copy, progression_href, progression_label = BRANCH_PROGRESSION[selected_branch]
+    return [
+        render_derivation_section(section),
+        get_references_section(BRANCH_REFERENCES[selected_branch]),
+        render_chapter_navigation(
+            progression_copy,
+            progression_href,
+            progression_label,
+        ),
+    ]
 
 
 def layout(selected_branch=OVERVIEW_BRANCH):
@@ -114,6 +146,7 @@ def layout(selected_branch=OVERVIEW_BRANCH):
                     html.Main(
                         className="equations-page",
                         children=[
+                            html.H1(EQUATIONS_PAGE.title, className="equations-page-title"),
                             _hero_section(),
                             _mechanical_model_section(),
                             render_derivation_section(DERIVATION_SECTIONS[0]),
@@ -121,7 +154,7 @@ def layout(selected_branch=OVERVIEW_BRANCH):
                             html.Div(
                                 id="equations-branch-output",
                                 className="equations-branch-output",
-                                children=_selected_branch_section(selected_branch),
+                                children=render_selected_branch(selected_branch),
                             ),
                         ],
                     ),

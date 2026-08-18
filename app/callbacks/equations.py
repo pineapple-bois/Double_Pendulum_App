@@ -20,10 +20,7 @@ def _branch_button_state(selected_branch):
 
 
 def _branch_children(selected_branch):
-    section = equations.BRANCH_SECTIONS.get(selected_branch)
-    if section is None:
-        return []
-    return [equations.render_derivation_section(section)]
+    return equations.render_selected_branch(selected_branch)
 
 
 def register_equations_callbacks(app):

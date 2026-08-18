@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 SIMPLE_MODEL_IMAGE_SRC = "/assets/Images/Model_Simple_Transparent_NoText.png"
 COMPOUND_MODEL_IMAGE_SRC = "/assets/Images/Model_Compound_Transparent_NoText.png"
+EQUATIONS_HERO_HEADLINE = "From geometry and energy to equations of motion"
 
 
 @dataclass(frozen=True)
