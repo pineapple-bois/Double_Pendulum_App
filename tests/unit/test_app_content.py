@@ -2,6 +2,7 @@ from pathlib import Path
 
 from dash import dcc
 
+from app.content.chaos import CHAOS_UNDER_DEVELOPMENT_TEXT
 from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE, REPOSITORY_URL
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
@@ -320,6 +321,30 @@ def test_home_and_404_have_chromeless_hero_layouts():
     assert RETURN_HOME_LABEL in not_found_text
     for line in NOT_FOUND_HAIKU_LINES:
         assert line in not_found_text
+
+
+def test_chaos_page_is_a_hero_placeholder_inside_the_shared_shell():
+    page = chaos.layout()
+    header, body, footer = page.children
+    hero = body.children[0]
+    hero_inner = hero.children[0]
+    title = hero_inner.children[0]
+    classes = collect_classnames(page)
+
+    assert page.className == "main-layout chaos-layout"
+    assert hero.className == "home-hero chaos-hero"
+    assert hero.style["backgroundImage"] == (
+        'url("/assets/Heros/double_pend_hero1_green.png")'
+    )
+    assert hero_inner.className == "chaos-hero-inner"
+    assert title.className == "chaos-placeholder-title"
+    assert title.children == CHAOS_UNDER_DEVELOPMENT_TEXT == "Under development"
+    assert collect_text(hero) == ["Under development"]
+    assert header.className == "site-header"
+    assert body.className == "body"
+    assert footer.className == "footer"
+    assert "site-header" in classes
+    assert "site-footer" in classes
 
 
 def test_home_layout_uses_reference_flow_and_link_structure():
