@@ -51,7 +51,7 @@ CHAOS_PAGE = PageMetadata(
 NOT_FOUND_PAGE = PageMetadata(
     path="",
     label="Not Found",
-    title="Page not found",
+    title="Path not found",
     description="The requested page was not found.",
 )
 

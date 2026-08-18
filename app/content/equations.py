@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 SIMPLE_MODEL_IMAGE_SRC = "/assets/Images/Model_Simple_Transparent_NoText.png"
 COMPOUND_MODEL_IMAGE_SRC = "/assets/Images/Model_Compound_Transparent_NoText.png"
+EQUATIONS_HERO_HEADLINE = "From geometry and energy to equations of motion"
 
 
 @dataclass(frozen=True)
@@ -40,15 +41,9 @@ class DerivationSection:
 
 INTRODUCTION_PARAGRAPHS = (
     (
-        "A double pendulum is a compact example of a classical mechanical system whose "
-        "behaviour quickly becomes rich. Its configuration is determined by two angular "
-        "degrees of freedom, $\\theta_1$ and $\\theta_2$, and small changes in the initial "
-        "angles or angular velocities can lead to either regular motion or chaotic motion."
-    ),
-    (
-        "The purpose of this page is to build the equations used by the numerical simulator. "
-        "The derivation begins with geometry and energy, then branches into the "
-        "Euler-Lagrange formulation and the Hamiltonian formulation."
+        "A double pendulum configuration is determined by two angular degrees of freedom, "
+        "$\\theta_1$ and $\\theta_2$, and small changes in the initial angles or angular "
+        "velocities can lead to either regular motion or chaotic motion."
     ),
     (
         "No closed-form solutions for $\\theta_1(t)$ and $\\theta_2(t)$ are known for the "
@@ -58,8 +53,7 @@ INTRODUCTION_PARAGRAPHS = (
 )
 
 MECHANICAL_MODEL_LEAD = (
-    "Before writing equations, we need to decide what physical object is being modelled. "
-    "The app compares two idealisations of the same planar mechanism: two pendulums attached "
+    "We compare two idealisations of the same planar mechanism: two pendulums attached "
     "end-to-end, first as a point-mass model and then as a compound rigid-rod model."
 )
 
@@ -97,17 +91,13 @@ SHARED_TRUNK = DerivationSection(
     eyebrow="Shared trunk",
     title="The common Lagrangian starting point",
     lead=(
-        "Both derivation branches begin with the same model setup. We first describe the "
-        "planar geometry, convert that geometry into kinetic and potential energy, and then "
+        "We first describe the planar geometry, convert to kinetic and potential energy, and then "
         "collect those energies into the Lagrangian."
     ),
     blocks=(
         EquationBlock(
             title="Physical assumptions",
             markdown=r"""
-            The system consists of two pendulums attached end-to-end. Motion is restricted to the
-            vertical plane, so every configuration can be described in the $(x,y)$-plane.
-            
             Non-conservative forces such as air resistance and hinge friction are neglected. Under this
             idealisation the system is conservative: energy is exchanged between kinetic and potential
             forms, but the total mechanical energy is not dissipated.
@@ -120,7 +110,7 @@ SHARED_TRUNK = DerivationSection(
         EquationBlock(
             title="Coordinate convention",
             markdown=r"""
-            The motion is planar. The origin is placed at the upper pivot, with $x$ horizontal and $y$
+            The origin is placed at the upper pivot, with $x$ horizontal and $y$
             vertical. The angles $\theta_1$ and $\theta_2$ are measured from the downward vertical, so
             the hanging equilibrium corresponds to $\theta_1=\theta_2=0$.
             
@@ -288,13 +278,7 @@ SHARED_TRUNK = DerivationSection(
             \mathcal{L}(\theta_1,\theta_2,\dot{\theta}_1,\dot{\theta}_2)=T-V.
             $$
             
-            This is the common object from which both later formulations are derived. The
-            Euler-Lagrange route differentiates $\mathcal{L}$ directly with respect to coordinates and
-            velocities. The Hamiltonian route performs a Legendre transform and works in phase space
-            using coordinates and canonical momenta. Both are different formulations of the same
-            conservative model.
-            
-            Substituting the energies gives
+            This is the common starting point for both formulations. Substituting the energies gives
             
             $$
             \mathcal{L}
@@ -305,9 +289,6 @@ SHARED_TRUNK = DerivationSection(
             + gm_2l_2\cos(\theta_2).
             $$
             """,
-            note=(
-                "Everything in the branch sections starts from this same Lagrangian."
-            ),
         ),
     ),
 )
@@ -385,10 +366,6 @@ EULER_LAGRANGE_SECTION = DerivationSection(
             \left(\frac{\partial \mathcal{L}}{\partial \dot{\theta}_2}\right)
             -\frac{\partial \mathcal{L}}{\partial \theta_2}=0.
             $$
-            
-            Because the Lagrangian contains both $\dot{\theta}_1$ and $\dot{\theta}_2$ in a shared
-            kinetic-energy term, these equations contain both angular accelerations. They are therefore
-            coupled second-order equations rather than two independent pendulum equations.
             """,
         ),
         EquationBlock(
@@ -428,9 +405,6 @@ EULER_LAGRANGE_SECTION = DerivationSection(
             -l_1\sin(\Delta)\dot{\theta}_1^2
             +g\sin(\theta_2)=0.
             $$
-            
-            These are second-order because they contain $\ddot{\theta}_1$ and $\ddot{\theta}_2$.
-            They are coupled because each equation contains the acceleration of the other coordinate.
             """,
         ),
         EquationBlock(
@@ -511,16 +485,12 @@ EULER_LAGRANGE_SECTION = DerivationSection(
             \end{bmatrix}.
             $$
             """,
-            note=(
-                "This first-order form is the version used by numerical ODE solvers."
-            ),
         ),
         EquationBlock(
             title="Compound model mechanics",
             markdown=r"""
-            The compound model changes the energy terms, not the variational principle. The rods have
-            distributed mass, so each rod contributes translational kinetic energy through its centre of
-            mass and rotational kinetic energy about its own centre of mass.
+            For the compound model, each rod contributes translational and rotational kinetic energy because 
+            its mass is distributed along its length.  
             
             For a uniform thin rod,
             
@@ -615,10 +585,6 @@ EULER_LAGRANGE_SECTION = DerivationSection(
             c_2=\frac{3l_1\sin(\Delta)\dot{\theta}_1^2-6g\sin(\theta_2)}{7l_2}.
             $$
             """,
-            note=(
-                "The compound model has different inertia coefficients, but it is governed by "
-                "the same Euler-Lagrange principle."
-            ),
         ),
     ),
 )
@@ -636,9 +602,6 @@ HAMILTONIAN_SECTION = DerivationSection(
         EquationBlock(
             title="Why introduce momenta?",
             markdown=r"""
-            The Euler-Lagrange branch works with coordinates and velocities. The Hamiltonian branch
-            uses coordinates and canonical momenta:
-            
             $$
             (\theta_1,\theta_2,\dot{\theta}_1,\dot{\theta}_2)
             \quad\longrightarrow\quad
@@ -649,9 +612,6 @@ HAMILTONIAN_SECTION = DerivationSection(
             energy is coupled, so the momentum associated with one angle can depend on both angular
             velocities.
             """,
-            note=(
-                "The Euler-Lagrange and Hamiltonian branches describe the same conservative system."
-            ),
         ),
         EquationBlock(
             title="Canonical momenta",
@@ -677,7 +637,6 @@ HAMILTONIAN_SECTION = DerivationSection(
             The cross terms come from differentiating the kinetic-energy coupling term. This is why
             $p_{\theta_1}$ and $p_{\theta_2}$ each contain information about both angular velocities.
             """,
-            note="Canonical momenta are coupled because the kinetic energy is coupled.",
         ),
         EquationBlock(
             title="Momentum matrix for the simple model",
@@ -769,10 +728,6 @@ HAMILTONIAN_SECTION = DerivationSection(
             \mathcal{H}
             =\sum_{i=1}^{2}\dot{\theta}_i p_{\theta_i}-\mathcal{L}.
             $$
-            
-            Because the simple and compound systems are conservative and their Lagrangians do not
-            depend explicitly on time, this Hamiltonian is the total mechanical energy expressed in
-            phase-space variables.
             """,
         ),
         EquationBlock(
@@ -823,7 +778,6 @@ HAMILTONIAN_SECTION = DerivationSection(
             Unlike the Euler-Lagrange equations, which first appear as second-order equations in
             $\theta_1$ and $\theta_2$, Hamilton's equations are first-order by construction.
             """,
-            note="Hamilton's equations are first-order by construction.",
         ),
         EquationBlock(
             title="First-order phase-space system",

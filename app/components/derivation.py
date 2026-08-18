@@ -102,3 +102,14 @@ def render_derivation_section(section):
             ),
         ],
     )
+
+
+def render_chapter_navigation(copy, href, label):
+    return html.Nav(
+        className="equations-chapter-navigation",
+        **{"aria-label": "Chapter progression"},
+        children=[
+            html.P(copy, className="equations-chapter-navigation-copy"),
+            dcc.Link(label, href=href, className="equations-chapter-navigation-link"),
+        ],
+    )

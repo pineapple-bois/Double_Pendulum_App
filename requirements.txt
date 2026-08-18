@@ -1,5 +1,4 @@
 dash
-dash-bootstrap-components
 Flask
 gunicorn
 matplotlib

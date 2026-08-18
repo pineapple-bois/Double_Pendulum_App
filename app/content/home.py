@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-HERO_IMAGE_SRC = "/assets/Heros/double_pend_hero1_navy.png"
+HERO_IMAGE_SRC = "/assets/Heros/double_pend_hero1_green.png"
 GITHUB_LOGO_SRC = "/assets/Images/github-mark.png"
 REPOSITORY_URL = "https://github.com/pineapple-bois/Double_Pendulum_App"
 REPOSITORY_LABEL = "pineapple-bois/Double_Pendulum_App"

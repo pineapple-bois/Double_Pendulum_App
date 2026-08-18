@@ -1,11 +1,12 @@
 from pathlib import Path
 
-from dash import dcc
+from dash import dcc, html
 
-from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE
+from app.content.chaos import CHAOS_UNDER_DEVELOPMENT_TEXT
+from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE, REPOSITORY_URL
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
-from app.content.not_found import NOT_FOUND_HAIKU_LINES
+from app.content.not_found import NOT_FOUND_HAIKU_LINES, NOT_FOUND_TITLE, RETURN_HOME_LABEL
 from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLIC_ROUTE_ITEMS
 from app.content.simulation import (
     INFORMATION_TEXT,
@@ -14,7 +15,7 @@ from app.content.simulation import (
     RUN_SIMULATION_LABEL,
     SIMULATION_INTERVAL_TITLE,
 )
-from app.callbacks.equations import register_equations_callbacks
+from app.callbacks.equations import _branch_children, register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
 from app.pages import chaos, equations, home, math, not_found, simulation
@@ -108,7 +109,7 @@ def test_equations_content_is_structured_and_reuses_existing_assets():
     assert "V_2=-gm_2\\left(l_1\\cos(\\theta_1(t))+l_2\\cos(\\theta_2(t))\\right)" in shared_blocks["Energy contribution from P2"]
     kinetic_markdown = shared_blocks["Collecting total energy"]
     assert "will not separate into two independent pendulums" in kinetic_markdown
-    assert "Both are different formulations of the same conservative model" in shared_blocks[
+    assert "This is the common starting point for both formulations" in shared_blocks[
         "The Lagrangian as the common starting point"
     ]
     assert all(len(section.blocks) > 1 for section in DERIVATION_SECTIONS)
@@ -176,8 +177,11 @@ def test_equations_hamiltonian_branch_is_guided_and_uses_project_notation():
     assert "must be written in terms of coordinates and momenta" in hamiltonian_blocks[
         "Recovering velocities from momenta"
     ]
-    assert "total mechanical energy expressed in phase-space variables" in hamiltonian_blocks[
+    assert "replaces the velocity description with the momentum description" in hamiltonian_blocks[
         "Legendre transform"
+    ]
+    assert "For the simple model, the Hamiltonian becomes" in hamiltonian_blocks[
+        "Hamiltonian as total energy"
     ]
     assert "\\frac{\\mathrm{d}}{\\mathrm{d}t}" in hamiltonian_blocks[
         "First-order phase-space system"
@@ -219,6 +223,43 @@ def test_equations_route_lazy_mounts_overview_without_branches():
     assert "Physical assumptions" in text
     assert "General Euler-Lagrange equation" not in text
     assert "Why introduce momenta?" not in text
+
+
+def test_equations_route_uses_route_title_and_single_column_teaching_hero():
+    page = equations.layout().children[1].children[0]
+    route_title, hero = page.children[:2]
+    hero_copy = hero.children[0]
+
+    assert isinstance(route_title, html.H1)
+    assert route_title.children == "Equations of Motion"
+    assert isinstance(hero_copy.children[1], html.H2)
+    assert hero_copy.children[1].children == "From geometry and energy to equations of motion"
+    assert "equations-hero-equation" not in collect_classnames(hero)
+
+
+def test_mounted_equations_branches_end_with_references_and_progression():
+    expected = {
+        equations.EULER_LAGRANGE_BRANCH: ("Continue to Hamiltonian", "/hamiltonian"),
+        equations.HAMILTONIAN_BRANCH: ("Continue to Simulation", "/simulation"),
+    }
+
+    for branch, (label, href) in expected.items():
+        branch_children = equations.render_selected_branch(branch)
+        reference_section, progression = branch_children[-2:]
+
+        assert reference_section.className == "references-section"
+        assert progression.className == "equations-chapter-navigation"
+        assert progression.children[1].children == label
+        assert progression.children[1].href == href
+
+
+def test_equations_branch_callback_mounts_complete_teaching_chapter():
+    children = _branch_children(equations.EULER_LAGRANGE_BRANCH)
+
+    assert children[0].id == "euler-lagrange-formulation"
+    assert children[-2].className == "references-section"
+    assert children[-1].className == "equations-chapter-navigation"
+    assert _branch_children(equations.OVERVIEW_BRANCH) == []
 
 
 def test_lagrangian_route_mounts_only_euler_lagrange_branch():
@@ -312,8 +353,63 @@ def test_home_and_404_have_chromeless_hero_layouts():
     assert "site-header" not in not_found_classes
     assert "home-hero" in home_classes
     assert "not-found-hero" in not_found_classes
+    assert "home-page" in not_found_classes
+    assert "not-found-message" in not_found_classes
+    assert "not-found-home-link" in not_found_classes
+    assert "not-found-link" not in not_found_classes
+    assert NOT_FOUND_TITLE in not_found_text
+    assert RETURN_HOME_LABEL in not_found_text
     for line in NOT_FOUND_HAIKU_LINES:
         assert line in not_found_text
+
+
+def test_chaos_page_is_a_hero_placeholder_inside_the_shared_shell():
+    page = chaos.layout()
+    header, body, footer = page.children
+    hero = body.children[0]
+    hero_inner = hero.children[0]
+    title = hero_inner.children[0]
+    classes = collect_classnames(page)
+
+    assert page.className == "main-layout chaos-layout"
+    assert hero.className == "home-hero chaos-hero"
+    assert hero.style["backgroundImage"] == (
+        'url("/assets/Heros/double_pend_hero1_green.png")'
+    )
+    assert hero_inner.className == "chaos-hero-inner"
+    assert title.className == "chaos-placeholder-title"
+    assert title.children == CHAOS_UNDER_DEVELOPMENT_TEXT == "Under development"
+    assert collect_text(hero) == ["Under development"]
+    assert header.className == "site-header"
+    assert body.className == "body"
+    assert footer.className == "footer"
+    assert "site-header" in classes
+    assert "site-footer" in classes
+
+
+def test_home_layout_uses_reference_flow_and_link_structure():
+    page = home.layout()
+    hero = page.children[0]
+    hero_inner, further_reading, attribution = hero.children
+
+    assert hero.className == "home-hero"
+    assert [child.className for child in hero_inner.children] == [
+        "home-hero-copy",
+        "home-explore-rail",
+    ]
+    assert further_reading.className == "home-further-reading"
+    assert further_reading.children[0].className == "home-further-reading-inner"
+    assert attribution.className == "home-attribution"
+
+    explore_links = hero_inner.children[1].children[1:]
+    assert [link.children[0].children for link in explore_links] == ["01", "02", "03"]
+
+    attribution_text, attribution_link = attribution.children
+    assert attribution_text.className == "home-attribution-text"
+    assert attribution_link.className == "home-attribution-link"
+    assert attribution_link.href == REPOSITORY_URL
+    assert attribution_link.children.alt == "GitHub repository"
+    assert getattr(attribution, "href", None) is None
 
 
 def test_simulation_callback_registration_is_importable():
@@ -342,9 +438,10 @@ def test_simulation_layout_opens_directly_into_workspace():
     assert SIMULATION_INTERVAL_TITLE in text
     assert text.count(SIMULATION_INTERVAL_TITLE) == 1
     assert RUN_SIMULATION_LABEL in text
-    assert "Run and inspect the simulation" in text
-    assert "Choose the system configuration" in text
-    assert "Use playback, guide toggles, and the time slider" in text
+    assert "Control Centre" in text
+    assert "Run and inspect the simulation" not in text
+    assert "Choose the system configuration" not in text
+    assert "Use playback, guide toggles, and the time slider" not in text
     assert "Show diagnostics" not in text
     assert "Integrator policy" not in text
     assert "Gravity" not in text

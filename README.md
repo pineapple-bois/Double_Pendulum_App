@@ -328,7 +328,6 @@ remain scientific-validation work rather than deployment blockers.
 
 #### Core Libraries
 - `dash`
-- `dash-bootstrap-components`
 
 #### Web Server and Framework
 - `Flask`

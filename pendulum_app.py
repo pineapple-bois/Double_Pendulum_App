@@ -1,6 +1,5 @@
 import dash
 from dash import html, dcc
-import dash_bootstrap_components as dbc
 from app import config
 from app.callbacks.equations import register_equations_callbacks
 from app.callbacks.routing import register_routing_callbacks
@@ -16,14 +15,10 @@ app = dash.Dash(
     external_scripts=[
         # ... (other scripts if any)
         'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js'
-    ],
-    external_stylesheets=[
-        dbc.themes.BOOTSTRAP,
-        "https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
     ]
 )
 server = app.server
-configure_server(server)
+configure_server(server, dash_index_renderer=app.index)
 
 
 # App set up
