@@ -19,6 +19,8 @@ and historical decision support. Production code must not import from
 - `documentation/simulation-runtime/` records Simulation runtime stability
   work: solver policy, solver/result contracts, callback routing/remount
   behavior, loading state, diagnostics, and manual UX inspection.
+- `documentation/restyle.md` records the completed interactive-textbook
+  restyle, preserved application contracts, and dependency cleanup.
 - `development/` records exploratory work, including the
   `development/simulation_workbench/` evidence that led to the current Canvas
   integration. Some detailed evidence directories, including
@@ -39,6 +41,7 @@ and historical decision support. Production code must not import from
 
 - [Simulation Canvas Architecture](simulation-canvas/)
 - [Simulation Runtime Stability](simulation-runtime/)
+- [Restyle Implementation Record](restyle.md)
 - [Development Workflow](development-workflow.md)
 
 ## Current state
@@ -49,7 +52,8 @@ Workbench produced the renderer decision and production promotion evidence, and
 the live Simulation page now uses a Python-built Canvas payload rendered by a
 browser-side Canvas asset.
 
-That state is useful but not polished. Phase 8 established the numerical,
-solver-policy, callback-routing, diagnostics, and manual UX inspection baseline.
-The active roadmap phase is now Phase 9: styling, production layout, and UX
-consolidation without weakening the accepted solver/result contracts.
+Phase 8 established the numerical, solver-policy, callback-routing,
+diagnostics, and manual UX inspection baseline. The subsequent Restyle
+consolidated the production layout and visual language without weakening those
+contracts. The active roadmap phase is now Chaos: establish the mathematical
+and diagnostic framework before implementing the production teaching surface.
