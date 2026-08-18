@@ -309,23 +309,24 @@ Likely owners:
 
 Tasks:
 
-- [ ] Change the active hero reference to
+- [x] Change the active hero reference to
       `double_pend_hero1_green.png`.
-- [ ] Replace the navy overlay with a restrained light wash.
-- [ ] Use charcoal title/body text and green/muted supporting roles.
-- [ ] Restyle the Explore rail as a translucent/light surface.
-- [ ] Align the reading list and attribution with the shared theme.
-- [ ] Keep the current home information architecture.
-- [ ] Retain the navy hero as a rollback asset.
-- [ ] Check focal point and crops at all target viewports.
+- [x] Replace the navy overlay with a restrained light wash.
+- [x] Use charcoal title/body text and green/muted supporting roles.
+- [x] Restyle the Explore rail as a translucent/light surface.
+- [x] Align the reading list and attribution with the shared theme.
+- [x] Keep the current home information architecture.
+- [x] Retain the navy hero as a rollback asset.
+- [x] Check focal point and crops at all target viewports.
 
 Validation:
 
-- [ ] Title and body remain readable over the image.
-- [ ] The pendulum remains visible without competing with the copy.
-- [ ] Explore links have clear hover and focus states.
-- [ ] Reading and attribution remain legible.
-- [ ] No content is clipped at short viewport heights.
+- [x] Title and body remain readable over the image.
+- [x] The pendulum remains visible without competing with the copy.
+- [x] Explore links have clear hover and focus states.
+- [x] Reading and attribution remain legible.
+- [x] No content is clipped at short viewport heights; the 390px layout
+      scrolls normally through the attribution.
 
 Rollback:
 
@@ -670,6 +671,7 @@ has remained stable through the agreed observation period.
 | 2026-08-17 | Keep this plan temporary | Prevent a branch checklist from becoming stale architecture documentation | Restyle closeout |
 | 2026-08-18 | Retain dark shell, home overlays, Canvas, Plotly, markup, and dependencies during Workstream 1 | Keep the token/base slice independently reviewable and respect later workstream ownership | This plan and later workstream commits |
 | 2026-08-18 | Complete the shared-shell restyle in CSS without markup changes | Existing semantic classes and native `details`/`summary` behaviour already provide the required structure and accessibility hooks | Shared shell CSS |
+| 2026-08-18 | Restyle Home with page-scoped CSS and retain the 404's existing treatment | Keep Workstream 3 independently reversible without changing the shared shell, chromeless route structure, or unrelated page presentation | Home CSS and later 404 work if desired |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -688,6 +690,9 @@ rollback.
 | 2026-08-18 | Workstream 2 | Full suite | 174 passed in 8.06s | No failures |
 | 2026-08-18 | Workstream 2 | Home, Equations, and Simulation at 1280px and 390px | Exact 72px header/body alignment; no horizontal overflow or brand/menu collision; menu and active states verified | Home remains deliberately outside the persistent shell; one existing informational `scroll.js` retry log and no new browser warnings/errors |
 | 2026-08-18 | Workstream 2 | Non-home route shell sweep | `/equations`, `/lagrangian`, `/hamiltonian`, `/simulation`, and `/chaos` have no header overlap | Footer remains static/in normal flow on every inspected shell route |
+| 2026-08-18 | Workstream 3 | Focused Home/content/route tests | 39 passed in 0.89s | No failures |
+| 2026-08-18 | Workstream 3 | Full suite | 174 passed in 7.93s | No failures |
+| 2026-08-18 | Workstream 3 | Home at 1280 × 720 and 390 × 720 | Hero, overlay, Explore hover/focus, reading transition, attribution, and complete scroll path verified; no horizontal overflow | Green hero loaded; no new browser warnings/errors; temporary responsive harness removed |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -701,7 +706,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [ ] Pre-change source, deployment, test, and visual baseline recorded.
 - [x] Theme tokens implemented.
 - [x] Shared shell restyled.
-- [x] Green hero activated.
+- [x] Green hero activated and Home page restyled.
 - [ ] Equations restyled.
 - [ ] Simulation HTML/CSS surfaces restyled.
 - [ ] Canvas/plotting palette updated.
