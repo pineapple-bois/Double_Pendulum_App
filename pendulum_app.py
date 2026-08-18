@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import dash
 from dash import html, dcc
 from app import config
@@ -9,13 +11,17 @@ from app.pages.registry import get_layout_for_path
 from app.server_hooks import configure_server
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent
+ASSETS_DIR = PROJECT_ROOT / "assets"
+MATHJAX_VERSION = "3.2.0"
+MATHJAX_ASSET_PATH = f"vendor/mathjax-{MATHJAX_VERSION}/tex-mml-chtml.js"
+MATHJAX_VENDOR_DIR = ASSETS_DIR / "vendor" / f"mathjax-{MATHJAX_VERSION}"
+
+
 app = dash.Dash(
     __name__,
-    suppress_callback_exceptions=True,  # May not be warned about genuine mistakes like typos in component IDs
-    external_scripts=[
-        # ... (other scripts if any)
-        'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.js'
-    ]
+    suppress_callback_exceptions=True,
+    assets_folder=str(ASSETS_DIR),
 )
 server = app.server
 configure_server(server, dash_index_renderer=app.index)
@@ -25,10 +31,10 @@ configure_server(server, dash_index_renderer=app.index)
 app.title = APP_TITLE
 app.index_string = open('assets/custom-header.html', 'r').read()
 app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),  # Tracks the url
+    dcc.Location(id='url', refresh=False),
     dcc.Store(id='update-state', data={'clear': False, 'update': False}),
-    html.Div(id='page-content', children=get_layout_for_path(HOME_PAGE.path)),  # Set initial content
-    dcc.Store(id='trigger-js')  # Hidden div to trigger JS
+    html.Div(id='page-content', children=get_layout_for_path(HOME_PAGE.path)),
+    dcc.Store(id='trigger-js')
 ])
 
 

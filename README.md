@@ -282,6 +282,31 @@ check.
 
 ----
 
+### Vendored MathJax
+
+Equation rendering uses MathJax 3.2.0 from
+`assets/vendor/mathjax-3.2.0/`. Dash discovers the combined
+`tex-mml-chtml.js` entry through the configured root assets directory and emits
+a prefix-aware local asset URL. CommonHTML fonts are served from the matching
+`output/chtml/fonts/woff-v2/` directory. No MathJax runtime request depends on
+an external CDN.
+
+The vendored files come from the official `mathjax@3.2.0` npm package. To
+refresh the pinned distribution:
+
+1. Run `npm pack mathjax@3.2.0 --pack-destination /private/tmp` outside the
+   repository and extract the tarball there.
+2. Copy only `es5/tex-mml-chtml.js`,
+   `es5/output/chtml/fonts/woff-v2/*.woff`, and `LICENSE` into
+   `assets/vendor/mathjax-3.2.0/` with the `es5/` prefix removed.
+3. Run the full tests and browser/network checks.
+
+Do not copy the npm source tree or `node_modules`. Verify that the vendored
+`LICENSE` contains the upstream Apache License 2.0 text and that the runtime and
+fonts are unchanged from the official package.
+
+----
+
 ### Running the Test Suite
 
 Synchronize the locked runtime and development dependencies:
