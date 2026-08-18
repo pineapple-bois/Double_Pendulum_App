@@ -49,13 +49,50 @@ def test_public_http_routes_return_dash_shell(client, pathname):
         "/shell.php",
         "/wp-login.php",
         "/wordpress/wp-includes/wlwmanifest.xml",
-        "/definitely-not-a-route",
+        "/api/private",
+        "/missing.js",
     ],
 )
-def test_unknown_and_scanner_paths_return_404(client, pathname):
+def test_probe_and_non_navigation_paths_return_plain_404(client, pathname):
     response = client.get(pathname, base_url="https://double-pendulum.test")
 
     assert response.status_code == 404
+    assert response.mimetype == "text/plain"
+    assert response.get_data(as_text=True) == "Not Found\n"
+
+
+def test_unknown_navigation_returns_custom_404_dash_shell(client):
+    pathname = "/definitely-not-a-route"
+    response = client.get(pathname, base_url="https://double-pendulum.test")
+
+    assert response.status_code == 404
+    assert response.mimetype == "text/html"
+    assert response.headers["Cache-Control"] == "no-store"
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+    assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
+    assert "Double Pendulum Simulation - Explore Non-Linear Dynamics" in response.get_data(
+        as_text=True
+    )
+
+    callback = client.post(
+        "/_dash-update-component",
+        base_url="https://double-pendulum.test",
+        json={
+            "output": "page-content.children",
+            "outputs": {"id": "page-content", "property": "children"},
+            "inputs": [{"id": "url", "property": "pathname", "value": pathname}],
+            "changedPropIds": ["url.pathname"],
+            "state": [],
+        },
+    )
+
+    assert callback.status_code == 200
+    callback_body = callback.get_data(as_text=True)
+    assert "Path not found" in callback_body
+    assert "not-found-message" in callback_body
+    assert "double_pend_hero1_green.png" in callback_body
+    assert "Return home" in callback_body
 
 
 @pytest.mark.parametrize("pathname", ["/_dash-layout", "/_dash-dependencies"])

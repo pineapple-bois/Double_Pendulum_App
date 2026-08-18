@@ -5,7 +5,7 @@ from dash import dcc
 from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE, REPOSITORY_URL
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
-from app.content.not_found import NOT_FOUND_HAIKU_LINES
+from app.content.not_found import NOT_FOUND_HAIKU_LINES, NOT_FOUND_TITLE, RETURN_HOME_LABEL
 from app.content.routes import APP_TITLE, NAVIGATION_ITEMS, PAGES_BY_PATH, PUBLIC_ROUTE_ITEMS
 from app.content.simulation import (
     INFORMATION_TEXT,
@@ -312,6 +312,12 @@ def test_home_and_404_have_chromeless_hero_layouts():
     assert "site-header" not in not_found_classes
     assert "home-hero" in home_classes
     assert "not-found-hero" in not_found_classes
+    assert "home-page" in not_found_classes
+    assert "not-found-message" in not_found_classes
+    assert "not-found-home-link" in not_found_classes
+    assert "not-found-link" not in not_found_classes
+    assert NOT_FOUND_TITLE in not_found_text
+    assert RETURN_HOME_LABEL in not_found_text
     for line in NOT_FOUND_HAIKU_LINES:
         assert line in not_found_text
 

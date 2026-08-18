@@ -23,7 +23,7 @@ app = dash.Dash(
     ]
 )
 server = app.server
-configure_server(server)
+configure_server(server, dash_index_renderer=app.index)
 
 
 # App set up

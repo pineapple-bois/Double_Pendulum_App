@@ -2409,72 +2409,54 @@ a:hover {
    ========================================================================== */
 
 .not-found-page {
-    background: var(--surface-dark);
-    color: var(--text-on-dark);
+    background: var(--surface-page);
+    color: var(--text-primary);
     min-height: 100vh;
 }
 
-.not-found-hero-inner {
+.home-page .home-hero.not-found-hero {
+    min-height: 100vh;
+}
+
+.home-page .not-found-hero .not-found-hero-inner {
     align-items: center;
     display: flex;
     justify-content: center;
-}
-
-.not-found-hero,
-.not-found-hero .home-hero-inner {
-    min-height: 100vh;
-}
-
-.not-found-hero .home-hero-inner {
-    margin: 0 auto;
-    max-width: var(--site-content-width);
-    padding: clamp(64px, 11vh, 132px) var(--site-gutter) clamp(32px, 6vh, 64px);
-    position: relative;
-    width: 100%;
-    z-index: 1;
+    padding: clamp(56px, 10vh, 112px) 0;
 }
 
 .not-found-panel {
-    max-width: min(860px, calc(100vw - 40px));
-    padding: clamp(20px, 4vw, 40px);
-    text-align: left;
-    width: max-content;
-}
-
-.not-found-haiku {
-    margin: 0 0 28px;
-}
-
-.not-found-haiku-line {
-    color: var(--text-on-dark);
-    font-size: clamp(1.65rem, 2.6vw, 2.85rem);
-    font-weight: 800;
-    line-height: 1.22;
-    margin: 0;
-    white-space: nowrap;
-}
-
-.not-found-actions {
+    align-items: flex-start;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
     display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+    flex-direction: column;
+    gap: 22px;
+    max-width: 860px;
+    padding: 0;
+    text-align: left;
+    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.86);
 }
 
-.not-found-link {
-    border: 1px solid rgba(215, 230, 244, 0.32);
-    border-radius: 8px;
-    color: var(--text-on-dark);
-    font-weight: 800;
-    line-height: 1.2;
-    padding: 11px 14px;
-    text-decoration: none;
+.not-found-message {
+    color: var(--text-primary);
+    font-size: clamp(1.6rem, 3.2vw, 3.05rem);
+    line-height: 1.12;
+    margin: 0;
 }
 
-.not-found-link:hover,
-.not-found-link-primary {
-    background: rgba(215, 230, 244, 0.12);
-    color: var(--text-on-dark);
+.not-found-home-link {
+    color: rgba(0, 99, 93, 0.78);
+    font-size: 1.08rem;
+    font-weight: 760;
     text-decoration: none;
+    text-underline-offset: 4px;
+}
+
+.not-found-home-link:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
 }
 
 .not-found-layout {
@@ -2819,6 +2801,10 @@ a:hover {
         height: auto;
         min-height: auto;
         padding: 24px 20px 28px;
+    }
+
+    .home-page .not-found-hero {
+        background-position: 66% center;
     }
 
     .home-page .home-hero-inner {

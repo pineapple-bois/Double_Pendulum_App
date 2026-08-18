@@ -483,6 +483,54 @@ Rollback:
   first pass and retained navy hero remain available as independent fallback
   points.
 
+#### Workstream 3B — Branded 404 routing and presentation
+
+Status: complete. This correction is a required gate before Workstream 4.
+
+Cause:
+
+- The route registry already returned the custom not-found layout for unknown
+  callback paths, but the Flask `before_request` guard aborted every unknown
+  path matched by Dash's catch-all. A direct browser request therefore received
+  Flask's generic 404 before Dash could mount the custom page.
+
+Tasks:
+
+- [x] Follow the Population Dynamics boundary: return the Dash index with HTTP
+      404 for ordinary missing-page navigation so the route callback can mount
+      the branded layout.
+- [x] Preserve plain-text HTTP 404 responses for scanner, sensitive-file,
+      file-like, API, and non-navigation requests.
+- [x] Set `Cache-Control: no-store` on branded missing-page responses.
+- [x] Align the not-found markup with the Population Dynamics composition: one
+      semantic message, one Return home link, no shared header or footer, and
+      no card surface.
+- [x] Use the green Double Pendulum hero and the shared Home wash, with a
+      subject-specific mobile focal point that keeps the pendulum visible.
+- [x] Add direct-request, callback-layout, scanner-probe, structure, hero, and
+      return-link regression coverage.
+
+Acceptance evidence:
+
+- [x] A direct GET for `/this-page-does-not-exist` returns HTTP 404, loads the
+      Dash runtime, and renders the custom not-found layout.
+- [x] Scanner probes including `.env`, PHP, and WordPress paths remain
+      plain-text HTTP 404 responses.
+- [x] The page is chromeless and contains only the expected Return home link.
+- [x] At 1280 × 720 and 390 × 720, the hero fills the viewport with no
+      horizontal overflow; the transparent message remains readable and the
+      pendulum artwork remains visible.
+- [x] Return home hover and focus-visible states match the shared theme, and
+      activating the link returns successfully to `/`.
+- [x] Browser diagnostics contain no warnings or errors.
+- [x] Focused routing/content tests and the full suite pass.
+
+Rollback:
+
+- Revert the Workstream 3B server-hook, 404 layout/content/style, and test
+  changes together. The prior request guard will restore the generic Flask 404
+  without affecting known public routes.
+
 ### Workstream 4 — Equations and teaching surfaces
 
 Goal: make long-form mathematical content feel like the same textbook without
@@ -824,6 +872,8 @@ has remained stable through the agreed observation period.
 | 2026-08-18 | Restyle Home with page-scoped CSS and retain the 404's existing treatment | Keep Workstream 3 independently reversible without changing the shared shell, chromeless route structure, or unrelated page presentation | Home CSS and later 404 work if desired |
 | 2026-08-18 | Reopen Home as a source-locked correction gate before Workstream 4 | The first pass matched the palette but drifted from the reference type scale, link states, and deliberately unboxed lower content | Home CSS, markup, and tests |
 | 2026-08-18 | Pin Population Dynamics `7c9f1b4` for the Home comparison | Give the correction measurable source ownership and prevent a moving visual target | This plan; durable theme documentation at closeout |
+| 2026-08-18 | Serve the Dash index with HTTP 404 for ordinary unknown navigation while retaining plain 404s for probes | Let the custom callback-owned 404 resolve without weakening scanner and sensitive-path hardening | Server hooks, routing tests, and durable deployment documentation at closeout |
+| 2026-08-18 | Match the Population Dynamics 404 composition with the Double Pendulum hero | Keep the error route recognisably within the interactive-textbook family and subject identity | 404 layout, content, and CSS |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -849,6 +899,9 @@ rollback.
 | 2026-08-18 | Workstream 3A | Focused Home/content/import tests | 40 passed in 1.08s | New structure test covers the reference flow, numbered Explore links, and separate attribution link |
 | 2026-08-18 | Workstream 3A | Full suite | 175 passed in 7.95s | No failures |
 | 2026-08-18 | Workstream 3A | Home at 1280 × 720 and 390 × 720 | All inventoried type sizes matched; hover/focus, overlay, scroll end, and artwork visibility verified; no horizontal overflow | No browser warnings/errors; responsive viewport override reset after inspection |
+| 2026-08-18 | Workstream 3B | Focused server-hook, import/routing, and content tests | 49 passed in 0.94s | Branded navigation 404 plus plain scanner, API, and file-like 404 paths covered |
+| 2026-08-18 | Workstream 3B | Full suite | 177 passed in 8.14s | No failures |
+| 2026-08-18 | Workstream 3B | Unknown route at 1280 × 720 and 390 × 720 | Direct request remained HTTP 404; custom hero, mobile focal point, Return home navigation, hover/focus, and overflow verified | No browser warnings/errors; responsive viewport override reset and local server stopped |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -864,6 +917,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Shared shell restyled.
 - [x] Green hero activated and Home first pass completed.
 - [x] Home reference lock completed before Workstream 4.
+- [x] Branded 404 routing and presentation completed before Workstream 4.
 - [ ] Equations restyled.
 - [ ] Simulation HTML/CSS surfaces restyled.
 - [ ] Canvas/plotting palette updated.

@@ -1,4 +1,6 @@
-from flask import Response, abort, redirect, request
+from urllib.parse import unquote_plus
+
+from flask import Response, make_response, redirect, request
 
 from app import config
 from app.content.routes import PUBLIC_ROUTE_ITEMS
@@ -14,7 +16,39 @@ Allow: /
 """
 
 
-def configure_server(server) -> None:
+def _plain_not_found():
+    return Response("Not Found\n", status=404, mimetype="text/plain")
+
+
+def _is_scanner_probe(path: str, query_string: bytes) -> bool:
+    normalized = path.lower().rstrip("/") or "/"
+    segments = tuple(segment for segment in normalized.split("/") if segment)
+    query = unquote_plus(query_string.decode("utf-8", errors="replace")).lower()
+
+    if any(segment.endswith(".php") for segment in segments):
+        return True
+    if any(
+        segment in {"wp", "wordpress", "wp-includes"}
+        or segment.startswith("wp-")
+        for segment in segments
+    ):
+        return True
+    if "rest_route=/wp/" in query:
+        return True
+    if any(
+        segment in {".git", ".svn", ".hg"}
+        or segment == ".env"
+        or segment.startswith(".env.")
+        for segment in segments
+    ):
+        return True
+    return any(
+        segment in {"composer.json", "package-lock.json"}
+        for segment in segments
+    )
+
+
+def configure_server(server, *, dash_index_renderer=None) -> None:
     """Attach routing, response-security, and optional deployment hooks."""
 
     @server.get("/robots.txt")
@@ -34,14 +68,26 @@ def configure_server(server) -> None:
             return redirect(https_url, code=301)
 
     @server.before_request
-    def reject_unknown_dash_routes():
+    def handle_unknown_dash_routes():
         matched_rule = request.url_rule
         if (
             matched_rule is not None
             and matched_rule.rule == DASH_CATCH_ALL_RULE
             and request.path not in PUBLIC_ROUTE_PATHS
         ):
-            abort(404)
+            final_segment = request.path.rsplit("/", 1)[-1]
+            if (
+                request.method not in {"GET", "HEAD"}
+                or dash_index_renderer is None
+                or _is_scanner_probe(request.path, request.query_string)
+                or request.path.startswith("/api/")
+                or "." in final_segment
+            ):
+                return _plain_not_found()
+
+            response = make_response(dash_index_renderer(), 404)
+            response.headers["Cache-Control"] = "no-store"
+            return response
         return None
 
     @server.after_request
