@@ -781,6 +781,11 @@ Rollback:
 
 ### Workstream 5 — Simulation HTML/CSS surfaces
 
+Status: complete on 2026-08-18. Simulation state contracts and IDs were
+retained; the visual change is confined to Simulation-scoped CSS plus a small
+output-markup simplification, with Canvas and Plotly palette work still
+deferred to Workstream 6.
+
 Goal: apply the theme without disturbing interaction or numerical state.
 
 Likely owners:
@@ -790,26 +795,26 @@ Likely owners:
 
 Tasks:
 
-- [ ] Restyle sidebar surfaces, segmented controls, dropdowns, steppers,
+- [x] Restyle sidebar surfaces, segmented controls, dropdowns, steppers,
       inputs, sliders, Run action, status, playback controls, panels, and
       diagnostics.
-- [ ] Keep established sidebar/output layout and responsive modes.
-- [ ] Preserve all callback-bound and renderer-bound IDs.
-- [ ] Theme generated Dash selectors deliberately.
-- [ ] Verify selected, disabled, hover, focus, invalid, stale, success, and
+- [x] Keep established sidebar/output layout and responsive modes.
+- [x] Preserve all callback-bound and renderer-bound IDs.
+- [x] Theme generated Dash selectors deliberately.
+- [x] Verify selected, disabled, hover, focus, invalid, stale, success, and
       failure states.
-- [ ] Avoid making diagnostics or controls visually ambiguous through excessive
+- [x] Avoid making diagnostics or controls visually ambiguous through excessive
       minimalism.
 
 Validation:
 
-- [ ] Valid simple Euler-Lagrange run.
-- [ ] Valid simple Hamiltonian run.
-- [ ] Representative compound run.
-- [ ] Invalid inputs show validation rather than a server error.
-- [ ] Playback, pause, reset, scrubber, axes, and grid controls work.
-- [ ] Route-away/route-back remount remains stable.
-- [ ] Simulation integration and numerical tests pass.
+- [x] Valid simple Euler-Lagrange run.
+- [x] Valid simple Hamiltonian run.
+- [x] Representative compound run.
+- [x] Invalid inputs show validation rather than a server error.
+- [x] Playback, pause, reset, scrubber, axes, and grid controls work.
+- [x] Route-away/route-back remount remains stable.
+- [x] Simulation integration and numerical tests pass.
 
 Rollback:
 
@@ -1092,6 +1097,8 @@ has remained stable through the agreed observation period.
 | 2026-08-18 | Match the Population Dynamics 404 composition with the Double Pendulum hero | Keep the error route recognisably within the interactive-textbook family and subject identity | 404 layout, content, and CSS |
 | 2026-08-18 | Use the Population Dynamics production teaching hierarchy for Workstream 4: one broad paper, one strong lesson hero, mostly unboxed prose, and boundaries only where they communicate function | This hierarchy, rather than card density, is the repeating visual grammar that makes short and very long Population Dynamics lessons feel like one textbook | Equations layout/components/CSS and durable theme documentation at closeout |
 | 2026-08-18 | Keep the Equations lesson hero single-column and omit an equation-summary panel | The route is a long derivation and its governing equations are too complex to abbreviate honestly without competing with the chapter itself | Equations content/layout and teaching-surface documentation |
+| 2026-08-18 | Complete Workstream 5 through Simulation-scoped CSS without component or renderer changes | Existing semantic classes and generated Dash selectors are sufficient to establish the new control language while preserving every callback and payload contract | Simulation CSS; Canvas and Plotly remain owned by Workstream 6 |
+| 2026-08-18 | Refine the Workstream 5 output into unboxed white figure regions and one compact control centre | Figure cards and explanatory playback copy reduced usable visualisation space and duplicated self-evident control meaning; grouping the existing controls and scrubber requires only non-ID markup movement | Simulation interaction markup/tests and scoped CSS; renderer behaviour remains untouched |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -1125,6 +1132,16 @@ rollback.
 | 2026-08-18 | Workstream 4 | Full suite | 181 passed in 8.24s | No failures |
 | 2026-08-18 | Workstream 4 | `/equations`, `/lagrangian`, and `/hamiltonian` at 1280 × 900 and 390 × 844 | 1203.2px desktop paper; 16px/26.4px prose; single-column green hero; branch/reference/progression states; sharp model images; local MathJax overflow; no document overflow | No browser warnings/errors; responsive viewport override reset and local server stopped |
 | 2026-08-18 | Workstream 4 review refinement | `/hamiltonian` at 1477 × 1149 and 390 × 844 | Broad, justified teaching copy without residual half-width paragraph caps; larger model diagrams on nearly transparent comparison surfaces; the existing major-section divider treatment retained unchanged; no mobile document overflow | Corrected an initially over-narrow 780px trial and removed the subsequently rejected per-block divider; no browser warnings/errors |
+| 2026-08-18 | Workstream 5 prerequisite | Equations hero at 1477 × 1149 and 390 × 844 | Title has no fixed maximum width: one natural line on desktop and content-driven wrapping on mobile, with no overflow | Removed the residual 780px title cap before Simulation work |
+| 2026-08-18 | Workstream 5 | Focused Simulation integration/import and numerical tests | 95 passed in 8.09s | No failures; no markup or ID changes required |
+| 2026-08-18 | Workstream 5 | Full suite | 181 passed in 8.48s | No failures |
+| 2026-08-18 | Workstream 5 | `/simulation` at 1280 × 900 and 390 × 844 | Desktop and established stacked mobile layouts have no horizontal overflow; generated dropdown/input states, focus treatment, sidebar, Run/status, playback, panels, and diagnostics styling verified | Simple Euler–Lagrange, simple Hamiltonian, compound Hamiltonian, stale, invalid, success, playback/pause/reset/scrubber/axes/grid, and route remount exercised; no browser warnings/errors beyond the existing informational `scroll.js` retry log |
+| 2026-08-18 | Workstream 5 review refinement | Focused Simulation interaction/content tests | 45 passed in 5.93s | Copy-removal and control-centre structure covered; callback-bound IDs unchanged |
+| 2026-08-18 | Workstream 5 review refinement | Full suite | 181 passed in 8.03s | No failures |
+| 2026-08-18 | Workstream 5 review refinement | `/simulation` at 1280 × 900 and 390 × 844 | Initial-state value `120` is fully visible and centred; figure and renderer surfaces are white with no borders, radii, or shadows; one restrained 8px control centre contains playback/display controls above the scrubber; no document overflow | Explanatory playback heading/prose removed; Canvas and Plotly drawing palettes unchanged |
+| 2026-08-18 | Workstream 5 responsive correction | Focused Simulation interaction/layout tests | 21 passed in 5.71s | Full-width labelled control centre and retained callback-bound structure covered |
+| 2026-08-18 | Workstream 5 responsive correction | Full suite | 179 passed, 2 failed in 8.32s | Both failures are current Equations-content expectation mismatches unrelated to this slice; all Simulation tests pass and the Equations content was not changed here |
+| 2026-08-18 | Workstream 5 responsive correction | `/simulation` at 800 × 900 and 600 × 900 | The 980px grid now names the existing `controls` area rather than the removed `scrubber` area; Motion/Projection canvases measure 718 × 718 and 568 × 568 respectively; control centre spans the full figure width with left-aligned controls; no document overflow | Presentation-only grid correction; renderer and payload behaviour unchanged |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -1143,7 +1160,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Branded 404 routing and presentation completed before Workstream 4.
 - [x] Workstream 4 Population Dynamics teaching-surface inventory recorded.
 - [x] Equations restyled.
-- [ ] Simulation HTML/CSS surfaces restyled.
+- [x] Simulation HTML/CSS surfaces restyled.
 - [ ] Canvas/plotting palette updated.
 - [ ] Styling dependencies audited.
 - [ ] Reusable theme boundary documented.

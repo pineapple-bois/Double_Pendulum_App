@@ -110,12 +110,6 @@ def build_canvas_workspace_placeholder():
         className="simulation-panel canvas-inspection-workspace",
         children=[
             html.Div(
-                className="simulation-output-header-row",
-                children=[
-                    build_playback_shell(),
-                ],
-            ),
-            html.Div(
                 className="canvas-workspace-grid",
                 children=[
                     _canvas_panel(
@@ -132,7 +126,17 @@ def build_canvas_workspace_placeholder():
                         "Theta-theta angular state projection view",
                         "canvas-panel-projection",
                     ),
-                    build_scrubber_shell(),
+                    html.Div(
+                        className="simulation-control-centre",
+                        children=[
+                            html.H3(
+                                "Control Centre",
+                                className="simulation-control-centre-title",
+                            ),
+                            build_playback_shell(),
+                            build_scrubber_shell(),
+                        ],
+                    ),
                     _canvas_panel(
                         "Angular Displacement",
                         CANVAS_TIME_SERIES_PLACEHOLDER_ID,
@@ -153,22 +157,6 @@ def build_playback_shell():
             "simulation-playback-header"
         ),
         children=[
-            html.Div(
-                className="playback-panel-copy",
-                children=[
-                    html.H3("Run and inspect the simulation", className="simulation-panel-heading playback-panel-heading"),
-                    html.P(
-                        "Choose the system configuration, then run the solver to prepare playback, "
-                        "state projection, and time-series plots.",
-                        className="playback-panel-text",
-                    ),
-                    html.P(
-                        "Use playback, guide toggles, and the time slider to inspect the computed "
-                        "trajectory across the linked visualisations.",
-                        className="playback-panel-text",
-                    ),
-                ],
-            ),
             html.Div(
                 className="playback-controls-row playback-panel-controls-row",
                 children=[

@@ -1116,7 +1116,6 @@ a:hover {
     font-weight: 700;
     line-height: 1.12;
     margin: 0 0 14px;
-    max-width: 780px;
 }
 
 .equations-hero-text p,
@@ -1478,7 +1477,7 @@ a:hover {
     align-items: stretch;
     background: var(--surface-panel);
     border: 1px solid var(--border-soft);
-    box-shadow: 0 18px 42px rgba(10, 31, 82, 0.06);
+    box-shadow: var(--shadow-panel);
     box-sizing: border-box;
     display: grid;
     grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
@@ -1499,7 +1498,7 @@ a:hover {
 
 .simulation-layout .side-bar {
     align-self: start;
-    background: var(--surface-panel);
+    background: var(--surface-panel-subtle);
     border-right: 1px solid var(--border-soft);
     box-sizing: border-box;
     display: flex;
@@ -1515,7 +1514,7 @@ a:hover {
 }
 
 .simulation-layout .inputs {
-    background: var(--surface-panel);
+    background: var(--surface-panel-subtle);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -1534,6 +1533,7 @@ a:hover {
 
 .simulation-layout .input-group {
     background: transparent;
+    border-bottom: 1px solid var(--border-soft);
     flex-grow: 0;
     gap: var(--simulation-sidebar-internal-gap);
     min-width: 0;
@@ -1555,7 +1555,7 @@ a:hover {
     border-bottom: 0;
     border-top: 1px solid var(--border-soft);
     bottom: 0;
-    box-shadow: 0 -8px 18px rgba(13, 41, 90, 0.04);
+    box-shadow: 0 -8px 20px rgba(31, 41, 51, 0.04);
     gap: var(--simulation-sidebar-internal-gap);
     margin-top: auto;
     padding: 12px var(--sidebar-x-padding) 16px;
@@ -1570,7 +1570,16 @@ a:hover {
 }
 
 .simulation-layout .inputs-title {
+    font-size: var(--font-size-medium);
+    font-weight: 700;
     margin: 0;
+}
+
+.simulation-layout .label,
+.simulation-layout .input-subtext {
+    font-size: var(--font-size-xsmall);
+    font-weight: 650;
+    line-height: 1.35;
 }
 
 .simulation-layout .button,
@@ -1581,17 +1590,27 @@ a:hover {
     color: var(--text-primary);
     font-weight: 700;
     min-height: 34px;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .simulation-layout .button:hover,
 .simulation-layout .button-show:hover {
-    background-color: var(--surface-panel-subtle);
+    background-color: var(--accent-soft);
     border-color: var(--link-color);
-    color: var(--link-color);
+    color: var(--accent-hover);
+}
+
+.simulation-layout .button:focus-visible,
+.simulation-layout .button-show:focus-visible {
+    border-color: var(--focus-outline);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 2px;
 }
 
 .simulation-layout .input,
 .simulation-layout .parameters-input .time-vector-input {
+    background: var(--surface-panel);
     border: 1px solid var(--border-control);
     border-radius: 8px;
     box-sizing: border-box;
@@ -1599,7 +1618,87 @@ a:hover {
     max-width: 100%;
     min-height: 34px;
     min-width: 0;
+    margin: 0;
+    padding: 8px 10px;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
     width: 100%;
+}
+
+.simulation-layout .input:hover {
+    border-color: var(--border-emphasis);
+}
+
+.simulation-layout .input:focus-visible {
+    border-color: var(--focus-outline);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 1px;
+}
+
+.simulation-layout .input:invalid {
+    border-color: var(--color-danger);
+}
+
+.simulation-layout .dash-input.input {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    overflow: hidden;
+    padding: 0;
+}
+
+.simulation-layout .dash-input.input:focus-within {
+    border-color: var(--focus-outline);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 1px;
+}
+
+.simulation-layout .dash-input.input:has(.dash-input-element:invalid) {
+    border-color: var(--color-danger);
+}
+
+.simulation-layout .dash-input-element {
+    background: var(--surface-panel);
+    border: 0;
+    box-sizing: border-box;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-size-small);
+    min-width: 0;
+    outline: 0;
+    padding: 8px 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.simulation-layout .dash-input-stepper {
+    background: var(--surface-panel);
+    border: 0;
+    border-left: 1px solid var(--border-soft);
+    color: var(--text-primary);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--font-size-medium);
+    font-weight: 700;
+    min-width: 0;
+    padding: 0;
+}
+
+.simulation-layout .dash-stepper-decrement {
+    border-left: 0;
+    border-right: 1px solid var(--border-soft);
+}
+
+.simulation-layout .dash-input-stepper:hover,
+.simulation-layout .dash-input-stepper:focus-visible {
+    background: var(--accent-soft);
+    color: var(--accent-color);
+}
+
+.simulation-layout .dash-input-stepper:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--focus-outline);
+    outline: 0;
 }
 
 .simulation-layout .split-inputs {
@@ -1625,7 +1724,7 @@ a:hover {
     display: grid;
     grid-template-columns: 44px minmax(0, 1fr) 44px;
     margin-bottom: 0;
-    min-height: 40px;
+    min-height: 42px;
     min-width: 0;
     overflow: hidden;
     width: 100%;
@@ -1639,7 +1738,7 @@ a:hover {
     cursor: pointer;
     display: inline-flex;
     font-size: var(--font-size-large);
-    font-weight: 800;
+    font-weight: 700;
     justify-content: center;
     line-height: 1;
     min-width: 0;
@@ -1648,9 +1747,13 @@ a:hover {
 
 .simulation-layout .parameter-stepper-button:hover,
 .simulation-layout .parameter-stepper-button:focus-visible {
-    background: var(--surface-panel-subtle);
+    background: var(--accent-soft);
     color: var(--accent-color);
-    outline: none;
+}
+
+.simulation-layout .parameter-stepper-button:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--focus-outline);
+    outline: 0;
 }
 
 .simulation-layout .parameter-stepper-decrement {
@@ -1671,6 +1774,16 @@ a:hover {
     min-height: 100%;
     padding: 0 10px;
     text-align: center;
+}
+
+.simulation-layout .parameter-stepper-input.dash-input {
+    display: block;
+    overflow: hidden;
+}
+
+.simulation-layout .parameter-stepper-input .dash-input-element {
+    height: 100%;
+    padding: 8px 4px;
 }
 
 .simulation-layout .parameter-stepper-input::-webkit-inner-spin-button,
@@ -1698,12 +1811,14 @@ a:hover {
     color: var(--text-primary);
     display: inline-flex;
     font-size: var(--font-size-small);
-    font-weight: 800;
+    cursor: pointer;
+    font-weight: 700;
     gap: 6px;
     justify-content: center;
     margin: 0;
     min-height: 34px;
     padding: 6px 8px;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .simulation-layout .binary-choice input {
@@ -1716,13 +1831,21 @@ a:hover {
 }
 
 .simulation-layout .binary-choice label:has(input:checked) {
-    background: var(--color-blue-200);
-    border-color: var(--color-blue-200);
-    color: var(--color-navy-950);
+    background: var(--accent-soft);
+    border-color: var(--accent-color);
+    color: var(--accent-hover);
+}
+
+.simulation-layout .binary-choice label:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-color);
+    color: var(--accent-hover);
 }
 
 .simulation-layout .binary-choice label:has(input:focus-visible) {
-    box-shadow: 0 0 0 4px rgba(36, 74, 125, 0.18);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 2px;
 }
 
 .simulation-layout .quiet-gravity-dropdown {
@@ -1770,7 +1893,7 @@ a:hover {
     cursor: pointer;
     display: inline-flex;
     font-size: var(--font-size-small);
-    font-weight: 800;
+    font-weight: 700;
     height: 24px;
     justify-content: center;
     list-style: none;
@@ -1784,16 +1907,22 @@ a:hover {
 
 .simulation-layout .initial-state-help-summary:hover,
 .simulation-layout .initial-state-help[open] .initial-state-help-summary {
-    background: var(--surface-panel-subtle);
+    background: var(--accent-soft);
     border-color: var(--link-color);
     color: var(--link-color);
+}
+
+.simulation-layout .initial-state-help-summary:focus-visible {
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 2px;
 }
 
 .simulation-layout .initial-state-help-panel {
     background: var(--surface-panel);
     border: 1px solid var(--border-soft);
     border-radius: 8px;
-    box-shadow: 0 14px 32px rgba(13, 41, 90, 0.16);
+    box-shadow: var(--shadow-floating);
     box-sizing: border-box;
     color: var(--text-secondary);
     font-size: var(--font-size-small);
@@ -1840,7 +1969,7 @@ a:hover {
 .simulation-layout .slider-label {
     display: block;
     font-size: var(--font-size-small);
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 4px;
 }
 
@@ -1874,7 +2003,7 @@ a:hover {
 }
 
 .simulation-layout .simulation-slider .dash-slider-track {
-    background-color: var(--color-blue-200);
+    background-color: var(--accent-soft);
     height: 5px;
 }
 
@@ -1892,7 +2021,7 @@ a:hover {
 .simulation-layout .simulation-slider .dash-slider-thumb:focus-visible,
 .simulation-layout .simulation-slider .dash-slider-thumb:hover {
     border-color: var(--accent-hover);
-    box-shadow: 0 0 0 4px rgba(36, 74, 125, 0.16);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .simulation-layout .simulation-slider .dash-slider-mark {
@@ -1902,7 +2031,7 @@ a:hover {
 }
 
 .simulation-layout .simulation-slider .rc-slider-rail {
-    background-color: var(--color-blue-200);
+    background-color: var(--accent-soft);
     height: 5px;
 }
 
@@ -1921,7 +2050,7 @@ a:hover {
 .simulation-layout .simulation-slider .rc-slider-handle:focus,
 .simulation-layout .simulation-slider .rc-slider-handle:hover {
     border-color: var(--accent-hover);
-    box-shadow: 0 0 0 4px rgba(36, 74, 125, 0.16);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .simulation-layout .simulation-slider .rc-slider-mark {
@@ -1943,11 +2072,87 @@ a:hover {
 }
 
 .simulation-layout .dropdown {
+    background: var(--surface-panel);
+    border: 1px solid var(--border-control);
     border-radius: 8px;
     box-sizing: border-box;
     color: var(--text-primary);
+    font: inherit;
+    min-height: 40px;
     max-width: 100%;
     min-width: 0;
+    text-align: left;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.simulation-layout .dash-dropdown-grid-container {
+    box-sizing: border-box;
+    gap: 10px;
+    min-height: 38px;
+    padding: 8px 10px;
+}
+
+.simulation-layout .dash-dropdown-value {
+    color: var(--text-primary);
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    line-height: 1.35;
+    min-width: 0;
+}
+
+.simulation-layout .dash-dropdown-trigger-icon {
+    color: var(--text-muted);
+}
+
+.simulation-layout .dash-dropdown:hover,
+.simulation-layout .dash-dropdown[data-state="open"] {
+    background: var(--surface-panel);
+    border-color: var(--accent-color);
+}
+
+.simulation-layout .dash-dropdown:focus-visible {
+    border-color: var(--focus-outline);
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 1px;
+}
+
+.simulation-layout .dash-dropdown-content {
+    background: var(--surface-panel);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-floating);
+    box-sizing: border-box;
+    margin-top: 4px;
+    overflow: hidden;
+    padding: 4px;
+    z-index: 20;
+}
+
+.simulation-layout .dash-dropdown-options {
+    display: grid;
+    gap: 2px;
+}
+
+.simulation-layout .dash-dropdown-option {
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: var(--font-size-small);
+    line-height: 1.35;
+    padding: 8px 10px;
+}
+
+.simulation-layout .dash-dropdown-option:hover,
+.simulation-layout .dash-dropdown-option.selected {
+    background: var(--accent-soft);
+    border-color: transparent;
+    box-shadow: none;
+    color: var(--accent-hover) !important;
+}
+
+.simulation-layout .dash-dropdown-option input {
+    accent-color: var(--accent-color);
 }
 
 .simulation-output-workspace {
@@ -1965,7 +2170,7 @@ a:hover {
     background: var(--surface-panel);
     box-sizing: border-box;
     display: grid;
-    gap: 28px;
+    gap: 24px;
     min-width: 0;
     padding: var(--simulation-output-top-padding) var(--simulation-output-x-padding) 32px;
 }
@@ -1982,10 +2187,10 @@ a:hover {
 }
 
 .simulation-status-message {
-    background: var(--surface-panel);
+    background: var(--surface-muted);
     border: 1px solid var(--border-soft);
     border-left: 5px solid var(--accent-color);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     box-sizing: border-box;
     color: var(--text-primary);
     font-size: var(--font-size-medium);
@@ -1994,14 +2199,17 @@ a:hover {
 }
 
 .simulation-status-success {
+    background: var(--color-success-light);
     border-left-color: var(--color-success);
 }
 
 .simulation-status-stale {
+    background: var(--color-warning-light);
     border-left-color: var(--color-warning);
 }
 
 .simulation-status-failed {
+    background: var(--color-danger-light);
     border-left-color: var(--color-danger);
 }
 
@@ -2017,7 +2225,8 @@ a:hover {
 .simulation-panel {
     background: var(--surface-panel);
     border: 1px solid var(--border-soft);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-panel);
     box-sizing: border-box;
     color: var(--text-primary);
     min-width: 0;
@@ -2029,6 +2238,7 @@ a:hover {
     color: var(--text-primary);
     letter-spacing: 0;
     margin: 0 0 10px;
+    font-weight: 700;
 }
 
 .simulation-panel-heading {
@@ -2044,6 +2254,7 @@ a:hover {
     color: var(--text-secondary);
     font-size: var(--font-size-small);
     line-height: 1.45;
+    font-weight: 400;
 }
 
 .simulation-panel ul {
@@ -2051,23 +2262,12 @@ a:hover {
     padding-left: 18px;
 }
 
-.simulation-output-header-row {
-    align-items: center;
-    display: block;
-    margin: 0 0 24px;
-    min-width: 0;
-}
-
-.simulation-output-header-row .simulation-panel-heading {
-    margin: 0;
-}
-
 .canvas-workspace-grid {
     display: grid;
-    gap: 28px;
+    gap: 20px;
     grid-template-areas:
         "motion projection"
-        "scrubber scrubber"
+        "controls controls"
         "time time";
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     min-width: 0;
@@ -2085,13 +2285,11 @@ a:hover {
     grid-area: time;
 }
 
-.canvas-time-selector {
-    grid-area: scrubber;
-}
-
 .canvas-placeholder-panel {
     background: var(--surface-panel);
     border: 0;
+    border-radius: 0;
+    box-shadow: none;
     min-width: 0;
     padding: 0;
 }
@@ -2124,6 +2322,7 @@ a:hover {
 .canvas-renderer-panel {
     background: var(--surface-panel);
     border: 0;
+    border-radius: 0;
     min-height: 0;
     min-width: 0;
     overflow: hidden;
@@ -2149,14 +2348,25 @@ a:hover {
     height: 300px;
 }
 
-.simulation-interaction-shell[data-result-state="stale"] .canvas-renderer-panel {
-    border-color: var(--color-warning);
+.simulation-control-centre {
+    background: var(--surface-panel-subtle);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    box-sizing: border-box;
+    display: grid;
+    gap: 12px;
+    grid-area: controls;
+    justify-self: stretch;
+    padding: 14px 16px;
+    width: 100%;
 }
 
-.simulation-interaction-shell[data-result-state="failed"] .canvas-renderer-panel,
-.simulation-interaction-shell[data-result-state="cleared"] .canvas-renderer-panel,
-.simulation-interaction-shell[data-result-state="empty"] .canvas-renderer-panel {
-    border-color: var(--border-soft);
+.simulation-control-centre-title {
+    color: var(--text-primary);
+    font-size: var(--font-size-medium);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0;
 }
 
 .playback-shell {
@@ -2164,9 +2374,10 @@ a:hover {
     background: transparent;
     border: 0;
     border-radius: 0;
+    box-shadow: none;
     box-sizing: border-box;
     display: grid;
-    gap: 14px;
+    gap: 0;
     grid-template-columns: 1fr;
     margin: 0;
     min-width: 0;
@@ -2184,30 +2395,12 @@ a:hover {
     grid-template-columns: auto;
 }
 
-.playback-panel-copy {
-    display: grid;
-    gap: 6px;
-    max-width: 920px;
-    min-width: 0;
-}
-
-.playback-panel-heading {
-    margin: 0;
-}
-
-.playback-panel-text {
-    color: var(--text-secondary);
-    font-size: var(--font-size-small);
-    font-weight: 650;
-    line-height: 1.42;
-    margin: 0;
-}
-
 .playback-panel-controls-row {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
     gap: 12px 18px;
+    justify-content: flex-start;
     min-width: 0;
 }
 
@@ -2226,19 +2419,22 @@ a:hover {
 }
 
 .playback-controls .button:disabled {
+    background: var(--surface-muted);
+    border-color: var(--border-soft);
+    color: var(--text-muted);
     cursor: not-allowed;
-    opacity: 0.56;
+    opacity: 0.72;
 }
 
 .simulation-frame-indicator {
-    background: transparent;
-    border: 0;
-    border-radius: 0;
+    background: var(--accent-soft);
+    border: 1px solid rgba(0, 99, 93, 0.18);
+    border-radius: 4px;
     color: var(--text-secondary);
     font-size: var(--font-size-small);
-    font-weight: 800;
-    min-height: auto;
-    padding: 0;
+    font-weight: 700;
+    min-height: 32px;
+    padding: 6px 10px;
     white-space: nowrap;
 }
 
@@ -2246,13 +2442,46 @@ a:hover {
     align-items: center;
     display: grid;
     gap: 10px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
     margin: 0;
     padding: 0;
 }
 
 .simulation-scrubber {
+    appearance: none;
     accent-color: var(--accent-color);
+    background: var(--border-soft);
+    border-radius: var(--radius-pill);
+    height: 6px;
     width: 100%;
+}
+
+.simulation-scrubber::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--surface-panel);
+    border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    box-shadow: var(--shadow-panel);
+    height: 18px;
+    width: 18px;
+}
+
+.simulation-scrubber::-moz-range-thumb {
+    background: var(--surface-panel);
+    border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    box-shadow: var(--shadow-panel);
+    height: 16px;
+    width: 16px;
+}
+
+.simulation-scrubber:focus-visible {
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 3px;
 }
 
 .simulation-scrubber:disabled {
@@ -2290,7 +2519,12 @@ a:hover {
     display: inline-flex;
     font-size: var(--font-size-small);
     gap: 6px;
+    background: var(--surface-panel);
+    border: 1px solid var(--border-control);
+    border-radius: 4px;
     margin-right: 0;
+    min-height: 32px;
+    padding: 5px 10px;
 }
 
 .display-options-toggle input {
@@ -2299,6 +2533,7 @@ a:hover {
 
 .canvas-inspection-workspace {
     border: 0;
+    box-shadow: none;
     padding: 0;
 }
 
@@ -2318,7 +2553,7 @@ a:hover {
     color: var(--text-primary);
     cursor: pointer;
     font-size: var(--font-size-small);
-    font-weight: 800;
+    font-weight: 700;
     list-style: none;
     min-height: 34px;
     padding: 8px 12px;
@@ -2331,19 +2566,25 @@ a:hover {
 }
 
 .simulation-diagnostics-summary:hover {
-    background: var(--surface-panel-subtle);
+    background: var(--accent-soft);
     border-color: var(--link-color);
     color: var(--link-color);
 }
 
 .simulation-diagnostics-toggle[open] .simulation-diagnostics-summary {
-    background: var(--surface-panel-subtle);
+    background: var(--accent-soft);
     border-color: var(--link-color);
     color: var(--link-color);
 }
 
+.simulation-diagnostics-summary:focus-visible {
+    box-shadow: 0 0 0 3px var(--focus-ring);
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 2px;
+}
+
 .simulation-diagnostics-toggle .simulation-summary-diagnostics {
-    background: var(--surface-panel);
+    background: var(--surface-panel-subtle);
     border-top: 1px solid var(--border-soft);
     margin-top: 2px;
     padding: 14px;
@@ -2378,7 +2619,7 @@ a:hover {
 
 .simulation-layout .graph-container {
     border: 1px solid var(--border-soft);
-    box-shadow: 0 18px 45px rgba(4, 24, 67, 0.08);
+    box-shadow: var(--shadow-panel);
 }
 
 .simulation-layout .graph-title {
@@ -2387,12 +2628,12 @@ a:hover {
 }
 
 .simulation-layout .run-simulation-button {
-    background-color: var(--color-blue-600);
-    border: 1px solid var(--color-navy-950);
-    border-radius: 8px !important;
+    background-color: var(--accent-color);
+    border: 1px solid var(--accent-hover);
+    border-radius: var(--radius-sm) !important;
     color: var(--text-on-dark);
     font-size: var(--font-size-medium);
-    font-weight: 800;
+    font-weight: 700;
     height: auto;
     letter-spacing: 0;
     margin: 0;
@@ -2402,29 +2643,30 @@ a:hover {
 }
 
 .simulation-layout .run-simulation-button:hover {
-    background-color: var(--color-blue-600);
-    border-color: var(--color-navy-950);
-    box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.12), 0 8px 18px rgba(4, 24, 67, 0.14);
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: 0 6px 14px rgba(0, 99, 93, 0.18);
     color: var(--text-on-dark);
 }
 
 .simulation-layout .run-simulation-button:focus-visible {
-    background-color: var(--color-blue-600);
-    border-color: var(--color-navy-950);
-    box-shadow: 0 0 0 3px rgba(197, 217, 242, 0.85), 0 8px 18px rgba(4, 24, 67, 0.18);
+    background-color: var(--accent-color);
+    border-color: var(--focus-outline);
+    box-shadow: 0 0 0 3px var(--focus-ring);
     color: var(--text-on-dark);
-    outline: none;
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 2px;
 }
 
 .simulation-run-validation-message {
-    background: transparent;
-    border: 0;
-    border-left: 3px solid var(--text-muted);
-    border-radius: 0;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-soft);
+    border-left: 4px solid var(--text-muted);
+    border-radius: var(--radius-sm);
     color: var(--text-primary);
     font-size: var(--font-size-small);
     line-height: 1.35;
-    padding: 2px 0 2px 10px;
+    padding: 9px 10px;
 }
 
 .simulation-run-validation-ready {
@@ -2432,15 +2674,18 @@ a:hover {
 }
 
 .simulation-run-validation-success {
+    background: var(--color-success-light);
     border-left-color: var(--color-success);
 }
 
 .simulation-run-validation-stale {
+    background: var(--color-warning-light);
     border-left-color: var(--color-warning);
 }
 
 .simulation-run-validation-invalid,
 .simulation-run-validation-failed {
+    background: var(--color-danger-light);
     border-left-color: var(--color-danger);
 }
 
@@ -2597,10 +2842,6 @@ a:hover {
    ========================================================================== */
 
 @media (max-width: 1180px) {
-    .simulation-output-header-row {
-        grid-template-columns: 1fr;
-    }
-
     .playback-shell {
         grid-template-columns: 1fr;
     }
@@ -2623,7 +2864,7 @@ a:hover {
         grid-template-areas:
             "motion"
             "projection"
-            "scrubber"
+            "controls"
             "time";
     }
 
@@ -3151,12 +3392,8 @@ a:hover {
         padding: 20px;
     }
 
-    .simulation-output-header-row {
-        margin: 0 0 22px;
-    }
-
-    .playback-shell {
-        padding: 0;
+    .simulation-control-centre {
+        padding: 18px;
     }
 
     .canvas-workspace-grid {
@@ -3211,21 +3448,21 @@ a:hover {
         padding: 16px;
     }
 
-    .simulation-output-header-row {
-        margin: 0 0 18px;
-    }
-
     .canvas-workspace-grid {
         grid-template-areas:
             "motion"
             "projection"
-            "scrubber"
+            "controls"
             "time";
         grid-template-columns: 1fr;
         gap: 18px;
     }
 
-    .playback-shell {
+    .simulation-control-centre {
+        padding: 16px;
+    }
+
+    .canvas-placeholder-panel {
         padding: 0;
     }
 

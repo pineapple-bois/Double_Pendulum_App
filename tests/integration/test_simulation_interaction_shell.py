@@ -276,17 +276,17 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert hidden_runtime_targets is not None
     assert find_by_id(hidden_runtime_targets, STATUS_MESSAGE_ID) is not None
     assert "Show diagnostics" not in text_from(run_dock)
-    assert "Run and inspect the simulation" in text_from(playback_strip)
-    assert "Choose the system configuration" in text_from(playback_strip)
-    assert "Use playback, guide toggles, and the time slider" in text_from(playback_strip)
+    assert "Run and inspect the simulation" not in text_from(playback_strip)
+    assert "Choose the system configuration" not in text_from(playback_strip)
+    assert "Use playback, guide toggles, and the time slider" not in text_from(playback_strip)
     assert {
         "canvas-panel-motion",
         "canvas-panel-projection",
         "canvas-panel-time",
-        "simulation-output-header-row",
+        "simulation-control-centre",
+        "simulation-control-centre-title",
         "simulation-playback-strip",
         "simulation-playback-header",
-        "playback-panel-copy",
         "playback-panel-controls-row",
         "canvas-time-selector",
         "playback-control-row",
@@ -325,6 +325,7 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     scrubber = find_by_id(layout, SCRUBBER_ID)
     display_options = find_by_id(layout, DISPLAY_OPTIONS_ID)
     time_selector = find_by_class(layout, "canvas-time-selector")
+    control_centre = find_by_class(layout, "simulation-control-centre")
     playback_display = find_by_class(layout, "playback-header-display")
     system_column = find_by_class(layout, "simulation-config-system-column")
     state_column = find_by_class(layout, "simulation-config-state-column")
@@ -366,6 +367,9 @@ def test_simulation_layout_includes_canvas_targets_and_local_controls():
     assert find_by_id(system_column, "init_cond_theta1") is None
     assert find_by_id(state_column, "param_l1") is None
     assert find_by_id(time_selector, SCRUBBER_ID) is not None
+    assert "Control Centre" in text_from(control_centre)
+    assert find_by_class(control_centre, "simulation-playback-strip") is playback_strip
+    assert find_by_class(control_centre, "canvas-time-selector") is time_selector
     assert find_by_id(playback_display, DISPLAY_OPTIONS_ID) is not None
     assert find_by_id(playback_strip, FRAME_INDICATOR_ID) is not None
     assert isinstance(initial_state_help, html.Details)
