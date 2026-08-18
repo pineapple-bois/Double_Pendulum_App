@@ -93,10 +93,18 @@ def test_shell_components_return_dash_components():
 def test_navigation_and_footer_components_return_dash_components():
     navbar = get_navbar("/simulation")
     footer = get_footer_section()
+    attribution, github_link = footer.children
+
     assert_dash_component(navbar)
     assert "site-nav-toggle" in collect_classnames(navbar)
     assert_dash_component(footer)
     assert {"site-footer", "site-footer-link", "site-footer-icon"} <= collect_classnames(footer)
+    assert github_link.className == "site-footer-link"
+    assert github_link.children.src == "/assets/Images/github-mark.png"
+    assert github_link.children.alt == "GitHub"
+    assert getattr(github_link, "aria-label") == "GitHub repository"
+    assert attribution.className == "site-footer-label"
+    assert attribution.children == "pineapple-bois 2026"
     assert "submit-val" not in collect_component_ids(footer)
     assert "run-simulation-group" not in collect_classnames(footer)
 

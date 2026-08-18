@@ -289,36 +289,34 @@ a:hover {
     box-sizing: border-box;
     color: var(--footer-text);
     display: flex;
-    justify-content: flex-end;
+    gap: 10px;
+    justify-content: flex-start;
     min-height: var(--footer-height);
     padding: 0 var(--site-gutter);
 }
 
 .site-footer-link {
     align-items: center;
-    border-radius: var(--radius-sm);
-    color: var(--accent-color);
     display: inline-flex;
-    font-size: var(--font-size-small);
-    gap: 8px;
-    font-family: var(--font-family-sans);
-    font-weight: 700;
-    letter-spacing: 0;
-    padding: var(--space-1) var(--space-2);
+    opacity: 0.64;
     text-decoration: none;
 }
 
 .site-footer-link:hover {
-    background: var(--accent-soft);
-    color: var(--accent-hover);
-    text-decoration: underline;
+    opacity: 1;
 }
 
 .site-footer-icon {
+    display: block;
     filter: none;
     height: 20px;
-    opacity: 0.78;
     width: 20px;
+}
+
+.site-footer-label {
+    color: var(--footer-text);
+    font-size: var(--font-size-small);
+    font-weight: 700;
 }
 
 .site-header {
@@ -429,7 +427,7 @@ a:hover {
 .site-nav-toggle:hover,
 .site-nav-menu[open] > .site-nav-toggle {
     background: var(--accent-soft);
-    border-color: var(--border-control);
+    border-color: transparent;
 }
 
 .site-nav-toggle-bar {

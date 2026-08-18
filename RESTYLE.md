@@ -533,35 +533,246 @@ Rollback:
 
 ### Workstream 4 — Equations and teaching surfaces
 
-Goal: make long-form mathematical content feel like the same textbook without
-reducing readability.
+Status: Population Dynamics reference inventory complete on 2026-08-18;
+Double Pendulum implementation pending.
+
+Goal: make the Equations routes read as chapters from the same interactive
+textbook as Population Dynamics without weakening the mathematical hierarchy,
+route behaviour, or long-form readability.
+
+#### Reference baseline and scope
+
+The reference remains the clean local Population Dynamics checkout on `main`
+at `7c9f1b415ca661a8c4214de6402b551a1e6d1845`. The deployed production pages
+were also inspected at `population-dynamics.net` on 2026-08-18 to distinguish
+the production teaching presentation from development-mode fallback styles.
+
+Representative reference pages:
+
+- `/continuous` for a chapter landing page with title, synopsis, mathematical
+  hero, prose, and an Explore rail;
+- `/continuous/logistic-growth` for a compact model lesson with one hero,
+  one interactive band, figures, interpretation, and chapter navigation;
+- `/discrete/periodicity` for a long mathematical chapter which alternates
+  prose, display equations, a disclosure, interactive bands, figures, and a
+  final hand-off without losing its reading rhythm;
+- the Interacting and Probabilistic page sources for variants of the same
+  teaching grammar rather than one-off layout rules.
+
+Reference owners inspected:
+
+| Concern | Population Dynamics owner | Double Pendulum owner |
+| --- | --- | --- |
+| App paper and page frame | `app/components/layout.py`, `assets/styles.css` | `app/pages/equations.py`, `assets/styles.css` |
+| Lesson title, hero, equation summary, controls, plots, and chapter hand-off | `app/components/model_page.py` | `app/pages/equations.py`, `app/components/derivation.py` |
+| Landing-page prose and Explore patterns | `app/pages/continuous/index.py`, `app/pages/discrete/index.py`, `app/pages/interacting/index.py` | No direct equivalent; useful as a teaching-pattern reference only |
+| Long-form theory and disclosure patterns | `app/pages/discrete/periodicity.py`, related page-specific CSS | `app/content/equations.py`, `app/components/derivation.py` |
+| Markdown and MathJax rhythm | `.math-markdown` and equation-panel rules | `.equation-markdown` and retained legacy Markdown routes |
+| References and onward progression | `.model-further-reading`, `chapter_navigation()` | `app/components/references.py`, branch controls, legacy reference data |
+| Structural regression coverage | routing and section-progression tests | `tests/unit/test_app_content.py`, Equations callback tests |
+
+This workstream owns the teaching surface inside the shared shell. It does not
+redesign the shared header/footer, change the accepted Double Pendulum
+title/subtitle treatment, restyle Plotly traces, remove dependencies, or alter
+the Simulation workspace. Plot containers may adopt the teaching-surface
+geometry here; Plotly internals remain Workstream 6.
+
+#### Fact-finding: the Population Dynamics teaching grammar
+
+Population Dynamics production pages use a hierarchy of surfaces rather than
+a uniform card system:
+
+1. **One broad paper.** A route is presented as one white document surface
+   within the 1400px shell. At 1280px the deployed model page resolves to
+   1203.2px wide. The paper is square-edged, quietly bordered and shadowed,
+   with 28px top, fluid 50px maximum inline, and 34px bottom padding.
+2. **A visible route title before the lesson hero.** The route H1 is 2.2rem
+   with 1.1 line height. The hero then supplies a more explanatory teaching
+   headline rather than repeating the same title at a larger scale.
+3. **One strong opening composition.** Model lessons use a two-column white
+   hero with a 2px deep-green border, 12px radius, restrained shadow, and 30px
+   padding. The copy sits beside a pale neutral equation/parameter panel whose
+   inner equation blocks are white, 8px-radius surfaces.
+4. **Body prose is mostly unboxed.** Direct theory and interpretation sections
+   become transparent in production mode. Whitespace and occasional short,
+   centred hairlines establish progression; each paragraph is not turned into
+   a separate card.
+5. **Boundaries are retained when they communicate function.** Comparison
+   areas, interactive explorers, equation summaries, current-value notes,
+   disclosures, figure groups, and chapter hand-offs remain visually bounded.
+6. **Interactive material is grouped as a chapter band.** A muted heading band
+   names the activity, while its controls, interpretation, and plots share one
+   enclosing surface. Nested control and plot cards are flattened in
+   production mode so an interactive does not become a stack of boxes.
+7. **The typography stays compact and book-like.** Deployed model pages resolve
+   body Markdown to 16px with a 26.4px line height. Supporting prose is regular
+   weight; hierarchy comes from size, spacing, colour, and labels rather than
+   making every paragraph semibold.
+8. **Long chapters repeat a predictable sequence.** The 6918px Periodicity
+   page remains legible by alternating unboxed theory, deliberate dividers,
+   four named interactive bands, one disclosure, and a final chapter hand-off.
+9. **Math overflow is local.** Wide tables, plots, and equations own their own
+   horizontal overflow. The document itself does not widen or acquire a page-
+   level horizontal scrollbar.
+10. **The last surface points somewhere.** Model pages end with one concise
+    guided hand-off, separating chapter progression from the global menu.
+
+Source- and browser-resolved reference targets:
+
+| Element | Population Dynamics production reference | Current Double Pendulum source | Workstream 4 direction |
+| --- | --- | --- | --- |
+| Document width at 1280px | 1203.2px within the 1400px shell | 1020px maximum with additional width subtraction | Use the shared 1400px shell and fluid 20–50px document padding; remove the extra narrow-document calculation |
+| Paper surface | One white, square-edged, subtle bordered/shadowed route surface | White paper, but narrower with a stronger floating-document effect | Retain one paper and quieten its border/shadow; do not add a second global card |
+| Route H1 | 2.2rem / 1.1, before the hero | Page title is inside the intro card at 3rem / 1.05 | Introduce a standalone route title and make the hero headline a distinct teaching statement |
+| Hero headline | `clamp(1.55rem, 2.4vw, 2.15rem)` / 1.12 | Same text doubles as the 3rem route title | Use the reference scale and avoid duplicate title copy |
+| Body Markdown | 1rem / 1.65, regular weight | 1rem / 1.56, weight 600 across core prose | Move derivation prose to regular weight and 1.65 line height; reserve semibold/bold for labels and headings |
+| Eyebrow | 0.78rem, weight 750, 0.05em tracking | Small uppercase label, weight 800, no tracking | Match the compact tracked label convention |
+| Lesson hero | 2px green border, 12px radius, two columns, 30px padding | Single-column inset callout with a 5px green left rule | Build a subject-specific copy/equation hero using the shared reference geometry |
+| Theory sections | Transparent, borderless, shadowless prose sections | Unboxed derivation blocks, but separated by large 60px/44px section gaps | Keep them unboxed and compress the hierarchy to the reference's 18–34px rhythm |
+| Purposeful sub-surfaces | Pale equation panels, 8px notes, meaningful interactive groups | Large intro box, 500px-minimum model cards, branch cards, notes | Keep comparison, branch, equation, and note boundaries; remove arbitrary minimum heights and excess elevation |
+| Section headings | 1.25rem functional H2s; 0.88rem tracked uppercase H3 labels where appropriate | 2rem section H2s and 1.15–1.25rem block headings | Reduce the repeated middle hierarchy so the route title and hero remain dominant |
+| Chapter completion | One copy/action hand-off row | Branch selection mounts content but the chapter has no final onward action | Add one subject-appropriate end hand-off without replacing global navigation |
+| Mobile | Hero and multi-column groups stack at 1100px; at 760px a 20px shell inset combines with the fluid 20px paper padding | Comparison and branch grids wait until 900px; paper becomes full width at 650px with 20px internal padding | Stack pressure-point grids at 1100px, preserve the reference's nested mobile inset, and keep local math overflow |
+
+#### Double Pendulum implementation map
+
+##### A. Establish the document and reading hierarchy
+
+- [ ] Replace the 1020px Equations-specific width calculation with the shared
+      1400px shell width and the Population Dynamics production paper model.
+- [ ] Keep one white route-level paper with a restrained border and shadow;
+      avoid rounded/elevated wrappers around the whole chapter.
+- [ ] Give the paper 28px top, fluid 20–50px inline, and approximately 34px
+      bottom padding, then tune only where MathJax or the model images require
+      additional breathing room.
+- [ ] Add a standalone 2.2rem route H1 before the teaching hero. Preserve the
+      shared shell's existing Double Pendulum title/subtitle treatment.
+- [ ] Establish a repeatable vertical scale based on 18, 20, 28, and 34px
+      intervals instead of repeated 52–60px gaps.
+
+##### B. Recompose the opening lesson
+
+- [ ] Convert the current left-rule introduction box into the reference's
+      purposeful green-framed lesson hero: copy on the left and a pale equation
+      summary on the right.
+- [ ] Use a teaching headline distinct from `Equations of Motion`; retain the
+      existing introduction and mathematical meaning rather than padding the
+      hero with decorative copy.
+- [ ] Give the equation panel one concise shared starting equation or
+      formulation map derived from existing content. Do not introduce a new
+      scientific claim merely to fill the panel.
+- [ ] Stack the hero at 1100px and preserve local overflow inside its equation
+      block at narrow widths.
+
+##### C. Flatten prose while preserving semantic surfaces
+
+- [ ] Render derivation sections and ordinary interpretation blocks as
+      unboxed document flow with consistent headings, paragraph measure, and
+      restrained hairline transitions.
+- [ ] Set teaching prose to 16px, normal weight, approximately 1.65 line
+      height, and a readable 68–72ch maximum where the layout permits.
+- [ ] Use compact tracked green eyebrows, 1.25rem functional section headings,
+      and smaller uppercase labels only for genuine equation/parameter
+      metadata.
+- [ ] Retain pale-green or pale-neutral note treatment for assumptions,
+      coordinate conventions, warnings, and equation annotations; use a
+      narrow accent rule rather than a floating card shadow.
+- [ ] Style disclosures as in-flow teaching aids with a green summary and
+      clear open spacing. Preserve native keyboard and screen-reader behaviour.
+
+##### D. Keep subject-specific comparison and branch interactions
+
+- [ ] Keep the Simple/Compound comparison because it communicates a physical
+      modelling choice, but remove arbitrary 500px minimum heights, reduce
+      image dominance, and use quiet borders without stacked shadows.
+- [ ] Preserve both model images, alternative text, descriptions, and detail
+      lists. Let the cards equalise naturally on desktop and stack at the
+      reference's 1100px pressure point.
+- [ ] Keep the Euler–Lagrange/Hamiltonian branch controls as buttons with their
+      current IDs, `aria-pressed` values, callback ownership, and lazy mounting.
+- [ ] Present the branch choice as one deliberate chapter-selection surface;
+      use pale green for active/hover state and avoid giving the selected card
+      a large floating shadow.
+- [ ] Keep selected branch content in the same paper so route transitions do
+      not look like a second application or nested document.
+
+##### E. Equations, references, and chapter progression
+
+- [ ] Keep MathJax equations on white or pale-neutral teaching surfaces and
+      preserve normal text contrast around them.
+- [ ] Give each display equation or genuinely wide table its own horizontal
+      overflow boundary. Do not use page-wide overflow and do not shrink math
+      until it becomes unreadable.
+- [ ] Preserve upright ordinary differential notation such as
+      `\frac{\mathrm{d}}{\mathrm{d}t}` and standard `\partial` notation.
+- [ ] Consolidate the retained Lagrangian/Hamiltonian reference data into a
+      chapter-end further-reading/reference pattern when its branch is mounted.
+      Use an unboxed list or narrow green rule rather than a large References
+      card.
+- [ ] End each mounted branch with one concise guided hand-off, such as return
+      to the Equations overview or continue to Simulation. This supplements,
+      and does not replace, the shared menu.
+
+##### F. Responsive and dependency boundaries
+
+- [ ] At 1100px, stack the opening hero, model comparison, and branch choices
+      before their content becomes cramped.
+- [ ] At 760px, use the reference's 20px shell inset plus fluid 20px paper
+      padding, keep headings within the reference scale, and allow long display
+      equations to scroll locally.
+- [ ] Remove page-level horizontal overflow at 390px without clipping equation
+      content, disclosure summaries, model images, or branch focus rings.
+- [ ] Do not change Bootstrap/Red Hat loading in this workstream. Record any
+      computed-style interference for Workstream 7 rather than combining the
+      dependency audit with the teaching redesign.
 
 Likely owners:
 
 - `assets/styles.css`
 - `app/pages/equations.py`
-- shared derivation/reference components only if structural changes are
-  justified
+- `app/components/derivation.py`
+- `app/components/references.py` if branch references are promoted into the
+  consolidated teaching page
+- `app/content/equations.py` only for a concise, scientifically existing hero
+  equation/headline or chapter hand-off copy
+- focused content/layout tests
 
-Tasks:
+Preservation constraints:
 
-- [ ] Align document width, paper surface, headings, body type, callouts,
-      equations, figures, references, and branch navigation.
-- [ ] Preserve ordinary differential notation conventions.
-- [ ] Preserve legacy route rendering through the consolidated page.
-- [ ] Check wide equations and images for horizontal overflow.
-- [ ] Keep MathJax output visually compatible with the new type scale.
+- Preserve `/equations`, `/lagrangian`, and `/hamiltonian` route behaviour.
+- Preserve every branch button ID, `equations-branch`,
+  `equations-branch-output`, callback, and selected-branch lazy-mount contract.
+- Preserve mathematical copy, formulae, Simple/Compound distinctions, image
+  paths, alternative text, and ordinary differential notation unless a
+  separately reviewed content correction is required.
+- Do not turn the Equations page into a dashboard and do not import Population
+  Dynamics components or CSS.
 
 Validation:
 
-- [ ] `/equations`, `/lagrangian`, and `/hamiltonian` render correctly.
-- [ ] Branch selection and callbacks still work.
-- [ ] Display equations remain readable at mobile widths.
-- [ ] Existing content and component tests pass.
+- [ ] At 1280px the paper follows the reference shell proportion, ordinary
+      prose resolves to 16px/approximately 1.65, and the title/hero hierarchy
+      matches the source-resolved targets above.
+- [ ] At 390px the hero, model comparison, and branch choices are single
+      column; the document has no horizontal overflow.
+- [ ] `/equations`, `/lagrangian`, and `/hamiltonian` render the correct shared
+      trunk and only the selected branch.
+- [ ] Branch controls work by mouse and keyboard, keep visible focus, and
+      expose correct `aria-pressed` state.
+- [ ] Wide display equations remain readable through local scrolling and do
+      not widen the document.
+- [ ] Model images remain sharp, contained, and correctly labelled.
+- [ ] References and the final guided hand-off contain valid links and do not
+      obscure or duplicate global navigation.
+- [ ] Browser diagnostics show no MathJax, missing-asset, callback, or overflow
+      errors.
+- [ ] Focused Equations/content tests and the full suite pass.
 
 Rollback:
 
-- Revert page-scoped Equations styles; avoid mixing with global token changes.
+- Implement this as an Equations-scoped CSS/markup slice and revert it as one
+  unit. Do not mix the teaching-surface work with Plotly palette, Simulation,
+  dependency-removal, or shared-shell changes.
 
 ### Workstream 5 — Simulation HTML/CSS surfaces
 
@@ -874,6 +1085,7 @@ has remained stable through the agreed observation period.
 | 2026-08-18 | Pin Population Dynamics `7c9f1b4` for the Home comparison | Give the correction measurable source ownership and prevent a moving visual target | This plan; durable theme documentation at closeout |
 | 2026-08-18 | Serve the Dash index with HTTP 404 for ordinary unknown navigation while retaining plain 404s for probes | Let the custom callback-owned 404 resolve without weakening scanner and sensitive-path hardening | Server hooks, routing tests, and durable deployment documentation at closeout |
 | 2026-08-18 | Match the Population Dynamics 404 composition with the Double Pendulum hero | Keep the error route recognisably within the interactive-textbook family and subject identity | 404 layout, content, and CSS |
+| 2026-08-18 | Use the Population Dynamics production teaching hierarchy for Workstream 4: one broad paper, one strong lesson hero, mostly unboxed prose, and boundaries only where they communicate function | This hierarchy, rather than card density, is the repeating visual grammar that makes short and very long Population Dynamics lessons feel like one textbook | Equations layout/components/CSS and durable theme documentation at closeout |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -902,6 +1114,7 @@ rollback.
 | 2026-08-18 | Workstream 3B | Focused server-hook, import/routing, and content tests | 49 passed in 0.94s | Branded navigation 404 plus plain scanner, API, and file-like 404 paths covered |
 | 2026-08-18 | Workstream 3B | Full suite | 177 passed in 8.14s | No failures |
 | 2026-08-18 | Workstream 3B | Unknown route at 1280 × 720 and 390 × 720 | Direct request remained HTTP 404; custom hero, mobile focal point, Return home navigation, hover/focus, and overflow verified | No browser warnings/errors; responsive viewport override reset and local server stopped |
+| 2026-08-18 | Workstream 4 fact finding | Population Dynamics `7c9f1b4` source inventory plus deployed `/continuous`, `/continuous/logistic-growth`, and `/discrete/periodicity` review | Production paper, type, hero, prose, interactive, equation, disclosure, progression, and responsive patterns mapped to Double Pendulum owners and constraints | Documentation-only teaching-surface pass; implementation remains pending |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -918,6 +1131,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Green hero activated and Home first pass completed.
 - [x] Home reference lock completed before Workstream 4.
 - [x] Branded 404 routing and presentation completed before Workstream 4.
+- [x] Workstream 4 Population Dynamics teaching-surface inventory recorded.
 - [ ] Equations restyled.
 - [ ] Simulation HTML/CSS surfaces restyled.
 - [ ] Canvas/plotting palette updated.
