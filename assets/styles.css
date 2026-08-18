@@ -1137,6 +1137,20 @@ a:hover {
     text-align: justify;
 }
 
+.equations-page ul,
+.equations-page ol {
+    margin-bottom: 0;
+    margin-top: 8px;
+}
+
+.equations-page li {
+    margin: 0;
+}
+
+.equations-page li + li {
+    margin-top: 4px;
+}
+
 .equations-hero-text {
     display: block;
     margin-top: 12px;
@@ -1216,7 +1230,7 @@ a:hover {
 .equations-model-detail-list,
 .equations-branch-list {
     display: grid;
-    gap: 8px;
+    gap: 0;
     margin: 0;
     padding-left: 18px;
 }
@@ -1325,6 +1339,12 @@ a:hover {
     width: 100%;
 }
 
+.equations-page .equations-branch-summary,
+.equations-page .equations-branch-list li,
+.equations-page .equations-branch-point p {
+    text-align: left;
+}
+
 .equations-branch-card:hover,
 .equations-branch-card--active {
     background: var(--accent-soft);
@@ -1395,13 +1415,21 @@ a:hover {
     color: var(--text-primary);
     font-size: 1.25rem;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .equations-page .references-section ul {
     display: grid;
-    gap: 8px;
+    gap: 0;
     margin: 0;
+}
+
+.equations-page .references-section li {
+    margin: 0;
+}
+
+.equations-page .references-section li + li {
+    margin-top: 4px;
 }
 
 .equations-page .references-section a {
