@@ -109,7 +109,7 @@ def test_equations_content_is_structured_and_reuses_existing_assets():
     assert "V_2=-gm_2\\left(l_1\\cos(\\theta_1(t))+l_2\\cos(\\theta_2(t))\\right)" in shared_blocks["Energy contribution from P2"]
     kinetic_markdown = shared_blocks["Collecting total energy"]
     assert "will not separate into two independent pendulums" in kinetic_markdown
-    assert "Both are different formulations of the same conservative model" in shared_blocks[
+    assert "This is the common starting point for both formulations" in shared_blocks[
         "The Lagrangian as the common starting point"
     ]
     assert all(len(section.blocks) > 1 for section in DERIVATION_SECTIONS)
@@ -177,8 +177,11 @@ def test_equations_hamiltonian_branch_is_guided_and_uses_project_notation():
     assert "must be written in terms of coordinates and momenta" in hamiltonian_blocks[
         "Recovering velocities from momenta"
     ]
-    assert "total mechanical energy expressed in phase-space variables" in hamiltonian_blocks[
+    assert "replaces the velocity description with the momentum description" in hamiltonian_blocks[
         "Legendre transform"
+    ]
+    assert "For the simple model, the Hamiltonian becomes" in hamiltonian_blocks[
+        "Hamiltonian as total energy"
     ]
     assert "\\frac{\\mathrm{d}}{\\mathrm{d}t}" in hamiltonian_blocks[
         "First-order phase-space system"

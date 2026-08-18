@@ -97,11 +97,9 @@ Simulation interaction, Canvas payloads, renderer boundaries, plotting style,
 and dependency removal. Clean-environment installation also succeeded without
 `dash-bootstrap-components`.
 
-The final dependency-audit run reported 180 passing tests and two existing
-Equations-content expectation failures. Those assertions expected phrases
-removed during the teaching-content revision; they are not dependency or
-runtime regressions, but should be reconciled before treating the full suite as
-green.
+The two Equations-content assertions made stale by the teaching-content
+revision were updated at closeout to test the revised structure and meaning.
+The final suite passed with 182 tests.
 
 Deployment was not authorised by the Restyle work. A release still requires a
 reviewed commit, an identified production baseline and rollback release, and a
