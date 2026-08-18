@@ -162,14 +162,11 @@ semantic and reusable; subject-specific teaching layouts remain app-owned.
 
 #### 5. Simplify global styling dependencies
 
-- Audit the Bootstrap stylesheet after the theme base and resets are in place.
-- If browser and test evidence confirms that production markup does not depend
-  on it, remove the unused Bootstrap theme and
-  `dash-bootstrap-components` dependency.
-- Remove the external Red Hat Display font request after the system font stack
-  is active.
-- Own base element styling explicitly so removing global dependencies does not
-  introduce browser-default drift.
+- Browser and source evidence confirmed that production markup does not depend
+  on Bootstrap or `dash-bootstrap-components`.
+- The Bootstrap stylesheet, `dash-bootstrap-components` top-level dependency,
+  and external Red Hat Display request have been removed.
+- Explicit app-owned base and control styling prevents browser-default drift.
 
 #### 6. Create the reusable interactive-textbook starting point
 

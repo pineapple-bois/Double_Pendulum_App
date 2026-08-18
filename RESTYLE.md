@@ -863,6 +863,13 @@ Rollback:
 
 ### Workstream 7 — Dependency audit
 
+Status: complete on 2026-08-18. Source and browser evidence confirmed that
+production uses no `dash-bootstrap-components` components and that the app's
+explicit theme owns the representative global, Home, shell, and Simulation
+computed styles. The Bootstrap stylesheet, external Red Hat Display request,
+and `dash-bootstrap-components` top-level dependency were therefore removed as
+one reversible dependency slice.
+
 Goal: remove global styling dependencies only after replacement styles are
 proven.
 
@@ -874,55 +881,34 @@ Likely owners:
 
 Tasks:
 
-- [ ] Confirm there are no production `dbc` components.
-- [ ] Inspect computed styles before and after removing Bootstrap.
-- [ ] Remove the Bootstrap external stylesheet only after explicit resets and
+- [x] Confirm there are no production `dbc` components.
+- [x] Inspect computed styles before and after removing Bootstrap.
+- [x] Remove the Bootstrap external stylesheet only after explicit resets and
       component styles cover current behaviour.
-- [ ] Remove the external Red Hat Display request after the system stack is
+- [x] Remove the external Red Hat Display request after the system stack is
       active.
-- [ ] Remove `dash-bootstrap-components` only if imports and runtime use are
+- [x] Remove `dash-bootstrap-components` only if imports and runtime use are
       absent and a clean environment install succeeds.
-- [ ] Verify `requirements.txt` remains a top-level dependency list rather
+- [x] Verify `requirements.txt` remains a top-level dependency list rather
       than a full freeze.
 
 Validation:
 
-- [ ] Clean-environment installation succeeds.
-- [ ] App import and Flask server tests pass.
-- [ ] All routes and controls retain expected layout and semantics.
+- [x] Clean-environment installation succeeds.
+- [x] App import and Flask server tests pass.
+- [x] All routes and controls retain expected layout and semantics.
 - [ ] Full test suite passes.
+
+The full suite remains at 180 passed and 2 pre-existing Equations-content
+expectation failures. Workstream 7 changes no Equations content; the dependency
+integration tests and all other tests pass.
 
 Rollback:
 
 - Restore the dependency, import, and external stylesheet in one revertible
   commit. Do not combine dependency removal with unrelated visual refinements.
 
-### Workstream 8 — Reusable theme boundary
-
-Goal: leave a repeatable starting point for future interactive textbooks.
-
-Tasks:
-
-- [ ] Separate shared tokens/base/shell/component rules from app-specific rules.
-- [ ] Add a version label or documented theme revision.
-- [ ] Document shared versus subject-specific responsibilities.
-- [ ] Define reusable patterns for header, footer, page header, hero, teaching
-      card, control band, plot card, status message, and reading list.
-- [ ] Confirm the vendored approach in both apps before proposing packaging.
-- [ ] Record candidates for a future GitHub template repository.
-
-Validation:
-
-- [ ] The Double Pendulum App does not import Population Dynamics code.
-- [ ] Theme ownership is understandable without reading page-specific CSS.
-- [ ] App-specific Simulation and Equations rules remain locally owned.
-
-Rollback:
-
-- Revert extraction if it obscures ownership or increases coupling. A clear
-  local stylesheet is preferable to a premature abstraction.
-
-### Workstream 9 — Documentation and closeout
+### Workstream 8 — Documentation and closeout
 
 Tasks:
 
@@ -1008,8 +994,7 @@ Preferred commit boundaries:
 6. Simulation HTML/CSS surfaces;
 7. Canvas/Plotly palette;
 8. dependency cleanup;
-9. reusable theme/documentation boundary;
-10. final fixes and closeout.
+9. final fixes and closeout.
 
 Rules:
 
@@ -1107,6 +1092,8 @@ has remained stable through the agreed observation period.
 | 2026-08-18 | Refine the Workstream 5 output into unboxed white figure regions and one compact control centre | Figure cards and explanatory playback copy reduced usable visualisation space and duplicated self-evident control meaning; grouping the existing controls and scrubber requires only non-ID markup movement | Simulation interaction markup/tests and scoped CSS; renderer behaviour remains untouched |
 | 2026-08-18 | Theme the active Canvas renderer and retained central Plotly layout, but defer model plotting helpers | Production Simulation has no Plotly-generation callers; `app/components/figure_style.py` is the retained central contract, while model animation, phase-path, time-graph, and Matplotlib conversion helpers are dormant compatibility surfaces | Canvas palette and central Plotly style now; dormant model plotting helpers require a separately scoped audit before reuse |
 | 2026-08-18 | Use muted plum `#76546f` for the Canvas secondary-series role | The earlier sage secondary trace did not separate clearly enough from green; plum adds hue contrast while remaining restrained within the textbook palette | Canvas θ₂/P₂ line, legend, motion trail/marker, and selected projection marker; previous values retained as comments during review |
+| 2026-08-18 | Remove Bootstrap, Red Hat Display, and `dash-bootstrap-components` together | Production has no `dbc` components and before/after computed styles confirmed that app-owned rules already control representative global, Home, shell, and Simulation surfaces | App bootstrap, requirements, integration coverage, and durable dependency documentation |
+| 2026-08-18 | Remove the reusable-theme-boundary workstream from this branch and promote closeout to Workstream 8 | Cross-app theme extraction will not be performed as part of `feat_restyle` | This temporary plan; longer-term template direction remains roadmap-owned |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -1155,6 +1142,10 @@ rollback.
 | 2026-08-18 | Workstream 6 | Real simple Euler–Lagrange run at 1280 × 900 and 600 × 900 | Motion, angular projection, and angular displacement retain distinct green/charcoal traces, markers, axes, and grids; playback advanced to a selected frame; stale wash and message remained readable; responsive Canvas sizes were 568 × 568, 568 × 568, and 568 × 260 with no overflow | No renderer warnings/errors; only the existing informational `scroll.js` retry log appeared; generated scrubber purple default was corrected to the semantic green/stone treatment |
 | 2026-08-18 | Workstream 6 plum refinement | Renderer boundary and Canvas payload tests | 16 passed in 6.13s | Active plum series/marker/trace roles are asserted while the commented prior values remain available for review |
 | 2026-08-18 | Workstream 6 plum refinement | Real simple Euler–Lagrange run at 1280 × 900 | θ₁/P₁ remains green and θ₂/P₂ resolves in muted plum across the displacement trace, legend, motion marker/trail, and selected projection point; selected-frame contrast remains clear | Playback and Canvas state remained successful with no horizontal overflow |
+| 2026-08-18 | Workstream 7 | Source/import audit | No production `dbc` components; Bootstrap and Red Hat Display were only loaded from `pendulum_app.py` | Removed both external stylesheet requests and the unused top-level package together |
+| 2026-08-18 | Workstream 7 | Clean Python 3.12 install plus `tests/integration/test_app_import.py -q` | Dependencies installed without `dash-bootstrap-components`; 22 passed in 12.26s | Clean import confirmed `dash_bootstrap_components` absent and no external stylesheet configuration |
+| 2026-08-18 | Workstream 7 | Before/after computed styles plus route sweep at 1280 × 720 and 390 × 844 | Representative body, Home Explore, header, and Simulation control-centre styles were unchanged; every public route and branded 404 had no overflow | Only `assets/styles.css` remained; no Bootstrap/Google Fonts asset and no browser warnings/errors |
+| 2026-08-18 | Workstream 7 | Full suite | 180 passed, 2 failed in 8.84s | Both failures are the existing Equations-content expectation mismatches; Workstream 7 changes no Equations content and all dependency/app/server tests pass |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -1175,8 +1166,7 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [x] Equations restyled.
 - [x] Simulation HTML/CSS surfaces restyled.
 - [x] Canvas/plotting palette updated.
-- [ ] Styling dependencies audited.
-- [ ] Reusable theme boundary documented.
+- [x] Styling dependencies audited.
 - [ ] Full validation completed.
 - [ ] Release and rollback targets recorded.
 - [ ] Durable documentation updated.

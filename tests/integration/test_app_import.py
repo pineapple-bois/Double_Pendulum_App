@@ -1,5 +1,7 @@
-from flask import Flask
+from pathlib import Path
+
 import pytest
+from flask import Flask
 
 from app.content.routes import APP_TITLE, PUBLIC_ROUTE_ITEMS
 from app.pages.registry import get_layout_for_path
@@ -10,6 +12,25 @@ def test_app_import_exposes_dash_app_without_starting_server():
 
     assert pendulum_app.app.server is pendulum_app.server
     assert pendulum_app.app.title == APP_TITLE
+
+
+def test_app_owns_global_styles_without_bootstrap_or_external_webfont():
+    import pendulum_app
+
+    project_root = Path(__file__).resolve().parents[2]
+    requirements = (project_root / "requirements.txt").read_text()
+
+    assert pendulum_app.app.config.external_stylesheets == []
+    assert "dash-bootstrap-components" not in requirements
+
+    response = pendulum_app.server.test_client().get(
+        "/", base_url="https://double-pendulum.test"
+    )
+    index = response.get_data(as_text=True)
+
+    assert "bootstrap" not in index.lower()
+    assert "fonts.googleapis.com" not in index
+    assert "Red+Hat+Display" not in index
 
 
 def test_flask_server_is_available_for_gunicorn_style_import():
