@@ -11,25 +11,41 @@ CDN dependency, or known vulnerable application dependency was identified.
 
 The most important findings are:
 
-1. The public numerical callback is an unauthenticated CPU and memory workload
-   behind Gunicorn's default single synchronous worker. Input bounds are useful,
-   but there is no evidenced request-rate control or application request-body
-   cap. Availability is the clearest current security risk.
+1. The public numerical callback is an unauthenticated CPU and memory workload.
+   The repository declares Gunicorn's default single synchronous worker; a
+   Railway command override remains a build-log verification item. Input
+   bounds are useful, but there is no evidenced request-rate control or
+   application request-body cap. Local callback measurements were CPU-bound and
+   exposed a legitimate
+   2.11 MB Dash state round-trip, so neither a body cap nor a rate threshold
+   should be guessed from the approximately 2 KB simulation-run request alone.
+   Availability is the clearest current security risk.
 2. A restrictive CSP is feasible, but it cannot be added as a simple static
    `script-src 'self'` header. Dash emits three executable inline scripts and
    the Cloudflare production path injects a fourth, changing inline JavaScript
-   Detections bootstrap. Dash hashes can cover the application scripts;
+   Detections bootstrap. JavaScript Detections is now confirmed enabled, not an
+   unexplained injection. Dash hashes can cover the application scripts;
    Cloudflare's documented nonce propagation should cover the edge injection.
    Runtime Dash and MathJax CSS still requires an inline-style allowance.
-3. The application manually trusts `X-Forwarded-Proto` when `FORCE_HTTPS` is
-   enabled and does not restrict trusted `Host` values. The exact Railway and
-   Cloudflare forwarding contract must be verified before proxy middleware or
-   redirect hardening is changed.
+3. Production has `FORCE_HTTPS=true`, and the application manually trusts the
+   first `X-Forwarded-Proto` value while leaving `TRUSTED_HOSTS` unset. Live
+   black-box tests show Railway currently normalizes the external scheme:
+   client-supplied protocol values could neither suppress its HTTP redirect nor
+   cause an HTTPS redirect loop. Do not add broad `ProxyFix` middleware; add
+   explicit host validation in a later small pass and preserve the verified
+   Railway boundary assumptions in tests/documentation.
 4. Public HTTP already redirects to HTTPS even though Cloudflare's **Always Use
-   HTTPS** setting is off, but the redirect is not produced by the Flask hook.
-   HSTS is absent. Cloudflare should ultimately own browser-to-edge HTTPS
-   enforcement and HSTS.
-5. **Do not move the current Railway/Cloudflare architecture to Full (strict)
+   HTTPS** setting is off. Both the Cloudflare and direct Railway hostnames show
+   the same pre-Flask Railway redirect. Cloudflare Always Use HTTPS would
+   duplicate the current public result while making edge ownership explicit;
+   it is not required to obtain a redirect today. HSTS remains absent.
+5. The Railway-generated hostname is confirmed public. It bypasses Cloudflare's
+   scanner rule, Bot Fight Mode, JavaScript Detections, and any future
+   Cloudflare-only callback rate limit. This is an architecture trade-off, not
+   automatically a vulnerability: it may be retained as a diagnostic/fallback
+   ingress only if application-level controls are treated as the security
+   baseline.
+6. **Do not move the current Railway/Cloudflare architecture to Full (strict)
    merely because the browser-facing certificate is valid.** Railway's current
    documentation explicitly instructs Cloudflare-proxied custom domains to use
    Full and says Full (strict) will not work as intended when Railway presents
@@ -101,9 +117,131 @@ Confirmed on 2026-08-18:
 - every runtime script, stylesheet, image, and font observed for the Equations
   page was same-origin;
 - Cloudflare injected `/cdn-cgi/challenge-platform/scripts/jsd/main.js` through
-  a changing inline bootstrap; and
+  a changing inline bootstrap; JavaScript Detections is confirmed enabled; and
 - TLS 1.2 and TLS 1.3 handshakes to the Cloudflare edge succeeded. The minimum
   accepted edge TLS version was not established by this audit.
+
+### Verified Security Pass 0 deployment facts
+
+The following production facts were verified manually in the Railway and
+Cloudflare control planes and are no longer assumptions:
+
+- Railway production variables contain only `FORCE_HTTPS=true`; no explicit
+  Flask/Dash debug or environment variable is configured.
+- Railway Networking exposes `double-pendulum.net`,
+  `www.double-pendulum.net`, and
+  `web-production-65a59.up.railway.app`.
+- No Railway health-check path is configured.
+- The Railway-generated hostname is publicly reachable and returns the same
+  application directly, without traversing Cloudflare.
+- Cloudflare uses **Full (automatic)**, with **Always Use HTTPS** and HSTS off.
+- Cloudflare Bot Fight Mode and JavaScript Detections are on. The existing
+  scanner-blocking custom rule remains active.
+
+Additional read-only ingress checks on 2026-08-18 established:
+
+- HTTP requests to both `double-pendulum.net` and the Railway-generated
+  hostname returned an empty `301` with `x-railway-67: 67` and no
+  Flask-added security headers. The redirect therefore occurs at Railway's
+  public edge before the current Flask hooks execute.
+- Supplying `X-Forwarded-Proto: https` on either HTTP ingress did not suppress
+  that Railway redirect.
+- Supplying `X-Forwarded-Proto: http`, `http, https`, or `https, http` on an
+  HTTPS request to the direct Railway hostname still returned the application
+  with `200`; `X-Forwarded-Proto: http` on Cloudflare HTTPS did the same.
+  Because the Flask hook would redirect if it received a first value of
+  `http`, this is black-box evidence that Railway replaces or otherwise
+  normalizes the external protocol signal before Flask evaluates it.
+- No same-URL HTTPS redirect loop was observed, and an external client could
+  neither bypass the Railway HTTP redirect nor induce a loop by supplying the
+  protocol header. This establishes present behavior, not a general licence to
+  trust arbitrary proxy headers or hop counts.
+
+The direct Railway HTTPS response also contained the same `nosniff`, framing,
+and referrer headers as the Cloudflare response. Together with the matching
+Flask hook values, this confirms those three controls originate in the
+application rather than Cloudflare.
+
+### Security Pass 0 callback measurements
+
+Measurements used the locked local Python 3.12 environment, Flask's test
+client, and the real `POST /_dash-update-component` callback envelope. Sizes
+are compact, uncompressed JSON bytes. Wall and process CPU time cover model
+construction, integration, Canvas payload construction/validation, Dash JSON
+serialization, and the Flask callback response. They are local evidence, not
+Railway capacity measurements.
+
+| Valid case | Samples | Request | Response | Wall | CPU |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Default controls, unity parameters, simple Lagrangian, first run | 4,000 | 2,005 B | 215,315 B | 2.184 s | 2.163 s |
+| Same default after caches were warm | 4,000 | 2,006 B | 215,320 B | 0.058 s | 0.058 s |
+| Moderate simple Lagrangian, 30 s | 6,000 | 2,011 B | 1,042,306 B | 0.191 s | 0.190 s |
+| Moderate simple Hamiltonian, 30 s | 6,000 | 2,012 B | 814,959 B | 0.493 s | 0.491 s |
+| Moderate compound Lagrangian, 30 s, first compound path | 6,000 | 2,013 B | 1,048,026 B | 2.250 s | 2.245 s |
+| Moderate compound Hamiltonian, 30 s | 6,000 | 2,014 B | 820,827 B | 0.520 s | 0.519 s |
+| Moderate simple Lagrangian, strict solver, 30 s | 6,000 | 2,013 B | 1,042,371 B | 0.251 s | 0.250 s |
+| Boundary-envelope simple Lagrangian, strict solver, 60 s | 12,000 | 2,029 B | 2,101,398 B | 1.092 s | 1.090 s |
+| Boundary-envelope simple Hamiltonian, strict solver, 60 s | 12,000 | 2,030 B | 1,652,874 B | 1.390 s | 1.387 s |
+| Boundary-envelope compound Lagrangian, 60 s | 12,000 | 2,029 B | 2,113,053 B | 0.373 s | 0.372 s |
+| Boundary-envelope compound Hamiltonian, 60 s | 12,000 | 2,031 B | 1,667,091 B | 0.399 s | 0.399 s |
+
+The moderate case used non-zero angles and angular velocities. The
+boundary-envelope cases used the maximum 60-second duration, maximum angular
+velocity magnitudes, boundary angles, minimum lengths, a large mass ratio, and
+maximum gravity accepted by the current validator. This deliberately samples a
+high-cost valid envelope; it is not proof of the absolute worst trajectory in
+a continuous input space.
+
+Wall and CPU time were nearly identical, so the measured callback work is
+CPU-bound. First-use symbolic/model cache effects were material: the first
+default simple Lagrangian and first compound Lagrangian paths each took about
+2.2 seconds, while the repeated default took 0.058 seconds. The largest
+measured response was about 2.11 MB. All cases completed below Gunicorn's
+30-second default timeout locally, but Railway CPU, memory, cold-start cost,
+network transfer, and concurrent queueing remain unmeasured.
+
+A second legitimate Dash request is important for body-limit planning. When a
+setting changes, `mark_output_stale_on_input_change()` sends the current Canvas
+store back to the same Dash endpoint as callback `State`. Using the largest
+measured valid payload produced a 2,112,330-byte request and a 2,113,430-byte
+response in 0.228 seconds. Therefore a global `MAX_CONTENT_LENGTH` based on the
+approximately 2 KB run request would break valid interaction. No body-size cap
+or rate threshold is proposed from these measurements alone.
+
+### Security Pass 0 deployment/build evidence
+
+Repository-controlled deployment intent is clear:
+
+- `.python-version` selects Python 3.12 and `pyproject.toml` constrains the
+  runtime to Python 3.12.
+- `Procfile` declares `web: gunicorn pendulum_app:server`.
+- runtime dependencies are declared in `pyproject.toml`; `uv.lock` contains
+  exact registry versions and artifact hashes.
+- there is no Dockerfile, `railway.toml`/`railway.json`, Railpack/Nixpacks
+  configuration, active root requirements file, or repository CI deployment
+  workflow. The old freeze below `legacy/` is not an active build input.
+- live Dash and Plotly versions and the emitted Python version matched the
+  committed locked/runtime state during this audit.
+
+Railway currently documents Railpack as its default source builder and Railpack
+documents that a Python project containing `pyproject.toml` and `uv.lock` uses
+the uv package-manager path. Railpack also documents automatic root `Procfile`
+detection and gives the `web` process highest priority. Therefore the
+repository-default build/start model is Railpack + uv, followed by
+`gunicorn pendulum_app:server` from the Procfile. Production behavior is
+consistent with that model. Railpack currently labels Procfile support
+deprecated in favor of native start-command configuration, but still documents
+automatic detection; this is deployment-maintenance evidence, not a present
+security defect or a reason to change strategy during the audit.
+
+That is still not proof of this service's actual build. A Railway service-level
+custom install/build/start command can override repository detection, and no
+build log or service Build/Deploy settings export was available in this pass.
+It remains externally unverified whether the deployed service used Railpack,
+the exact uv install flags, whether the dev group was excluded, and whether the
+Procfile command was unmodified. Confirm those items from the next production
+build log and Railway Build/Deploy settings; do not infer them from matching
+live package versions alone.
 
 ### Point-in-time scanner evidence
 
@@ -174,17 +312,17 @@ assets tree is optional hygiene, not a material security pass.
 | Control | Primary owner | Defence-in-depth / trade-off |
 | --- | --- | --- |
 | CSP source list, Dash hashes, CSP mode, policy regression tests | Dash/Flask application | The policy is release-coupled to generated application scripts. Do not add a second independent Cloudflare CSP: multiple policies intersect and can break Dash. Cloudflare must remain compatible with the nonce because it injects JavaScript Detections. |
-| Browser HTTPS redirect | Cloudflare edge | Railway currently appears to redirect before Flask. Cloudflare **Always Use HTTPS** should become the explicit public owner after verification. Keep an application redirect only as a documented fallback for direct-origin traffic. |
-| HSTS | Cloudflare edge / browser-facing policy | The edge terminates public TLS and can guarantee the header on HTTPS responses. Do not emit it unconditionally from Flask until proxy and hostname behavior is proven. |
+| Browser HTTPS redirect | Railway currently; Cloudflare edge as the recommended custom-domain owner | Railway is confirmed to redirect both custom-domain and generated-host HTTP before Flask. Cloudflare **Always Use HTTPS** would duplicate the custom-domain outcome but make public-edge ownership explicit. The application hook is currently a fallback, not the observed production redirect owner. |
+| HSTS | Cloudflare edge / browser-facing policy | Cloudflare can own HSTS for the custom domains. If the Railway hostname remains an intentionally supported browser ingress, Cloudflare cannot cover it and Railway or the application must separately own its host-specific HSTS after the architecture decision. |
 | Origin TLS and certificate lifecycle | Railway | Cloudflare chooses validation mode; Railway controls what certificate the origin presents. Full (strict) requires evidence at this boundary, not the Cloudflare edge certificate. |
-| Forwarded scheme and host trust | Railway contract plus Dash/Flask application | The platform must overwrite forwarding headers; the app must trust only the values and hop count actually supplied. Incorrect `ProxyFix` is worse than a narrow verified implementation. |
-| Valid hostnames | Dash/Flask application | Cloudflare host routing helps at the public edge, but `TRUSTED_HOSTS` also protects direct Railway access and URL construction. Keep health-check and Railway host requirements explicit. |
+| Forwarded scheme and host trust | Railway contract plus Dash/Flask application | Live tests confirm Railway currently normalizes external protocol values. The app should depend only on that observed contract; incorrect broad `ProxyFix` remains worse than the existing narrow scheme check. |
+| Valid hostnames | Dash/Flask application | Cloudflare host routing cannot protect the direct Railway ingress. The initial recommended production allowlist is the apex, `www`, and the generated Railway hostname; no health-check host/path is currently required. |
 | WAF scanner rule | Cloudflare edge | Keep the supplied opportunistic-probe rule at the edge. Do not add Flask routes to duplicate it. The existing generic/plain-404 application handling can remain direct-origin defence in depth. |
-| Numerical request validation and body-size limit | Dash/Flask application | Only the app knows valid fields and computational cost. Railway/Cloudflare body limits are broader safeguards, not substitutes. |
-| Callback rate limiting and bot controls | Cloudflare edge | Rate limiting before Railway avoids consuming the single application worker. Application rate limiting would add state/coordination and is not the first choice here. |
+| Numerical request validation and body-size limit | Dash/Flask application | Only the app knows valid fields and computational cost. A global cap must accommodate the measured multi-megabyte Canvas state round-trip or follow a callback-state refactor; Railway/Cloudflare limits are broader safeguards, not substitutes. |
+| Callback rate limiting and bot controls | Cloudflare edge, conditional on ingress architecture | Rate limiting before Railway avoids consuming the worker on custom-domain traffic, but the public Railway hostname bypasses it. Either accept partial edge coverage, add a coordinated application/deployment control, or make Cloudflare the required ingress. |
 | Gunicorn worker count, timeout, memory, and deploy flags | Railway/deployment | Changes require measurement on the actual Railway service size. More workers improve concurrency but multiply NumPy/SciPy/SymPy memory. |
 | `nosniff`, referrer policy, framing policy, permissions policy | Dash/Flask application | These are stable application requirements and are easy to version and test. Cloudflare should not overwrite them unless it is deliberately the single owner. |
-| Direct-origin restriction | Railway if supported; otherwise Cloudflare plus application | Prefer disabling an unnecessary Railway public domain. If not possible, a Cloudflare-overwritten secret header with constant-time application validation is a viable but outage-sensitive fallback. |
+| Direct-origin policy | Railway architecture decision; application baseline regardless | Keeping the generated hostname provides a diagnostic/fallback ingress but means Cloudflare controls are enhancements, not universal controls. If Cloudflare must become the only ingress, first verify Railway can remove the generated domain without harming deployment operations; an overwritten origin-secret is a viable but outage-sensitive fallback. |
 
 ## Material findings
 
@@ -211,6 +349,9 @@ resources are same-origin, but the HTML contains executable inline code.
   implementation must change this ordering before it snapshots Dash hashes.
 - Production HTML contains an additional changing Cloudflare bootstrap that
   loads same-origin `/cdn-cgi/challenge-platform/scripts/jsd/main.js`.
+  Cloudflare JavaScript Detections and Bot Fight Mode are confirmed enabled,
+  so this is an intentional edge feature. Direct Railway responses bypass the
+  feature and its injection.
 - Cloudflare documents that JavaScript Detections will fail under
   `script-src 'self'` unless its injection receives an allowed nonce; it also
   documents that it propagates a nonce parsed from a CSP response header.
@@ -299,10 +440,10 @@ script, object, base, frame, font, image, or connection restrictions while
 waiting for a complete CSS architecture change. Revisit `style-src-elem` and
 `style-src-attr` only in a later measured compatibility pass.
 
-### F3. Unauthenticated numerical callbacks expose the single worker to availability abuse
+### F3. Unauthenticated numerical callbacks expose the default worker model to availability abuse
 
-**Status:** confirmed repository/deployment finding; production rate-limit state requires verification  
-**Priority:** High  
+**Status:** confirmed repository/deployment and local measurement finding; production callback rate-limit state remains unverified\
+**Priority:** High\
 **Enforcement layer:** application validation plus Cloudflare rate limiting and Railway capacity controls
 
 **Current state**
@@ -313,16 +454,18 @@ current output request at 12,000 time samples. Parameter, mass, length,
 gravity, angle, and angular-velocity bounds are also present. These are
 important positive controls.
 
-The production command is only:
+The repository-declared production command is only:
 
 ```text
 gunicorn pendulum_app:server
 ```
 
-Gunicorn's effective defaults are one sync worker, one thread, a 30-second
-timeout, and unlimited requests per worker. Flask has no configured
+If Railway uses that unmodified command, Gunicorn's effective defaults are one
+sync worker, one thread, a 30-second timeout, and unlimited requests per
+worker. Flask has no configured
 `MAX_CONTENT_LENGTH`. The supplied Cloudflare custom rule blocks scanner paths;
-it is not a callback rate limit.
+it is not a callback rate limit. Bot Fight Mode and JavaScript Detections are
+enabled, but both are bypassed through the public Railway hostname.
 
 **Evidence**
 
@@ -334,80 +477,114 @@ it is not a callback rate limit.
   callback is the production computation path.
 - Crafted requests can send their own Dash state rather than being limited to
   values produced by the visible controls.
+- Real callback-envelope measurements found approximately 2 KB simulation-run
+  requests, 0.22-2.11 MB responses, and 0.058-2.25 seconds of local CPU/wall
+  time depending on caches and path. CPU and wall time tracked closely.
+- The 60-second valid envelope returned 12,000 samples. The largest response
+  measured 2,113,053 bytes.
+- A legitimate input-change callback then posted that Canvas state back to the
+  server in a 2,112,330-byte request and returned 2,113,430 bytes. This is a
+  framework/application state-flow cost, not a malicious oversized request.
 
 **Actual risk**
 
-A small number of repeated valid expensive requests can queue or time out all
-users on the only worker. Large JSON bodies can consume parsing memory before
-field-level validation. This is an availability risk, not an authentication or
-data-confidentiality risk.
+A small number of repeated valid expensive requests can queue or time out users
+under the repository-default one-worker configuration. Large JSON bodies can
+consume parsing memory before field-level validation. This is an availability
+risk, not an authentication or data-confidentiality risk. The measured local
+cases did not approach the 30-second timeout, but they do not establish Railway
+service capacity or concurrent behavior. A Cloudflare-only rate limit would
+reduce custom-domain
+load while leaving the direct Railway path available for bypass.
 
 **Recommended mitigation**
 
-1. Measure representative simple/compound and Lagrangian/Hamiltonian cold and
-   warm requests on the Railway service size.
-2. Add a conservative application request-body cap after measuring the largest
-   legitimate Dash request. Return a generic `413`.
+1. Repeat the representative cold/warm measurements on the Railway service size
+   or use Railway metrics during a controlled run before changing concurrency.
+2. Do **not** add a global body cap in Pass 1 from the 2 KB run-request figure.
+   First remove/bound the multi-megabyte Canvas store round-trip or measure its
+   complete valid envelope and choose explicit headroom. Then add a tested cap
+   with a generic `413`.
 3. Explicitly allowlist model, system, and solver-policy enum values and reject
    non-finite numeric input before model construction. The current validation
    allows `NaN` angle values to reach solver setup.
 4. Configure a Cloudflare rate-limit rule specifically for
    `POST /_dash-update-component`, with enough burst capacity for normal Dash
-   use. Observe before blocking and do not apply the scanner-path rule as a
-   substitute.
+   use. Observe before blocking, do not invent a threshold from a single-user
+   local test, and document that coverage is partial while direct Railway
+   access remains public.
 5. Evaluate Railway/Gunicorn concurrency only with memory measurements. An
    explicit small worker count or `WEB_CONCURRENCY` may help, but importing the
    numerical stack per worker is expensive.
 6. Consider `max_requests` plus jitter only if deployment evidence shows
    long-lived worker memory growth.
 
-### F4. The direct Railway origin may bypass Cloudflare controls
+### F4. The public Railway ingress bypasses Cloudflare controls by design
 
-**Status:** deployment verification required  
-**Priority:** Medium, rising to High if the Railway-generated hostname is public and rate limiting is relied on  
-**Enforcement layer:** Railway first; otherwise Cloudflare request transform plus application validation
+**Status:** confirmed production architecture finding\
+**Priority:** Medium; High for any control incorrectly treated as universal\
+**Enforcement layer:** Railway architecture decision plus application baseline
 
 **Current state**
 
-The repository and public responses prove a Railway deployment, but the
-Railway-provided hostname and whether it remains publicly reachable are not in
-tracked configuration. Cloudflare WAF, JavaScript Detections, future rate
-limits, HTTPS redirect, and future HSTS protect only traffic that traverses
+`https://web-production-65a59.up.railway.app` directly serves the application.
+The known host inventory is the apex, `www`, and this generated hostname. No
+Railway health-check path is configured. There is no origin-authentication
+header or application rule requiring traffic to have passed through
 Cloudflare.
 
 **Evidence**
 
-Production responses contain Railway request/edge headers behind Cloudflare.
-There is no application origin-authentication header and no repository evidence
-that a direct Railway hostname is disabled.
+- Direct Railway HTTPS returned `200` with `server: railway-hikari` and the
+  application-owned response headers, without Cloudflare response headers.
+- Direct Railway HTTP returned Railway's pre-Flask `301` to the same hostname
+  over HTTPS.
+- Cloudflare Bot Fight Mode, JavaScript Detections, the scanner rule, any future
+  Cloudflare rate limit, Cloudflare Always Use HTTPS, and Cloudflare HSTS exist
+  only on the proxied custom-domain path.
 
 **Actual risk**
 
-If the Railway hostname is discoverable and reachable, an attacker can bypass
-the supplied Cloudflare scanner rule and any future edge-only callback rate
-limit. The application still applies input validation and its generic 404
-handling, so this is not a bypass of all controls.
+The hostname permits deliberate bypass of every Cloudflare-only protection.
+Today that concretely bypasses the scanner rule, Bot Fight Mode, and JavaScript
+Detections. It would also bypass a future callback rate limit, so that rate
+limit cannot be described as complete availability protection while this
+ingress remains public. It does not bypass Flask input validation, generic 404
+handling, application security headers, or a future application-owned CSP.
 
-**Recommended mitigation**
+Public origin access is not automatically a vulnerability. It can provide a
+useful Railway diagnostic/fallback URL and a way to distinguish origin from
+Cloudflare incidents. The trade-off is architectural: either it is a supported
+second ingress whose security baseline must be application/deployment-owned,
+or Cloudflare becomes the required ingress and the diagnostic path is given up
+or replaced by a controlled mechanism.
 
-1. Inventory Railway public domains and test them without changing DNS.
-2. Disable an unnecessary Railway-generated public hostname if Railway supports
-   doing so while retaining the custom domain.
-3. If it cannot be disabled, consider the population-dynamics origin-secret
-   pattern: Cloudflare must **overwrite** a private request header, and the
-   application must compare it in constant time before serving content.
-4. Stage the Cloudflare rule before enabling application enforcement, include
-   both public hostnames, account for health checks, provide a rollback, and
-   never commit the secret.
+**Recommended target decision**
 
-Authenticated Origin Pulls is not a practical recommendation unless Railway
-provides a supported way to install/validate Cloudflare client certificates at
-the managed origin.
+1. For Pass 1, keep all controls that protect confidentiality/integrity or
+   constrain application inputs at Flask/Dash regardless of Cloudflare. Include
+   all three current production hosts in `TRUSTED_HOSTS` if direct Railway
+   access is retained. No health-check exception is presently needed.
+2. Before rate-limit enforcement, choose and document one target architecture:
+   **dual public ingress**, accepting that Cloudflare controls cover only the
+   custom domains; or **Cloudflare-required ingress**, making the edge controls
+   universal.
+3. If Cloudflare-required ingress is chosen, first verify in Railway whether the
+   generated domain can be removed while custom domains, deploy readiness, and
+   diagnostics continue to work. Do not block it merely because it exists.
+4. If Railway cannot make the origin private and universal edge enforcement is
+   required, the population-dynamics overwritten-secret-header pattern is a
+   viable fallback. Stage the Cloudflare overwrite before application
+   enforcement, compare in constant time, cover both custom hosts, and retain a
+   tested rollback. This deliberately makes the direct Railway URL unavailable.
 
-### F5. Forwarded-scheme trust is narrow but unverified, and host validation is absent
+Authenticated Origin Pulls is not practical unless Railway adds supported
+managed-origin client-certificate validation.
 
-**Status:** confirmed application finding; Railway header behavior requires production verification  
-**Priority:** Medium  
+### F5. Railway normalizes external scheme today; host validation is still absent
+
+**Status:** confirmed application and production-boundary finding\
+**Priority:** Medium\
 **Enforcement layer:** Dash/Flask application informed by Railway's proxy contract
 
 **Current state**
@@ -420,37 +597,46 @@ and Flask `TRUSTED_HOSTS` is unset. A local request with
 
 Gunicorn's default `forwarded_allow_ips` trusts only loopback addresses, while
 the application bypasses that Gunicorn decision by reading the raw header.
+Production has `FORCE_HTTPS=true`; it is the only configured Railway variable.
 
 **Evidence**
 
 - `app/server_hooks.py:force_https_redirect()` reads
   `X-Forwarded-Proto` and uses `request.url`.
 - tests prove that a client-supplied `X-Forwarded-Proto: https` suppresses the
-  application redirect.
+  application redirect when calling Flask directly.
 - `server.config["TRUSTED_HOSTS"]` is `None`.
-- Repository default `FORCE_HTTPS` is false. The production environment value
-  is not visible from the repository.
+- External HTTP is redirected at Railway before Flask, even when the client
+  supplies `X-Forwarded-Proto: https`.
+- External HTTPS returned `200`, rather than a same-URL redirect, when clients
+  supplied first-value `http` and conflicting comma-separated protocol values.
+  This proves the hostile external value does not survive to the hook in a form
+  that controls its decision. The exact internal header representation was not
+  captured, so this conclusion is deliberately limited to observed behavior.
 
 **Actual risk**
 
-If Railway does not overwrite forwarding headers, a direct client can spoof the
-scheme and bypass the application fallback redirect. If a hostile `Host` reaches
-the app while that redirect runs, it can influence `Location`. The Cloudflare
-zone and Railway host routing reduce public exploitability, but they do not
-justify trusting an unverified header path.
+No external scheme-spoof or redirect-loop defect was reproduced at the current
+Railway boundary. The raw-header design would still be unsafe if the app were
+served directly without Railway normalization, and a topology change could
+invalidate this evidence. Host validation remains a separate confirmed gap:
+Cloudflare cannot enforce it on the direct Railway path, and an untrusted host
+could influence future external URL generation or the fallback redirect if a
+request ever reaches that hook over an unnormalized HTTP path.
 
 **Recommended mitigation**
 
-1. Verify whether Railway overwrites or appends `X-Forwarded-Proto`, what value
-   Flask receives through Cloudflare -> Railway -> Gunicorn, and whether direct
-   custom headers survive.
-2. Add production `TRUSTED_HOSTS` for the apex, `www`, and only the Railway or
-   health-check hosts that are genuinely required. Keep local hosts explicit in
-   the local runner/tests.
-3. Prefer Cloudflare for browser HTTPS redirects. Retain the application hook
-   only as a direct-origin fallback with a documented trusted-header contract.
-4. If `ProxyFix` is introduced, trust only the exact header types and hop count
-   Railway documents. Do not copy a blanket `x_for=x_host=x_proto=1` example.
+1. Add production `TRUSTED_HOSTS` for the apex, `www`, and the Railway hostname
+   while it remains supported. Keep local test/development hosts explicit. No
+   health-check host exception is currently evidenced.
+2. Preserve a regression test for the current first-value parsing and record
+   Railway normalization as a deployment assumption. Recheck it if Railway,
+   Gunicorn, or ingress topology changes.
+3. Do not introduce `ProxyFix` in Pass 1. No current defect requires it, and
+   the exact trusted hop count for every forwarded header has not been
+   established.
+4. Retain the Flask hook only as a fallback. If it is later rewritten, construct
+   redirects from validated hosts and a documented scheme signal.
 
 ### F6. HTTPS redirect behavior exists, but HSTS ownership is incomplete
 
@@ -468,29 +654,36 @@ Cloudflare settings supplied for this audit are:
 
 Nevertheless, public HTTP requests to both apex and `www` returned a `301` to
 HTTPS. Those redirect responses lacked the three Flask-added security headers
-and included a Railway marker, proving they did not pass through the current
-Flask `after_request` hook. The exact upstream component issuing the redirect
-should still be confirmed in the dashboards.
+and included a Railway marker. Direct HTTP to the generated Railway hostname
+returned the same form of response, and spoofed protocol headers did not change
+it. The observed redirect owner is therefore Railway's public edge, before the
+current Flask hooks.
 
 **Actual risk**
 
 Users are redirected today, but enforcement ownership is implicit and there is
 no browser memory of the HTTPS requirement. The first HTTP request remains
 subject to downgrade until HSTS has been learned. Enabling HSTS prematurely can
-make hostnames inaccessible if their HTTPS support later fails.
+make hostnames inaccessible if their HTTPS support later fails. Turning on
+Cloudflare Always Use HTTPS would duplicate the existing redirect outcome for
+the custom domains; the value is explicit edge ownership and earlier handling,
+not closure of a current redirect gap. It would not control the Railway
+hostname.
 
 **Recommended target and migration order**
 
-1. Inventory apex, `www`, any public Railway hostname, and every subdomain that
-   could be affected by future `includeSubDomains`.
-2. Confirm current HTTPS and redirect behavior for apex and `www` and identify
-   the present redirect owner.
-3. Enable Cloudflare **Always Use HTTPS** so the public edge is the explicit
-   enforcement point. Re-test path and query preservation.
-4. Keep the Flask redirect as an optional direct-origin fallback only after F5
-   is resolved.
-5. After a stable observation period, enable Cloudflare HSTS with a short
+1. Treat apex, `www`, and the generated Railway hostname as the current browser
+   host inventory. Decide whether the Railway hostname remains a supported
+   public ingress before assigning HSTS ownership.
+2. Enable Cloudflare **Always Use HTTPS** so the custom-domain edge is the
+   explicit enforcement point. Re-test path and query preservation.
+3. Keep the Flask redirect as a documented fallback; Railway currently handles
+   all observed public HTTP paths before it.
+4. After a stable observation period, enable Cloudflare HSTS with a short
    `max-age`, without `includeSubDomains` and without preload.
+5. If the Railway hostname is intentionally user-facing, separately determine
+   whether Railway or an application header should supply HSTS there. A
+   Cloudflare zone setting cannot cover another registrable domain.
 6. Increase `max-age` gradually. Add `includeSubDomains` only after every
    subdomain is inventoried and HTTPS-only. Treat preload as a separate,
    difficult-to-reverse decision, not part of the initial hardening.
@@ -555,7 +748,8 @@ domain service does not support customer-supplied external certificates.
 - `X-Frame-Options: SAMEORIGIN`
 
 The exact same values appeared on HTML, static asset, Dash JSON, and reload
-responses, so their origin is confirmed as Flask rather than Cloudflare or
+responses. They also appeared through the direct Railway hostname without
+Cloudflare, so their origin is confirmed as Flask rather than Cloudflare or
 Railway. `Permissions-Policy` is absent.
 
 **Actual risk**
@@ -614,8 +808,8 @@ used by the population-dynamics reference. OSV reported no known advisory for
 
 ### F10. Python dependency locking is good; advisory checks are manual
 
-**Status:** confirmed positive control with a low-priority process gap  
-**Priority:** Low  
+**Status:** confirmed repository lock; production install mode still requires build-log verification\
+**Priority:** Low\
 **Enforcement layer:** repository and deployment supply chain
 
 **Current state and evidence**
@@ -625,21 +819,37 @@ URL dependency. Runtime versions observed in production for Dash and Plotly
 match the lock. Registry artifacts carry lockfile hashes. A current advisory
 scan reported no application-package vulnerability.
 
+The repository declares Python 3.12 and `web: gunicorn pendulum_app:server` and
+contains no alternative Railway, Docker, Nixpacks, active root requirements, or
+CI deploy configuration. The old freeze under `legacy/` is not an active build
+input. Railway's current default builder documentation says Railpack
+detects Python projects; Railpack documents uv selection from the pair of
+`pyproject.toml` and `uv.lock` and automatic use of the Procfile `web` command.
+This is the expected build/start path. However, Railway service-level install,
+build, and start overrides are not stored here. No production build log or
+settings export was available to prove the selected builder, exact uv flags,
+dev-group exclusion, or absence of a start-command override.
+
 The local environment's `pip==26.1.1` advisory is not represented in
 `uv.lock`; it is tooling/build-environment hygiene, not evidence of a vulnerable
 import in the deployed app.
 
 **Actual risk**
 
-The resolved application environment is reproducible, but a new advisory can
-remain unnoticed between manual audits. Broad direct requirements in
+The committed application environment is reproducible when installed from the
+lock, but this audit cannot yet prove every production artifact came from that
+path. Matching key live versions is good corroboration, not full supply-chain
+attestation. A new advisory can also remain unnoticed between manual audits.
+Broad direct requirements in
 `pyproject.toml` also make an intentional lock refresh capable of selecting
 new major versions, even though ordinary locked installs remain deterministic.
 
 **Recommended mitigation**
 
-- Verify Railway installs from `uv.lock` in frozen/locked mode; the matching
-  live versions are supporting evidence but not build-log proof.
+- Inspect the next Railway build log and Build/Deploy settings for the builder,
+  source commit, exact dependency command, locked/frozen behavior, development
+  group handling, and start-command override. Record the result without
+  changing the dependency strategy in this branch.
 - Add a repeatable runtime export plus `pip-audit` check to the development or
   CI workflow when such automation is introduced.
 - Upgrade the local environment's pip tooling to a fixed version without adding
@@ -659,6 +869,8 @@ new major versions, even though ordinary locked installs remain deterministic.
 `if __name__ == '__main__'` local runner. Gunicorn imports
 `pendulum_app:server`, so that block cannot run in production. Live Dash config
 showed development UI and property checks disabled, and hot reload inactive.
+Railway production variables contain only `FORCE_HTTPS=true`; no debug or
+Flask environment override is configured.
 
 Simulation exception handlers catch broad exceptions but put `str(exc)` into
 the failed Canvas payload's `errors` collection, which is sent to the browser.
@@ -676,9 +888,9 @@ credentialed backend.
 Return stable public error codes/messages and log exception details server-side
 with a request correlation identifier. Keep numerical diagnostics that are
 deliberately educational, but separate them from raw exception text. Verify
-Railway does not set local-only debug variables; changing `DASH_DEBUG` currently
-does not affect Gunicorn import, but deployment variables should still reflect
-intent.
+the same variable state after material deployment configuration changes;
+changing `DASH_DEBUG` currently does not affect Gunicorn import, but deployment
+variables should still reflect intent.
 
 ### F12. External-link opener handling is inconsistent
 
@@ -716,6 +928,33 @@ traffic and for correct Dash 404 behavior, but it must not be described as a
 replacement for the Cloudflare rule. Expanding this duplicate list has little
 security value.
 
+## Pass 0 conclusion and remaining external verification
+
+Security Pass 0 now provides a concrete ingress and application model. The
+Railway variable/debug state, host inventory, absence of a health check, direct
+origin reachability, current redirect owner, externally observable forwarded
+scheme behavior, Cloudflare bot/JavaScript settings, application callback
+sizes, and local callback cost are confirmed findings.
+
+The following items remain explicitly unconfirmed because repository and HTTP
+evidence cannot answer them:
+
+- the Railway service's selected builder, build/start overrides, exact uv
+  install flags, dev-group handling, and deployed lock/source identity;
+- Railway instance CPU/memory, replica count, cold-start behavior, concurrent
+  callback performance, and memory use;
+- whether any separate Cloudflare rule already rate-limits the Dash callback
+  path beyond the supplied scanner rule; and
+- the Cloudflare-to-Railway certificate/SNI behavior needed to reconsider Full
+  (strict).
+
+The first item should be checked in Railway Build/Deploy settings and the next
+build log. The second belongs to the later availability pass. The third belongs
+to Cloudflare rate-limit discovery before proposing a threshold. The fourth is
+not a blocker: Full remains the provider-supported target for the current
+architecture. None of these uncertainties justifies delaying the small,
+application-only Pass 1 guards.
+
 ## Recommended target state
 
 ### Application
@@ -725,10 +964,12 @@ security value.
 - Per-response CSP nonce compatible with Cloudflare JavaScript Detections.
 - Initial enforced policy has no unsafe script/eval and retains only the
   documented inline-style allowance.
-- `TRUSTED_HOSTS` configured by deployment mode.
+- `TRUSTED_HOSTS` initially covers the apex, `www`, and the intentionally
+  retained Railway hostname, with separate explicit local hosts.
 - Narrow `Permissions-Policy`.
-- Measured request-body cap, finite/enum validation, and generic public solver
-  errors.
+- Finite/enum validation and generic public solver errors.
+- A request-body cap only after the legitimate Canvas state round-trip is
+  removed or completely bounded; no guessed Pass 1 cap.
 - Existing low-risk headers retained.
 
 ### Railway/deployment
@@ -737,8 +978,9 @@ security value.
 - Worker/concurrency settings are explicit only after memory and request-cost
   measurements.
 - Locked dependency installation is verified from build logs.
-- Custom-domain status, origin certificate behavior, and any Railway-generated
-  public hostname are inventoried.
+- The three current public hosts and absence of a health check are documented.
+- The generated-host ingress is retained or removed only through an explicit
+  architecture decision, not an automatic hardening reaction.
 - Full remains the supported Cloudflare-to-Railway TLS mode unless Railway
   confirms a strictly validated alternative.
 
@@ -746,7 +988,8 @@ security value.
 
 - Existing scanner rule retained at the edge.
 - JavaScript Detections retained and verified with the application nonce.
-- Callback rate limiting observed and then enforced at the edge.
+- Callback rate limiting observed and then enforced at the edge only after its
+  partial coverage or Cloudflare-required ingress is explicit.
 - **Always Use HTTPS** becomes the explicit public redirect owner.
 - HSTS is introduced with a short max-age, then increased; no initial
   `includeSubDomains` or preload.
@@ -762,30 +1005,40 @@ security value.
 - Same-origin framing remains allowed; cross-origin framing remains blocked.
 - Referrer and MIME-sniffing policies remain unchanged.
 - Unused powerful browser features are disabled.
-- HSTS is delivered only after the HTTPS migration checks.
+- HSTS is delivered only after the HTTPS migration checks and with explicit
+  ownership for any intentionally public Railway hostname.
 
 ## Proposed sequence of small implementation passes
 
-### Pass 0: deployment fact verification
+### Pass 0: deployment fact verification — completed for planning
 
-- Record Railway `FORCE_HTTPS` and debug variables.
-- Identify the current HTTP redirect owner.
-- Inventory apex, `www`, Railway hostnames, health checks, and direct-origin
-  reachability.
-- Confirm Cloudflare JavaScript Detections is intentionally enabled.
-- Confirm Railway domain/certificate status and locked build behavior.
-- Measure representative callback request sizes and compute cost.
+- Confirmed `FORCE_HTTPS=true` as the only Railway variable and no explicit
+  debug configuration.
+- Confirmed Railway's pre-Flask public edge as the current HTTP redirect owner
+  and observed protocol-header normalization with no redirect loop.
+- Confirmed the three-host inventory, no Railway health check, and direct
+  Railway reachability.
+- Confirmed Cloudflare Bot Fight Mode and JavaScript Detections are enabled.
+- Measured representative callback request/response sizes and local CPU/wall
+  cost, including the large legitimate Canvas-state POST.
+- Confirmed repository deployment intent and recorded the remaining production
+  build-log uncertainty rather than inferring it away.
 
 No behavior change.
 
 ### Pass 1: low-risk application guards
 
-- Add production/local `TRUSTED_HOSTS` configuration and tests.
+- Add production `TRUSTED_HOSTS` for the exact three-host inventory while the
+  Railway hostname remains supported; keep local hosts in explicit local/test
+  configuration.
 - Add `Permissions-Policy`.
 - Add explicit enum and finite-number validation.
 - Add `rel` to reference links.
 - Replace raw public exception strings with stable messages.
-- Add a measured request-body limit.
+- Add tests that preserve the current HTTPS/proxy assumptions, but do not add
+  `ProxyFix` or otherwise change the redirect implementation.
+- Do not add a request-body limit in this pass: the measured valid Dash state
+  flow is already multi-megabyte and needs a separate design decision.
 
 Deploy and verify before CSP.
 
@@ -821,8 +1074,17 @@ Do not enforce in production in this pass.
 
 ### Pass 5: availability and origin controls
 
-- Add an observed-then-enforced Cloudflare callback rate limit.
-- Decide whether the direct Railway hostname can be disabled.
+- Refactor or explicitly bound the Canvas payload round-trip in the input-change
+  callback, then measure the full legitimate request envelope and introduce a
+  tested application body cap with headroom.
+- Repeat callback measurements against Railway capacity and use observation to
+  design, rather than invent, a callback rate threshold.
+- Decide whether the supported target is dual public ingress or
+  Cloudflare-required ingress.
+- Add an observed-then-enforced Cloudflare callback rate limit with its ingress
+  coverage stated accurately.
+- If Cloudflare-required ingress is chosen, verify whether the generated
+  Railway hostname can be removed without operational loss.
 - If necessary, stage a Cloudflare-overwritten origin secret with an
   application rollback.
 - Tune Gunicorn only from Railway memory and concurrency evidence.
@@ -834,6 +1096,8 @@ These controls should not be bundled into the CSP deployment.
 - Keep Cloudflare/Railway Full while provider guidance requires it.
 - Enable **Always Use HTTPS** and verify both hostnames, paths, and queries.
 - Introduce short HSTS without subdomains/preload, observe, then increase.
+- If direct Railway remains a supported browser ingress, assign and test its
+  separate HSTS owner; Cloudflare cannot cover that hostname.
 - Reassess Full (strict) only if the Railway origin certificate/SNI path becomes
   explicitly supported and verified.
 
@@ -857,10 +1121,19 @@ These controls should not be bundled into the CSP deployment.
   <https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/>
 - Railway custom domains, certificates, and Cloudflare Full guidance:
   <https://docs.railway.com/networking/domains/working-with-domains>
+- Railway Railpack build behavior and service-level configuration overrides:
+  <https://docs.railway.com/builds/railpack>
+- Railway build configuration and Procfile detection:
+  <https://docs.railway.com/builds/build-configuration>
+- Railpack Procfile process selection and override order:
+  <https://railpack.com/config/procfile/>
+- Railpack Python detection, Python-version precedence, and uv lockfile path:
+  <https://github.com/railwayapp/railpack/blob/main/docs/src/content/docs/languages/python.md>
+- Railway start-command detection and override behavior:
+  <https://docs.railway.com/deployments/start-command>
 - Cloudflare JavaScript Detections and CSP nonce propagation:
   <https://developers.cloudflare.com/cloudflare-challenges/challenge-types/javascript-detections/>
 - Cloudflare CSP product interactions:
   <https://developers.cloudflare.com/fundamentals/reference/policies-compliances/content-security-policies/>
 - Cloudflare HSTS requirements and rollout cautions:
   <https://developers.cloudflare.com/ssl/edge-certificates/additional-options/http-strict-transport-security/>
-
