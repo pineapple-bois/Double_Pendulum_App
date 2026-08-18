@@ -225,6 +225,87 @@ Validation:
 
 Rollback: not applicable; this slice is read-only.
 
+#### Workstream 0A — Home reference inventory
+
+Status: source inventory complete on 2026-08-18. This is a Home-scoped
+correction pass, not a claim that the full application inventory above is
+complete.
+
+The reference is the clean local Population Dynamics checkout on `main` at
+`7c9f1b415ca661a8c4214de6402b551a1e6d1845`. This pins the source used for the
+comparison; it does not establish which commit is currently deployed at
+`population-dynamics.net`.
+
+Reference owners inspected:
+
+| Concern | Population Dynamics owner | Double Pendulum owner |
+| --- | --- | --- |
+| Home composition | `app/pages/home.py` | `app/pages/home.py` |
+| Home copy and links | `app/content/home.py` | `app/content/home.py` |
+| Tokens, Home rules, and responsive bands | `assets/styles.css` | `assets/styles.css` |
+| External font/framework effects | App bootstrap and base CSS | `pendulum_app.py` and base CSS |
+| Route-level structural expectations | `tests/infrastructure/test_routing.py` | `tests/unit/test_app_content.py` |
+
+The Home route does not use Dash-generated form-control selectors. Its
+`dcc.Link` components render as anchors and are styled through explicit Home
+classes. Bootstrap is still loaded in Double Pendulum, but the app's later
+`body`, heading, paragraph, and Home rules own the relevant Home typography.
+The Red Hat Display webfont is still downloaded, but it is not selected by the
+Home font cascade after Workstream 1; its remaining explicit use is outside
+this Home slice. Dependency removal remains Workstream 7.
+
+##### Structure and surface inventory
+
+| Concern | Population Dynamics reference | Current Double Pendulum first pass | Home lock decision |
+| --- | --- | --- | --- |
+| Hero composition | One unboxed `.home-hero`; `.home-hero-inner` contains only copy and Explore, followed by reading and attribution siblings | Reading and attribution are nested in `.home-lower-left` as a third grid area | Permit a minimal Home-only markup adjustment so the reference flow can be expressed without layout hacks; preserve content, routes, and information architecture |
+| Hero wash | One left-to-right white gradient over the artwork | Two gradients, including a strong lower wash, with a separate mobile wash/crop | Match the restrained reference wash and centered crop, then verify contrast against the Double Pendulum artwork |
+| Horizontal rhythm | `clamp(20px, 3vw, 40px)`; 38.4px at 1280px and 20px at 390px | `clamp(20px, 5vw, 72px)`; 64px at 1280px and 20px at 390px | Use a Home-scoped reference gutter without changing the shared shell token |
+| Explore surface | `rgba(255,255,255,0.36)`, 14px blur, 12px radius, restrained floating shadow | `rgba(255,255,255,0.86)`, 12px blur, 12px radius, floating shadow | Reduce opacity to let the artwork read; retain the reference's single intentional panel |
+| Explore rows | Transparent at rest and hover; no visible separators or row boxes; only the number turns green on hover | Top separators, padded inset rows, pale-green hover boxes, and green title/number states | Remove the extra row-box treatment; keep an explicit accessible focus-visible ring |
+| Further reading | Transparent and unboxed; its inner wrapper carries width only | Translucent white bordered card with radius, shadow, blur, and padding | Remove the extra box and align it to the hero's reference content width |
+| Reading links | Charcoal at rest; dark green and underlined on hover | Green at rest; dark green and underlined on hover | Match the reference rest and hover states; retain keyboard focus visibility |
+| Attribution | Plain muted text plus a separate icon-only link, absolutely positioned; no surface | The complete attribution is one bordered pill link | Match the unboxed reference treatment; keep the repository target and accessible icon alternative |
+| Responsive structure | Two-column desktop; single-column at 1100px; two-column Explore until 760px | Single-column at 1200px; single-column Explore at 900px | Adopt the reference Home breakpoints without changing shared shell or other pages |
+
+##### Source-resolved Home typography inventory
+
+The pixel values below resolve each codebase's CSS at the two required
+validation widths with a 16px root. They are implementation targets for the
+Home correction; browser-computed values and screenshots remain the
+acceptance evidence.
+
+| Element | Population at 1280px | Double first pass at 1280px | Population at 390px | Double first pass at 390px |
+| --- | ---: | ---: | ---: | ---: |
+| Hero title | 53.12px | 76.8px | 40px | 51.2px |
+| Hero description | 17.28px | 19.2px | 16.8px | 18px |
+| Hero note | 14.72px | 16px | 15.68px | 16px |
+| Explore heading | 15.68px | 24px | 16.8px | 24px |
+| Explore number | 15.04px | 18px | 16.8px | 18px |
+| Explore title | 16.32px | 18px | 18.24px | 18px |
+| Explore description | 14.08px | 14px | 15.68px | 14px |
+| Further-reading heading | 12.8px | 14px | 14.4px | 14px |
+| Reading title | 13.76px | 16px | 16px | 16px |
+| Reading role | 12.16px | 14px | 13.76px | 14px |
+
+Weight is part of the drift as well as size. Population Dynamics leaves the
+hero description and note at normal body weight, uses weight 600 for Explore
+descriptions and reading roles, and compresses the Explore and reading type in
+the 1024–1440px desktop/laptop band. Double Pendulum currently makes the hero
+copy heavier while making the smaller supporting copy lighter.
+
+Inventory outcomes:
+
+- [x] Pin the exact Population Dynamics source baseline used for Home.
+- [x] Inventory active Home markup, selectors, surfaces, link states, type,
+      spacing, and responsive bands in both codebases.
+- [x] Check Dash, Bootstrap, and external-font effects relevant to Home.
+- [x] Identify the minimum structural difference that blocks a clean match.
+- [x] Keep all application-wide inventory items open until their owning
+      workstreams are reached.
+- [x] Capture browser-computed styles and matched screenshots while
+      implementing the Home reference lock below.
+
 ### Workstream 1 — Theme tokens and base styles
 
 Goal: establish the shared palette and typography without redesigning layouts.
@@ -332,6 +413,75 @@ Rollback:
 
 - Restore the navy hero path and prior home-specific CSS commit. Because the
   old asset remains tracked, no asset recovery should be needed.
+
+#### Workstream 3A — Home reference lock before Workstream 4
+
+Status: required correction gate. Do not begin Workstream 4 until this slice
+passes. Workstreams 1 and 2 remain accepted and should not be revisited unless
+a narrowly scoped Home correction exposes a regression.
+
+Tasks:
+
+- [x] Align the Home hero type scale, weights, line heights, and margins to the
+      pinned Population Dynamics source at desktop and mobile widths.
+- [x] Align the Home-only gutter, grid proportions, vertical spacing, and
+      1024–1440px compression band without changing shared shell tokens.
+- [x] Replace the current two-part wash and mobile crop override with the
+      reference overlay model, adjusted only if the Double Pendulum artwork
+      requires more contrast.
+- [x] Reduce the Explore panel opacity and align its blur, padding, gaps,
+      border, radius, and shadow.
+- [x] Remove Explore row separators and hover boxes; match reference rest and
+      hover colours while preserving the global focus-visible ring.
+- [x] Remove the further-reading card surface and match its heading, title,
+      role, spacing, and link states.
+- [x] Replace the attribution pill presentation with the reference's plain
+      text and separately focusable icon-link treatment.
+- [x] Make only the minimal Home markup changes needed to express the
+      reference flow; preserve content, routes, IDs, callbacks, and scroll
+      behaviour.
+- [x] Add or refine Home structure tests for the markup adjustment.
+
+Acceptance evidence:
+
+- [x] At 1280 × 720, browser-computed font sizes match the inventory targets
+      and the reference's desktop/laptop compression is active.
+- [x] At 390 × 720, the title resolves to 40px, the copy scale matches the
+      reference, and the full page scrolls normally.
+- [x] Explore links are charcoal at rest; hover changes only the numbered
+      affordance; keyboard focus remains unambiguous.
+- [x] Reading links are charcoal at rest and dark green/underlined on hover;
+      their focus treatment remains visible.
+- [x] The Explore rail is the only elevated Home panel; reading and
+      attribution have no card, pill, border, radius, or shadow treatment.
+- [x] The hero remains readable, the artwork remains visible, and the
+      transition into lower content feels continuous.
+- [x] No horizontal overflow, clipped content, broken route, browser error,
+      or scroll regression appears at either target width.
+- [x] Focused Home tests and the full suite pass.
+
+Completion evidence:
+
+- At 1280 × 720, browser-computed Home type matches every source-resolved
+  inventory target, including a 53.12px title, 17.28px introduction, 15.68px
+  Explore heading, and 13.76px reading title.
+- At 390 × 720, the title resolves to 40px and all supporting sizes match the
+  mobile targets. The 1188px document scrolls to its 468px maximum offset and
+  leaves the complete attribution visible.
+- The document and body scroll widths equal their client widths at both target
+  sizes. The green hero remains centered, legible, and visible through the
+  single reference wash.
+- Explore hover leaves the row transparent and changes only the number to
+  `#00635d`. Reading hover resolves to `#004c47` with an underline. Explore
+  and reading keyboard focus resolve to the shared 3px green outline and 4px
+  pale-green ring.
+- Browser diagnostics contain no warnings or errors.
+
+Rollback:
+
+- Revert the dedicated Home reference-lock commit. The committed Workstream 3
+  first pass and retained navy hero remain available as independent fallback
+  points.
 
 ### Workstream 4 — Equations and teaching surfaces
 
@@ -672,6 +822,8 @@ has remained stable through the agreed observation period.
 | 2026-08-18 | Retain dark shell, home overlays, Canvas, Plotly, markup, and dependencies during Workstream 1 | Keep the token/base slice independently reviewable and respect later workstream ownership | This plan and later workstream commits |
 | 2026-08-18 | Complete the shared-shell restyle in CSS without markup changes | Existing semantic classes and native `details`/`summary` behaviour already provide the required structure and accessibility hooks | Shared shell CSS |
 | 2026-08-18 | Restyle Home with page-scoped CSS and retain the 404's existing treatment | Keep Workstream 3 independently reversible without changing the shared shell, chromeless route structure, or unrelated page presentation | Home CSS and later 404 work if desired |
+| 2026-08-18 | Reopen Home as a source-locked correction gate before Workstream 4 | The first pass matched the palette but drifted from the reference type scale, link states, and deliberately unboxed lower content | Home CSS, markup, and tests |
+| 2026-08-18 | Pin Population Dynamics `7c9f1b4` for the Home comparison | Give the correction measurable source ownership and prevent a moving visual target | This plan; durable theme documentation at closeout |
 
 Add decisions when they affect scope, safety, architecture, deployment, or
 rollback.
@@ -693,6 +845,10 @@ rollback.
 | 2026-08-18 | Workstream 3 | Focused Home/content/route tests | 39 passed in 0.89s | No failures |
 | 2026-08-18 | Workstream 3 | Full suite | 174 passed in 7.93s | No failures |
 | 2026-08-18 | Workstream 3 | Home at 1280 × 720 and 390 × 720 | Hero, overlay, Explore hover/focus, reading transition, attribution, and complete scroll path verified; no horizontal overflow | Green hero loaded; no new browser warnings/errors; temporary responsive harness removed |
+| 2026-08-18 | Workstream 0A | Source inventory against Population Dynamics `7c9f1b4` | Home markup, CSS, responsive bands, dependency effects, and source-resolved type sizes recorded | Documentation-only pass; browser-computed comparison deferred to Workstream 3A implementation |
+| 2026-08-18 | Workstream 3A | Focused Home/content/import tests | 40 passed in 1.08s | New structure test covers the reference flow, numbered Explore links, and separate attribution link |
+| 2026-08-18 | Workstream 3A | Full suite | 175 passed in 7.95s | No failures |
+| 2026-08-18 | Workstream 3A | Home at 1280 × 720 and 390 × 720 | All inventoried type sizes matched; hover/focus, overlay, scroll end, and artwork visibility verified; no horizontal overflow | No browser warnings/errors; responsive viewport override reset after inspection |
 
 Append results; do not rewrite failed evidence into a success-only history.
 
@@ -706,7 +862,8 @@ Append results; do not rewrite failed evidence into a success-only history.
 - [ ] Pre-change source, deployment, test, and visual baseline recorded.
 - [x] Theme tokens implemented.
 - [x] Shared shell restyled.
-- [x] Green hero activated and Home page restyled.
+- [x] Green hero activated and Home first pass completed.
+- [x] Home reference lock completed before Workstream 4.
 - [ ] Equations restyled.
 - [ ] Simulation HTML/CSS surfaces restyled.
 - [ ] Canvas/plotting palette updated.

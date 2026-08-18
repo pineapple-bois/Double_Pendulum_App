@@ -18,7 +18,7 @@ def _explore_link(index, item):
         className="home-explore-link",
         href=item.href,
         children=[
-            html.Span(f"{index}", className="home-explore-number"),
+            html.Span(f"{index:02d}", className="home-explore-number"),
             html.Span(
                 className="home-explore-copy",
                 children=[
@@ -50,24 +50,36 @@ def _further_reading_section():
     return html.Section(
         className="home-further-reading",
         children=[
-            html.H2("Further reading", className="home-further-reading-heading"),
-            html.Ul(
-                className="home-reading-list",
-                children=[_reading_item(item) for item in FURTHER_READING],
+            html.Div(
+                className="home-further-reading-inner",
+                children=[
+                    html.H2("Further reading", className="home-further-reading-heading"),
+                    html.Ul(
+                        className="home-reading-list",
+                        children=[_reading_item(item) for item in FURTHER_READING],
+                    ),
+                ],
             ),
         ],
     )
 
 
 def _home_attribution():
-    return html.A(
+    return html.Div(
         className="home-attribution",
-        href=REPOSITORY_URL,
-        target="_blank",
-        rel="noopener noreferrer",
         children=[
-            html.Span(ATTRIBUTION_LABEL, className="home-attribution-label"),
-            html.Img(src=GITHUB_LOGO_SRC, className="home-attribution-icon", alt="GitHub"),
+            html.Span(ATTRIBUTION_LABEL, className="home-attribution-text"),
+            html.A(
+                className="home-attribution-link",
+                href=REPOSITORY_URL,
+                target="_blank",
+                rel="noopener noreferrer",
+                children=html.Img(
+                    src=GITHUB_LOGO_SRC,
+                    className="home-attribution-icon",
+                    alt="GitHub repository",
+                ),
+            ),
         ],
     )
 
@@ -84,7 +96,7 @@ def layout():
                         className="home-hero-inner",
                         children=[
                             html.Div(
-                                className="home-copy",
+                                className="home-hero-copy",
                                 children=[
                                     html.H1(HOME_TITLE, className="home-hero-title"),
                                     html.P(HOME_INTRODUCTION, className="home-hero-description"),
@@ -92,7 +104,7 @@ def layout():
                                 ],
                             ),
                             html.Nav(
-                                className="home-explore-panel",
+                                className="home-explore-rail",
                                 children=[
                                     html.H2("Explore", className="home-explore-heading"),
                                     *[
@@ -101,15 +113,10 @@ def layout():
                                     ],
                                 ],
                             ),
-                            html.Div(
-                                className="home-lower-left",
-                                children=[
-                                    _further_reading_section(),
-                                    _home_attribution(),
-                                ],
-                            ),
                         ],
                     ),
+                    _further_reading_section(),
+                    _home_attribution(),
                 ],
             ),
         ],

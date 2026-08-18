@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dash import dcc
 
-from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE
+from app.content.home import EXPLORE_LINKS, FURTHER_READING, HOME_TITLE, REPOSITORY_URL
 from app.content.equations import BRANCH_CARDS, DERIVATION_SECTIONS, MODEL_SUMMARIES
 from app.content.math import MATH_PAGES
 from app.content.not_found import NOT_FOUND_HAIKU_LINES
@@ -314,6 +314,31 @@ def test_home_and_404_have_chromeless_hero_layouts():
     assert "not-found-hero" in not_found_classes
     for line in NOT_FOUND_HAIKU_LINES:
         assert line in not_found_text
+
+
+def test_home_layout_uses_reference_flow_and_link_structure():
+    page = home.layout()
+    hero = page.children[0]
+    hero_inner, further_reading, attribution = hero.children
+
+    assert hero.className == "home-hero"
+    assert [child.className for child in hero_inner.children] == [
+        "home-hero-copy",
+        "home-explore-rail",
+    ]
+    assert further_reading.className == "home-further-reading"
+    assert further_reading.children[0].className == "home-further-reading-inner"
+    assert attribution.className == "home-attribution"
+
+    explore_links = hero_inner.children[1].children[1:]
+    assert [link.children[0].children for link in explore_links] == ["01", "02", "03"]
+
+    attribution_text, attribution_link = attribution.children
+    assert attribution_text.className == "home-attribution-text"
+    assert attribution_link.className == "home-attribution-link"
+    assert attribution_link.href == REPOSITORY_URL
+    assert attribution_link.children.alt == "GitHub repository"
+    assert getattr(attribution, "href", None) is None
 
 
 def test_simulation_callback_registration_is_importable():
