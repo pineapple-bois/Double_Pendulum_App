@@ -1526,7 +1526,7 @@ a:hover {
 
 .simulation-layout .side-bar {
     align-self: start;
-    background: var(--surface-panel-subtle);
+    background: var(--surface-panel);
     border-right: 1px solid var(--border-soft);
     box-sizing: border-box;
     display: flex;
@@ -1542,7 +1542,7 @@ a:hover {
 }
 
 .simulation-layout .inputs {
-    background: var(--surface-panel-subtle);
+    background: var(--surface-panel);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -1561,7 +1561,7 @@ a:hover {
 
 .simulation-layout .input-group {
     background: transparent;
-    border-bottom: 1px solid var(--border-soft);
+    border-bottom: 0;
     flex-grow: 0;
     gap: var(--simulation-sidebar-internal-gap);
     min-width: 0;
@@ -1581,9 +1581,9 @@ a:hover {
 .simulation-layout .run-group {
     background: var(--surface-panel);
     border-bottom: 0;
-    border-top: 1px solid var(--border-soft);
+    border-top: 0;
     bottom: 0;
-    box-shadow: 0 -8px 20px rgba(31, 41, 51, 0.04);
+    box-shadow: none;
     gap: var(--simulation-sidebar-internal-gap);
     margin-top: auto;
     padding: 12px var(--sidebar-x-padding) 16px;
