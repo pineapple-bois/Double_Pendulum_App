@@ -7,6 +7,21 @@ It is exploratory material only. Production app code must not import from this
 directory, and this directory must not be used as a source of production
 callbacks, layouts, assets, routes, metrics, plots, APIs, or datasets.
 
+## Branch Boundary
+
+Active Chaos-content development belongs on Phase 10 experimental branches only.
+The current working branch is `phase10/chaos-experiments`.
+
+Do not develop or promote material in this sandbox from unrelated feature
+branches, including the parallel CSP/security development strand. This keeps
+mathematical and numerical discovery isolated from production administration
+work and reduces accidental coupling between the two efforts.
+
+Future Phase 10 experiment branches may use the `phase10/...` namespace. Work
+leaves this sandbox only through an explicit promotion decision after its
+mathematical conventions, numerical behaviour, tests, and documentation have
+been reviewed.
+
 ## Purpose
 
 - Preserve Phase 10 discovery notes separately from the historic
@@ -16,6 +31,49 @@ callbacks, layouts, assets, routes, metrics, plots, APIs, or datasets.
 - Provide a clean place for future rewritten chaos experiments.
 - Keep all future experiments self-contained unless a read-only production
   reference is explicitly justified in the experiment notes.
+
+## Chaos Journey Map
+
+The sandbox follows a conceptual progression. Later stages depend on evidence
+and conventions established by earlier stages; the existence of exploratory
+code for a later stage does not imply that stage has been accepted.
+
+### 1. Sensitivity to initial conditions — the gateway
+
+Begin with controlled pairs of nearby initial states. Establish the state and
+perturbation conventions, define how trajectory separation is measured, and
+inspect how separation evolves under identical physical parameters and solver
+policy.
+
+The first goal is descriptive rather than classificatory: produce trustworthy
+static evidence of nearby-trajectory behaviour before attempting to assign a
+Lyapunov exponent or a general label of chaos.
+
+### 2. Poincare sections — turn motion into geometry
+
+Once trajectory behaviour and numerical validity are understood, sample the
+flow on a precisely defined section of phase space. Crossing direction,
+coordinate conventions, interpolation, transient removal, solver policy, and
+section residuals must all be explicit and testable.
+
+The existing `experiments/hamiltonian_poincare/` work predates this journey map.
+It is retained as useful exploratory prior work, not as evidence that Stage 2
+is complete. Its assumptions and implementation should be reviewed when this
+stage is reached.
+
+### 3. Lyapunov analysis — quantify what users just saw
+
+Build from the nearby-trajectory experiments toward a numerically defensible
+measure of exponential separation. Begin with finite-time divergence and only
+introduce stronger Lyapunov claims once perturbation size, fitting interval,
+renormalisation, convergence, and numerical sensitivity have been addressed.
+
+### 4. Chaos maps — explore parameter/state space
+
+Only after an individual chaos diagnostic is trusted should it be evaluated
+systematically across initial-condition or parameter space. Grids, ensembles,
+classification maps, and expensive parameter sweeps therefore belong late in
+the journey rather than at the start of discovery.
 
 ## Internal Structure
 
@@ -41,12 +99,94 @@ Nothing in this sandbox is production-ready unless a later Phase 10 task
 promotes it deliberately with mathematical fidelity review, tests, and
 production documentation.
 
+## Experimental Method
+
+Every new experiment follows the same progression:
+
+```text
+define precisely
+      ↓
+run minimally
+      ↓
+verify numerically
+      ↓
+inspect statically
+      ↓
+increase complexity
+```
+
+**Define precisely.** State the question before implementing the experiment.
+Record the mathematical quantity being investigated, coordinate conventions,
+initial conditions, perturbation or event rule, numerical policy, and what
+would count as failure.
+
+**Run minimally.** Start with the smallest experiment capable of answering the
+question: one model, one or two named initial conditions, and an integration
+short enough to inspect. Do not begin with grids, ensembles, long sweeps, or
+performance optimisation.
+
+**Verify numerically.** Solver success alone is not acceptance. Check relevant
+invariants, finite values, residuals, event/interpolation accuracy, and
+sensitivity to tolerances or resolution where the experiment requires it.
+Failed numerical criteria should reject a run rather than merely annotate it.
+
+**Inspect statically.** Matplotlib diagnostics come before interactive product
+visualisation. Figures should expose correctness, failure, structure, and
+numerical artefacts. A visually interesting result is not evidence of its own
+validity.
+
+**Increase complexity.** Longer integrations, additional initial conditions,
+different energy regimes, ensembles, and parameter sweeps are introduced only
+after the minimal result is understood and accepted.
+
+> Complexity is earned by verification.
+
+## Experiment Contract
+
+Each experiment should record, either in a local README or an equivalent small
+experiment note:
+
+- **Question** — what are we trying to establish?
+- **Definition** — what mathematical quantity or event is being measured?
+- **Minimal experiment** — what is the smallest run that can answer it?
+- **Numerical validity** — how could the result be wrong, and how will that be
+  detected?
+- **Static inspection** — which figures expose the result and its failure
+  modes?
+- **Acceptance** — what evidence permits the experiment to progress?
+- **Findings** — what was actually observed?
+- **Next experiment** — what additional complexity has now been justified?
+
+The intended development flow is therefore:
+
+```text
+numerical primitive
+      ↓
+verification experiment
+      ↓
+static diagnostic
+      ↓
+accepted mathematical contract
+      ↓
+reusable analysis API
+      ↓
+interactive teaching surface
+```
+
+Promotion into production is a separate activity. Nothing should move into
+production merely because an experiment is useful or visually compelling.
+
 ## Executable Sandbox Artifacts
 
 - `experiments/hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section
   workflow with explicit state, section, interpolation, solver, and
   energy-drift policies.
+
+This experiment is currently treated as exploratory prior work for Stage 2 of
+the journey map. Keep it runnable and inspectable, but do not let its existence
+skip the Stage 1 sensitivity work or imply that its mathematical and numerical
+policies have already passed final acceptance.
 
 Run it from the repository root:
 
