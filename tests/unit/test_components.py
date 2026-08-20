@@ -110,7 +110,12 @@ def test_navigation_and_footer_components_return_dash_components():
 
 
 def test_reference_and_graph_components_return_dash_components():
-    assert_dash_component(get_references_section(MATH_PAGES["lagrangian"].references))
+    references = get_references_section(MATH_PAGES["lagrangian"].references)
+    reference_links = [item.children for item in references.children[2].children]
+
+    assert_dash_component(references)
+    assert all(link.target == "_blank" for link in reference_links)
+    assert all(link.rel == "noopener noreferrer" for link in reference_links)
     assert_dash_component(get_animation_phase_section("Trace Animation", "Phase Portrait"))
     assert_dash_component(get_time_graph_section("Time Graph"))
 

@@ -15,6 +15,8 @@ def validate_inputs(
     param_M1,
     param_M2,
     param_g,
+    system_type,
+    integrator_policy_value=None,
 ):
     sections = validate_input_sections(
         initial_conditions_list,
@@ -28,6 +30,8 @@ def validate_inputs(
         param_M1,
         param_M2,
         param_g,
+        system_type,
+        integrator_policy_value,
     )
 
     error_list = []

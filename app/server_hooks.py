@@ -14,6 +14,7 @@ Disallow: /
 User-agent: *
 Allow: /
 """
+PERMISSIONS_POLICY = "camera=(), microphone=(), geolocation=()"
 
 
 def _plain_not_found():
@@ -50,6 +51,12 @@ def _is_scanner_probe(path: str, query_string: bytes) -> bool:
 
 def configure_server(server, *, dash_index_renderer=None) -> None:
     """Attach routing, response-security, and optional deployment hooks."""
+
+    server.config["TRUSTED_HOSTS"] = (
+        list(config.TRUSTED_HOSTS)
+        if config.TRUSTED_HOSTS is not None
+        else None
+    )
 
     @server.get("/robots.txt")
     def robots_txt():
@@ -98,4 +105,5 @@ def configure_server(server, *, dash_index_renderer=None) -> None:
             "strict-origin-when-cross-origin",
         )
         response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        response.headers.setdefault("Permissions-Policy", PERMISSIONS_POLICY)
         return response

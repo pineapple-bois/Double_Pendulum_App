@@ -1,8 +1,11 @@
+from copy import deepcopy
+import logging
+import math
+
 import dash
 from dash import html
 from dash.dependencies import Input, Output, State
 import sympy as sp
-from copy import deepcopy
 
 from app.components.simulation_interaction import (
     CANVAS_PAYLOAD_STORE_ID,
@@ -58,10 +61,20 @@ INTEGRATOR_POLICY_BY_VALUE = {
 }
 PARAMETER_MINIMUM = 1
 PARAMETER_MAXIMUM = 10
+LOGGER = logging.getLogger(__name__)
+SOLVER_SETUP_FAILURE_MESSAGE = (
+    "Solver setup failed before a drawable payload could be created."
+)
+OUTPUT_PAYLOAD_FAILURE_MESSAGE = "Output payload generation failed."
 
 
 def _clamp_integer_parameter(value):
-    if value is None or not isinstance(value, (int, float)):
+    if (
+        value is None
+        or not isinstance(value, (int, float))
+        or isinstance(value, bool)
+        or not math.isfinite(value)
+    ):
         return PARAMETER_MINIMUM
     return max(PARAMETER_MINIMUM, min(PARAMETER_MAXIMUM, int(round(value))))
 
@@ -415,7 +428,7 @@ def build_input_change_result(
     initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
     new_error_message = validate_inputs([initial_conditions],
                                         time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
-                                        param_M1, param_M2, param_g)
+                                        param_M1, param_M2, param_g, system_type, integrator_policy_value)
     if new_error_message:
         message = "Validation failed. Correct the highlighted inputs before rerunning."
         return _failed_result(
@@ -482,7 +495,7 @@ def build_simulation_run_result(
     initial_conditions = [init_cond_theta1, init_cond_theta2, init_cond_omega1, init_cond_omega2]
     error_message = validate_inputs([initial_conditions],
                                     time_start, time_end, model_type, param_l1, param_l2, param_m1, param_m2,
-                                    param_M1, param_M2, param_g)
+                                    param_M1, param_M2, param_g, system_type, integrator_policy_value)
     if error_message:
         message = "Validation failed. Correct the highlighted inputs before rerunning."
         return _failed_result(
@@ -517,20 +530,34 @@ def build_simulation_run_result(
                 model=model_type,
                 solver_policy=solver_policy,
             )
-    except Exception as exc:
+        solver_metadata = getattr(pendulum, "solver_metadata", None)
+        solver_metadata_dict = (
+            solver_metadata.to_dict()
+            if hasattr(solver_metadata, "to_dict")
+            else None
+        )
+        solver_failed = (
+            solver_metadata is not None
+            and solver_metadata.success is False
+        )
+    except Exception:
+        LOGGER.exception(
+            "Simulation solver setup failed for run_id=%s model=%r system=%r",
+            run_id,
+            model_type,
+            system_type,
+        )
         return _failed_result(
             run_id=run_id,
             model_type=model_type,
             system_type=system_type,
-            message="Solver setup failed before a drawable payload could be created.",
-            errors=[str(exc)],
+            message=SOLVER_SETUP_FAILURE_MESSAGE,
+            errors=[SOLVER_SETUP_FAILURE_MESSAGE],
             failure_reason=SimulationResultState.SOLVER_FAILURE.value,
             previous_playback_state=current_playback_state,
         )
 
-    solver_metadata = getattr(pendulum, "solver_metadata", None)
-    solver_metadata_dict = solver_metadata.to_dict() if hasattr(solver_metadata, "to_dict") else None
-    if solver_metadata is not None and solver_metadata.success is False:
+    if solver_failed:
         return _failed_result(
             run_id=run_id,
             model_type=model_type,
@@ -553,13 +580,19 @@ def build_simulation_run_result(
             request_label=f"{model_type} {system_type} run {run_id}",
         )
         payload_problems = validate_canvas_motion_payload(payload)
-    except Exception as exc:
+    except Exception:
+        LOGGER.exception(
+            "Simulation output preparation failed for run_id=%s model=%r system=%r",
+            run_id,
+            model_type,
+            system_type,
+        )
         return _failed_result(
             run_id=run_id,
             model_type=model_type,
             system_type=system_type,
-            message="Output payload generation failed.",
-            errors=[str(exc)],
+            message=OUTPUT_PAYLOAD_FAILURE_MESSAGE,
+            errors=[OUTPUT_PAYLOAD_FAILURE_MESSAGE],
             failure_reason=SimulationResultState.SOLVER_FAILURE.value,
             solver_metadata=solver_metadata_dict,
             previous_playback_state=current_playback_state,
