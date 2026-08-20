@@ -178,6 +178,24 @@ production merely because an experiment is useful or visually compelling.
 
 ## Executable Sandbox Artifacts
 
+- `experiments/initial_condition_sensitivity/` investigates whether the fixed
+  simple-model pair `(0, 120, 0, 0)` and `(0, 120.001, 0, 0)`, in user-facing
+  degree units, exhibits credible substantial finite-time physical separation.
+  Its current status is **rejected as sensitivity evidence**: all principal and
+  tighter-reference numerical checks pass, but neither pair reaches the
+  predeclared separation threshold within 20 seconds. Reproduce its principal
+  diagnostic bundle from the repository root with:
+
+  ```bash
+  uv run python development/chaos_content/experiments/initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/principal --plots
+  ```
+
+  The command exits non-zero because the fixed acceptance result is rejected,
+  while still writing the ignored evidence bundle. The result does not show
+  that separation cannot occur over a longer interval, and it supports no
+  general sensitivity or chaos claim. The experiment-local README owns the
+  detailed contract, findings, and limitations.
+
 - `experiments/hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section
   workflow with explicit state, section, interpolation, solver, and
