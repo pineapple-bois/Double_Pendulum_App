@@ -1,8 +1,9 @@
 # Deployed Application Security Audit
 
 Date: 2026-08-18  
+Last updated: 2026-08-20
 Branch: `feat_CSP`  
-Status: audit and hardening plan only; no application or infrastructure controls were changed
+Status: Security Pass 0 complete; Security Pass 1 implemented and locally verified; broader programme paused before Pass 2
 
 ## Executive summary
 
@@ -27,13 +28,11 @@ The most important findings are:
    unexplained injection. Dash hashes can cover the application scripts;
    Cloudflare's documented nonce propagation should cover the edge injection.
    Runtime Dash and MathJax CSS still requires an inline-style allowance.
-3. Production has `FORCE_HTTPS=true`, and the application manually trusts the
-   first `X-Forwarded-Proto` value while leaving `TRUSTED_HOSTS` unset. Live
-   black-box tests show Railway currently normalizes the external scheme:
-   client-supplied protocol values could neither suppress its HTTP redirect nor
-   cause an HTTPS redirect loop. Do not add broad `ProxyFix` middleware; add
-   explicit host validation in a later small pass and preserve the verified
-   Railway boundary assumptions in tests/documentation.
+3. Production has `FORCE_HTTPS=true`, and Pass 1 now uses that verified
+   production boundary to enable Flask `TRUSTED_HOSTS` for the apex, `www`, and
+   generated Railway hostname. Local HTTP development leaves host enforcement
+   off. The first-value `X-Forwarded-Proto` behavior is unchanged, regression
+   tested, and no `ProxyFix` middleware was added.
 4. Public HTTP already redirects to HTTPS even though Cloudflare's **Always Use
    HTTPS** setting is off. Both the Cloudflare and direct Railway hostnames show
    the same pre-Flask Railway redirect. Cloudflare Always Use HTTPS would
@@ -279,6 +278,117 @@ Cloudflare's injected script.
 
 The exact temporary process was stopped and port 8063 was confirmed closed.
 
+### Security Pass 1 implementation evidence
+
+Security Pass 1 was implemented on 2026-08-20 without changing CSP,
+Cloudflare, Railway, HTTPS redirect logic, proxy middleware, HSTS, request-size
+limits, rate limiting, Canvas state, Gunicorn, dependencies, or MathJax.
+
+Implemented controls:
+
+- `FORCE_HTTPS=true`, the verified production deployment boundary, enables
+  Flask `TRUSTED_HOSTS` for `double-pendulum.net`,
+  `www.double-pendulum.net`, and
+  `web-production-65a59.up.railway.app`. With `FORCE_HTTPS=false`, trusted-host
+  enforcement remains off so localhost development and ordinary tests are not
+  coupled to production hostnames.
+- Flask responses now include
+  `Permissions-Policy: camera=(), microphone=(), geolocation=()` alongside the
+  existing browser headers.
+- Simulation validation explicitly permits only the supported model,
+  formulation, and named integrator-policy strings. A missing integrator policy
+  remains an intentional safe request for the server default; unknown strings
+  are rejected.
+- Finite-number checks now cover start/end time, all four initial-state values,
+  lengths, the active simple/compound masses, and gravity. Boolean values are
+  not accepted as numbers. Parameter-stepper callback state also rejects
+  boolean and non-finite values before rounding.
+- Solver-setup, metadata-conversion, and output-preparation exceptions are
+  logged server-side with run/model/formulation context. Failed Canvas payloads
+  contain stable messages rather than `str(exc)`. Deliberate solver metadata
+  remains available as educational diagnostics.
+- Every application link that opens a new tab now explicitly uses
+  `rel="noopener noreferrer"`.
+
+Focused regression coverage verifies the three production hosts, hostile-host
+rejection, localhost behavior, the existing redirect cases, first forwarded
+protocol selection, secure requests with a conflicting forwarded value, the
+new header, all enum classes, representative non-finite values across every
+numeric input category, stepper state, exception redaction/logging, and link
+attributes. The implementation-time full suite passed: **227 tests passed in
+8.23 seconds**.
+A production-mode import smoke check returned `200` for the apex and direct
+Railway hosts, `400` for a hostile host, and the expected Permissions Policy.
+
+Production deployment verification remains required before Pass 2: exercise
+all three allowed hosts through their intended ingress paths and confirm that
+the generated Railway hostname has not changed. If the deployment stops using
+`FORCE_HTTPS=true`, or the host inventory changes, the trusted-host boundary
+must be revised deliberately rather than silently broadening the allowlist.
+
+### Security branch closeout and promotion readiness
+
+The broader hardening programme is paused after Pass 1. Passes 2–4 are paused,
+not abandoned; no CSP scaffolding, report-only policy, or enforcement work has
+been implemented. The Pass 0 evidence and deferred findings remain in this
+branch-local document so that a future security pass can resume without
+repeating the investigation unnecessarily.
+
+The Pass 1 application changes are cleanly separable from the unfinished CSP
+architecture and are recommended for promotion to `main` together with their
+tests:
+
+| Accepted control | Application files | Regression evidence | Recommendation |
+| --- | --- | --- | --- |
+| Production-aware trusted hosts and Permissions Policy | `app/config.py`, `app/server_hooks.py` | `tests/unit/test_config.py`, `tests/integration/test_server_hooks.py` cover the exact production inventory, hostile hosts, localhost, response policy, and unchanged HTTPS/forwarded-protocol behavior | Promote |
+| Enum/finite-number validation and stable caught-exception messages | `src/double_pendulum/validation/__init__.py`, `src/double_pendulum/validation/dash.py`, `src/double_pendulum/validation/inputs.py`, `app/callbacks/simulation.py` | `tests/unit/test_validation.py` and `tests/integration/test_simulation_interaction_shell.py` cover all configuration enums, every relevant numeric input category, callback rejection, safe stepper handling, stable browser messages, and server logging | Promote |
+| Explicit new-tab relationship protection | `app/components/references.py` | `tests/unit/test_components.py` checks every generated reference link | Promote |
+
+These controls are independently useful application hardening. None requires
+CSP hashes, nonces, policy modes, callback-registration changes, Cloudflare
+configuration, or another deferred architectural change. Trusted-host
+validation is deployment-aware rather than generic: it is correct for the
+verified `FORCE_HTTPS=true` production model and exact three-host inventory,
+and must be reviewed whenever either fact changes.
+
+Closeout verification on 2026-08-20 passed all 117 focused tests covering the
+proposed promotion files in 6.07 seconds and the complete 227-test suite in
+8.46 seconds. The earlier production-mode local import smoke also accepted the
+apex and direct Railway hosts, rejected a hostile host, and emitted the exact
+Permissions Policy. Live post-deployment verification remains outstanding and
+is an operational follow-up, not a reason to couple Pass 1 to future CSP work.
+
+`SECURITY_AUDIT.md` must remain only on `feat_CSP`; it is not recommended for
+promotion or copying to `main`. At closeout review time the Pass 1 application,
+test, and audit refinements are uncommitted changes on top of branch HEAD
+`673b9dc`. The branch-only history since merge base `87f74d4` also contains the
+audit commits `ebddeba` and `db7ec44`. Commit `673b9dc` is an unrelated sidebar
+style change whose resulting file content already matches `main` commit
+`1f4bc8d`; it is not part of Security Pass 1. A branch merge is therefore the
+wrong promotion mechanism even though that style content currently converges.
+
+Before promotion, create one commit containing only the twelve Pass 1
+application and test files in the table above, then create a separate closeout
+commit containing only `SECURITY_AUDIT.md`. Cherry-pick only the application
+and test commit onto an up-to-date `main`. This preserves the branch-local
+documentation boundary and avoids importing the branch's divergent audit and
+style history.
+
+The concrete future resume point is Pass 2 CSP scaffolding in `off` or
+report-only mode. Before resuming, first re-verify the production host
+inventory, `FORCE_HTTPS` deployment state, Railway build/start configuration,
+and Cloudflare JavaScript Detections behavior. Then implement the already
+proposed dedicated CSP builder/mode parser, callback-registration ordering,
+validated Dash hashes, per-response nonce design, and exact policy tests. Pass
+3 remains the production report-only observation period, and Pass 4 remains
+enforcement only after that evidence is accepted.
+
+Availability/origin controls, HTTPS/HSTS migration, dependency provenance,
+Cloudflare changes, rate limiting, request-body limits, Railway ingress,
+Canvas/result-state redesign, Gunicorn tuning, and dependency upgrades remain
+intentionally deferred. They are not prerequisites for promoting Pass 1 and
+must not be bundled into the selective promotion.
+
 ## Current deployed surface
 
 The intended public application surface is small:
@@ -452,7 +562,9 @@ Any client can post directly to the Dash callback endpoint and request a
 simulation. Validation caps duration at 60 seconds and therefore caps the
 current output request at 12,000 time samples. Parameter, mass, length,
 gravity, angle, and angular-velocity bounds are also present. These are
-important positive controls.
+important positive controls. Pass 1 additionally rejects unknown model,
+formulation, and named integrator-policy strings before model construction and
+requires finite, non-boolean values across the numerical input surface.
 
 The repository-declared production command is only:
 
@@ -494,8 +606,8 @@ consume parsing memory before field-level validation. This is an availability
 risk, not an authentication or data-confidentiality risk. The measured local
 cases did not approach the 30-second timeout, but they do not establish Railway
 service capacity or concurrent behavior. A Cloudflare-only rate limit would
-reduce custom-domain
-load while leaving the direct Railway path available for bypass.
+reduce custom-domain load while leaving the direct Railway path available for
+bypass.
 
 **Recommended mitigation**
 
@@ -506,8 +618,8 @@ load while leaving the direct Railway path available for bypass.
    complete valid envelope and choose explicit headroom. Then add a tested cap
    with a generic `413`.
 3. Explicitly allowlist model, system, and solver-policy enum values and reject
-   non-finite numeric input before model construction. The current validation
-   allows `NaN` angle values to reach solver setup.
+   non-finite numeric input before model construction. **Implemented in Pass 1;
+   retain the regression coverage.**
 4. Configure a Cloudflare rate-limit rule specifically for
    `POST /_dash-update-component`, with enough burst capacity for normal Dash
    use. Observe before blocking, do not invent a threshold from a single-user
@@ -581,9 +693,9 @@ or replaced by a controlled mechanism.
 Authenticated Origin Pulls is not practical unless Railway adds supported
 managed-origin client-certificate validation.
 
-### F5. Railway normalizes external scheme today; host validation is still absent
+### F5. Railway normalizes external scheme today; production host validation is now enforced
 
-**Status:** confirmed application and production-boundary finding\
+**Status:** Pass 1 mitigation implemented; production deployment verification pending\
 **Priority:** Medium\
 **Enforcement layer:** Dash/Flask application informed by Railway's proxy contract
 
@@ -591,9 +703,12 @@ managed-origin client-certificate validation.
 
 When `FORCE_HTTPS` is enabled, the application reads the first comma-separated
 `X-Forwarded-Proto` value directly. It treats `https` as authoritative and
-otherwise constructs a redirect from `request.url`. No `ProxyFix` is installed,
-and Flask `TRUSTED_HOSTS` is unset. A local request with
-`Host: hostile.example` returned `200`.
+otherwise constructs a redirect from `request.url`. No `ProxyFix` is installed.
+
+Pass 1 configures Flask `TRUSTED_HOSTS` for the three verified production hosts
+when `FORCE_HTTPS=true`. This rejects unknown hosts before they can influence
+the fallback redirect. With `FORCE_HTTPS=false`, trusted-host enforcement is
+disabled so localhost and `127.0.0.1` development remain available.
 
 Gunicorn's default `forwarded_allow_ips` trusts only loopback addresses, while
 the application bypasses that Gunicorn decision by reading the raw header.
@@ -605,7 +720,9 @@ Production has `FORCE_HTTPS=true`; it is the only configured Railway variable.
   `X-Forwarded-Proto` and uses `request.url`.
 - tests prove that a client-supplied `X-Forwarded-Proto: https` suppresses the
   application redirect when calling Flask directly.
-- `server.config["TRUSTED_HOSTS"]` is `None`.
+- tests accept the apex, `www`, and generated Railway hostname in production
+  mode and return `400` for hostile HTTPS and HTTP hosts;
+- tests accept localhost and `127.0.0.1` when production mode is off;
 - External HTTP is redirected at Railway before Flask, even when the client
   supplies `X-Forwarded-Proto: https`.
 - External HTTPS returned `200`, rather than a same-URL redirect, when clients
@@ -617,19 +734,18 @@ Production has `FORCE_HTTPS=true`; it is the only configured Railway variable.
 **Actual risk**
 
 No external scheme-spoof or redirect-loop defect was reproduced at the current
-Railway boundary. The raw-header design would still be unsafe if the app were
-served directly without Railway normalization, and a topology change could
-invalidate this evidence. Host validation remains a separate confirmed gap:
-Cloudflare cannot enforce it on the direct Railway path, and an untrusted host
-could influence future external URL generation or the fallback redirect if a
-request ever reaches that hook over an unnormalized HTTP path.
+Railway boundary, and the known-host gap is mitigated in code. The remaining
+risk is configuration drift: the application deliberately treats
+`FORCE_HTTPS=true` as its production-mode signal, and the Railway-generated
+hostname is release configuration. A changed production flag or hostname can
+cause either missing enforcement or rejected legitimate traffic.
 
 **Recommended mitigation**
 
-1. Add production `TRUSTED_HOSTS` for the apex, `www`, and the Railway hostname
-   while it remains supported. Keep local test/development hosts explicit. No
-   health-check host exception is currently evidenced.
-2. Preserve a regression test for the current first-value parsing and record
+1. Deploy Pass 1 independently and verify the apex, `www`, and direct Railway
+   host. Confirm the generated hostname before every host-inventory change. No
+   health-check exception is currently evidenced.
+2. Preserve the regression tests for first-value parsing and record
    Railway normalization as a deployment assumption. Recheck it if Railway,
    Gunicorn, or ingress topology changes.
 3. Do not introduce `ProxyFix` in Pass 1. No current defect requires it, and
@@ -733,9 +849,9 @@ Full (strict) only when all of the following are true:
 Do not install a Cloudflare Origin CA certificate: Railway's managed custom
 domain service does not support customer-supplied external certificates.
 
-### F8. Existing browser headers are application-owned but incomplete
+### F8. Browser security headers are application-owned; Pass 1 adds Permissions Policy
 
-**Status:** confirmed  
+**Status:** Pass 1 mitigation implemented; production deployment verification pending
 **Priority:** Low outside the CSP/HSTS findings  
 **Enforcement layer:** Dash/Flask application
 
@@ -746,22 +862,24 @@ domain service does not support customer-supplied external certificates.
 - `X-Content-Type-Options: nosniff`
 - `Referrer-Policy: strict-origin-when-cross-origin`
 - `X-Frame-Options: SAMEORIGIN`
+- `Permissions-Policy: camera=(), microphone=(), geolocation=()`
 
 The exact same values appeared on HTML, static asset, Dash JSON, and reload
 responses. They also appeared through the direct Railway hostname without
 Cloudflare, so their origin is confirmed as Flask rather than Cloudflare or
-Railway. `Permissions-Policy` is absent.
+Railway. Pass 1 adds and tests `Permissions-Policy` in the same Flask response
+hook.
 
 **Actual risk**
 
-The present values are suitable. The app does not use camera, microphone, or
-geolocation, so those browser capabilities remain unnecessarily available by
-default. Framing is already limited; CSP `frame-ancestors 'self'` should become
-the modern paired control.
+The present values are suitable, and unused camera, microphone, and geolocation
+capabilities are now disabled. Framing is already limited; CSP
+`frame-ancestors 'self'` should become the modern paired control in a later
+pass.
 
 **Recommended mitigation**
 
-Add and test a narrow application-owned policy such as:
+Retain the tested application-owned policy:
 
 ```text
 Permissions-Policy: camera=(), microphone=(), geolocation=()
@@ -857,9 +975,9 @@ new major versions, even though ordinary locked installs remain deterministic.
 - Keep dependency upgrades separate from CSP enforcement unless a security fix
   requires coupling them.
 
-### F11. Production debug mode is not exposed; exception text still reaches browser state
+### F11. Production debug mode is not exposed; handled exception text is now redacted
 
-**Status:** confirmed positive debug control and low-priority information-disclosure finding  
+**Status:** Pass 1 information-disclosure mitigation implemented
 **Priority:** Low  
 **Enforcement layer:** Dash/Flask application and Railway deployment variables
 
@@ -872,48 +990,51 @@ showed development UI and property checks disabled, and hot reload inactive.
 Railway production variables contain only `FORCE_HTTPS=true`; no debug or
 Flask environment override is configured.
 
-Simulation exception handlers catch broad exceptions but put `str(exc)` into
-the failed Canvas payload's `errors` collection, which is sent to the browser.
-No traceback was observed, and no secrets are configured.
+Pass 1 keeps the existing handled failure states but replaces raw exception
+strings with stable solver-setup and output-preparation messages. The original
+exceptions are logged server-side with run ID, model, and formulation context.
+Intentional numerical solver metadata remains visible as educational
+diagnostics; it is not populated from a caught exception.
 
 **Actual risk**
 
-There is no exposed Werkzeug/Dash debugger. Crafted solver failures may still
-reveal library messages or implementation details useful for reconnaissance.
-The impact is low because the application is public, stateless, and contains no
-credentialed backend.
+There is no exposed Werkzeug/Dash debugger, and the handled callback exception
+paths no longer copy exception text into browser state. Request correlation IDs
+are not yet added to these application log messages, so cross-system incident
+tracing still depends on Railway/platform logging context.
 
 **Recommended mitigation**
 
-Return stable public error codes/messages and log exception details server-side
-with a request correlation identifier. Keep numerical diagnostics that are
-deliberately educational, but separate them from raw exception text. Verify
-the same variable state after material deployment configuration changes;
-changing `DASH_DEBUG` currently does not affect Gunicorn import, but deployment
-variables should still reflect intent.
+Preserve the stable public messages and server-side exception logging. A
+request-correlation helper may be added with later observability work, but it
+is not required to prevent the disclosure. Verify the same variable state
+after material deployment configuration changes; changing `DASH_DEBUG`
+currently does not affect Gunicorn import, but deployment variables should
+still reflect intent.
 
-### F12. External-link opener handling is inconsistent
+### F12. External-link opener protection is explicit and consistent
 
-**Status:** confirmed low-impact finding  
+**Status:** resolved in Pass 1
 **Priority:** Low / opportunistic  
 **Enforcement layer:** application markup
 
 **Current state and evidence**
 
 Home and footer links opened with `target="_blank"` also set
-`rel="noopener noreferrer"`. Reference links created by
-`app/components/references.py` use `_blank` without an explicit `rel`.
+`rel="noopener noreferrer"`. Pass 1 applies the same explicit value to reference
+links created by `app/components/references.py`; a component regression test
+checks every generated reference link.
 
 **Actual risk**
 
-Modern browsers implicitly apply `noopener` to `_blank`, so this is not a
-meaningful exploit on current browsers. Explicit consistency protects older or
-embedded clients and makes intent reviewable.
+Modern browsers implicitly apply `noopener` to `_blank`, so the original gap
+was low impact. Explicit consistency now protects older or embedded clients and
+makes intent reviewable.
 
 **Recommended mitigation**
 
-Add `rel="noopener noreferrer"` to reference links during a small application
-hardening pass. Do not make this a CSP blocker.
+Retain explicit `rel="noopener noreferrer"` for every new-tab link. This is not
+a CSP blocker.
 
 ## Existing Cloudflare scanner rule
 
@@ -964,10 +1085,10 @@ application-only Pass 1 guards.
 - Per-response CSP nonce compatible with Cloudflare JavaScript Detections.
 - Initial enforced policy has no unsafe script/eval and retains only the
   documented inline-style allowance.
-- `TRUSTED_HOSTS` initially covers the apex, `www`, and the intentionally
-  retained Railway hostname, with separate explicit local hosts.
-- Narrow `Permissions-Policy`.
-- Finite/enum validation and generic public solver errors.
+- Production-aware `TRUSTED_HOSTS` covers the apex, `www`, and the intentionally
+  retained Railway hostname; local mode does not enforce production hosts.
+- Narrow application-owned `Permissions-Policy`.
+- Finite/enum validation and stable public solver exception messages.
 - A request-body cap only after the legitimate Canvas state round-trip is
   removed or completely bounded; no guessed Pass 1 cap.
 - Existing low-risk headers retained.
@@ -1026,23 +1147,25 @@ application-only Pass 1 guards.
 
 No behavior change.
 
-### Pass 1: low-risk application guards
+### Pass 1: low-risk application guards — implemented and locally verified
 
-- Add production `TRUSTED_HOSTS` for the exact three-host inventory while the
-  Railway hostname remains supported; keep local hosts in explicit local/test
-  configuration.
-- Add `Permissions-Policy`.
-- Add explicit enum and finite-number validation.
-- Add `rel` to reference links.
-- Replace raw public exception strings with stable messages.
-- Add tests that preserve the current HTTPS/proxy assumptions, but do not add
-  `ProxyFix` or otherwise change the redirect implementation.
-- Do not add a request-body limit in this pass: the measured valid Dash state
-  flow is already multi-megabyte and needs a separate design decision.
+- Added production-mode `TRUSTED_HOSTS` for the exact three-host inventory while
+  leaving local mode compatible with localhost and `127.0.0.1`.
+- Added `Permissions-Policy`.
+- Added explicit enum and finite-number validation across the simulation input
+  surface.
+- Added `rel="noopener noreferrer"` to generated reference links.
+- Replaced raw caught-exception strings with stable browser messages and
+  server-side logging.
+- Added HTTPS/proxy, host, header, validation, exception, and link regression
+  tests without adding `ProxyFix` or changing redirect behavior.
+- Deliberately did not add a request-body limit; the measured valid Dash state
+  flow remains multi-megabyte and needs a separate design decision.
 
-Deploy and verify before CSP.
+The full local suite passed (227 tests). Deploy and verify this pass across all
+three production hosts before beginning Pass 2.
 
-### Pass 2: CSP scaffolding, initially off or report-only
+### Pass 2: CSP scaffolding, initially off or report-only — paused; resume here
 
 - Add a dedicated policy builder and mode parser.
 - Move server-hook configuration after all callback registration.
@@ -1053,7 +1176,7 @@ Deploy and verify before CSP.
 
 Do not enforce in production in this pass.
 
-### Pass 3: production CSP report-only observation
+### Pass 3: production CSP report-only observation — paused after Pass 2
 
 - Deploy `Content-Security-Policy-Report-Only`.
 - Verify Cloudflare adds the advertised nonce to its injected bootstrap.
@@ -1063,7 +1186,7 @@ Do not enforce in production in this pass.
   fonts, connections, and style behavior.
 - Keep a tested `off` rollback.
 
-### Pass 4: CSP enforcement
+### Pass 4: CSP enforcement — paused after Pass 3 evidence
 
 - Enforce the observed policy with no unsafe script/eval.
 - Retain `style-src 'unsafe-inline'` as the only unsafe source.
