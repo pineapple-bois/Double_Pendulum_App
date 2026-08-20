@@ -7,6 +7,9 @@ from .inputs import (
     MIN_GRAVITY,
     MIN_LENGTH,
     MIN_MASS,
+    VALID_INTEGRATOR_POLICIES,
+    VALID_MODEL_TYPES,
+    VALID_SYSTEM_TYPES,
     ValidationSection,
     validate_input_sections,
 )
@@ -20,6 +23,9 @@ __all__ = [
     "MIN_GRAVITY",
     "MIN_LENGTH",
     "MIN_MASS",
+    "VALID_INTEGRATOR_POLICIES",
+    "VALID_MODEL_TYPES",
+    "VALID_SYSTEM_TYPES",
     "ValidationSection",
     "validate_input_sections",
 ]

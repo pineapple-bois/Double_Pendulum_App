@@ -21,6 +21,7 @@ def test_force_https_defaults_to_false(monkeypatch):
     config = reload_config(monkeypatch)
 
     assert config.FORCE_HTTPS is False
+    assert config.TRUSTED_HOSTS is None
 
 
 def test_force_https_truthy_values(monkeypatch):
@@ -28,6 +29,11 @@ def test_force_https_truthy_values(monkeypatch):
         config = reload_config(monkeypatch, force_https=value)
 
         assert config.FORCE_HTTPS is True
+        assert config.TRUSTED_HOSTS == (
+            "double-pendulum.net",
+            "www.double-pendulum.net",
+            "web-production-65a59.up.railway.app",
+        )
 
 
 def test_force_https_falsey_values(monkeypatch):
@@ -35,6 +41,7 @@ def test_force_https_falsey_values(monkeypatch):
         config = reload_config(monkeypatch, force_https=value)
 
         assert config.FORCE_HTTPS is False
+        assert config.TRUSTED_HOSTS is None
 
 
 def test_dash_debug_defaults_to_false(monkeypatch):

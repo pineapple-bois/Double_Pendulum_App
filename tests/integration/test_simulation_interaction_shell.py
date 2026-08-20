@@ -1,8 +1,12 @@
 from pathlib import Path
 
 from dash import dcc, html, no_update
+import pytest
 
 from app.callbacks.simulation import (
+    OUTPUT_PAYLOAD_FAILURE_MESSAGE,
+    SOLVER_SETUP_FAILURE_MESSAGE,
+    _clamp_integer_parameter,
     build_input_change_result,
     build_simulation_run_result,
     selected_initial_state_preset_update,
@@ -633,12 +637,112 @@ def test_validation_failure_stores_failed_non_drawable_payload():
     assert "theta1_deg" not in payload
 
 
+@pytest.mark.parametrize(
+    ("model_type", "system_type", "integrator_policy_value", "expected_error"),
+    [
+        (
+            "unknown",
+            "lagrangian",
+            "simple_default",
+            "Model type must be one of: simple, compound.",
+        ),
+        (
+            "simple",
+            "unknown",
+            "simple_default",
+            "System type must be one of: lagrangian, hamiltonian.",
+        ),
+        (
+            "simple",
+            "lagrangian",
+            "unknown",
+            "Integrator policy must be one of:",
+        ),
+    ],
+)
+def test_unknown_configuration_values_fail_before_solver_construction(
+    model_type,
+    system_type,
+    integrator_policy_value,
+    expected_error,
+):
+    result = build_simulation_run_result(
+        23,
+        10.0,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        0.02,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        9.81,
+        model_type,
+        system_type,
+        integrator_policy_value=integrator_policy_value,
+    )
+
+    payload = result["canvas_payload"]
+    assert payload["status"] == "failed"
+    assert payload["failure_reason"] == SimulationResultState.VALIDATION_ERROR.value
+    assert expected_error in payload["errors"][0]
+    assert payload["solver_metadata"] == {}
+
+
+@pytest.mark.parametrize(
+    ("theta1", "time_end", "param_l1", "expected_error"),
+    [
+        (float("nan"), 0.02, 1.0, "θ1 must be finite."),
+        (10.0, float("inf"), 1.0, "End time must be finite."),
+        (10.0, 0.02, float("-inf"), "l1 (length of rod 1) must be finite."),
+    ],
+)
+def test_non_finite_callback_inputs_return_validation_failures(
+    theta1,
+    time_end,
+    param_l1,
+    expected_error,
+):
+    result = build_simulation_run_result(
+        24,
+        theta1,
+        20.0,
+        0.0,
+        0.0,
+        0.0,
+        time_end,
+        param_l1,
+        1.0,
+        1.0,
+        1.0,
+        None,
+        None,
+        9.81,
+        "simple",
+        "lagrangian",
+        integrator_policy_value="simple_default",
+    )
+
+    payload = result["canvas_payload"]
+    assert payload["status"] == "failed"
+    assert payload["failure_reason"] == SimulationResultState.VALIDATION_ERROR.value
+    assert expected_error in payload["errors"][0]
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf"), True])
+def test_parameter_stepper_clamps_non_finite_and_boolean_state(value):
+    assert _clamp_integer_parameter(value) == 1
+
+
 def test_simple_policy_selector_values_are_reflected_in_solver_metadata():
     expected = {
         "simple_default": ("simple_default", "DOP853", 1e-6, 1e-8),
         "simple_reference": ("simple_reference", "DOP853", 1e-9, 1e-11),
         "solve_ivp_default_baseline": ("solve_ivp_default_baseline", None, None, None),
-        "unknown-policy": ("simple_default", "DOP853", 1e-6, 1e-8),
         None: ("simple_default", "DOP853", 1e-6, 1e-8),
     }
 
@@ -810,6 +914,103 @@ def test_solver_failure_stores_failed_non_drawable_payload(monkeypatch):
     assert result["playback_state"]["playback_state"] == "cancelled"
     assert "time_s" not in payload
     assert "theta1_deg" not in payload
+
+
+def test_solver_setup_exception_is_logged_but_not_returned_to_client(
+    monkeypatch,
+    caplog,
+):
+    private_detail = "private solver setup detail"
+
+    class ExplodingPendulum:
+        def __init__(self, *args, **kwargs):
+            raise RuntimeError(private_detail)
+
+    monkeypatch.setattr(
+        "app.callbacks.simulation.DoublePendulumLagrangian",
+        ExplodingPendulum,
+    )
+
+    with caplog.at_level("ERROR", logger="app.callbacks.simulation"):
+        result = build_simulation_run_result(
+            25,
+            10.0,
+            20.0,
+            0.0,
+            0.0,
+            0.0,
+            0.02,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            None,
+            None,
+            9.81,
+            "simple",
+            "lagrangian",
+            integrator_policy_value="simple_default",
+        )
+
+    payload = result["canvas_payload"]
+    assert payload["status"] == "failed"
+    assert payload["errors"] == [SOLVER_SETUP_FAILURE_MESSAGE]
+    assert private_detail not in repr(payload)
+    assert "Simulation solver setup failed" in caplog.text
+    assert private_detail in caplog.text
+
+
+def test_output_exception_is_logged_but_not_returned_to_client(
+    monkeypatch,
+    caplog,
+):
+    private_detail = "private output preparation detail"
+
+    class SuccessfulMetadata:
+        success = True
+
+        def to_dict(self):
+            return {"success": True, "message": "completed"}
+
+    class ExplodingOutputPendulum:
+        def __init__(self, *args, **kwargs):
+            self.solver_metadata = SuccessfulMetadata()
+
+        def precompute_positions(self):
+            raise RuntimeError(private_detail)
+
+    monkeypatch.setattr(
+        "app.callbacks.simulation.DoublePendulumLagrangian",
+        ExplodingOutputPendulum,
+    )
+
+    with caplog.at_level("ERROR", logger="app.callbacks.simulation"):
+        result = build_simulation_run_result(
+            26,
+            10.0,
+            20.0,
+            0.0,
+            0.0,
+            0.0,
+            0.02,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            None,
+            None,
+            9.81,
+            "simple",
+            "lagrangian",
+            integrator_policy_value="simple_default",
+        )
+
+    payload = result["canvas_payload"]
+    assert payload["status"] == "failed"
+    assert payload["errors"] == [OUTPUT_PAYLOAD_FAILURE_MESSAGE]
+    assert private_detail not in repr(payload)
+    assert "Simulation output preparation failed" in caplog.text
+    assert private_detail in caplog.text
 
 
 def test_input_change_marks_success_payload_stale_without_recomputing_physics():

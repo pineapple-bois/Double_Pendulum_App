@@ -5,7 +5,12 @@ from app.content.math import REFERENCES_TITLE
 
 def get_references_section(references):
     reference_links = [
-        html.A(href=ref.href, children=ref.text, target="_blank")
+        html.A(
+            href=ref.href,
+            children=ref.text,
+            target="_blank",
+            rel="noopener noreferrer",
+        )
         for ref in references
     ]
     return html.Div(
@@ -16,4 +21,3 @@ def get_references_section(references):
             html.Ul([html.Li(link) for link in reference_links]),
         ],
     )
-

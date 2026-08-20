@@ -14,6 +14,8 @@ def validation_messages(
     time_start=0,
     time_end=20,
     model_type="simple",
+    system_type="lagrangian",
+    integrator_policy_value="simple_default",
     params=VALID_SIMPLE_PARAMS,
 ):
     sections = validate_input_sections(
@@ -22,6 +24,8 @@ def validation_messages(
         time_end,
         model_type,
         *params,
+        system_type,
+        integrator_policy_value,
     )
     return [message for section in sections for message in section.messages]
 
@@ -36,6 +40,8 @@ def test_dash_validation_wrapper_renders_validation_messages():
             20,
             "simple",
             *VALID_SIMPLE_PARAMS,
+            "lagrangian",
+            "simple_default",
         )
     )
 
@@ -57,6 +63,34 @@ def test_accepts_representative_compound_inputs():
 
 
 @pytest.mark.parametrize(
+    ("overrides", "expected_message"),
+    [
+        (
+            {"model_type": "unknown"},
+            "Model type must be one of: simple, compound.",
+        ),
+        (
+            {"system_type": "unknown"},
+            "System type must be one of: lagrangian, hamiltonian.",
+        ),
+        (
+            {"integrator_policy_value": "unknown"},
+            (
+                "Integrator policy must be one of: simple_default, "
+                "simple_reference, solve_ivp_default_baseline."
+            ),
+        ),
+    ],
+)
+def test_rejects_unknown_configuration_values(overrides, expected_message):
+    assert expected_message in validation_messages(**overrides)
+
+
+def test_allows_missing_integrator_policy_to_use_the_server_default():
+    assert validation_messages(integrator_policy_value=None) == []
+
+
+@pytest.mark.parametrize(
     ("time_start", "time_end", "expected_message"),
     [
         (None, 20, "Please provide a value for start time."),
@@ -69,6 +103,28 @@ def test_accepts_representative_compound_inputs():
 )
 def test_rejects_invalid_time_intervals(time_start, time_end, expected_message):
     assert expected_message in validation_messages(time_start=time_start, time_end=time_end)
+
+
+@pytest.mark.parametrize(
+    ("time_start", "time_end", "expected_message"),
+    [
+        (float("nan"), 20, "Start time must be finite."),
+        (float("inf"), 20, "Start time must be finite."),
+        (0, float("nan"), "End time must be finite."),
+        (0, float("-inf"), "End time must be finite."),
+        (True, 20, "Start time must be a number."),
+        (0, False, "End time must be a number."),
+    ],
+)
+def test_rejects_non_finite_and_boolean_time_values(
+    time_start,
+    time_end,
+    expected_message,
+):
+    assert expected_message in validation_messages(
+        time_start=time_start,
+        time_end=time_end,
+    )
 
 
 @pytest.mark.parametrize(
@@ -133,6 +189,52 @@ def test_rejects_invalid_gravity(params, expected_messages):
 
 
 @pytest.mark.parametrize(
+    ("model_type", "params", "expected_message"),
+    [
+        (
+            "simple",
+            (float("nan"), 1, 1, 1, 1, 1, 9.81),
+            "l1 (length of rod 1) must be finite.",
+        ),
+        (
+            "simple",
+            (1, float("inf"), 1, 1, 1, 1, 9.81),
+            "l2 (length of rod 2) must be finite.",
+        ),
+        (
+            "simple",
+            (1, 1, float("-inf"), 1, 1, 1, 9.81),
+            "m1 (mass of bob 1) must be finite.",
+        ),
+        (
+            "compound",
+            (1, 1, 1, 1, float("nan"), 1, 9.81),
+            "M1 (mass of rod 1) must be finite.",
+        ),
+        (
+            "simple",
+            (1, 1, 1, 1, 1, 1, float("inf")),
+            "g (acceleration due to gravity) must be finite.",
+        ),
+        (
+            "simple",
+            (True, 1, 1, 1, 1, 1, 9.81),
+            "l1 (length of rod 1) must be a number.",
+        ),
+    ],
+)
+def test_rejects_non_finite_and_boolean_parameter_values(
+    model_type,
+    params,
+    expected_message,
+):
+    assert expected_message in validation_messages(
+        model_type=model_type,
+        params=params,
+    )
+
+
+@pytest.mark.parametrize(
     ("initial_conditions", "expected_message"),
     [
         ([[None, 120, 0, 0]], "θ1 requires a numerical value."),
@@ -171,3 +273,21 @@ def test_rejects_bool_and_container_initial_condition_values():
     assert "θ2 requires a numerical value." in messages
     assert "ω1 requires a numerical value." in messages
     assert "ω2 requires a numerical value." in messages
+
+
+@pytest.mark.parametrize(
+    ("initial_conditions", "expected_message"),
+    [
+        ([[float("nan"), 120, 0, 0]], "θ1 must be finite."),
+        ([[0, float("inf"), 0, 0]], "θ2 must be finite."),
+        ([[0, 120, float("-inf"), 0]], "ω1 must be finite."),
+        ([[0, 120, 0, float("nan")]], "ω2 must be finite."),
+    ],
+)
+def test_rejects_non_finite_initial_conditions(
+    initial_conditions,
+    expected_message,
+):
+    assert expected_message in validation_messages(
+        initial_conditions=initial_conditions,
+    )
