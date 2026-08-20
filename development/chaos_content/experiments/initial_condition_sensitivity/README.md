@@ -2,17 +2,20 @@
 
 ## Status
 
-**Numerically accepted as a regular-control result; rejected only as evidence
-of substantial finite-time sensitivity.** The fixed named run is retained as
-valid negative evidence: all four trajectories pass the numerical policy, but
-neither the principal nor tighter-reference pair reaches the predeclared
-physical-separation threshold within 20 seconds. Its evidential value is that a
-small perturbation does not automatically produce large visible separation on
-this timescale.
+**Numerically accepted as a close-over-this-interval result; rejected under the
+original binary contract as evidence of threshold-crossing separation.** The
+fixed named run is retained as valid descriptive evidence: all four trajectories
+pass the numerical policy, but neither the principal nor tighter-reference pair
+reaches the predeclared physical-separation threshold within 20 seconds. Its
+evidential value is that a small perturbation does not automatically produce
+large visible separation on this timescale.
 
 The later predeclared regime-selection extension is **provisionally useful as
-Outcome C**: its high-excitation candidates expose numerical-policy failures,
-so no threshold-crossing sensitivity case is accepted yet.
+Outcome C**. Its two high-excitation candidates are physically promising but
+numerically unresolved: their production-principal integrations fail the
+experiment's energy limit, and their threshold-crossing observables have not
+yet been tested across a suitable tolerance hierarchy. Neither candidate is
+retroactively accepted.
 
 The numerical configuration below must not be retuned merely to obtain an
 accepted or visually dramatic result.
@@ -25,6 +28,47 @@ Chaos API, or a general test for chaos.
 Can two simple-double-pendulum trajectories differing in exactly one declared
 user-facing initial-state component exhibit finite-time physical separation
 that remains credible under an explicit numerical acceptance policy?
+
+This is the executable experiment's fixed question. The broader Stage 1
+learning question is:
+
+> How do two nearby initial states evolve, and how does the observed
+> relationship depend on where the system starts?
+
+The answer may be that the trajectories remain close over the visible interval,
+separate gradually, separate rapidly, or develop qualitatively different motion
+after an initially similar evolution. “No substantial separation observed in
+this interval” is a result, not an experiment failure.
+
+## Current Convention Status
+
+The first experiments required fixed choices in order to be reproducible. Their
+use in an executable contract does not make them universal definitions of Stage
+1 or of sensitivity.
+
+| Status | Current contents |
+| --- | --- |
+| **Established physical/model conventions** | The current simple point-mass production equations; user-facing state order `(theta1, theta2, omega1, omega2)` with angular velocities rather than canonical momenta; physical parameter meanings and SI units; identical declared parameters within a pair; periodic angle equivalence; Cartesian bob geometry; and mechanical energy as an invariant of the undamped model. |
+| **Useful current diagnostics** | Normalized second-bob separation, both-bob configuration separation, periodic angular separation, initial energy difference, independent energy drift, solver success/completeness/finiteness, threshold-event time, and differences exposed by changing numerical policy. These quantities can reveal behaviour or failure without each becoming an acceptance gate. |
+| **Provisional experimental choices** | The named base states; perturbing `theta2` only; perturbation `0.001 deg`; deliberately unequal pair energy; unit masses and lengths; 20 seconds at 200 Hz; the current DOP853 policies; the experiment-specific energy limits; `d_tip = 0.1`; crossing-time agreement within `0.5 s`; the physical/numerical ratio of `100`; and binary accepted/rejected sensitivity labels. They remain fixed when reproducing the recorded experiments but may be changed by a new, explicitly scoped question. |
+| **Unresolved pedagogical choices** | Which nearby perturbation a learner should receive; whether its component or magnitude is fixed or contextual; which physical or mathematical separation views best build intuition; whether a visible threshold or qualitative vocabulary is useful; how to communicate a finite pointwise predictability horizon; how observable robustness should be validated; and what visible duration best supports exploration. |
+
+Numerical validity of an integration, pointwise convergence of a nominal
+trajectory, robustness of a teaching observable, and usefulness of an
+interaction are separate judgements. A failure in one category must not be
+silently relabelled as a conclusion in another.
+
+## Exploratory Design Hypothesis
+
+> A learner may choose an initial condition, the sandbox applies a small and
+> disclosed nearby perturbation, and both pendulums are released together. The
+> experience shows what happens rather than guaranteeing divergence.
+
+The purpose of such a self-contained sandbox prototype would be to explore
+whether trying different regions of state space helps learners build intuition,
+exposes hidden assumptions, and reveals which observables deserve further
+numerical work. This is not a final UI specification, accepted production model,
+or production architecture decision.
 
 ## Model And Formulation
 
@@ -82,8 +126,10 @@ Exactly one component, `theta2`, differs. The perturbation is
 This pair is taken from the explicit nearby-state example in `PEDAGOGY.md`, not
 from a parameter search. The perturbation is small relative to a one-radian
 angular scale, is precisely representable as a user-facing decimal input, and
-is far above floating-point roundoff. No alternate initial state or perturbation
-will be tried if the named pair fails acceptance.
+is far above floating-point roundoff. It is an immutable fixture for reproducing
+this named run, not a recommended universal perturbation. No alternate initial
+state or perturbation will be substituted inside this fixed experiment merely
+because its observed relationship is less dramatic.
 
 ## Initial Energy Policy
 
@@ -132,16 +178,17 @@ It is dimensionless, formulation-independent, periodic in both angles, and has
 a direct physical interpretation: the distance between the two end bobs as a
 fraction of the total pendulum length.
 
-For this experiment, **substantial finite-time physical separation** is defined
-before execution as:
+For this fixed experiment, the provisional event called **substantial
+finite-time physical separation** was defined before execution as:
 
 ```text
 max_t d_tip(t) >= 0.1
 ```
 
 That corresponds to an end-bob distance of at least `0.2 m` for the named
-parameters. The threshold is a descriptive scale for this one experiment, not
-a chaos classifier.
+parameters. The threshold is a reproducible descriptive scale for these runs,
+not a universal definition of sensitivity, a required learner-facing boundary,
+or a chaos classifier.
 
 ### Complementary: both-bob configuration separation
 
@@ -176,11 +223,13 @@ sampling interval is therefore exactly `0.005 s` (`200 Hz`). Adaptive solver
 steps remain owned by `solve_ivp`; the requested grid provides time-aligned
 diagnostic output and does not impose a fixed integration step.
 
-Twenty seconds is the existing Simulation default duration and is short enough
-to inspect without extending into a long-duration scientific-validity claim.
-Acceptance depends on crossing a fixed physical-separation threshold, not on a
-single narrow sampled peak. The reported threshold-crossing time is only
-resolved to the `0.005 s` output interval.
+Twenty seconds was selected because it is the existing Simulation default and
+is short enough to inspect without extending into a long-duration scientific-
+validity claim. It is the horizon of the recorded experiment, not an established
+Stage 1 or product requirement. The original binary contract depends on
+crossing a fixed physical-separation threshold, not on a single narrow sampled
+peak. The reported threshold-crossing time is only resolved to the `0.005 s`
+output interval.
 
 ## Solver And Reference Policies
 
@@ -219,13 +268,24 @@ e_numerical(t) = max(
 This is compared with the reference pair separation at the first time the
 reference pair reaches `d_tip = 0.1`. At that time the physical perturbation
 effect must be at least `100` times the same-state solver-policy disagreement.
-This ratio is the experiment's explicit distinction between paired physical
-separation and the numerical disagreement exposed by the two policies.
+This ratio is the original experiment's strong trajectory-attribution test. It
+asks whether physical pair separation overwhelmingly exceeds the same-state
+displacement exposed by changing solver policy. The factor `100` is provisional:
+it is not derived from the separation threshold, sampling rate, display scale,
+or a universal sensitivity definition.
 
 Both principal and reference pairs must reach the substantial-separation
 threshold, and their first threshold-crossing times must agree within `0.5 s`
 (`2.5%` of the integration duration). This accepts the finite-time descriptive
 conclusion without claiming pointwise long-time trajectory equivalence.
+
+The methodology reassessment distinguishes this pointwise trajectory question
+from convergence of the pair-separation observable. Sensitive dynamics may
+amplify solver-induced perturbations after a finite predictability horizon while
+event existence or approximate onset remains stable under refinement. That
+possibility does not excuse failed invariant checks or make qualitative
+agreement automatically trustworthy; it motivates an observable-focused
+tolerance hierarchy.
 
 ## Independent Energy Diagnostic
 
@@ -262,7 +322,7 @@ new production solver guarantees. They are deliberately looser than the solver
 tolerances because local truncation tolerance does not translate directly into
 an invariant-error bound over a nonlinear trajectory.
 
-## Rejection And Acceptance
+## Original Run Rejection And Acceptance
 
 A trajectory is rejected if any of the following holds:
 
@@ -274,8 +334,9 @@ A trajectory is rejected if any of the following holds:
   integrations;
 - its normalized energy drift exceeds the policy-specific bound.
 
-The named experiment is accepted only if all four trajectories pass those
-checks and all of the following are true:
+Under the original executable contract, the named threshold-crossing claim is
+accepted only if all four trajectories pass those checks and all of the
+following are true:
 
 - the input states differ only in `theta2` by exactly `0.001 deg`;
 - the measured initial separations agree with the declared geometry;
@@ -290,6 +351,11 @@ checks and all of the following are true:
 
 Failure is retained as evidence. The configuration must not be lengthened,
 retuned, or replaced by a search inside this experiment.
+
+These binary labels belong to the fixed executable question. They do not define
+all useful Stage 1 observations: a numerically valid pair that remains close has
+answered the broader learning question even though it does not satisfy the
+threshold-crossing claim.
 
 ## Reproducible Commands
 
@@ -358,11 +424,12 @@ The initial energies deliberately differed by `1.48277e-4 J`, or
 `5.03831e-6` of the fixed gravitational energy scale, because only `theta2`
 was perturbed.
 
-No permitted sensitivity claim is supported. In particular, the experiment
-does not establish that the pair never separates over a longer interval; it
-establishes only that this fixed 20-second experiment did not produce the
-substantial finite-time separation required by its contract. The stop condition
-prohibits lengthening the run or searching for a replacement pair in this task.
+No threshold-crossing sensitivity claim is supported. A valid descriptive Stage
+1 observation is supported: this pair remained close under both recorded
+policies over the visible interval. The experiment does not establish that the
+pair never separates over a longer interval; it establishes only what was
+observed during this fixed 20-second run. The stop condition prohibited
+lengthening the run or searching for a replacement pair in that task.
 
 ## Regime-Selection Extension
 
@@ -434,24 +501,25 @@ The bundle contains `regime_manifest.json`, `regime_summary.json`,
 ### Comparative findings
 
 The full predeclared set was run without replacing a case, increasing the
-duration or perturbation, or changing an acceptance threshold. The result is
-**Outcome C: numerical credibility becomes problematic in the candidate
-high-excitation regimes**.
+duration or perturbation, or changing an acceptance threshold. Under its
+original contract the result is **Outcome C**: the production-principal policy
+fails the energy bound in the two threshold-crossing cases, and two policies are
+not enough to establish robustness of their teaching observable.
 
 `E / E_scale` below uses the signed energy with the experiment's declared
 potential datum. Maximum separation and crossing times are tighter-reference
-values. Values marked untrusted are reported because complete finite data were
-returned, but cannot support a sensitivity claim because the case failed the
-numerical policy.
+values. Values marked unvalidated are reported because complete finite data
+were returned, but they cannot yet support a sensitivity claim under either the
+recorded contract or the revised observable-robustness methodology.
 
-| Case | Physical rationale | `E / E_scale` | Maximum `d_tip` | First `d_tip >= 0.1` | Numerical status | Sensitivity status |
+| Case | Physical rationale | `E / E_scale` | Maximum `d_tip` | First `d_tip >= 0.1` | Integration status | Recorded contract status |
 | --- | --- | ---: | ---: | ---: | --- | --- |
-| `theta2_120_vs_120.001_deg` | Retained regular control | `-0.500000` | `5.93180e-5` | none | accepted | rejected: below threshold |
-| `small_angle_in_phase` | Low-excitation, near-small-angle motion | `-0.984808` | `8.88084e-6` | none | accepted | rejected: below threshold |
-| `nonlinear_bounded_release` | Large-angle but energetically bounded release | `-0.638071` | `2.68095e-5` | none | accepted | rejected: below threshold |
-| `second_link_rotation_access` | Just above the second-link upright energy barrier | `-0.329283` | `8.72665e-6` | none | accepted | rejected: below threshold |
-| `opposed_high_energy_fixture` | Opposed high-angle, counter-moving fixture | `0.746861` | `1.73054` (untrusted) | `7.040 s` (untrusted) | rejected | not evaluable |
-| `near_inverted_release` | Near the both-links-up potential maximum | `0.999848` | `1.87011` (untrusted) | `10.695 s` (untrusted) | rejected | not evaluable |
+| `theta2_120_vs_120.001_deg` | Retained regular control | `-0.500000` | `5.93180e-5` | none | all runs accepted | no threshold crossing observed |
+| `small_angle_in_phase` | Low-excitation, near-small-angle motion | `-0.984808` | `8.88084e-6` | none | all runs accepted | no threshold crossing observed |
+| `nonlinear_bounded_release` | Large-angle but energetically bounded release | `-0.638071` | `2.68095e-5` | none | all runs accepted | no threshold crossing observed |
+| `second_link_rotation_access` | Just above the second-link upright energy barrier | `-0.329283` | `8.72665e-6` | none | all runs accepted | no threshold crossing observed |
+| `opposed_high_energy_fixture` | Opposed high-angle, counter-moving fixture | `0.746861` | `1.73054` (unvalidated) | `7.040 s` (unvalidated) | principal runs rejected; reference runs accepted | physically promising, numerically unresolved |
+| `near_inverted_release` | Near the both-links-up potential maximum | `0.999848` | `1.87011` (unvalidated) | `10.695 s` (unvalidated) | principal runs rejected; reference runs accepted | physically promising, numerically unresolved |
 
 All 24 integrations reported solver success and returned all 4001 finite,
 time-aligned samples. The maximum independent energy drifts, taking the worse
@@ -468,12 +536,16 @@ member of each pair, were:
 
 The two high-excitation pairs cross the physical threshold under both policies,
 and their first crossing times differ by `0.000 s` and `0.030 s`. That agreement
-is insufficient for acceptance. At the reference crossing, the physical-to-
-numerical ratios are only `46.64` and `7.46`, below the required `100`.
-The maximum same-state principal/reference disagreement later reaches `1.98346`
-and `1.98336`, respectively, while the principal trajectories also violate the
-energy-drift limit. The visually substantial separations are therefore retained
-as untrusted diagnostic evidence, not accepted sensitivity evidence.
+is promising but insufficient for validation. At the reference crossing, the
+physical-to-numerical ratios are `46.64` and `7.46`, below the original
+provisional requirement of `100`. The maximum same-state principal/reference
+disagreement later reaches `1.98346` and `1.98336`, respectively. That late
+disagreement identifies loss of pointwise predictability between the two
+policies; it does not by itself prove that the earlier separation observable is
+invalid. The independent blockers are that the principal trajectories violate
+the energy-drift limit and the observable has been compared at only two
+tolerance levels. The substantial separations remain unvalidated diagnostic
+evidence, not accepted sensitivity evidence.
 
 The four numerically accepted cases remain far below the threshold under both
 policies. In particular, the original pair remains useful rather than obsolete:
@@ -484,13 +556,16 @@ are blocked by numerical credibility.
 
 ### Next justified experiment
 
-The next experiment should be a **single-case numerical-policy adequacy test**
-for `near_inverted_release`, the more severe of the two rejected cases. Its one
-question should be whether a predeclared tighter DOP853 policy hierarchy can
-pass an explicit energy bound and produce a converged threshold-crossing result
-against an independently tighter reference over the unchanged 20 seconds.
+The next experiment should be a **single-case observable-robustness test** for
+`near_inverted_release`, the more severe of the two unresolved cases. Its one
+question should be whether a predeclared DOP853 tolerance hierarchy consistently
+produces the threshold-crossing observation with a stabilising onset time and
+pre-crossing separation curve while every validation-level integration passes
+independent solver, completeness, finiteness, and energy criteria.
 
 That experiment should not add states, extend time, lower the threshold, or
-claim sensitivity merely because the current tighter trace looks dramatic. A
-timescale experiment is not yet justified; numerical-policy credibility is the
-current blocker.
+claim sensitivity merely because the current tighter trace looks dramatic.
+Same-state policy spread and a finite pointwise predictability horizon should be
+reported separately; pointwise agreement for all 20 seconds is not the target.
+A timescale experiment is not yet justified; observable-focused numerical
+validation is the current blocker.

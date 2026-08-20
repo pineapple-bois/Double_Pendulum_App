@@ -110,11 +110,21 @@ with the remaining initial conditions identical.
 
 The interface can visually identify the single changed value. This is pedagogically stronger than creating two vaguely nearby states by dragging bobs.
 
-Initially the trajectories may appear indistinguishable. Later they diverge.
+This pair illustrates how to disclose a perturbation; it is not a guaranteed
+divergence preset. The first Stage 1 experiment found that it remained close
+over its recorded 20-second interval. Other physically motivated starting
+regions may remain close, separate gradually, or separate rapidly. The
+experience should reveal the relationship rather than promise one outcome.
 
-The first lesson is therefore not a Lyapunov exponent. It is an observable fact:
+The first lesson is therefore not a Lyapunov exponent. It is an observable
+question:
 
-> **A tiny difference in initial conditions can eventually produce substantially different trajectories, even though the governing system is deterministic.**
+> **How can a tiny disclosed difference in initial conditions affect the
+> trajectories produced by the same deterministic system?**
+
+Substantial finite-time separation, where it is numerically supported, is one
+important answer. No substantial separation over the visible interval is also
+an informative observation.
 
 ---
 
@@ -553,7 +563,10 @@ Begin because there is a question worth answering.
 
 ### 2. Phenomenon before terminology
 
-Let the learner see nearby trajectories diverge before introducing "sensitive dependence on initial conditions."
+Let the learner compare nearby trajectories before introducing "sensitive
+dependence on initial conditions." Where visible separation occurs, let the
+learner see it before naming it; do not use the term to predetermine every run's
+outcome.
 
 Let the learner see approximately linear growth in log separation before introducing a Lyapunov exponent.
 

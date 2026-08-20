@@ -40,14 +40,23 @@ code for a later stage does not imply that stage has been accepted.
 
 ### 1. Sensitivity to initial conditions — the gateway
 
-Begin with controlled pairs of nearby initial states. Establish the state and
-perturbation conventions, define how trajectory separation is measured, and
-inspect how separation evolves under identical physical parameters and solver
-policy.
+Begin with the learning question:
 
-The first goal is descriptive rather than classificatory: produce trustworthy
-static evidence of nearby-trajectory behaviour before attempting to assign a
-Lyapunov exponent or a general label of chaos.
+> How do two nearby initial states evolve, and how does the observed
+> relationship depend on where the system starts?
+
+Controlled pairs should keep their changed component and perturbation explicit,
+then connect physical motion with a mathematical representation of separation.
+The experience must not promise divergence. Remaining close over the visible
+interval, separating gradually, separating rapidly, and developing
+qualitatively different motion after an initially similar evolution are all
+valid observations.
+
+The first goal is descriptive rather than classificatory: build trustworthy
+evidence of nearby-trajectory behaviour and learn which observations are useful
+before attempting to assign a Lyapunov exponent or a general label of chaos.
+No particular perturbation, separation threshold, duration, or binary
+sensitivity label defines Stage 1.
 
 ### 2. Poincare sections — turn motion into geometry
 
@@ -101,24 +110,28 @@ production documentation.
 
 ## Experimental Method
 
-Every new experiment follows the same progression:
+New work begins with a precise question and minimal evidence, but discovery is
+not required to move through a one-way pipeline. Numerical and interaction
+work can inform each other:
 
 ```text
-define precisely
-      ↓
-run minimally
-      ↓
-verify numerically
-      ↓
-inspect statically
-      ↓
-increase complexity
+phenomenon
+    ↓
+minimal numerical evidence
+    ↓
+static inspection
+    ↓
+exploratory interaction prototype
+    ↘
+      observable definition ↔ numerical validation ↔ pedagogical design
+              ↖_______________________________________________|
 ```
 
 **Define precisely.** State the question before implementing the experiment.
 Record the mathematical quantity being investigated, coordinate conventions,
 initial conditions, perturbation or event rule, numerical policy, and what
-would count as failure.
+would count as failure. Mark choices as established, provisional, or unresolved
+rather than allowing an early test configuration to become a general contract.
 
 **Run minimally.** Start with the smallest experiment capable of answering the
 question: one model, one or two named initial conditions, and an integration
@@ -128,18 +141,29 @@ performance optimisation.
 **Verify numerically.** Solver success alone is not acceptance. Check relevant
 invariants, finite values, residuals, event/interpolation accuracy, and
 sensitivity to tolerances or resolution where the experiment requires it.
-Failed numerical criteria should reject a run rather than merely annotate it.
+Failed numerical criteria should reject an individual run under its declared
+policy rather than merely annotate it. That does not automatically make the
+initial condition pedagogically useless or settle whether a teaching observable
+is robust under a better policy.
 
-**Inspect statically.** Matplotlib diagnostics come before interactive product
-visualisation. Figures should expose correctness, failure, structure, and
-numerical artefacts. A visually interesting result is not evidence of its own
-validity.
+**Inspect statically.** Matplotlib diagnostics are the baseline for exposing
+correctness, failure, structure, and numerical artefacts. A visually interesting
+result is not evidence of its own validity.
 
-**Increase complexity.** Longer integrations, additional initial conditions,
-different energy regimes, ensembles, and parameter sweeps are introduced only
-after the minimal result is understood and accepted.
+**Prototype interactions deliberately.** A self-contained sandbox interaction
+prototype may follow minimal numerical evidence before every mathematical or
+pedagogical convention is final. Its purpose must be to explore interaction
+design, expose assumptions, generate better questions, or discover which
+observables help a learner. It is not an accepted numerical model, production
+feature, or substitute for static and machine-readable evidence.
 
-> Complexity is earned by verification.
+**Increase complexity for a reason.** Longer integrations, additional initial
+conditions, different energy regimes, ensembles, and parameter sweeps require a
+question justified by earlier evidence or prototype feedback. More complexity
+does not confer more validity.
+
+> Complexity must answer an evidence-backed or explicitly exploratory question;
+> neither makes it production-ready.
 
 ## Experiment Contract
 
@@ -151,50 +175,69 @@ experiment note:
 - **Minimal experiment** — what is the smallest run that can answer it?
 - **Numerical validity** — how could the result be wrong, and how will that be
   detected?
+- **Convention status** — which choices are established, provisional, or
+  unresolved?
 - **Static inspection** — which figures expose the result and its failure
   modes?
-- **Acceptance** — what evidence permits the experiment to progress?
+- **Observable robustness** — does the intended conclusion survive an
+  appropriate numerical comparison even if pointwise trajectories eventually
+  differ?
+- **Prototype purpose** — when interaction is involved, what assumption or
+  learning question is it intended to test?
+- **Acceptance** — what evidence supports a particular claim or permits
+  production promotion?
 - **Findings** — what was actually observed?
 - **Next experiment** — what additional complexity has now been justified?
 
-The intended development flow is therefore:
+These questions must keep four judgements distinct:
+
+- whether an individual integration is numerically valid under its declared
+  policy;
+- whether a nominal trajectory is pointwise resolved over a stated interval;
+- whether the observable used for a teaching claim is robust;
+- whether an interaction is useful for learning or for discovering the next
+  experimental question.
+
+An exploratory prototype can be useful while one or more mathematical choices
+remain unresolved. Production promotion is still a separate, later activity:
 
 ```text
-numerical primitive
-      ↓
-verification experiment
-      ↓
-static diagnostic
-      ↓
-accepted mathematical contract
-      ↓
-reusable analysis API
-      ↓
-interactive teaching surface
+reviewed mathematical and numerical contract
+                  +
+reviewed pedagogical evidence and production architecture
+                  ↓
+          explicit promotion decision
+                  ↓
+         production teaching surface
 ```
 
-Promotion into production is a separate activity. Nothing should move into
-production merely because an experiment is useful or visually compelling.
+Nothing should move into production merely because an experiment or sandbox
+prototype is useful or visually compelling. Production code must not import
+from this sandbox.
 
 ## Executable Sandbox Artifacts
 
-- `experiments/initial_condition_sensitivity/` investigates credible finite-time
-  physical separation for simple-model pairs differing only by `0.001 deg` in
-  `theta2`. The original fixed pair remains a numerically accepted regular
-  control: it does not reach the threshold within 20 seconds. A predeclared
-  six-regime comparison is **provisionally useful (Outcome C)**: two
-  high-excitation pairs cross the threshold under the tighter policy, but their
-  principal runs fail the energy bound and principal/reference disagreement is
-  too large to accept the sensitivity evidence. Reproduce the comparison with:
+- `experiments/initial_condition_sensitivity/` investigates how nearby
+  simple-model trajectories evolve from different regions of initial-state
+  space. Its current `theta2 += 0.001 deg`, 20-second, and `d_tip = 0.1`
+  conventions are experimental scaffolding, not universal definitions of
+  sensitivity. The original fixed pair remains a numerically accepted
+  close-over-this-interval observation. A predeclared six-regime comparison is
+  **provisionally useful (Outcome C)**: two high-excitation pairs cross the
+  provisional threshold under both recorded policies, but their production-
+  principal runs fail the energy bound and the observable has not yet been
+  validated across a suitable tolerance hierarchy. Reproduce the comparison
+  with:
 
   ```bash
   uv run python development/chaos_content/experiments/initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
   ```
 
-  No sensitive case is yet accepted, and this does not establish that 20 seconds
-  is generally inadequate. The next justified work is numerical-policy
-  validation, not a longer run or a chaos claim. The experiment-local README
-  owns the detailed contract, case definitions, findings, and limitations.
+  No high-excitation case has yet passed the recorded experiment contract, and
+  this does not establish that 20 seconds is generally adequate or inadequate.
+  The next justified work is observable-focused numerical validation, not a
+  longer run or a chaos claim. The experiment-local README owns the detailed
+  conventions, results, methodology reassessment, and limitations.
 
 - `experiments/hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section
