@@ -38,6 +38,21 @@ The sandbox follows a conceptual progression. Later stages depend on evidence
 and conventions established by earlier stages; the existence of exploratory
 code for a later stage does not imply that stage has been accepted.
 
+The current teaching direction follows the question raised by the opening
+interaction:
+
+```text
+deterministic evolution / sensitivity to initial conditions
+                         ↓
+how should distance between nearby trajectories be defined?
+                         ↓
+how quickly does that distance grow?
+                         ↓
+finite-time divergence
+                         ↓
+Lyapunov analysis
+```
+
 ### 1. Sensitivity to initial conditions — the gateway
 
 Begin with the learning question:
@@ -58,31 +73,208 @@ before attempting to assign a Lyapunov exponent or a general label of chaos.
 No particular perturbation, separation threshold, duration, or binary
 sensitivity label defines Stage 1.
 
-### 2. Poincare sections — turn motion into geometry
-
-Once trajectory behaviour and numerical validity are understood, sample the
-flow on a precisely defined section of phase space. Crossing direction,
-coordinate conventions, interpolation, transient removal, solver policy, and
-section residuals must all be explicit and testable.
-
-The existing `experiments/hamiltonian_poincare/` work predates this journey map.
-It is retained as useful exploratory prior work, not as evidence that Stage 2
-is complete. Its assumptions and implementation should be reviewed when this
-stage is reached.
-
-### 3. Lyapunov analysis — quantify what users just saw
+### 2. Lyapunov analysis — formalise and quantify divergence
 
 Build from the nearby-trajectory experiments toward a numerically defensible
-measure of exponential separation. Begin with finite-time divergence and only
-introduce stronger Lyapunov claims once perturbation size, fitting interval,
-renormalisation, convergence, and numerical sensitivity have been addressed.
+notion of trajectory separation. Lyapunov analysis now follows sensitivity
+directly because the opening interaction naturally asks both “what is the
+distance between two trajectories?” and “at what rate does that distance
+grow?” Begin with finite-time divergence and only introduce stronger Lyapunov
+claims once the state-space metric, perturbation size, renormalisation,
+convergence, and numerical sensitivity have been addressed.
 
-### 4. Chaos maps — explore parameter/state space
+### 3. Poincare sections — turn motion into geometry
+
+Once nearby-trajectory behaviour and its distance conventions are understood,
+sample the flow on a precisely defined section of phase space. Crossing
+direction, coordinate conventions, interpolation, transient removal, solver
+policy, and section residuals must all be explicit and testable.
+
+The existing `experiments/hamiltonian_poincare/` work predates this journey map.
+It is retained as useful exploratory prior work, not as evidence that Stage 3
+is complete. Moving it later changes development and teaching priority, not its
+mathematical importance. Its assumptions and implementation should be reviewed
+when this stage is reached.
+
+### 4. Chaos maps — explore initial-state or parameter space
 
 Only after an individual chaos diagnostic is trusted should it be evaluated
 systematically across initial-condition or parameter space. Grids, ensembles,
 classification maps, and expensive parameter sweeps therefore belong late in
 the journey rather than at the start of discovery.
+
+## Stage 1 Decision Record — Opening Interaction Candidate
+
+### Decision and earned claim
+
+The current initial-condition-sensitivity prototype is accepted as a **strong
+candidate for the opening Chaos-page teaching interaction**, subject to small
+mathematical and usability scaffolding and a separate production-promotion
+review. This is a pedagogical acceptance decision, not production promotion or
+acceptance of a general chaos diagnostic.
+
+The interaction establishes the qualitative phenomenon needed at the opening:
+
+- both trajectories evolve deterministically under the same equations,
+  physical parameters, and numerical policy;
+- their initial states are deliberately nearby and differ in one disclosed
+  component;
+- a very small second-angle perturbation can produce visibly different motion
+  over time for the guided sensitive example; and
+- a synchronized physical-separation trace accompanies the animation.
+
+The descriptive claim is therefore that nearby deterministic beginnings can
+evolve into visibly different motion, with the outcome depending on where the
+system starts. The interaction does not establish exponential growth, measure
+a Lyapunov exponent, or classify either a trajectory or the system as chaotic.
+Its purpose is to demonstrate sensitivity and motivate a more formal question:
+what should “distance between trajectories” mean?
+
+### Minimal state and flow scaffold
+
+The prototype uses the production simple-model Euler–Lagrange state convention,
+not the Hamiltonian canonical-momentum convention:
+
+$
+\mathbf{x}(t)
+=
+\begin{pmatrix}
+\theta_1(t) & \theta_2(t) & \omega_1(t) & \omega_2(t)
+\end{pmatrix}^{\mathsf T}.
+$
+
+The production model's public initial-condition interface receives angles and
+angular velocities in degrees and degrees per second, then converts them to
+radians and radians per second for this solver state. The prototype exposes only
+the angles and supplies zero angular velocities, so both pendulums are released
+from rest:
+
+$
+\mathbf{x}_0
+=
+\begin{pmatrix}
+\theta_{1,0} & \theta_{2,0} & 0 & 0
+\end{pmatrix}^{\mathsf T},
+\qquad
+\mathbf{x}'_0
+=
+\mathbf{x}_0 + \delta\mathbf{x}_0,
+$
+
+with the disclosed nearby perturbation
+
+$
+\delta\mathbf{x}_0
+=
+\begin{pmatrix}
+0 & \delta\theta_{2,0} & 0 & 0
+\end{pmatrix}^{\mathsf T}.
+$
+
+Under the same deterministic model, parameters, and numerical policy, the two
+trajectories are represented schematically by
+
+$
+\mathbf{x}(t)=\Phi^t(\mathbf{x}_0),
+\qquad
+\mathbf{x}'(t)=\Phi^t(\mathbf{x}'_0).
+$
+
+This notation describes the present interaction only. It does not decide which
+coordinates or norm should be used for Lyapunov analysis.
+
+### Distance contract: display versus state space
+
+For the opening interaction, the displayed separation is the Euclidean distance
+between the two second-bob Cartesian positions:
+
+$
+d_{\mathrm{bob}}(t)
+=
+\left\lVert
+\mathbf{r}_2(t)-\mathbf{r}'_2(t)
+\right\rVert_2.
+$
+
+The pair shares the same pivot, link lengths, masses, gravity, solver policy,
+and every initial-state component except the explicitly perturbed second angle.
+Because each second bob lies within total reach $$l_1+l_2$$ of the common pivot,
+
+$
+0 \le d_{\mathrm{bob}}(t) \le 2(l_1+l_2).
+$
+
+The current teaching configuration uses $$l_1=l_2=1\,\mathrm{m}$$, so its maximum
+possible displayed separation is $$4\,\mathrm{m}$$. This bound is geometric; it
+does not define a sensitivity threshold.
+
+Two distance concepts are now part of the project contract and must remain
+distinct:
+
+1. **Display/teaching distance:** second-bob Cartesian separation
+   $$d_{\mathrm{bob}}(t)$$, chosen because it is intuitive, periodic in the
+   angles through the Cartesian geometry, and directly visible in the animation.
+2. **State-space distance:** a metric on the full dynamical state, still to be
+   formalised before finite-time divergence or Lyapunov analysis can be
+   interpreted defensibly.
+
+The display distance is not the definitive state-space norm. In particular, it
+omits angular-velocity information and saturates because the physical reach is
+bounded.
+
+### Remaining pre-promotion refinement
+
+An optional usability refinement is a decade increment control for the
+perturbation magnitude. It should make scales such as
+$$10^{-1}, 10^{-2}, 10^{-3}, 10^{-4}, \ldots$$ degrees easy to explore without
+awkward manual decimal entry. The precise UI treatment remains open. This is
+useful scaffolding, not a blocker to accepting the conceptual interaction.
+
+### Epistemic limitation: designed-case selection
+
+The controlled experiments remain useful verification evidence, but their
+initial states, perturbed component and magnitude, tolerances, durations, and
+acceptance quantities were deliberately selected by the project. Agreement
+across a handful of such manually chosen cases does not make those choices an
+unbiased or representative sample of the double pendulum's behaviour.
+
+The experiment therefore cannot bootstrap its own parameter choices into a
+general sensitivity claim. Broader state/parameter sampling or other robustness
+work may later address this self-referential selection bias, but it is not
+required merely to justify the opening descriptive prototype. The same caveat
+must remain visible when finite-time divergence or Lyapunov examples are later
+selected.
+
+## Next Mathematical Contract — Lyapunov Strand
+
+The next development question is:
+
+> **What definition of distance between nearby double-pendulum states is
+> mathematically appropriate for finite-time divergence and eventual Lyapunov
+> analysis?**
+
+That investigation must distinguish the current second-bob display distance
+from a full state-space perturbation norm. Without prematurely choosing an
+answer, it should examine:
+
+- the repository's actual dynamical state
+  $$(\theta_1,\theta_2,\omega_1,\omega_2)$$ for the current Euler–Lagrange
+  formulation, and the implications of other formulations;
+- angular periodicity and wrapped angle differences;
+- position coordinates versus angular-velocity or momentum components;
+- the dimensional incompatibility of unlike coordinates;
+- whether nondimensionalisation or physically justified scaling is required;
+- whether Cartesian, generalized-coordinate, or tangent-space representations
+  are preferable;
+- how finite-time numerical values depend on the selected norm;
+- infinitesimal perturbations versus the finite perturbation used by the
+  teaching prototype;
+- saturation of bounded physical-space distances; and
+- whether perturbation renormalisation is required for a defensible Lyapunov
+  algorithm.
+
+This question, not an exponent implementation, parameter sweep, or definitive
+norm choice, is the next mathematical task.
 
 ## Internal Structure
 
@@ -233,15 +425,12 @@ from this sandbox.
   teaching surface or chaos classifier. Its local README owns the provisional
   controls, numerical policy, limitations, and run instructions.
 
-  Prototype use now raises a candidate next learning question: **What structure
-  appears when sensitivity is measured across the `(theta1, theta2)`
-  initial-angle plane?** A possible progression is from observing nearby pairs
-  that stay close or separate, to noticing that sensitivity varies with the
-  starting state, and then to investigating the plane for complex boundaries
-  between relatively ordered and strongly sensitive finite-time behaviour.
-  This is a question, not a prescribed sweep or an accepted claim that any
-  observed boundary is fractal. Its observable, classification, resolution,
-  colour mapping, and numerical validation policy all remain unresolved.
+  Prototype use also raises a later map question: **What structure appears when
+  sensitivity is measured across the `(theta1, theta2)` initial-angle plane?**
+  That remains a Stage 4 direction rather than the immediate next task. It is
+  not a prescribed sweep or an accepted claim that any observed boundary is
+  fractal; its observable, classification, resolution, colour mapping, and
+  numerical validation policy all remain unresolved.
 
 - `experiments/initial_condition_sensitivity/` investigates how nearby
   simple-model trajectories evolve from different regions of initial-state
@@ -261,16 +450,18 @@ from this sandbox.
 
   No high-excitation case has yet passed the recorded experiment contract, and
   this does not establish that 20 seconds is generally adequate or inadequate.
-  The next justified work is observable-focused numerical validation, not a
-  longer run or a chaos claim. The experiment-local README owns the detailed
-  conventions, results, methodology reassessment, and limitations.
+  Observable-focused numerical validation of those cases remains unresolved,
+  but the next mathematical strand is to define an appropriate state-space
+  distance rather than lengthen a run or make a chaos claim. The experiment-
+  local README owns the detailed conventions, results, methodology
+  reassessment, and limitations.
 
 - `experiments/hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section
   workflow with explicit state, section, interpolation, solver, and
   energy-drift policies.
 
-This experiment is currently treated as exploratory prior work for Stage 2 of
+This experiment is currently treated as exploratory prior work for Stage 3 of
 the journey map. Keep it runnable and inspectable, but do not let its existence
 skip the Stage 1 sensitivity work or imply that its mathematical and numerical
 policies have already passed final acceptance.
