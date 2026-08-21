@@ -1,4 +1,8 @@
-# Minimal Hamiltonian Poincare Experiment
+# 001 — Minimal Hamiltonian Poincare Experiment
+
+**Status: exploratory prior work.** Chronologically this is the first executable
+Phase 10 experiment; conceptually Poincare sections now occur after sensitivity
+and Lyapunov analysis. The number records history, not acceptance or maturity.
 
 This is the first executable Phase 10 chaos-content sandbox artifact. It is a
 small, self-contained simple-double-pendulum Hamiltonian experiment for
@@ -63,19 +67,19 @@ From the repository root:
 Smoke-test run:
 
 ```bash
-python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py
+python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py
 ```
 
 Run the built-in smoke check:
 
 ```bash
-python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --self-check
+python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --self-check
 ```
 
 Write a small smoke-test output bundle:
 
 ```bash
-python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
+python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
 ```
 
 The default 30-second run is intentionally conservative for validation. Its
@@ -85,7 +89,7 @@ number of section points.
 Write a longer diagnostic bundle for a structurally meaningful plot:
 
 ```bash
-python development/chaos_content/experiments/hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
+python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
 ```
 
 With `--output-dir`, the experiment writes `manifest.json`, `summary.json`, and

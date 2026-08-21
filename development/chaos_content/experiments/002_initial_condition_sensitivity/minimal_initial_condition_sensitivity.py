@@ -804,11 +804,14 @@ def write_output_bundle(run: dict[str, Any], output_dir: Path, include_plots: bo
         "created_files": [manifest_path.name, *[path.name for path in created]],
         "reproduction_command": (
             "uv run python development/chaos_content/experiments/"
-            "initial_condition_sensitivity/minimal_initial_condition_sensitivity.py "
+            "002_initial_condition_sensitivity/minimal_initial_condition_sensitivity.py "
             "--output-dir development/chaos_content/outputs/"
             "initial_condition_sensitivity/principal --plots"
         ),
-        "contract": "development/chaos_content/experiments/initial_condition_sensitivity/README.md",
+        "contract": (
+            "development/chaos_content/experiments/"
+            "002_initial_condition_sensitivity/README.md"
+        ),
         "configuration": run["summary"].get("configuration", {}),
         "acceptance_policy": run["summary"].get("acceptance_policy", {}),
         "acceptance_checks": run["summary"].get("acceptance_checks", {}),

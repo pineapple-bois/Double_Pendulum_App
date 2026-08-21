@@ -764,13 +764,13 @@ def write_output_bundle(
         "created_files": [manifest_path.name, *[path.name for path in created]],
         "reproduction_command": (
             "uv run python development/chaos_content/experiments/"
-            "initial_condition_sensitivity/regime_selection_comparison.py "
+            "002_initial_condition_sensitivity/regime_selection_comparison.py "
             "--output-dir development/chaos_content/outputs/"
             "initial_condition_sensitivity/regime_selection --plots"
         ),
         "contract": (
             "development/chaos_content/experiments/"
-            "initial_condition_sensitivity/README.md"
+            "002_initial_condition_sensitivity/README.md"
         ),
         "case_order": comparison["summary"]["case_order"],
         "claim_boundary": comparison["summary"]["claim_boundary"],

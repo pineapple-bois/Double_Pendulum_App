@@ -1,9 +1,13 @@
-# Minimal Initial-Condition Sensitivity Experiment
+# 002 — Initial-Condition Sensitivity Experiment
 
 ## Status
 
-**Numerically accepted as a close-over-this-interval result; rejected under the
-original binary contract as evidence of threshold-crossing separation.** The
+**Status: accepted for a limited close-over-this-interval claim; high-excitation
+evidence remains numerically unresolved.**
+
+The fixed pair was numerically accepted as a close-over-this-interval result
+and rejected under the original binary contract as evidence of threshold-
+crossing separation. The
 fixed named run is retained as valid descriptive evidence: all four trajectories
 pass the numerical policy, but neither the principal nor tighter-reference pair
 reaches the predeclared physical-separation threshold within 20 seconds. Its
@@ -362,13 +366,13 @@ threshold-crossing claim.
 Run the deterministic self-check:
 
 ```bash
-uv run python development/chaos_content/experiments/initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --self-check
+uv run python development/chaos_content/experiments/002_initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --self-check
 ```
 
 Write the principal diagnostic bundle, including the tighter comparison:
 
 ```bash
-uv run python development/chaos_content/experiments/initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/principal --plots
+uv run python development/chaos_content/experiments/002_initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/principal --plots
 ```
 
 The bundle contains:
@@ -485,13 +489,13 @@ predeclared.
 Run the deterministic comparison self-check:
 
 ```bash
-uv run python development/chaos_content/experiments/initial_condition_sensitivity/regime_selection_comparison.py --self-check
+uv run python development/chaos_content/experiments/002_initial_condition_sensitivity/regime_selection_comparison.py --self-check
 ```
 
 Write the ignored comparative evidence bundle:
 
 ```bash
-uv run python development/chaos_content/experiments/initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
+uv run python development/chaos_content/experiments/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
 ```
 
 The bundle contains `regime_manifest.json`, `regime_summary.json`,
