@@ -47,7 +47,7 @@ The current chronology is:
 | `002_initial_condition_sensitivity/` | The nearby-trajectory gateway investigation and its regime-selection extension. | Accepted for a limited close-over-this-interval claim; high-excitation evidence unresolved |
 | `003_lyapunov_distance_contract/` | Compare dimensionally coherent nearby-state distances before estimating growth rates. | Accepted for distance-convention findings; no exponent estimated |
 | `004_finite_time_exponential_growth/` | Audit whether the controlled local divergence has a reproducible approximately exponential interval. | Completed with valid rejection: no defensible common interval under the predeclared rule |
-| `005_renormalised_local_stretching/` | Test direction-preserving perturbation resets and convergence of accumulated local stretching. | Completed with accepted negative result: baseline resets work, but the rate does not stabilise robustly |
+| `005_renormalised_local_stretching/` | Test direction-preserving perturbation resets and convergence of accumulated local stretching. | Repaired iteration Outcome C: coordinate/step defects removed, but strict-tolerance and duration convergence still fail |
 
 This chronology intentionally differs from the Chaos journey below. Experiment
 001 happened before that journey was formalised, so historical truth is
@@ -353,23 +353,23 @@ local resets could overcome the rejected finite-window instability.
 
 ## Lyapunov Strand — Renormalised Local Stretching Result
 
-Experiment 005 implements the first direction-preserving Candidate-A reset
-cycle. The reference trajectory remains uninterrupted, while the nearby state
-is explicitly treated as an algorithmic shadow reconstructed after each
-segment. Signed contraction cycles remain in the accumulated logarithmic sum.
+Experiment 005 implements direction-preserving Candidate-A resets and retains
+signed contraction in the accumulated logarithmic sum. Its original run
+rejected convergence, but an independent audit found winding-dependent solver
+error control, unrestricted step size, and lifted-coordinate reconstruction
+loss. That historical bundle is preserved.
 
-The baseline reset algorithm passes through `80 s`, remains far inside the
-empirical local ceiling, restores its target magnitude, and evolves all four
-scaled EL direction components. However, accumulated rates continue to drift
-substantially from `20→40→80 s`, late-time blocks disagree, the $10^{-6}$
-reset loses direction resolvability, the `0.125 s` interval fails its segment
-energy check, and the strict-tolerance result differs materially.
+The repaired second iteration keeps solver-facing cycle-boundary angles in a
+principal local chart, accumulates winding separately, and applies
+$h_{\max}=\min(T_c/32,\tau_r/25)$ plus one half-step check. All magnitude and
+interval runs now complete: the old $10^{-6}$ and `0.125 s` failures do not
+survive, and the half-step rate differs by only `0.0912%`.
 
-The accepted result is therefore negative: repeated renormalisation is a valid
-local algorithm for the baseline, but its accumulated rate does not stabilise
-robustly under all declared conventions. Candidate-B-along-A and $L_c=2$ checks
-are compatible, but neither overrides the duration and numerical rejections.
-No maximal Lyapunov validation experiment has been earned.
+Status remains negative as Outcome C. The repaired `20/40/80 s` rates are
+`0.756750`, `0.839863`, and `0.903459 s^-1`; the strict-tolerance result is
+`0.806183 s^-1`, a failing `10.767%` difference. The finite-shadow method is
+therefore still numerically unresolved, no maximal Lyapunov exponent is
+accepted, and further finite-shadow tuning is not justified by this result.
 
 ## Internal Structure
 
@@ -584,17 +584,17 @@ from this sandbox.
 
 - `experiments/005_renormalised_local_stretching/` is the first repeated-reset
   investigation. It preserves the evolved Candidate-A direction, records every
-  signed cycle contribution, keeps the reference uninterrupted, and audits
-  duration, reset magnitude, reset interval, scaling, tolerance, energy, and a
-  limited Candidate-B representation check. The result is an accepted negative
-  result, not a Lyapunov exponent. Reproduce the final ignored evidence with:
+  signed cycle contribution, and now keeps local solver coordinates separate
+  from reference winding history under an explicit max-step policy. The
+  repaired result is Outcome C, not a Lyapunov exponent. Reproduce the repaired
+  ignored evidence with:
 
   ```bash
-  uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/baseline --plots
+  uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/repaired --plots
   ```
 
-  The experiment-local README records the staged duration evidence, explicit
-  robustness rejections, energy semantics, and claim boundary.
+  The experiment-local README preserves the original rejection, independent
+  audit, repaired evidence, explicit robustness rejections, and claim boundary.
 
 - `experiments/001_hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section

@@ -1,12 +1,38 @@
 # 005 Renormalised Local Stretching
 
-**Status: completed; accepted negative result — the accumulated renormalised
-rate did not stabilise robustly under the declared conventions.**
+**Status: repaired second numerical iteration completed; Outcome C — all
+declared runs are numerically valid and max-step refinement is stable, but the
+accumulated rate remains tolerance-sensitive and is not accepted.**
 
 This experiment asks whether repeated perturbation renormalisation can retain a
 numerically resolvable local perturbation and produce a more stable accumulated
 finite-time stretching rate than the unrenormalised rate rejected by Experiment
 004. It does not calculate or claim an accepted maximal Lyapunov exponent.
+
+## Chronology
+
+1. The original Experiment 005 contract introduced direction-preserving
+   Candidate-A resets, signed growth accumulation, and the `20→40→80 s`
+   duration ladder.
+2. The original run showed that the reset algebra worked mechanically and that
+   the direction evolved, but rejected rate convergence. Its `80 s` baseline
+   and strict values were `1.039931` and `0.788167 s^-1`; the $10^{-6}$ and
+   `0.125 s` cases were rejected.
+3. The independent [`LYAPUNOV_REVIEW.md`](../LYAPUNOV_REVIEW.md) audit found
+   that this rejection was not trustworthy as evidence against the
+   finite-shadow method. Lifted solver coordinates made relative error control
+   winding-dependent, no `max_step` was set, and lifted reset reconstruction
+   lost avoidable precision.
+4. The repaired second iteration retains the mathematical contract and
+   thresholds, but uses local angular coordinates, separate winding history,
+   and one predeclared step cap plus its half-step refinement.
+5. The repaired result is Outcome C. Coordinate/reconstruction and short-cycle
+   energy failures disappear, while the strict-tolerance comparison still
+   differs materially. The method remains numerically unresolved.
+
+The original ignored evidence bundle remains at
+`outputs/renormalised_local_stretching/baseline`; the repaired bundle is at
+`outputs/renormalised_local_stretching/repaired`.
 
 ## Prior evidence and question
 
@@ -119,11 +145,12 @@ $$
 \mathbf{x}_k^{\prime +}=\mathbf{x}_k+\delta\mathbf{x}_k^+.
 $$
 
-The reference state is not changed. Adding the two small angular components to
-whatever $2\pi$ representative the reference integrator currently carries is
-equivariant under shifting that representative by $2\pi$. Tests must verify
-that the wrapped reconstructed difference and reset direction are unchanged
-across the $-\pi/\pi$ branch.
+The physical reference state is not changed. In the repaired iteration its
+angles are first canonicalised deterministically to $(-\pi,\pi]$; the reset is
+constructed around that local representative and the resulting shadow angles
+are canonicalised again. Tests verify the reset norm and direction across the
+$-\pi/\pi$ branch and from synthetic million-turn representatives, including
+at $\varepsilon=10^{-6}$.
 
 The baseline is $\varepsilon=10^{-5}$ in Candidate-A norm. Initially this also
 equals a $10^{-5}$ rad pure $\theta_2$ increment. After the first reset it is
@@ -131,10 +158,11 @@ the norm of a four-component scaled perturbation, not an angular increment.
 
 ## Reference and shadow semantics
 
-For each run, the reference trajectory is integrated once over the entire
-declared duration. It is never restarted or perturbed at reset events.
-Reference states at exact cycle boundaries are sampled from that uninterrupted
-integration.
+For each repaired run, the reference remains one uninterrupted **physical**
+trajectory: it is never perturbed or dynamically reset. Its coordinate chart
+is rebased at each cycle boundary and DOP853 is restarted from the physically
+equivalent principal-angle state. This prevents solver error control from
+depending on accumulated winding while preserving exact cycle timing.
 
 The nearby comparison is an algorithmic shadow: each segment evolves under the
 same EL equations and numerical policy, but its endpoint is deliberately
@@ -218,9 +246,20 @@ norm-independent convergence.
 
 ## Numerical policy and validity
 
-The baseline retains DOP853 with `rtol=1e-9`, `atol=1e-11`. Reference energy is
-evaluated over one uninterrupted integration. Nearby energy is evaluated
-within each segment relative to that segment's post-reset start. Reset energy
+The baseline retains DOP853 with `rtol=1e-9`, `atol=1e-11`. Every reference
+and shadow solve now receives the predeclared bound
+
+$$
+h_{\max}=\min(T_c/32,\tau_r/25)=0.0099773571\ \mathrm{s}.
+$$
+
+This provides at least 32 permitted steps per characteristic time and 25 per
+baseline reset interval. The only step-control comparison uses
+$h_{\max}/2=0.0049886786\ \mathrm{s}$; neither value was selected from a rate
+result. Reference energy is evaluated across the uninterrupted physical
+trajectory. Nearby energy is evaluated within each segment relative to that
+segment's own post-reset start. The audit found that this definition was
+already correct, so the `1e-7` criterion and formula were not changed. Reset energy
 jumps are recorded separately as deliberate algorithmic changes and are not
 mislabelled as numerical drift.
 
@@ -276,7 +315,8 @@ convergence. Success requires all of the following at `80 s`:
 7. the three reset-interval final rates have relative spread at most `10%`;
 8. the strict-tolerance final rate differs from baseline by at most `1%`; and
 9. the true $L_c=2\ \mathrm{m}$ renormalised final rate differs from the
-   $L_c=1\ \mathrm{m}$ value by at most `5%`.
+   $L_c=1\ \mathrm{m}$ value by at most `5%`; and
+10. the $h_{\max}/2$ final rate differs from baseline by at most `1%`.
 
 Relative comparisons use the baseline or median magnitude as explicitly
 recorded. A near-zero denominator makes the relevant diagnostic invalid rather
@@ -296,13 +336,15 @@ replace the full result and will not be adjusted after inspection. Cumulative
 curves at `20`, `40`, and `80 s` expose progressively longer histories without
 inventing a burn-in from a visually favourable plot.
 
-## Winding-history limitation
+## Local angles and separate winding history
 
-Wrapped angular differences remain part of local Candidate A. Lifted winding
-history is meaningful for the uninterrupted reference and may be recorded for
-context. The repeatedly reset shadow has an artificial, interrupted history;
-its accumulated revolution count is not presented as a natural trajectory and
-does not enter the algorithm.
+Wrapped angular differences remain part of local Candidate A. Solver-facing
+reference and shadow states start every cycle in $(-\pi,\pi]$. At `0.01 s`
+diagnostic samples, wrapped angular increments are accumulated into a separate
+continuous reference history. That history handles positive and negative
+turns, reversals, multiple turns, and principal-branch crossings; it is never
+fed to DOP853, Candidate A, reset reconstruction, or acceptance. The repeatedly
+reset shadow still has no natural global winding history.
 
 ## Required evidence and figures
 
@@ -322,11 +364,13 @@ Deterministic figures show:
 5. reset-magnitude robustness;
 6. reset-interval robustness;
 7. reference/segment energy and numerical validity; and
-8. fixed scaling, tolerance, and Candidate-B representation comparisons.
+8. fixed scaling, tolerance, and Candidate-B representation comparisons;
+9. baseline/strict cycle, cumulative-rate, direction, and max-step diagnostics;
+10. bounded local angles beside separately accumulated winding history.
 
 No plot can override a failed numerical check.
 
-## Completed evidence and findings
+## Original completed evidence and findings (first iteration)
 
 ### Observation — the baseline reset algorithm works locally
 
@@ -459,19 +503,128 @@ initial direction, reset magnitude, reset interval, duration, representability
 floor, energy threshold, and solver policy. The evidence does not earn the
 stronger maximal-Lyapunov validation experiment described below.
 
+## Independent audit and repaired second iteration
+
+### Repairs applied
+
+The second iteration maps the audit findings narrowly to three code paths:
+
+- `canonicalize_state_angles`, `integrate_rebased_reference`, and
+  `reconstruct_shadow_state` keep cycle-boundary reference/shadow angles in
+  $(-\pi,\pi]$ while `accumulate_lifted_angles` owns winding history outside
+  the solver state;
+- `solve_segment` requires an explicit `max_step`, records it with actual
+  `nfev`/`njev`/`nlu` statistics, and is called with the same cap for reference
+  and shadow; and
+- achieved reset norm/direction are recovered around the local reference
+  chart, avoiding subtraction from large lifted representatives.
+
+The EL RHS, Cartesian state, and energy were tested under independent positive
+and negative integer $2\pi$ shifts before using rebasing. The physical model,
+initial state, Candidate-A norm, initial direction, reset map, signed
+accumulation, duration ladder, tolerances, and original acceptance thresholds
+were not changed. The segment energy definition was not changed because the
+audit verified that it already used the segment's own post-reset initial
+energy.
+
+### Repaired baseline and duration convergence
+
+All `320` baseline cycles complete and remain local. The repaired rates are:
+
+| Duration | $\Lambda_N$ / $\mathrm{s}^{-1}$ | Relative change |
+| ---: | ---: | ---: |
+| `20 s` | `0.756750` | — |
+| `40 s` | `0.839863` | `9.896%` (passes `10%`) |
+| `80 s` | `0.903459` | `7.039%` (fails `5%`) |
+
+The final-quarter cumulative-rate range is `9.817%` of the final value and
+fails its `5%` limit. The `40–60 s` and `60–80 s` block rates are `0.923574`
+and `1.010534 s^-1`, a passing `8.605%` difference. Excluding the first `2 s`
+changes the rate by `5.233%`, just beyond the unchanged `5%` criterion. These
+failures are retained; no duration was added to average them away.
+
+The repaired baseline contains `215` expanding and `105` contracting cycles,
+with $-1.48444\le\ell_k\le1.62763$. Its largest pre-reset Candidate-A norm is
+`5.09177e-5`. Maximum reset-relative and direction-component errors are
+`6.26e-11` and `6.36e-11`. Maximum reference and shadow-segment normalized
+energy drifts are `4.11e-9` and `2.64e-9`, respectively.
+
+### Repaired tolerance and step-control findings
+
+At the baseline cap, the strict-tolerance rate is `0.806183 s^-1`, `10.767%`
+below the baseline value and still outside the unchanged `1%` limit. This is
+smaller than the original `24.21%` discrepancy but remains material. Both
+runs use identical physical initial state, reset magnitude and interval,
+rebasing, cap, cycle times, and accumulation; each complete tolerance policy
+integrates its own reference.
+
+The first baseline/strict cycle-log difference above `0.1` occurs at `27.0 s`;
+the first direction-component difference above `0.1` occurs at `29.25 s`; and
+the cumulative rates first differ by more than `1%` at `29.75 s`. Their
+reference Candidate-A distance crosses `0.01` at `21.68 s`, `0.1` at `25.9 s`,
+and `1` at `29.7 s`. The maximum direction-component difference is `1.8014`,
+the maximum cumulative-rate relative difference is `17.619%`, and the final
+rates do not reconverge within `1%`. Evolved direction divergence therefore
+coincides with later cycle-stretching divergence, rather than a reset back to
+the initial $\theta_2$ direction.
+
+The sole half-step run gives `0.904282 s^-1`, only `0.0912%` from baseline and
+passes the predeclared `1%` step-refinement check. Thus unrestricted step size
+was a real original contaminant, but further reducing the repaired cap does
+not explain the remaining tolerance discrepancy.
+
+### Repaired magnitude, interval, scale, and representation findings
+
+- Reset magnitudes $10^{-4}$, $10^{-5}$, and $10^{-6}$ give `0.901479`,
+  `0.903459`, and `0.903646 s^-1`, a passing `0.240%` spread. The $10^{-6}$
+  run completes all cycles; its maximum reset-relative and direction-component
+  errors are `6.20e-10` and `6.42e-10`, with no failure time. The old `45 s`
+  rejection was primarily a lifted-coordinate conditioning artifact.
+- Reset intervals `0.125`, `0.25`, and `0.5 s` give `0.838355`, `0.903459`,
+  and `0.879541 s^-1`, a passing `7.402%` spread. The `0.125 s` run completes;
+  its maximum segment energy drift is `3.72e-9`. The old `18.25 s` rejection
+  does not survive the explicit step/local-coordinate policy.
+- The true $L_c=2\ \mathrm{m}$ run gives `0.905297 s^-1`, a passing `0.203%`
+  difference from baseline.
+- Candidate B measured along Candidate-A resets gives `0.910543 s^-1`, a
+  `0.784%` observational difference. It still does not define the resets and
+  is not a Candidate-B convergence result.
+
+Local stored reference angles remain within `3.141585 rad`; continuous angles
+inside one integration segment reach at most `5.411470 rad` before the next
+rebase, rather than growing to the original tens or hundreds of radians.
+Separate winding bookkeeping continues across branch crossings and records the
+history without entering the norm or solver error scale.
+
+### Outcome C — repaired method remains numerically unresolved
+
+All required runs now pass cycle, reconstruction, locality, solver, and energy
+validity. Magnitude, interval, scale, and max-step refinement checks pass. The
+coordinate-conditioned $10^{-6}$ and `0.125 s` failures are repaired.
+
+The experiment is still rejected because the strict-tolerance difference is
+`10.767%`, the `40→80 s` duration change is `7.039%`, the final-quarter range
+is `9.817%`, and the initial-transient comparison is `5.233%`. The original
+headline values and causes are superseded, but its core claim boundary
+survives: Experiment 005 still has not produced a robustly converged
+accumulated stretching rate and still does not establish a maximal Lyapunov
+exponent. Under the task's interpretation hierarchy this is **Outcome C**, not
+an invitation to tune more finite-shadow parameters.
+
 ## Reproduction
 
-The staged commands are:
+The repaired final bundle is reproduced with:
 
 ```bash
-UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 20 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/stage_20s
-UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 40 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/stage_40s
-UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/baseline --plots
+UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/repaired --plots
 ```
 
 Generated evidence is ignored and reproducible. `summary.json` owns the final
 decision and claim boundary; `cycles.json` and `cycles.csv` preserve every
-accepted and rejected cycle.
+accepted and rejected cycle. `policy_comparison.csv` exposes corresponding
+baseline/strict cycle logs, rates, directions, and half-step rates;
+`winding_history.csv` separates bounded local angles from lifted history. The
+original `baseline` bundle is intentionally not overwritten.
 
 ## Claim boundary and next question
 
@@ -483,13 +636,18 @@ The strongest possible success claim is:
 > becomes substantially more stable with time and survives the declared reset,
 > tolerance, and scaling comparisons.
 
-This would earn a stronger maximal-Lyapunov validation experiment. It would not
-itself establish a production-ready, coordinate-invariant, representative, or
-Hamiltonian-validated maximal Lyapunov exponent.
+This acceptance boundary was not met. The repaired max-step result is stable,
+but independently integrated baseline/strict policies select different
+long-time reference and reset-direction histories and fail the `1%` rate
+criterion. Further finite-shadow parameter tuning is not justified by this
+experiment. Tangent/variational dynamics is now a justified next mathematical
+formulation because it would remove finite-state subtraction and repeated
+shadow reconstruction, but it is not implemented here and would require a
+separately validated EL-flow Jacobian.
 
 The reference trajectory, initial direction, reset magnitude, reset interval,
 scale, duration ladder, numerical policy, and thresholds remain manually
 selected. Success cannot generalise this trajectory across phase space.
 
-If the rate fails to stabilise robustly, that negative result will be retained
-and the stronger validation experiment will not be earned.
+No Experiment 006, additional initial condition, longer duration, or tangent
+dynamics is part of this repaired Experiment 005 iteration.

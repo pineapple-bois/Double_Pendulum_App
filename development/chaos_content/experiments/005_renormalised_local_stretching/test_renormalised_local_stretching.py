@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -14,6 +15,54 @@ if str(EXPERIMENT_ROOT) not in sys.path:
     sys.path.insert(0, str(EXPERIMENT_ROOT))
 
 import renormalised_local_stretching as experiment
+
+
+@pytest.fixture(scope="module")
+def dynamics():
+    return experiment.build_dynamics()
+
+
+def test_el_rhs_is_invariant_under_independent_integer_turn_shifts(dynamics) -> None:
+    state = np.array([0.73, -1.21, 2.4, -3.1])
+    expected = np.asarray(dynamics._system(state, 0.37), dtype=float)
+    for turns in ((1, -1), (-7, 4), (23, -19)):
+        shifted = np.array(state, copy=True)
+        shifted[:2] += 2.0 * math.pi * np.asarray(turns)
+        actual = np.asarray(dynamics._system(shifted, 0.37), dtype=float)
+        np.testing.assert_allclose(actual, expected, rtol=1.0e-12, atol=1.0e-11)
+
+
+def test_physical_observables_are_invariant_under_equivalent_angles() -> None:
+    state = np.array([0.73, -1.21, 2.4, -3.1])
+    shifted = np.array(state, copy=True)
+    shifted[:2] += 2.0 * math.pi * np.array([-11, 8])
+
+    np.testing.assert_allclose(
+        experiment.cartesian_full_state(shifted),
+        experiment.cartesian_full_state(state),
+        rtol=1.0e-12,
+        atol=1.0e-12,
+    )
+    np.testing.assert_allclose(
+        experiment.simple_energy(shifted),
+        experiment.simple_energy(state),
+        rtol=1.0e-12,
+        atol=1.0e-12,
+    )
+
+
+def test_local_angular_rebasing_and_branch_crossing() -> None:
+    state = np.array(
+        [math.pi + 2.0e-6, -math.pi - 3.0e-6, 0.4, -0.2]
+    )
+    canonical = experiment.canonicalize_state_angles(state)
+
+    assert -math.pi < canonical[0] <= math.pi
+    assert -math.pi < canonical[1] <= math.pi
+    np.testing.assert_allclose(
+        experiment.wrap_angle_difference(canonical[:2] - state[:2]), [0.0, 0.0]
+    )
+    np.testing.assert_array_equal(canonical[2:], state[2:])
 
 
 def test_scaled_vector_normalization_uses_characteristic_time() -> None:
@@ -75,6 +124,30 @@ def test_reset_is_equivariant_across_angular_branch_representatives() -> None:
     )
 
 
+@pytest.mark.parametrize("target", [1.0e-5, 1.0e-6])
+def test_reset_is_conditioned_at_large_synthetic_winding_count(target: float) -> None:
+    reference = np.array(
+        [2.0 * math.pi * 1_000_000 + 0.2, -2.0 * math.pi * 800_000 - 0.3, 1.1, -0.7]
+    )
+    direction = np.array([0.2, -0.4, 0.8, math.sqrt(0.16)])
+    direction /= np.linalg.norm(direction)
+
+    shadow = experiment.reconstruct_shadow_state(reference, direction, target)
+    local_reference = experiment.canonicalize_state_angles(reference)
+    achieved = experiment.scaled_el_vector(
+        experiment.wrapped_el_difference(local_reference, shadow)
+    )
+    achieved_norm = np.linalg.norm(achieved)
+
+    assert abs(achieved_norm - target) / target <= experiment.RESET_RELATIVE_TOLERANCE
+    np.testing.assert_allclose(
+        achieved / achieved_norm,
+        direction,
+        rtol=0.0,
+        atol=experiment.DIRECTION_ABSOLUTE_TOLERANCE,
+    )
+
+
 def test_normalized_reset_preserves_evolved_direction_not_initial_direction() -> None:
     evolved = np.array([2.0e-5, -1.0e-5, 7.0e-5, -3.0e-5])
     _, _, direction, reset_physical = experiment.normalized_reset(evolved, 1.0e-5)
@@ -109,6 +182,70 @@ def test_deterministic_cycle_timing_uses_integer_cycle_indices() -> None:
     np.testing.assert_array_equal(times, np.linspace(0.0, 1.0, 9))
     with pytest.raises(ValueError):
         experiment.deterministic_cycle_times(1.0, 0.3)
+
+
+def test_winding_bookkeeping_handles_turns_reversals_and_branches() -> None:
+    positive = np.linspace(0.2, 4.0 * math.pi + 0.2, 33)
+    reverse = np.linspace(4.0 * math.pi + 0.2, -2.0 * math.pi + 0.2, 49)[1:]
+    physical = np.concatenate((positive, reverse))
+    second = -0.5 * physical
+    lifted_expected = np.column_stack((physical, second))
+    local = experiment.wrap_angle_difference(lifted_expected)
+
+    reconstructed = experiment.accumulate_lifted_angles(local)
+
+    np.testing.assert_allclose(reconstructed, lifted_expected, atol=2.0e-14)
+    np.testing.assert_allclose(
+        experiment.wrap_angle_difference(reconstructed), local, atol=2.0e-14
+    )
+    assert np.max(reconstructed[:, 0]) > 2.0 * math.pi
+    assert reconstructed[-1, 0] < reconstructed[-10, 0]
+
+
+def test_explicit_max_step_is_forwarded_to_solve_ivp(monkeypatch) -> None:
+    captured: dict[str, float] = {}
+    requested = np.linspace(0.0, 0.25, 4)
+    initial = np.array([0.2, -0.3, 0.4, -0.5])
+
+    def fake_solve_ivp(*args, **kwargs):
+        captured["max_step"] = kwargs["max_step"]
+        return SimpleNamespace(
+            success=True,
+            status=0,
+            message="ok",
+            nfev=17,
+            njev=0,
+            nlu=0,
+            t=np.array(kwargs["t_eval"], copy=True),
+            y=np.repeat(initial[:, None], len(kwargs["t_eval"]), axis=1),
+        )
+
+    monkeypatch.setattr(experiment, "solve_ivp", fake_solve_ivp)
+    result = experiment.solve_segment(
+        SimpleNamespace(_system=lambda state, time: state),
+        initial,
+        requested,
+        experiment.SIMPLE_REFERENCE_SOLVER_POLICY,
+        max_step=0.0125,
+    )
+
+    assert result["accepted"]
+    assert captured["max_step"] == 0.0125
+    assert result["solver_status"]["max_step_seconds"] == 0.0125
+
+
+def test_segment_energy_is_measured_from_post_reset_segment_start() -> None:
+    post_reset = np.array([0.7, -0.4, 1.2, -0.8])
+    later = np.array([0.71, -0.39, 1.19, -0.79])
+    state = np.vstack((post_reset, later))
+
+    drift = experiment.normalized_segment_energy_drift(state)
+    expected = abs(
+        experiment.simple_energy(later)[0] - experiment.simple_energy(post_reset)[0]
+    ) / experiment.energy_scale()
+
+    assert drift[0] == 0.0
+    assert math.isclose(drift[1], expected, rel_tol=0.0, abs_tol=1.0e-16)
 
 
 def test_invalid_cycle_is_explicitly_rejected() -> None:

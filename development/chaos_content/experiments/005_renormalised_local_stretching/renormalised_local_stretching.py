@@ -63,6 +63,18 @@ RESET_RELATIVE_TOLERANCE = 1.0e-8
 DIRECTION_ABSOLUTE_TOLERANCE = 1.0e-8
 RECONSTRUCTION_ABSOLUTE_TOLERANCE = 1.0e-12
 
+# Repaired numerical policy declared before the second Experiment 005 run.
+# This resolves each characteristic time with at least 32 permitted steps and
+# each baseline reset interval with at least 25 permitted steps.
+BASELINE_MAX_STEP = min(
+    math.sqrt(LC_BASELINE / float(PARAMETERS[g])) / 32.0,
+    BASELINE_RESET_INTERVAL / 25.0,
+)
+REFINED_MAX_STEP = BASELINE_MAX_STEP / 2.0
+MAX_MAX_STEP_RATE_DIFFERENCE = 0.01
+MATERIAL_POLICY_LOG_DIFFERENCE = 0.1
+MATERIAL_POLICY_DIRECTION_DIFFERENCE = 0.1
+
 # Provisional convergence thresholds fixed in README before execution.
 MAX_DURATION_CHANGE_20_TO_40 = 0.10
 MAX_DURATION_CHANGE_40_TO_80 = 0.05
@@ -93,6 +105,51 @@ def wrap_angle_difference(values: np.ndarray) -> np.ndarray:
     values = np.asarray(values, dtype=float)
     wrapped = np.remainder(values + math.pi, 2.0 * math.pi) - math.pi
     return np.where(wrapped == -math.pi, math.pi, wrapped)
+
+
+def canonicalize_state_angles(state: np.ndarray) -> np.ndarray:
+    """Return an equivalent EL state with angles in the principal interval.
+
+    The deterministic convention is ``(-pi, pi]``. Angular velocities are not
+    modified. This is a coordinate rebase, not a physical trajectory reset.
+    """
+
+    canonical = np.array(state, dtype=float, copy=True)
+    if canonical.shape[-1] != 4:
+        raise ValueError("EL states must have four components.")
+    canonical[..., :2] = wrap_angle_difference(canonical[..., :2])
+    return canonical
+
+
+def accumulate_lifted_angles(
+    sampled_angles: np.ndarray, initial_lifted_angles: np.ndarray | None = None
+) -> np.ndarray:
+    """Reconstruct continuous winding history outside the ODE solver state.
+
+    Consecutive samples must resolve motion to less than one half-turn. The
+    experiment's 0.01 s diagnostic sampling and explicit step cap provide that
+    resolution for the recorded run.
+    """
+
+    angles = np.asarray(sampled_angles, dtype=float)
+    if angles.ndim != 2 or angles.shape[1] != 2 or len(angles) == 0:
+        raise ValueError("Sampled angles must have shape (n, 2).")
+    if np.any(~np.isfinite(angles)):
+        raise ValueError("Sampled angles must be finite.")
+    increments = wrap_angle_difference(np.diff(angles, axis=0))
+    lifted = np.empty_like(angles)
+    if initial_lifted_angles is None:
+        lifted[0] = angles[0]
+    else:
+        initial = np.asarray(initial_lifted_angles, dtype=float)
+        if initial.shape != (2,) or np.any(~np.isfinite(initial)):
+            raise ValueError("Initial lifted angles must be a finite two-vector.")
+        if np.max(np.abs(wrap_angle_difference(angles[0] - initial))) > 1.0e-10:
+            raise ValueError("Initial lifted history is not equivalent to the first sample.")
+        lifted[0] = initial
+    if len(angles) > 1:
+        lifted[1:] = lifted[0] + np.cumsum(increments, axis=0)
+    return lifted
 
 
 def wrapped_el_difference(reference: np.ndarray, nearby: np.ndarray) -> np.ndarray:
@@ -155,7 +212,8 @@ def reconstruct_shadow_state(
     if not np.isfinite(norm) or not math.isclose(norm, 1.0, rel_tol=0.0, abs_tol=1.0e-12):
         raise ValueError("Reset direction must be a finite unit vector.")
     physical = physical_el_vector(target_magnitude * direction, length_metres)
-    return np.asarray(reference_state, dtype=float) + physical
+    local_reference = canonicalize_state_angles(reference_state)
+    return canonicalize_state_angles(local_reference + physical)
 
 
 def growth_contribution(pre_reset_magnitude: float, previous_reset_magnitude: float) -> tuple[float, float]:
@@ -243,6 +301,13 @@ def energy_scale() -> float:
     )
 
 
+def normalized_segment_energy_drift(state: np.ndarray) -> np.ndarray:
+    """Measure a physical segment from its own post-reset initial energy."""
+
+    energy = simple_energy(state)
+    return np.abs(energy - energy[0]) / energy_scale()
+
+
 def policy_dict(policy: SolverPolicy) -> dict[str, Any]:
     return {
         "name": policy.name,
@@ -270,13 +335,18 @@ def solve_segment(
     initial_state: np.ndarray,
     requested_time: np.ndarray,
     policy: SolverPolicy,
+    *,
+    max_step: float,
 ) -> dict[str, Any]:
     requested_time = np.asarray(requested_time, dtype=float)
+    if not np.isfinite(max_step) or max_step <= 0.0:
+        raise ValueError("max_step must be positive and finite.")
     result = solve_ivp(
         lambda time_value, state: dynamics._system(state, time_value),
         (float(requested_time[0]), float(requested_time[-1])),
         np.asarray(initial_state, dtype=float),
         t_eval=requested_time,
+        max_step=max_step,
         **policy.solve_ivp_kwargs(),
     )
     state = np.asarray(result.y.T, dtype=float)
@@ -304,6 +374,7 @@ def solve_segment(
             "nlu": int(result.nlu),
             "requested_count": len(requested_time),
             "returned_count": len(result.t),
+            "max_step_seconds": max_step,
         },
     }
 
@@ -371,21 +442,87 @@ def cycle_validity(
     }
 
 
-def _reference_requested_times(duration: float, cycle_times: np.ndarray) -> np.ndarray:
-    sample_count = int(round(duration / REFERENCE_SAMPLE_INTERVAL)) + 1
-    regular = np.linspace(0.0, duration, sample_count)
-    return np.unique(np.round(np.concatenate((regular, cycle_times)), 12))
+def _segment_requested_times(start: float, end: float) -> np.ndarray:
+    count = max(1, int(math.ceil((end - start) / REFERENCE_SAMPLE_INTERVAL)))
+    return np.linspace(start, end, count + 1)
 
 
-def _state_at_times(
-    available_times: np.ndarray, states: np.ndarray, requested_times: np.ndarray
-) -> np.ndarray:
-    indices = np.searchsorted(available_times, requested_times)
-    if np.any(indices >= len(available_times)) or not np.allclose(
-        available_times[indices], requested_times, rtol=0.0, atol=1.0e-12
-    ):
-        raise ValueError("Reference cycle boundaries are unavailable.")
-    return states[indices]
+def aggregate_solver_statistics(statuses: list[dict[str, Any]]) -> dict[str, Any]:
+    if not statuses:
+        return {
+            "solve_call_count": 0,
+            "total_nfev": 0,
+            "minimum_nfev_per_call": None,
+            "maximum_nfev_per_call": None,
+            "mean_nfev_per_call": None,
+        }
+    nfev = np.asarray([status["nfev"] for status in statuses], dtype=int)
+    return {
+        "solve_call_count": len(statuses),
+        "total_nfev": int(np.sum(nfev)),
+        "minimum_nfev_per_call": int(np.min(nfev)),
+        "maximum_nfev_per_call": int(np.max(nfev)),
+        "mean_nfev_per_call": float(np.mean(nfev)),
+        "total_njev": int(sum(status["njev"] for status in statuses)),
+        "total_nlu": int(sum(status["nlu"] for status in statuses)),
+        "max_step_seconds": float(statuses[0]["max_step_seconds"]),
+    }
+
+
+def integrate_rebased_reference(
+    dynamics: DoublePendulumLagrangian,
+    cycle_times: np.ndarray,
+    policy: SolverPolicy,
+    *,
+    max_step: float,
+) -> dict[str, Any]:
+    """Integrate one physical reference with coordinate rebases per cycle."""
+
+    current_state = canonicalize_state_angles(BASE_STATE_RADIANS)
+    current_lifted = np.array(current_state[:2], copy=True)
+    boundary_states = [np.array(current_state, copy=True)]
+    times = [float(cycle_times[0])]
+    local_states = [np.array(current_state, copy=True)]
+    lifted_angles = [np.array(current_lifted, copy=True)]
+    statuses: list[dict[str, Any]] = []
+    issues: list[str] = []
+    maximum_abs_solver_angle = float(np.max(np.abs(current_state[:2])))
+
+    for cycle_index in range(1, len(cycle_times)):
+        requested = _segment_requested_times(
+            float(cycle_times[cycle_index - 1]), float(cycle_times[cycle_index])
+        )
+        segment = solve_segment(
+            dynamics, current_state, requested, policy, max_step=max_step
+        )
+        statuses.append(segment["solver_status"])
+        if not segment["accepted"]:
+            issues.extend(f"cycle_{cycle_index}:{issue}" for issue in segment["issues"])
+            break
+        raw_state = segment["state"]
+        maximum_abs_solver_angle = max(
+            maximum_abs_solver_angle, float(np.max(np.abs(raw_state[:, :2])))
+        )
+        local_segment = canonicalize_state_angles(raw_state)
+        lifted_segment = accumulate_lifted_angles(local_segment[:, :2], current_lifted)
+        times.extend(segment["time"][1:].tolist())
+        local_states.extend(local_segment[1:])
+        lifted_angles.extend(lifted_segment[1:])
+        current_state = canonicalize_state_angles(raw_state[-1])
+        current_lifted = np.array(lifted_segment[-1], copy=True)
+        boundary_states.append(np.array(current_state, copy=True))
+
+    accepted = len(boundary_states) == len(cycle_times) and not issues
+    return {
+        "accepted": accepted,
+        "issues": issues,
+        "time": np.asarray(times, dtype=float),
+        "local_state": np.asarray(local_states, dtype=float),
+        "lifted_angles": np.asarray(lifted_angles, dtype=float),
+        "boundary_states": np.asarray(boundary_states, dtype=float),
+        "solver_statistics": aggregate_solver_statistics(statuses),
+        "maximum_abs_solver_angle_within_segment_radians": maximum_abs_solver_angle,
+    }
 
 
 def run_renormalised(
@@ -397,29 +534,46 @@ def run_renormalised(
     reset_interval: float,
     length_metres: float,
     policy: SolverPolicy,
+    max_step: float = BASELINE_MAX_STEP,
 ) -> dict[str, Any]:
     cycle_times = deterministic_cycle_times(duration, reset_interval)
-    reference_time = _reference_requested_times(duration, cycle_times)
-    reference = solve_segment(dynamics, BASE_STATE_RADIANS, reference_time, policy)
+    reference = integrate_rebased_reference(
+        dynamics, cycle_times, policy, max_step=max_step
+    )
     if not reference["accepted"]:
         return {
             "run_id": run_id,
             "accepted": False,
             "issues": [f"reference:{issue}" for issue in reference["issues"]],
             "cycles": [],
-            "configuration": {},
+            "configuration": {
+                "duration_seconds": duration,
+                "epsilon_candidate_a_norm": epsilon,
+                "reset_interval_seconds": reset_interval,
+                "characteristic_length_metres": length_metres,
+                "solver_policy": policy_dict(policy),
+                "max_step_seconds": max_step,
+                "requested_cycle_count": len(cycle_times) - 1,
+            },
         }
 
-    reference_state = reference["state"]
+    reference_time = reference["time"]
+    reference_state = reference["local_state"]
     reference_energy = simple_energy(reference_state)
     reference_energy_drift = np.abs(reference_energy - reference_energy[0]) / energy_scale()
     reference_max_drift = float(np.max(reference_energy_drift))
-    boundary_states = _state_at_times(reference_time, reference_state, cycle_times)
+    boundary_states = reference["boundary_states"]
 
     initial_scaled = np.array([0.0, epsilon, 0.0, 0.0])
     initial_physical = physical_el_vector(initial_scaled, length_metres)
-    shadow_state = boundary_states[0] + initial_physical
-    previous_reset_a = float(candidate_a_distance(initial_physical, length_metres))
+    initial_direction = initial_scaled / np.linalg.norm(initial_scaled)
+    shadow_state = reconstruct_shadow_state(
+        boundary_states[0], initial_direction, epsilon, length_metres
+    )
+    achieved_initial_physical = wrapped_el_difference(boundary_states[0], shadow_state)
+    previous_reset_a = float(
+        candidate_a_distance(achieved_initial_physical, length_metres)
+    )
     previous_reset_b = float(candidate_b_distance(boundary_states[0], shadow_state, length_metres))
     cumulative_log_a = 0.0
     cumulative_log_b = 0.0
@@ -432,7 +586,9 @@ def run_renormalised(
         reference_start = boundary_states[cycle_index - 1]
         reference_end = boundary_states[cycle_index]
         segment_time = np.linspace(start_time, end_time, SEGMENT_SAMPLE_COUNT)
-        segment = solve_segment(dynamics, shadow_state, segment_time, policy)
+        segment = solve_segment(
+            dynamics, shadow_state, segment_time, policy, max_step=max_step
+        )
         if not segment["accepted"]:
             cycles.append(
                 {
@@ -447,7 +603,7 @@ def run_renormalised(
             run_issues.append(f"cycle_{cycle_index}:segment_solver_or_state_failure")
             break
 
-        pre_reset_state = segment["state"][-1]
+        pre_reset_state = canonicalize_state_angles(segment["state"][-1])
         physical_pre = wrapped_el_difference(reference_end, pre_reset_state)
         try:
             scaled_pre, pre_reset_a, direction, reset_physical = normalized_reset(
@@ -476,8 +632,7 @@ def run_renormalised(
         reconstruction_error = float(np.max(np.abs(achieved_physical - reset_physical)))
         post_reset_b = float(candidate_b_distance(reference_end, post_reset_state, length_metres))
 
-        segment_energy = simple_energy(segment["state"])
-        segment_energy_drift = np.abs(segment_energy - segment_energy[0]) / energy_scale()
+        segment_energy_drift = normalized_segment_energy_drift(segment["state"])
         max_segment_energy_drift = float(np.max(segment_energy_drift))
         reset_energy_change = float(
             (simple_energy(post_reset_state)[0] - simple_energy(pre_reset_state)[0])
@@ -589,8 +744,10 @@ def run_renormalised(
         else None
     )
     contraction_count = int(np.count_nonzero(logs_a < 0.0))
+    reference_lifted_angles = reference["lifted_angles"]
     reference_revolutions = (
-        (reference_state[-1, :2] - reference_state[0, :2]) / (2.0 * math.pi)
+        (reference_lifted_angles[-1] - reference_lifted_angles[0])
+        / (2.0 * math.pi)
     ).tolist()
     detailed_cycles = [cycle for cycle in cycles if "pre_reset_candidate_a_norm" in cycle]
     return {
@@ -604,13 +761,26 @@ def run_renormalised(
             "characteristic_length_metres": length_metres,
             "characteristic_time_seconds": characteristic_time(length_metres),
             "solver_policy": policy_dict(policy),
+            "max_step_seconds": max_step,
+            "angular_rebasing_convention": "theta_i in (-pi, pi] at every cycle boundary",
             "requested_cycle_count": requested_cycles,
         },
         "reference": {
-            "uninterrupted": True,
-            "solver_status": reference["solver_status"],
+            "physical_trajectory_uninterrupted": True,
+            "single_solve_call": False,
+            "coordinate_rebased_at_cycle_boundaries": True,
+            "solver_statistics": reference["solver_statistics"],
             "max_normalized_energy_drift": reference_max_drift,
             "total_signed_revolutions": reference_revolutions,
+            "maximum_abs_local_angle_radians": float(
+                np.max(np.abs(reference_state[:, :2]))
+            ),
+            "maximum_abs_solver_angle_within_segment_radians": reference[
+                "maximum_abs_solver_angle_within_segment_radians"
+            ],
+            "winding_bookkeeping": (
+                "wrapped increments of 0.01 s local samples accumulated outside solver state"
+            ),
         },
         "valid_cycle_count": sum(cycle.get("accepted", False) for cycle in cycles),
         "contraction_cycle_count": contraction_count,
@@ -660,9 +830,24 @@ def run_renormalised(
             if detailed_cycles
             else None
         ),
+        "shadow_solver_statistics": aggregate_solver_statistics(
+            [cycle["solver_status"] for cycle in cycles if "solver_status" in cycle]
+        ),
+        "first_failed_cycle_end_time_seconds": (
+            next(
+                (
+                    cycle["end_time_seconds"]
+                    for cycle in cycles
+                    if not cycle.get("accepted", False)
+                ),
+                None,
+            )
+        ),
         "cycles": cycles,
         "_reference_time": reference_time,
         "_reference_energy_drift": reference_energy_drift,
+        "_reference_local_state": reference_state,
+        "_reference_lifted_angles": reference["lifted_angles"],
         "_cycle_end_times": end_times,
         "_cycle_logs_a": logs_a,
         "_cycle_rates_a": rates_a,
@@ -691,12 +876,118 @@ def _block_rate(run: dict[str, Any], start: float, end: float) -> float | None:
     return float(sum(cycle["log_growth_candidate_a"] for cycle in cycles) / (end - start))
 
 
+def tolerance_policy_comparison(
+    baseline: dict[str, Any], stricter: dict[str, Any]
+) -> dict[str, Any]:
+    """Compare like-timed baseline/strict cycles, directions, and references."""
+
+    base_cycles = [cycle for cycle in baseline["cycles"] if cycle.get("accepted")]
+    strict_cycles = [cycle for cycle in stricter["cycles"] if cycle.get("accepted")]
+    count = min(len(base_cycles), len(strict_cycles))
+    times = np.asarray(
+        [base_cycles[index]["end_time_seconds"] for index in range(count)], dtype=float
+    )
+    strict_times = np.asarray(
+        [strict_cycles[index]["end_time_seconds"] for index in range(count)], dtype=float
+    )
+    if not np.array_equal(times, strict_times):
+        raise ValueError("Tolerance-policy cycles are not synchronized.")
+    base_logs = np.asarray(
+        [base_cycles[index]["log_growth_candidate_a"] for index in range(count)]
+    )
+    strict_logs = np.asarray(
+        [strict_cycles[index]["log_growth_candidate_a"] for index in range(count)]
+    )
+    base_rates = np.asarray(
+        [
+            base_cycles[index]["cumulative_rate_candidate_a_per_second"]
+            for index in range(count)
+        ]
+    )
+    strict_rates = np.asarray(
+        [
+            strict_cycles[index]["cumulative_rate_candidate_a_per_second"]
+            for index in range(count)
+        ]
+    )
+    base_directions = np.asarray(
+        [base_cycles[index]["normalized_scaled_direction"] for index in range(count)]
+    )
+    strict_directions = np.asarray(
+        [strict_cycles[index]["normalized_scaled_direction"] for index in range(count)]
+    )
+    log_difference = np.abs(base_logs - strict_logs)
+    direction_difference = np.max(
+        np.abs(base_directions - strict_directions), axis=1
+    )
+    rate_relative_difference = np.abs(base_rates - strict_rates) / np.maximum(
+        np.abs(base_rates), 1.0e-12
+    )
+
+    reference_times = baseline["_reference_time"]
+    if not np.array_equal(reference_times, stricter["_reference_time"]):
+        raise ValueError("Tolerance-policy reference samples are not synchronized.")
+    reference_difference = candidate_a_distance(
+        wrapped_el_difference(
+            baseline["_reference_local_state"], stricter["_reference_local_state"]
+        )
+    )
+
+    def first_crossing(values: np.ndarray, threshold: float) -> float | None:
+        indices = np.flatnonzero(values > threshold)
+        return float(times[indices[0]]) if len(indices) else None
+
+    reference_crossings: dict[str, float | None] = {}
+    for threshold in (1.0e-6, 1.0e-4, 1.0e-2, 1.0e-1, 1.0):
+        indices = np.flatnonzero(reference_difference > threshold)
+        reference_crossings[f"{threshold:.0e}"] = (
+            float(reference_times[indices[0]]) if len(indices) else None
+        )
+
+    return {
+        "comparison_cycle_count": count,
+        "reference_paths": "independently integrated under each complete tolerance policy",
+        "first_material_log_difference_time_seconds": first_crossing(
+            log_difference, MATERIAL_POLICY_LOG_DIFFERENCE
+        ),
+        "first_material_direction_difference_time_seconds": first_crossing(
+            direction_difference, MATERIAL_POLICY_DIRECTION_DIFFERENCE
+        ),
+        "first_one_percent_cumulative_rate_difference_time_seconds": first_crossing(
+            rate_relative_difference, MAX_TOLERANCE_RATE_DIFFERENCE
+        ),
+        "maximum_absolute_cycle_log_difference": float(np.max(log_difference)),
+        "maximum_direction_component_difference": float(np.max(direction_difference)),
+        "maximum_cumulative_rate_relative_difference": float(
+            np.max(rate_relative_difference)
+        ),
+        "final_cumulative_rate_relative_difference": float(
+            rate_relative_difference[-1]
+        ),
+        "reference_candidate_a_first_crossing_seconds": reference_crossings,
+        "reference_candidate_a_final_distance": float(reference_difference[-1]),
+        "cumulative_rates_reconverged_within_one_percent_at_80s": bool(
+            rate_relative_difference[-1] <= MAX_TOLERANCE_RATE_DIFFERENCE
+        ),
+        "_times": times,
+        "_baseline_logs": base_logs,
+        "_stricter_logs": strict_logs,
+        "_baseline_rates": base_rates,
+        "_stricter_rates": strict_rates,
+        "_direction_difference": direction_difference,
+        "_reference_time": reference_times,
+        "_reference_difference": reference_difference,
+    }
+
+
 def convergence_analysis(
     duration_runs: dict[float, dict[str, Any]],
     magnitude_runs: dict[float, dict[str, Any]],
     interval_runs: dict[float, dict[str, Any]],
     scaling_run: dict[str, Any],
     stricter_run: dict[str, Any],
+    refined_max_step_run: dict[str, Any],
+    policy_comparison: dict[str, Any],
 ) -> dict[str, Any]:
     baseline_20 = duration_runs[20.0]
     baseline_40 = duration_runs[40.0]
@@ -746,12 +1037,17 @@ def convergence_analysis(
     tolerance_difference = relative_difference(
         rate_80, stricter_run["final_cumulative_rate_candidate_a_per_second"]
     )
+    max_step_difference = relative_difference(
+        rate_80,
+        refined_max_step_run["final_cumulative_rate_candidate_a_per_second"],
+    )
     required_runs = [
         *duration_runs.values(),
         *magnitude_runs.values(),
         *interval_runs.values(),
         scaling_run,
         stricter_run,
+        refined_max_step_run,
     ]
     checks = {
         "all_required_runs_valid": all(run["accepted"] for run in required_runs),
@@ -789,6 +1085,10 @@ def convergence_analysis(
             scaling_difference is not None
             and scaling_difference <= MAX_SCALING_RATE_DIFFERENCE
         ),
+        "max_step_refinement_difference_within_1_percent": (
+            max_step_difference is not None
+            and max_step_difference <= MAX_MAX_STEP_RATE_DIFFERENCE
+        ),
     }
     return {
         "duration_final_rates_per_second": {
@@ -816,6 +1116,15 @@ def convergence_analysis(
             "final_cumulative_rate_candidate_a_per_second"
         ],
         "stricter_tolerance_relative_difference": tolerance_difference,
+        "max_step_refinement_final_rate_per_second": refined_max_step_run[
+            "final_cumulative_rate_candidate_a_per_second"
+        ],
+        "max_step_refinement_relative_difference": max_step_difference,
+        "tolerance_policy_divergence": {
+            key: value
+            for key, value in policy_comparison.items()
+            if not key.startswith("_")
+        },
         "candidate_b_along_a_reset_final_rate_per_second": baseline_80[
             "final_cumulative_rate_candidate_b_along_a_reset_per_second"
         ],
@@ -850,6 +1159,7 @@ def run_investigation(max_duration: float = 20.0) -> dict[str, Any]:
             reset_interval=BASELINE_RESET_INTERVAL,
             length_metres=LC_BASELINE,
             policy=SIMPLE_REFERENCE_SOLVER_POLICY,
+            max_step=BASELINE_MAX_STEP,
         )
         duration_runs[duration] = run
         all_runs.append(run)
@@ -899,6 +1209,7 @@ def run_investigation(max_duration: float = 20.0) -> dict[str, Any]:
             reset_interval=BASELINE_RESET_INTERVAL,
             length_metres=LC_BASELINE,
             policy=SIMPLE_REFERENCE_SOLVER_POLICY,
+            max_step=BASELINE_MAX_STEP,
         )
         magnitude_runs[epsilon] = run
         all_runs.append(run)
@@ -915,6 +1226,7 @@ def run_investigation(max_duration: float = 20.0) -> dict[str, Any]:
             reset_interval=interval,
             length_metres=LC_BASELINE,
             policy=SIMPLE_REFERENCE_SOLVER_POLICY,
+            max_step=BASELINE_MAX_STEP,
         )
         interval_runs[interval] = run
         all_runs.append(run)
@@ -927,6 +1239,7 @@ def run_investigation(max_duration: float = 20.0) -> dict[str, Any]:
         reset_interval=BASELINE_RESET_INTERVAL,
         length_metres=LC_ALTERNATIVE,
         policy=SIMPLE_REFERENCE_SOLVER_POLICY,
+        max_step=BASELINE_MAX_STEP,
     )
     stricter_run = run_renormalised(
         dynamics,
@@ -936,20 +1249,56 @@ def run_investigation(max_duration: float = 20.0) -> dict[str, Any]:
         reset_interval=BASELINE_RESET_INTERVAL,
         length_metres=LC_BASELINE,
         policy=STRICTER_POLICY,
+        max_step=BASELINE_MAX_STEP,
     )
-    all_runs.extend((scaling_run, stricter_run))
+    refined_max_step_run = run_renormalised(
+        dynamics,
+        run_id="refined_max_step_80s",
+        duration=80.0,
+        epsilon=BASELINE_EPSILON,
+        reset_interval=BASELINE_RESET_INTERVAL,
+        length_metres=LC_BASELINE,
+        policy=SIMPLE_REFERENCE_SOLVER_POLICY,
+        max_step=REFINED_MAX_STEP,
+    )
+    all_runs.extend((scaling_run, stricter_run, refined_max_step_run))
+    policy_comparison = tolerance_policy_comparison(baseline_80, stricter_run)
     convergence = convergence_analysis(
-        duration_runs, magnitude_runs, interval_runs, scaling_run, stricter_run
+        duration_runs,
+        magnitude_runs,
+        interval_runs,
+        scaling_run,
+        stricter_run,
+        refined_max_step_run,
+        policy_comparison,
     )
     accepted = convergence["accepted"]
+    controls = convergence["checks"]
+    numerically_controlled = all(
+        controls[name]
+        for name in (
+            "all_required_runs_valid",
+            "reset_magnitude_spread_within_5_percent",
+            "reset_interval_spread_within_10_percent",
+            "strict_tolerance_difference_within_1_percent",
+            "scaling_difference_within_5_percent",
+            "max_step_refinement_difference_within_1_percent",
+        )
+    )
+    outcome = "Outcome A" if accepted else ("Outcome B" if numerically_controlled else "Outcome C")
     summary = _base_summary(max_duration, all_runs)
     summary.update(
         {
             "status": (
-                "accepted_stabilising_renormalised_local_stretching"
-                if accepted
-                else "renormalised_rate_not_robustly_stabilised"
+                "repaired_experiment_005_converged"
+                if outcome == "Outcome A"
+                else (
+                    "repaired_numerically_controlled_but_not_duration_converged"
+                    if outcome == "Outcome B"
+                    else "repaired_nearby_shadow_method_numerically_unresolved"
+                )
             ),
+            "outcome_classification": outcome,
             "accepted": accepted,
             "completed_duration_seconds": 80.0,
             "failure_reason": None if accepted else "one_or_more_predeclared_convergence_checks_failed",
@@ -958,16 +1307,52 @@ def run_investigation(max_duration: float = 20.0) -> dict[str, Any]:
                 "Repeated Candidate-A renormalisation preserves a valid local perturbation and the "
                 "accumulated stretching rate stabilises under the declared robustness checks."
                 if accepted
-                else "The accumulated renormalised stretching rate did not stabilise robustly under all declared conventions."
+                else (
+                    "The finite-shadow calculation is numerically controlled under the repaired "
+                    "policy, but its accumulated rate has not converged over 20, 40, and 80 s."
+                    if numerically_controlled
+                    else "The repaired nearby-shadow calculation remains numerically unresolved "
+                    "under at least one declared robustness comparison."
+                )
             ),
         }
     )
-    return {"summary": summary, "runs": all_runs, "convergence": convergence}
+    return {
+        "summary": summary,
+        "runs": all_runs,
+        "convergence": convergence,
+        "policy_comparison": policy_comparison,
+    }
 
 
 def _base_summary(max_duration: float, runs: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "experiment": EXPERIMENT_NAME,
+        "iteration": "repaired_second_numerical_iteration_of_experiment_005",
+        "historical_context": {
+            "original_result": "renormalised_rate_not_robustly_stabilised",
+            "original_baseline_80s_rate_per_second": 1.039930922101729,
+            "original_strict_80s_rate_per_second": 0.7881667381880963,
+            "original_rejected_comparisons": {
+                "epsilon_1e-6": (
+                    "rejected at 45 s; direction-component error 1.34013e-8"
+                ),
+                "reset_interval_0.125s": (
+                    "rejected at 18.25 s; segment energy drift 2.27188e-6"
+                ),
+                "strict_tolerance_relative_difference": 0.2420970264109565,
+            },
+            "audit": "development/chaos_content/experiments/LYAPUNOV_REVIEW.md",
+            "audit_verdict": "original method-level negative result not trustworthy because of identified defect",
+            "audited_contamination_repaired": [
+                "winding-dependent solver relative-error scaling",
+                "unrestricted adaptive maximum step",
+                "lifted-angle reset reconstruction precision loss",
+            ],
+            "original_outputs_preserved_at": (
+                "development/chaos_content/outputs/renormalised_local_stretching/baseline"
+            ),
+        },
         "question": (
             "Does repeated direction-preserving renormalisation keep the perturbation local and "
             "produce a more stable accumulated logarithmic stretching rate?"
@@ -990,6 +1375,17 @@ def _base_summary(max_duration: float, runs: list[dict[str, Any]]) -> dict[str, 
             "parameters_si": {str(key): float(value) for key, value in PARAMETERS.items()},
             "baseline_solver_policy": policy_dict(SIMPLE_REFERENCE_SOLVER_POLICY),
             "stricter_solver_policy": policy_dict(STRICTER_POLICY),
+            "angular_canonicalisation": "deterministic (-pi, pi] at cycle boundaries",
+            "winding_bookkeeping": (
+                "continuous lifted history reconstructed from wrapped 0.01 s sample increments; "
+                "not supplied to solve_ivp or Candidate A"
+            ),
+            "baseline_max_step_seconds": BASELINE_MAX_STEP,
+            "baseline_max_step_derivation": "min(Tc/32, baseline_tau_r/25)",
+            "refined_max_step_seconds": REFINED_MAX_STEP,
+            "reference_sample_interval_seconds": REFERENCE_SAMPLE_INTERVAL,
+            "shadow_segment_requested_sample_count": SEGMENT_SAMPLE_COUNT,
+            "dense_output_requested": False,
             "local_distance_ceiling": LOCAL_DISTANCE_CEILING,
             "energy_drift_limit": ENERGY_DRIFT_LIMIT,
         },
@@ -1000,6 +1396,10 @@ def _base_summary(max_duration: float, runs: list[dict[str, Any]]) -> dict[str, 
             "cycle_log_stretching": "ell_k=log(g_k), including negative contraction values",
             "cumulative_rate": "Lambda_N=sum(ell_k)/t_N; descriptive, not lambda_max",
             "candidate_b_role": "measured along Candidate-A resets; does not define reset direction",
+            "reference_semantics": (
+                "one uninterrupted physical trajectory, coordinate-rebased and solver-restarted "
+                "at cycle boundaries"
+            ),
         },
         "thresholds": {
             "duration_change_20_to_40": MAX_DURATION_CHANGE_20_TO_40,
@@ -1011,6 +1411,7 @@ def _base_summary(max_duration: float, runs: list[dict[str, Any]]) -> dict[str, 
             "reset_interval_rate_spread": MAX_RESET_INTERVAL_RATE_SPREAD,
             "tolerance_rate_difference": MAX_TOLERANCE_RATE_DIFFERENCE,
             "scaling_rate_difference": MAX_SCALING_RATE_DIFFERENCE,
+            "max_step_refinement_rate_difference": MAX_MAX_STEP_RATE_DIFFERENCE,
             "status": "provisional and fixed in README before execution",
         },
         "runs": [public_run_summary(run) for run in runs],
@@ -1122,6 +1523,69 @@ def write_cycles_csv(path: Path, runs: list[dict[str, Any]]) -> None:
                 ):
                     row.update({f"{prefix}_{name}": value for name, value in zip(names, values)})
                 writer.writerow(row)
+
+
+def write_policy_comparison_csv(path: Path, result: dict[str, Any]) -> None:
+    comparison = result["policy_comparison"]
+    refined = _run_by_id(result, "refined_max_step_80s")
+    fields = [
+        "cycle_end_time_s",
+        "baseline_log_growth",
+        "stricter_log_growth",
+        "baseline_cumulative_rate_per_s",
+        "stricter_cumulative_rate_per_s",
+        "direction_max_component_difference",
+        "refined_max_step_cumulative_rate_per_s",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for index, time_value in enumerate(comparison["_times"]):
+            writer.writerow(
+                {
+                    "cycle_end_time_s": time_value,
+                    "baseline_log_growth": comparison["_baseline_logs"][index],
+                    "stricter_log_growth": comparison["_stricter_logs"][index],
+                    "baseline_cumulative_rate_per_s": comparison["_baseline_rates"][index],
+                    "stricter_cumulative_rate_per_s": comparison["_stricter_rates"][index],
+                    "direction_max_component_difference": comparison[
+                        "_direction_difference"
+                    ][index],
+                    "refined_max_step_cumulative_rate_per_s": refined[
+                        "_cycle_rates_a"
+                    ][index],
+                }
+            )
+
+
+def write_winding_history_csv(path: Path, baseline: dict[str, Any]) -> None:
+    fields = [
+        "time_s",
+        "local_theta1",
+        "local_theta2",
+        "lifted_theta1",
+        "lifted_theta2",
+        "signed_revolutions_theta1",
+        "signed_revolutions_theta2",
+    ]
+    lifted = baseline["_reference_lifted_angles"]
+    initial = lifted[0]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for index, time_value in enumerate(baseline["_reference_time"]):
+            turns = (lifted[index] - initial) / (2.0 * math.pi)
+            writer.writerow(
+                {
+                    "time_s": time_value,
+                    "local_theta1": baseline["_reference_local_state"][index, 0],
+                    "local_theta2": baseline["_reference_local_state"][index, 1],
+                    "lifted_theta1": lifted[index, 0],
+                    "lifted_theta2": lifted[index, 1],
+                    "signed_revolutions_theta1": turns[0],
+                    "signed_revolutions_theta2": turns[1],
+                }
+            )
 
 
 def load_pyplot():
@@ -1288,6 +1752,77 @@ def write_plots(output_dir: Path, result: dict[str, Any]) -> list[Path]:
     axis.legend()
     save_figure(fig, path)
     paths.append(path)
+
+    comparison = result["policy_comparison"]
+    refined = _run_by_id(result, "refined_max_step_80s")
+    path = output_dir / "09_tolerance_direction_and_step_control.png"
+    fig, axes = plt.subplots(3, 1, figsize=(11, 11), sharex=True)
+    axes[0].plot(
+        comparison["_times"], comparison["_baseline_logs"], label="baseline tolerance"
+    )
+    axes[0].plot(
+        comparison["_times"],
+        comparison["_stricter_logs"],
+        linestyle="--",
+        label="strict tolerance",
+    )
+    axes[1].plot(
+        comparison["_times"], comparison["_baseline_rates"], label="baseline tolerance"
+    )
+    axes[1].plot(
+        comparison["_times"],
+        comparison["_stricter_rates"],
+        linestyle="--",
+        label="strict tolerance",
+    )
+    axes[1].plot(
+        refined["_cycle_end_times"],
+        refined["_cycle_rates_a"],
+        linestyle=":",
+        label="half max_step",
+    )
+    axes[2].plot(
+        comparison["_times"], comparison["_direction_difference"], color="tab:purple"
+    )
+    axes[2].axhline(
+        MATERIAL_POLICY_DIRECTION_DIFFERENCE,
+        color="red",
+        linestyle=":",
+        label="material diagnostic threshold",
+    )
+    axes[0].set(ylabel=r"$\ell_k$", title="Tolerance-policy cycle stretching")
+    axes[1].set(ylabel=r"$\Lambda_N$ / s$^{-1}$", title="Tolerance and max-step refinement")
+    axes[2].set(
+        xlabel="cycle end time / s",
+        ylabel="max component difference",
+        title="Baseline-versus-strict reset direction divergence",
+    )
+    for axis in axes:
+        axis.grid(True, alpha=0.25)
+        axis.legend()
+    save_figure(fig, path)
+    paths.append(path)
+
+    path = output_dir / "10_local_angles_and_winding.png"
+    fig, axes = plt.subplots(2, 1, figsize=(11, 8), sharex=True)
+    local = baseline["_reference_local_state"][:, :2]
+    lifted = baseline["_reference_lifted_angles"]
+    turns = (lifted - lifted[0]) / (2.0 * math.pi)
+    axes[0].plot(baseline["_reference_time"], local[:, 0], label=r"local $\theta_1$")
+    axes[0].plot(baseline["_reference_time"], local[:, 1], label=r"local $\theta_2$")
+    axes[0].axhline(math.pi, color="black", linestyle=":")
+    axes[0].axhline(-math.pi, color="black", linestyle=":")
+    axes[1].plot(baseline["_reference_time"], turns[:, 0], label=r"$\theta_1$ turns")
+    axes[1].plot(baseline["_reference_time"], turns[:, 1], label=r"$\theta_2$ turns")
+    axes[0].set(ylabel="principal angle / rad", title="Bounded solver-facing angle diagnostics")
+    axes[1].set(
+        xlabel="time / s", ylabel="signed revolutions", title="Separately reconstructed winding history"
+    )
+    for axis in axes:
+        axis.grid(True, alpha=0.25)
+        axis.legend()
+    save_figure(fig, path)
+    paths.append(path)
     return paths
 
 
@@ -1296,12 +1831,22 @@ def write_output_bundle(result: dict[str, Any], output_dir: Path, plots: bool) -
     summary_path = output_dir / "summary.json"
     cycles_json_path = output_dir / "cycles.json"
     cycles_csv_path = output_dir / "cycles.csv"
+    policy_csv_path = output_dir / "policy_comparison.csv"
+    winding_csv_path = output_dir / "winding_history.csv"
     json_write(summary_path, result["summary"])
     write_cycles_json(cycles_json_path, result["runs"])
     write_cycles_csv(cycles_csv_path, result["runs"])
+    if result["summary"].get("completed_duration_seconds") == 80.0:
+        write_policy_comparison_csv(policy_csv_path, result)
+        write_winding_history_csv(
+            winding_csv_path, _run_by_id(result, "baseline_80s")
+        )
     plot_paths = write_plots(output_dir, result) if plots else []
     manifest_path = output_dir / "manifest.json"
-    created = [manifest_path, summary_path, cycles_json_path, cycles_csv_path, *plot_paths]
+    data_paths = [summary_path, cycles_json_path, cycles_csv_path]
+    if result["summary"].get("completed_duration_seconds") == 80.0:
+        data_paths.extend((policy_csv_path, winding_csv_path))
+    created = [manifest_path, *data_paths, *plot_paths]
     json_write(
         manifest_path,
         {
@@ -1315,13 +1860,16 @@ def write_output_bundle(result: dict[str, Any], output_dir: Path, plots: bool) -
                 "uv run python development/chaos_content/experiments/"
                 "005_renormalised_local_stretching/renormalised_local_stretching.py "
                 "--max-duration 80 --self-check --output-dir development/chaos_content/outputs/"
-                "renormalised_local_stretching/baseline --plots"
+                "renormalised_local_stretching/repaired --plots"
             ),
             "claim_boundary": result["summary"]["claim_boundary"],
             "notes": [
                 "Accumulated renormalised finite-time stretching only; not an accepted Lyapunov exponent.",
                 "Negative cycle contributions are retained.",
-                "The reference is uninterrupted; only the algorithmic shadow is reset.",
+                "This is the repaired second numerical iteration; the original baseline bundle is preserved.",
+                "The reference is physically uninterrupted and coordinate-rebased at cycle boundaries.",
+                "Winding is accumulated separately and is not supplied to solve_ivp or Candidate A.",
+                f"Every solve uses explicit max_step; baseline={BASELINE_MAX_STEP:.17g} s.",
                 "Candidate B is measured along Candidate-A resets and does not define them.",
             ],
         },

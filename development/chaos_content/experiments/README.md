@@ -78,9 +78,9 @@ directories unless a local README records a specific exception.
 
 - `005_renormalised_local_stretching/` - repeatedly restores the scaled
   Candidate-A perturbation magnitude while retaining its evolved direction and
-  accumulating all signed cycle stretching. The uninterrupted reference and
-  reset algorithmic shadow have distinct energy/history semantics. Status:
-  completed with an accepted negative result—the baseline reset mechanism is
-  valid, but accumulated rates do not stabilise robustly under the predeclared
-  duration, magnitude, interval, and tolerance checks; no maximal Lyapunov
-  exponent accepted.
+  accumulating all signed cycle stretching. Its repaired second numerical
+  iteration uses locally rebased solver coordinates, separate winding history,
+  and an explicit mechanically chosen step cap. Status: Outcome C—the original
+  $10^{-6}$ reconstruction and `0.125 s` energy failures are repaired and
+  max-step refinement is stable, but strict-tolerance and duration convergence
+  still fail; no maximal Lyapunov exponent accepted.
