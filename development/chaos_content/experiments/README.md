@@ -75,3 +75,12 @@ directories unless a local README records a specific exception.
   and signed revolutions are retained separately as global history diagnostics.
   Status: completed with a valid rejection—no defensible common interval under
   the predeclared rule; no Lyapunov exponent or renormalisation implemented.
+
+- `005_renormalised_local_stretching/` - repeatedly restores the scaled
+  Candidate-A perturbation magnitude while retaining its evolved direction and
+  accumulating all signed cycle stretching. The uninterrupted reference and
+  reset algorithmic shadow have distinct energy/history semantics. Status:
+  completed with an accepted negative result—the baseline reset mechanism is
+  valid, but accumulated rates do not stabilise robustly under the predeclared
+  duration, magnitude, interval, and tolerance checks; no maximal Lyapunov
+  exponent accepted.
