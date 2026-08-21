@@ -45,7 +45,7 @@ The current chronology is:
 | --- | --- | --- |
 | `001_hamiltonian_poincare/` | The first executable Phase 10 experiment, retained as exploratory prior work. | Exploratory |
 | `002_initial_condition_sensitivity/` | The nearby-trajectory gateway investigation and its regime-selection extension. | Accepted for a limited close-over-this-interval claim; high-excitation evidence unresolved |
-| `003_lyapunov_distance_contract/` | The next question: formalise distance between nearby dynamical states. | Contract defined; implementation not started |
+| `003_lyapunov_distance_contract/` | Compare dimensionally coherent nearby-state distances before estimating growth rates. | Accepted for distance-convention findings; no exponent estimated |
 
 This chronology intentionally differs from the Chaos journey below. Experiment
 001 happened before that journey was formalised, so historical truth is
@@ -279,17 +279,16 @@ required merely to justify the opening descriptive prototype. The same caveat
 must remain visible when finite-time divergence or Lyapunov examples are later
 selected.
 
-## Next Mathematical Contract — Lyapunov Strand
+## Lyapunov Strand — Distance Contract Result
 
-The next development question is:
+Experiment 003 asked:
 
 > **What definition of distance between nearby double-pendulum states is
 > mathematically appropriate for finite-time divergence and eventual Lyapunov
 > analysis?**
 
-That investigation must distinguish the current second-bob display distance
-from a full state-space perturbation norm. Without prematurely choosing an
-answer, it should examine:
+The investigation distinguishes the current second-bob display distance from
+a full state-space perturbation norm. It addressed or explicitly deferred:
 
 - the repository's actual dynamical state
   $$(\theta_1,\theta_2,\omega_1,\omega_2)$$ for the current Euler–Lagrange
@@ -307,8 +306,16 @@ answer, it should examine:
 - whether perturbation renormalisation is required for a defensible Lyapunov
   algorithm.
 
-This question, not an exponent implementation, parameter sweep, or definitive
-norm choice, is the next mathematical task.
+The result retains one scaled Euler–Lagrange norm and one scaled Cartesian
+full-state embedding as plausible, non-unique candidates. They give strongly
+correlated local growth shapes but materially different finite-time values.
+The bounded second-bob distance remains a display observable only, and the raw
+mixed-units EL Euclidean norm is rejected.
+
+The next earned question is whether a reproducible approximately exponential
+local interval can be defined without contamination from transients, norm
+choice, or saturation. Experiment 003 does not fit that interval or estimate a
+growth rate or exponent.
 
 ## Internal Structure
 
@@ -491,6 +498,21 @@ from this sandbox.
   distance rather than lengthen a run or make a chaos claim. The experiment-
   local README owns the detailed conventions, results, methodology
   reassessment, and limitations.
+
+- `experiments/003_lyapunov_distance_contract/` compares a scaled
+  Euler–Lagrange full-state norm, a scaled Cartesian full-state embedding, and
+  the bounded second-bob display observable for one controlled nearby pair.
+  Both full-state candidates remain plausible despite material finite-time
+  differences; perturbation, tolerance, sampling, and scaling checks are
+  recorded without fitting a growth rate or exponent. Reproduce its ignored
+  evidence bundle with:
+
+  ```bash
+  uv run python development/chaos_content/experiments/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/outputs/lyapunov_distance_contract/baseline --plots
+  ```
+
+  The experiment-local README owns the accepted, rejected, and unresolved
+  conventions and the self-selection limitation.
 
 - `experiments/001_hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section

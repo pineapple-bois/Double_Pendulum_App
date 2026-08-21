@@ -62,6 +62,8 @@ directories unless a local README records a specific exception.
   teaching prototype under `../prototypes/initial_condition_sensitivity/` is a
   derived Experiment 002 interaction, not a third mathematical experiment.
 
-- `003_lyapunov_distance_contract/` - the next chronological question: define
-  what distance between nearby states should mean before finite-time divergence
-  or Lyapunov estimation. Status: contract defined; implementation not started.
+- `003_lyapunov_distance_contract/` - compares two explicit, dimensionally
+  coherent Euler–Lagrange/Cartesian full-state distances with the bounded
+  second-bob display observable, including controlled perturbation, tolerance,
+  sampling, and scaling checks. Status: accepted for distance-convention
+  findings; no growth rate or exponent estimated.
