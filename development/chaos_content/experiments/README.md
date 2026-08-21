@@ -84,3 +84,12 @@ directories unless a local README records a specific exception.
   $10^{-6}$ reconstruction and `0.125 s` energy failures are repaired and
   max-step refinement is stable, but strict-tolerance and duration convergence
   still fail; no maximal Lyapunov exponent accepted.
+
+- `006_variational_dynamics_validation/` - directly evolves the infinitesimal
+  Euler–Lagrange tangent vector with a production-derived symbolic Jacobian,
+  validates that Jacobian independently, and compares tangent norm and signed
+  direction with the $10^{-4}$, $10^{-5}$, and $10^{-6}$ finite-shadow local
+  limit. Status: accepted for the limited short-time formulation claim;
+  baseline/strict and half-step policies agree within the predeclared bounds,
+  but no long-time tangent renormalisation or maximal Lyapunov exponent is
+  included.

@@ -48,6 +48,7 @@ The current chronology is:
 | `003_lyapunov_distance_contract/` | Compare dimensionally coherent nearby-state distances before estimating growth rates. | Accepted for distance-convention findings; no exponent estimated |
 | `004_finite_time_exponential_growth/` | Audit whether the controlled local divergence has a reproducible approximately exponential interval. | Completed with valid rejection: no defensible common interval under the predeclared rule |
 | `005_renormalised_local_stretching/` | Test direction-preserving perturbation resets and convergence of accumulated local stretching. | Repaired iteration Outcome C: coordinate/step defects removed, but strict-tolerance and duration convergence still fail |
+| `006_variational_dynamics_validation/` | Validate direct Euler–Lagrange tangent evolution against the finite-shadow local limit and repaired numerical policies. | Accepted for the limited short-time formulation claim; a long-time tangent-Lyapunov study is not included |
 
 This chronology intentionally differs from the Chaos journey below. Experiment
 001 happened before that journey was formalised, so historical truth is
