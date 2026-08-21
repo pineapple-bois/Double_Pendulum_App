@@ -46,6 +46,7 @@ The current chronology is:
 | `001_hamiltonian_poincare/` | The first executable Phase 10 experiment, retained as exploratory prior work. | Exploratory |
 | `002_initial_condition_sensitivity/` | The nearby-trajectory gateway investigation and its regime-selection extension. | Accepted for a limited close-over-this-interval claim; high-excitation evidence unresolved |
 | `003_lyapunov_distance_contract/` | Compare dimensionally coherent nearby-state distances before estimating growth rates. | Accepted for distance-convention findings; no exponent estimated |
+| `004_finite_time_exponential_growth/` | Audit whether the controlled local divergence has a reproducible approximately exponential interval. | Completed with valid rejection: no defensible common interval under the predeclared rule |
 
 This chronology intentionally differs from the Chaos journey below. Experiment
 001 happened before that journey was formalised, so historical truth is
@@ -317,6 +318,36 @@ local interval can be defined without contamination from transients, norm
 choice, or saturation. Experiment 003 does not fit that interval or estimate a
 growth rate or exponent.
 
+## Lyapunov Strand — Finite-Time Growth Result
+
+Experiment 004 tested that earned question using Candidate A as the primary EL
+distance and Candidate B as a required robustness comparison. Its locality
+rule, primary `0.32–1.12 s` interval, eleven-window audit, endpoint movements,
+moving-slope width, and provisional thresholds were fixed before numerical
+interpretation.
+
+The three perturbation magnitudes collapse closely through the common local
+prefix, and tolerance, sampling, and energy checks pass. However, Candidate A
+fails the predeclared log-linearity and residual checks, endpoint rates vary by
+more than the allowed amount, and the fixed $L_c=2\ \mathrm{m}$ comparison
+fails its linearity check. Candidate B shows qualitatively compatible local
+growth but a materially different finite-window rate. No audit interval is
+promoted in place of the failed primary interval.
+
+The completed result is therefore a valid rejection: **no defensible common
+approximately exponential interval was identified under the predeclared
+rule**. A recorded finite-window rate is descriptive only and is not a
+Lyapunov exponent.
+
+Experiment 004 also preserves lifted angles and signed accumulated revolutions
+as global history diagnostics. They remain separate from wrapped local angular
+differences and do not enter either full-state norm, locality, interval
+selection, or acceptance. In the baseline run the trajectories first differ
+by one accumulated revolution only much later than the local prefix.
+
+Because the finite approximately exponential interval was not established,
+the renormalisation question has not yet been earned.
+
 ## Internal Structure
 
 - `DISCOVERY_REPORT.md` - Phase 10 discovery report for
@@ -513,6 +544,20 @@ from this sandbox.
 
   The experiment-local README owns the accepted, rejected, and unresolved
   conventions and the self-selection limitation.
+
+- `experiments/004_finite_time_exponential_growth/` audits a predeclared
+  finite growth interval without selecting a visually straight segment. It
+  records perturbation collapse, Candidate A/B and scaling dependence, moving
+  slopes, endpoint sensitivity, numerical validity, and separate winding-
+  history diagnostics. The result is a valid rejection, not an exponent.
+  Reproduce its ignored evidence bundle with:
+
+  ```bash
+  uv run python development/chaos_content/experiments/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/outputs/finite_time_exponential_growth/baseline --plots
+  ```
+
+  The experiment-local README owns the predeclared inference contract, exact
+  findings, rejected stronger claims, and unresolved choices.
 
 - `experiments/001_hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section

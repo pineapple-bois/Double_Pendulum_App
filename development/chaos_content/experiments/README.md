@@ -67,3 +67,11 @@ directories unless a local README records a specific exception.
   second-bob display observable, including controlled perturbation, tolerance,
   sampling, and scaling checks. Status: accepted for distance-convention
   findings; no growth rate or exponent estimated.
+
+- `004_finite_time_exponential_growth/` - audits whether the Experiment 003
+  nearby-state growth contains a reproducible approximately exponential finite
+  interval. Candidate A remains primary and Candidate B a robustness check;
+  interval selection and provisional thresholds are predeclared. Lifted angles
+  and signed revolutions are retained separately as global history diagnostics.
+  Status: completed with a valid rejection—no defensible common interval under
+  the predeclared rule; no Lyapunov exponent or renormalisation implemented.
