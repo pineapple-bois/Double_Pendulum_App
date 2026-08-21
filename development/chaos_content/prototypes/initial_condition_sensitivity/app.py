@@ -40,21 +40,13 @@ OUTPUT_RATE_HZ = 100
 ENERGY_DRIFT_LIMIT = 1e-6
 MIN_DURATION_SECONDS = 2.0
 MAX_DURATION_SECONDS = 40.0
-PRESETS: dict[str, dict[str, Any]] = {
-    "small_angle": {
-        "label": "Small angle",
-        "state": [10.0, 10.0, 0.0, 0.0],
-    },
-    "regular_control": {
-        "label": "Regular control",
+GUIDED_EXAMPLES: dict[str, dict[str, Any]] = {
+    "stays_close": {
+        "label": "Stays close",
         "state": [0.0, 120.0, 0.0, 0.0],
     },
-    "bounded_nonlinear": {
-        "label": "Nonlinear release",
-        "state": [45.0, 60.0, 0.0, 0.0],
-    },
-    "near_inverted": {
-        "label": "Near inverted",
+    "separates": {
+        "label": "Separates",
         "state": [179.0, 179.0, 0.0, 0.0],
     },
 }
@@ -348,7 +340,7 @@ def _state_disclosure(data: dict[str, Any] | None) -> html.Div:
 
 
 def build_layout() -> html.Div:
-    default = PRESETS["regular_control"]["state"]
+    default = GUIDED_EXAMPLES["separates"]["state"]
     return html.Div(
         id="prototype-root",
         children=[
@@ -362,7 +354,7 @@ def build_layout() -> html.Div:
                 children=[
                     html.H1("Initial condition sensitivity"),
                     html.P(
-                        "Release two nearly identical double pendulums from rest and compare their motion.",
+                        "Start two almost-identical pendulums and see how their motion compares.",
                         className="prototype-lede",
                     ),
                 ],
@@ -373,6 +365,29 @@ def build_layout() -> html.Div:
                     html.Section(
                         className="prototype-controls",
                         children=[
+                            html.Div(
+                                className="prototype-guided-examples",
+                                children=[
+                                    html.Strong("Guided examples"),
+                                    *[
+                                        html.Button(
+                                            item["label"],
+                                            id=f"prototype-example-{name}",
+                                            className="prototype-example-button",
+                                            n_clicks=0,
+                                        )
+                                        for name, item in GUIDED_EXAMPLES.items()
+                                    ],
+                                    html.Span("or choose your own angles below."),
+                                ],
+                            ),
+                            html.Div(
+                                className="prototype-starting-heading",
+                                children=[
+                                    html.H2("Starting angles"),
+                                    html.Span("a point in the (θ₁, θ₂) plane"),
+                                ],
+                            ),
                             html.Div(
                                 className="prototype-angle-grid",
                                 children=[
@@ -411,16 +426,6 @@ def build_layout() -> html.Div:
                             html.Div(
                                 className="prototype-shortcuts",
                                 children=[
-                                    html.Span("Try:"),
-                                    *[
-                                        html.Button(
-                                            item["label"],
-                                            id=f"prototype-preset-{name}",
-                                            className="prototype-preset-button",
-                                            n_clicks=0,
-                                        )
-                                        for name, item in PRESETS.items()
-                                    ],
                                     html.Div(
                                         className="prototype-duration-row",
                                         children=[
@@ -575,7 +580,7 @@ def build_layout() -> html.Div:
                                         children=[
                                             html.Div(
                                                 className="prototype-trace-heading",
-                                                children=[html.H2("Separation")],
+                                                children=[html.H2("Second-bob separation")],
                                             ),
                                             html.Canvas(
                                                 id="prototype-separation-canvas",
@@ -606,18 +611,16 @@ app.layout = build_layout
 @app.callback(
     Output("prototype-theta1", "value"),
     Output("prototype-theta2", "value"),
-    Input("prototype-preset-small_angle", "n_clicks"),
-    Input("prototype-preset-regular_control", "n_clicks"),
-    Input("prototype-preset-bounded_nonlinear", "n_clicks"),
-    Input("prototype-preset-near_inverted", "n_clicks"),
+    Input("prototype-example-stays_close", "n_clicks"),
+    Input("prototype-example-separates", "n_clicks"),
     prevent_initial_call=True,
 )
-def apply_preset(*_clicks: int):
-    preset_name = str(ctx.triggered_id).removeprefix("prototype-preset-")
-    preset = PRESETS.get(preset_name)
-    if preset is None:
+def apply_guided_example(*_clicks: int):
+    example_name = str(ctx.triggered_id).removeprefix("prototype-example-")
+    example = GUIDED_EXAMPLES.get(example_name)
+    if example is None:
         return no_update, no_update
-    return tuple(preset["state"][:2])
+    return tuple(example["state"][:2])
 
 
 @app.callback(
@@ -731,8 +734,8 @@ app.clientside_callback(
 
 
 def run_self_check() -> None:
-    for preset_name, preset in PRESETS.items():
-        original = list(preset["state"])
+    for example_name, example in GUIDED_EXAMPLES.items():
+        original = list(example["state"])
         nearby = list(original)
         nearby[1] += 0.001
         perturbation = {
@@ -745,18 +748,18 @@ def run_self_check() -> None:
         }
         payload = build_simulation_payload(original, nearby, 20.0, perturbation)
         if payload["status"] != "success":
-            raise AssertionError(f"Preset failed: {preset_name}: {payload}")
+            raise AssertionError(f"Guided example failed: {example_name}: {payload}")
         if payload["sample_count"] != 2001:
-            raise AssertionError(f"Unexpected sample count for {preset_name}.")
+            raise AssertionError(f"Unexpected sample count for {example_name}.")
         if not math.isclose(
             payload["separation_normalized"][0],
             2.0 * math.sin(math.radians(0.001) / 2.0) / 2.0,
             rel_tol=0.0,
             abs_tol=1e-12,
         ):
-            raise AssertionError(f"Initial geometry mismatch for {preset_name}.")
+            raise AssertionError(f"Initial geometry mismatch for {example_name}.")
         print(
-            f"{preset_name}: ok; max separation="
+            f"{example_name}: ok; max separation="
             f"{payload['max_normalized_separation']:.6g}"
         )
 

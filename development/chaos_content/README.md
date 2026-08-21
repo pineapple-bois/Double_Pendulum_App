@@ -220,9 +220,10 @@ from this sandbox.
 ## Executable Sandbox Artifacts
 
 - `prototypes/initial_condition_sensitivity/` is the exploratory Stage 1 Dash
-  interaction: choose an initial state, disclose one small nearby change, and
-  compare synchronized motion in superimposed or side-by-side views. Launch it
-  from the repository root with:
+  interaction: compare one nearby pair that stays close with one that separates,
+  then choose an initial state, disclose one small nearby change, and compare
+  synchronized motion in superimposed or side-by-side views. Launch it from the
+  repository root with:
 
   ```bash
   uv run python development/chaos_content/prototypes/initial_condition_sensitivity/app.py
@@ -231,6 +232,16 @@ from this sandbox.
   It is a sandbox UX/numerical-observable probe, not an accepted production
   teaching surface or chaos classifier. Its local README owns the provisional
   controls, numerical policy, limitations, and run instructions.
+
+  Prototype use now raises a candidate next learning question: **What structure
+  appears when sensitivity is measured across the `(theta1, theta2)`
+  initial-angle plane?** A possible progression is from observing nearby pairs
+  that stay close or separate, to noticing that sensitivity varies with the
+  starting state, and then to investigating the plane for complex boundaries
+  between relatively ordered and strongly sensitive finite-time behaviour.
+  This is a question, not a prescribed sweep or an accepted claim that any
+  observed boundary is fractal. Its observable, classification, resolution,
+  colour mapping, and numerical validation policy all remain unresolved.
 
 - `experiments/initial_condition_sensitivity/` investigates how nearby
   simple-model trajectories evolve from different regions of initial-state

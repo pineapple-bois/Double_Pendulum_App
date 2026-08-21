@@ -9,10 +9,12 @@ question:
 It is an exploratory interaction surface, not a production application feature,
 an accepted Stage 1 numerical contract, or a chaos detector.
 
-The current interaction hypothesis is:
+The revised interaction hypothesis is:
 
-> The learner chooses a state, receives a small disclosed nearby perturbation,
-> and watches what happens without being promised divergence.
+> The learner first sees one nearby pair that stays close and one that separates,
+> then chooses a point in the `(theta1, theta2)` initial-angle plane, receives a
+> small disclosed perturbation, and watches what happens without being promised
+> divergence.
 
 Remaining close, gradual separation, and rapid finite-time separation are all
 valid observations. The prototype exists so those experiences can inform later
@@ -26,8 +28,8 @@ From the repository root:
 uv run python development/chaos_content/prototypes/initial_condition_sensitivity/app.py
 ```
 
-Open <http://127.0.0.1:8060/>. Enter the two release angles, inspect the exact
-nearby pair, and select **Release**.
+Open <http://127.0.0.1:8060/>. Start with either guided example, or enter two
+release angles directly. Inspect the exact nearby pair and select **Release**.
 
 Use a different local port when needed:
 
@@ -68,28 +70,43 @@ bespoke glue inside the sandbox while preserving the same authority split:
 Python computes physics; JavaScript only interpolates precomputed samples for
 display and playback.
 
+The Canvas renderer calculates every rod direction in screen coordinates and
+insets each rod endpoint by the adjacent rendered bob radius. It draws all rods
+before all bobs. This local geometry rule keeps links visually terminated at
+bob boundaries in both comparison modes without changing the production Canvas
+renderer or hiding the problem with oversized bobs.
+
+The CSS locally mirrors the production application's paper and white surfaces,
+charcoal and muted text, teal accent, stone/control borders, restrained corner
+radii, and Helvetica-based type hierarchy. No production stylesheet is loaded
+or modified.
+
 ## Interaction
 
 Both pendulums are released from rest. The learner enters `theta1` and `theta2`
 in degrees and chooses a positive perturbation magnitude from `0.000001` to
 `0.1` degrees. The prototype always adds that disclosed difference to `theta2`;
 internally both angular velocities are zero. The exact original and nearby
-angle pair is shown immediately before release.
+angle pair is shown immediately before release. These controls make the chosen
+state a location in the `(theta1, theta2)` initial-angle plane without exposing
+a larger multidimensional state editor.
 
-Four secondary shortcuts reproduce rest-release states used by the Stage 1
-exploration:
+Two guided examples give the comparison a pedagogical role before open input:
 
-- **Small-angle** — `(10, 10, 0, 0)`;
-- **Regular control** — `(0, 120, 0, 0)`;
-- **Nonlinear release** — `(45, 60, 0, 0)`;
-- **Near inverted** — `(179, 179, 0, 0)`;
+- **Stays close** — `(0, 120, 0, 0)` versus `(0, 120.001, 0, 0)`. The fixed-pair
+  experiment accepted this as a numerically credible observation that remains
+  close over 20 seconds.
+- **Separates** — `(179, 179, 0, 0)` versus `(179, 179.001, 0, 0)`. Both recorded
+  experiment policies produced clear finite-time separation with onset times
+  differing by about `0.03 s`, and the tighter-reference integrations satisfied
+  their energy criterion. The production-principal integrations did not satisfy
+  the predeclared energy bound, however, and only two tolerance policies have
+  been compared. This example is therefore physically promising but numerically
+  unresolved: it is suitable for testing the guided interaction, not accepted
+  Stage 1 evidence.
 
-The former high-energy fixture is omitted because it requires non-zero angular
-velocities and would complicate this deliberately simple release-from-rest
-interaction.
-
-The labels describe why a state is useful to try. They do not classify it as
-chaotic.
+“Separates” describes what this disclosed pair does under the prototype policy;
+it is not a classification of the trajectory or the system as chaotic.
 
 **Superimposed** draws both systems at their true positions about one shared
 pivot. The nearby trajectory has a thinner dashed orange treatment so close
@@ -130,10 +147,12 @@ available for UX exploration. This does not establish tolerance convergence, a
 predictability horizon, or robustness of any teaching conclusion. A run that
 fails any current prototype check is not sent to the renderer.
 
-The separation trace is the Cartesian distance between the two second bobs.
-The teaching surface presents metres only and does not classify the result.
-Normalized separation remains in the internal payload for comparison with the
-earlier experiments.
+The separation trace is the absolute Cartesian distance between the two second
+bobs. The teaching surface presents metres only and does not classify the
+result. It draws only the history reached in playback, marks the current time,
+and uses the physical upper bound `2 * (l1 + l2)` for its vertical range so that
+the axes do not reveal the future run. Normalized separation remains in the
+internal payload for comparison with earlier experiments.
 
 ## Deliberately provisional choices
 
@@ -143,21 +162,39 @@ The following are interaction hypotheses to test, not settled conventions:
 - the default `theta2 + 0.001 degrees` perturbation;
 - fixing the perturbation to a positive change in `theta2`;
 - the release-from-rest restriction;
-- the preset set and its wording;
+- the two guided examples and their wording;
 - 20 seconds as the default, the 2–40 second bounds, and the speed choices;
 - 100 Hz browser output;
 - second-bob Cartesian distance as the primary relationship display;
-- linear full-run scaling of the trace;
+- the fixed physical vertical range of the trace;
 - whether the metre readout and trace help rather than distract.
+
+## Candidate next learning direction
+
+The guided contrast raises a question that this prototype does not answer:
+
+> What structure appears when sensitivity is measured across the initial-angle
+> plane?
+
+A possible learning progression is now: nearby initial states can remain close
+or separate; that response depends on the chosen initial state; finite-time
+sensitivity can therefore be investigated across the `(theta1, theta2)` plane;
+and the resulting structure may reveal complex, possibly fractal-like boundaries
+between relatively ordered and strongly sensitive regions. The last point is a
+hypothesis, not evidence that any boundary in this system or measurement is
+fractal.
+
+No classification metric, grid density, colour mapping, sweep implementation,
+or binary-versus-continuous quantity is prescribed here. Lyapunov methodology
+also remains later work.
 
 ## Known limitations and claim boundary
 
 - The app integrates a complete pair before playback. It cannot continue a
   loaded trajectory beyond the chosen duration.
 - Canvas interpolation is visual only; diagnostics use the precomputed samples.
-- The trace uses the maximum of the full computed run for its vertical scale,
-  so playback reveals the curve's eventual range before the pendulums reach it.
-  That makes comparison convenient but may reduce the sense of discovery.
+- The fixed `0` to `2 * (l1 + l2)` separation scale is physically interpretable
+  and stable across runs, but small early differences can be visually compressed.
 - A strict solver policy plus an energy bound screens individual runs, but the
   prototype does not compare a tolerance hierarchy or validate robustness of
   separation onset/classification.
@@ -168,6 +205,9 @@ The following are interaction hypotheses to test, not settled conventions:
 
 The prototype may support descriptions such as “this disclosed pair remained
 close over the selected interval” or “these motions became visibly different.”
-It must not be interpreted as proof of chaos, exponential divergence, a
-Lyapunov measurement, a global state-space result, or solver-independent
+A single trajectory that looks complicated, irregular, or non-periodic is not
+thereby established as chaotic. The teaching comparison concerns sensitivity
+between nearby states, and even that observation does not by itself prove chaos.
+The prototype must not be interpreted as proof of chaos, exponential divergence,
+a Lyapunov measurement, a global state-space result, or solver-independent
 long-time prediction.

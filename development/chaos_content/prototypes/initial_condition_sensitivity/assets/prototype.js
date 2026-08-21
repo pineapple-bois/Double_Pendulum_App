@@ -2,9 +2,9 @@
   "use strict";
 
   const colours = {
-    original: "#1bb3a9",
-    nearby: "#ff9d5c",
-    ink: "#edf7f5",
+    original: "#00635d",
+    nearby: "#b7791f",
+    ink: "#1f2933",
     traceInk: "#3f4f4f",
     grid: "rgba(31, 41, 51, 0.14)",
   };
@@ -71,32 +71,72 @@
     };
   }
 
-  function drawPendulum(context, geometry, origin, scale, colour, options) {
+  function screenPoints(geometry, origin, scale) {
     const point = (x, y) => [origin.x + x * scale, origin.y - y * scale];
-    const pivot = [origin.x, origin.y];
-    const first = point(geometry.x1, geometry.y1);
-    const second = point(geometry.x2, geometry.y2);
+    return {
+      pivot: [origin.x, origin.y],
+      first: point(geometry.x1, geometry.y1),
+      second: point(geometry.x2, geometry.y2),
+    };
+  }
+
+  function insetSegment(start, end, startInset, endInset) {
+    const dx = end[0] - start[0];
+    const dy = end[1] - start[1];
+    const length = Math.hypot(dx, dy);
+    if (length <= startInset + endInset || length === 0) return null;
+    const ux = dx / length;
+    const uy = dy / length;
+    return {
+      start: [start[0] + ux * startInset, start[1] + uy * startInset],
+      end: [end[0] - ux * endInset, end[1] - uy * endInset],
+    };
+  }
+
+  function drawLinks(context, points, colour, options) {
+    const firstRadius = 7;
+    const secondRadius = 9;
+    const capAllowance = options.lineWidth / 2;
+    const firstLink = insetSegment(
+      points.pivot,
+      points.first,
+      0,
+      firstRadius + capAllowance
+    );
+    const secondLink = insetSegment(
+      points.first,
+      points.second,
+      firstRadius + capAllowance,
+      secondRadius + capAllowance
+    );
 
     context.save();
     context.strokeStyle = colour;
-    context.fillStyle = colour;
     context.lineWidth = options.lineWidth;
     context.globalAlpha = options.alpha;
     context.lineCap = "round";
     if (options.dashed) context.setLineDash([7, 6]);
-    context.beginPath();
-    context.moveTo(pivot[0], pivot[1]);
-    context.lineTo(first[0], first[1]);
-    context.lineTo(second[0], second[1]);
-    context.stroke();
+    [firstLink, secondLink].forEach((segment) => {
+      if (!segment) return;
+      context.beginPath();
+      context.moveTo(segment.start[0], segment.start[1]);
+      context.lineTo(segment.end[0], segment.end[1]);
+      context.stroke();
+    });
     context.setLineDash([]);
+    context.restore();
+  }
 
-    [first, second].forEach((position, index) => {
+  function drawBobs(context, points, colour, options) {
+    context.save();
+    context.fillStyle = colour;
+    context.globalAlpha = options.alpha;
+    [points.first, points.second].forEach((position, index) => {
       context.beginPath();
       context.arc(position[0], position[1], index === 0 ? 7 : 9, 0, Math.PI * 2);
       context.fill();
-      context.strokeStyle = "rgba(5, 20, 24, 0.76)";
-      context.lineWidth = 2;
+      context.strokeStyle = "rgba(31, 41, 51, 0.28)";
+      context.lineWidth = 1.5;
       context.stroke();
     });
     context.restore();
@@ -119,15 +159,22 @@
     const scale = Math.min(width, height) * 0.215;
 
     context.save();
-    context.strokeStyle = "rgba(210, 236, 232, 0.10)";
+    context.strokeStyle = "rgba(63, 79, 79, 0.13)";
     context.lineWidth = 1;
     context.beginPath();
     context.arc(origin.x, origin.y, scale * 2, 0, Math.PI * 2);
     context.stroke();
     context.restore();
 
-    trajectories.forEach((item) => {
-      drawPendulum(context, item.geometry, origin, scale, item.colour, item.options);
+    const rendered = trajectories.map((item) => ({
+      ...item,
+      points: screenPoints(item.geometry, origin, scale),
+    }));
+    rendered.forEach((item) => {
+      drawLinks(context, item.points, item.colour, item.options);
+    });
+    rendered.forEach((item) => {
+      drawBobs(context, item.points, item.colour, item.options);
     });
     drawPivot(context, origin);
   }
@@ -139,8 +186,8 @@
     const { context, width, height } = prepared;
     const values = playback.payload.separation_metres;
     const duration = playback.payload.duration_seconds;
-    const maximum = Math.max(playback.payload.max_separation_metres, 1e-9);
-    const margin = { left: 60, right: 16, top: 18, bottom: 28 };
+    const maximum = 2 * playback.payload.total_length_metres;
+    const margin = { left: 76, right: 24, top: 20, bottom: 52 };
     const plotWidth = width - margin.left - margin.right;
     const plotHeight = height - margin.top - margin.bottom;
     const x = (time) => margin.left + (time / duration) * plotWidth;
@@ -149,31 +196,51 @@
     context.save();
     context.strokeStyle = colours.grid;
     context.fillStyle = colours.traceInk;
-    context.font = "12px ui-monospace, SFMono-Regular, Menlo, monospace";
+    context.font = '12px "Helvetica Neue", Helvetica, Arial, sans-serif';
     context.lineWidth = 1;
-    [0, 0.5, 1].forEach((portion) => {
+    [0, 0.25, 0.5, 0.75, 1].forEach((portion) => {
       const gridY = margin.top + plotHeight * portion;
       context.beginPath();
       context.moveTo(margin.left, gridY);
       context.lineTo(width - margin.right, gridY);
       context.stroke();
+      context.textAlign = "right";
+      context.fillText(
+        `${(maximum * (1 - portion)).toFixed(1)}`,
+        margin.left - 10,
+        gridY + 4
+      );
     });
-    context.fillText(`${maximum.toPrecision(3)} m`, 4, margin.top + 4);
-    context.fillText("0", 28, margin.top + plotHeight + 4);
-    context.fillText("0 s", margin.left, height - 6);
-    context.textAlign = "right";
-    context.fillText(`${duration.toFixed(0)} s`, width - margin.right, height - 6);
-    context.textAlign = "left";
-
-    context.strokeStyle = "#b8efe9";
-    context.lineWidth = 2;
+    context.strokeStyle = colours.traceInk;
     context.beginPath();
-    values.forEach((value, index) => {
+    context.moveTo(margin.left, margin.top);
+    context.lineTo(margin.left, margin.top + plotHeight);
+    context.lineTo(width - margin.right, margin.top + plotHeight);
+    context.stroke();
+
+    [0, 0.5, 1].forEach((portion) => {
+      const tickX = margin.left + plotWidth * portion;
+      context.textAlign = portion === 0 ? "left" : portion === 1 ? "right" : "center";
+      context.fillText(`${(duration * portion).toFixed(0)}`, tickX, height - 29);
+    });
+    context.textAlign = "center";
+    context.fillText("time (s)", margin.left + plotWidth / 2, height - 8);
+    context.save();
+    context.translate(18, margin.top + plotHeight / 2);
+    context.rotate(-Math.PI / 2);
+    context.fillText("separation (m)", 0, 0);
+    context.restore();
+
+    context.strokeStyle = colours.original;
+    context.lineWidth = 2.5;
+    context.beginPath();
+    values.slice(0, frame.index + 1).forEach((value, index) => {
       const pointX = x(index / playback.payload.output_rate_hz);
       const pointY = y(value);
       if (index === 0) context.moveTo(pointX, pointY);
       else context.lineTo(pointX, pointY);
     });
+    context.lineTo(x(playback.elapsed), y(frame.separationMetres));
     context.stroke();
 
     const cursorX = x(playback.elapsed);
