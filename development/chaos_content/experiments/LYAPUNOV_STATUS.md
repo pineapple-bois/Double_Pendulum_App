@@ -3,9 +3,9 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 009 tested long-time statistical compatibility across
-decorrelated numerical reference shadows. It records the current evidence
-boundary and the next question earned by that evidence.
+strand after Experiment 010 extended the long-time statistical-compatibility
+test across decorrelated numerical reference shadows to `640 s`. It records
+the current evidence boundary and the next question earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -37,14 +37,15 @@ direct tangent formulation:
 | [007](007_full_matrix_qr_tangent_dynamics/README.md) | **Established:** physical-coordinate full-matrix tangent evolution and Candidate-A-scaled periodic QR have internally consistent orthonormality, reconstruction, accumulation, and reference-validity bookkeeping. **Unresolved:** through `80 s`, the cumulative spectrum fails the predeclared duration, tolerance, step-cap, QR-interval, and one-vector agreement criteria. | All long-time runs remain numerically valid, but their four finite-time values are policy-dependent diagnostics. No converged spectrum or Lyapunov exponent was established. |
 | [008](008_common_reference_qr_isolation/README.md) | **Established:** when all tangent/QR variants are driven by one locally refined piecewise-dense reference history, Experiment 007's `0.082–0.157 s^-1` policy separation collapses to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$ at `80 s`. Numerical reference-shadow divergence is therefore the primary observed source of the prior separation. | The result is conditional on one common numerical reference history. Its finite-time vector is not a converged spectrum, and independently integrated long-time shadows need not agree pointwise. |
 | [009](009_independent_shadow_spectrum_compatibility/README.md) | **Established:** three independently integrated reference shadows decorrelate by `40 s`, remain numerically valid through `320 s`, and become substantially more compatible than at `80 s`. **Unresolved:** residual late-window fluctuation and final/late between-shadow spread remain marginally above the predeclared limits. | No statistically compatible spectrum is accepted at `320 s`; the result is neither accepted nor clearly incompatible. |
+| [010](010_independent_shadow_640s_compatibility/README.md) | **Established:** the unchanged three-shadow ensemble remains numerically valid through `640 s` and satisfies every predeclared within-shadow, final-spread, late-window, and ensemble-mean compatibility limit. | Acceptance supports one statistically compatible numerical Euler–Lagrange QR spectrum estimate for the declared initial condition and three deterministic policies; it is not universal or independently validated in canonical coordinates. |
 
-Experiment 009 is the current boundary. Direct tangent dynamics and QR remain
-numerically valid, while three decorrelated reference shadows show strong but
-incomplete long-time statistical reconciliation. From `80` to `320 s`, the
-maximum between-shadow component range falls from `0.157` to `0.0573 s^-1`,
-and every checkpoint-drift criterion passes. Compatibility remains unresolved
-because late outer-component fluctuation and spread still exceed the stricter
-acceptance limits.
+Experiment 010 is the current boundary. It continues the exact Experiment 009
+policies, reproduces all three committed `320 s` prefix spectra exactly, and
+then advances each independently integrated reference+tangent shadow to
+`640 s`. The maximum final component range falls from `0.0573` to
+`0.0166 s^-1`, maximum sample standard deviation from `0.0293` to
+`0.00953 s^-1`, and matched-width late-window range from `0.0967` to
+`0.0501 s^-1`. All retained criteria pass.
 
 ## Established results
 
@@ -102,9 +103,20 @@ The following statements are supported by the experiment chain:
     `(0.9822, 0.0124, -0.0083, -0.9878) s^-1`. The maximum final range is
     `0.0573 s^-1` and maximum late-window range is `0.0967 s^-1`, so the
     predeclared compatibility claim remains unresolved.
+11. Experiment 010 extends exactly those three runs to `640 s`. Their final
+    vectors are statistically compatible under the retained criteria, with
+    ensemble mean approximately
+    `(0.9833, 0.0123, -0.0099, -0.9865) s^-1`. The final component ranges are
+    at most `0.0166 s^-1`, sample standard deviations at most `0.00953 s^-1`,
+    and maximum `560–640 s` between-shadow range `0.0501 s^-1`. All numerical
+    guards and within-shadow settling limits pass.
 
-No finite-time scalar or vector reported by Experiments 004–009 is an accepted
-Lyapunov exponent or spectrum.
+No finite-time scalar or vector reported by Experiments 004–009 was an
+accepted Lyapunov exponent or spectrum. Experiment 010 now supports a
+statistically compatible long-time numerical spectrum estimate within its
+declared three-shadow protocol, with descriptive componentwise half-widths
+`(0.0239, 0.00637, 0.00838, 0.0248) s^-1`. This remains a bounded numerical
+claim, not a universal spectrum for the double pendulum.
 
 ## Current mathematical contract
 
@@ -144,11 +156,10 @@ remain locally rebased; winding remains separate.
 
 The project has not established:
 
-- convergence of any long-time tangent Lyapunov estimate or spectrum beyond
-  the unresolved `320 s` three-shadow ensemble;
-- the integration duration required for convergence;
-- whether the marginal outer-component drift and between-shadow spread fall
-  below the compatibility limits by `640 s`;
+- compatibility beyond the accepted `640 s` three-shadow protocol, or across
+  a larger or probabilistically defined numerical-shadow ensemble;
+- whether `640 s` is generally sufficient under other formulations, norms,
+  tangent bases, or physical initial conditions;
 - whether the common-reference QR-interval and tangent-policy collapse remains
   negligible at substantially longer duration;
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
@@ -160,16 +171,17 @@ The project has not established:
 - any broader classification of the trajectory, initial-condition region, or
   double-pendulum system as chaotic.
 
-The Experiment 007 limits apply only to its completed `20/40/80 s` matrix.
-No acceptance boundary has been declared for the longer-duration question.
+The accepted Experiment 010 limits apply only to its completed continuation
+design. They do not turn its descriptive uncertainty envelope into a formal
+confidence interval.
 
 ## Next justified question
 
 The next justified research question is:
 
-> Does one predeclared extension of the same three-shadow ensemble to `640 s`
-> reduce outer-exponent late-window drift and between-shadow spread below the
-> compatibility limits?
+> Does an independently formulated Hamiltonian/canonical tangent QR
+> calculation reproduce the statistically compatible Euler–Lagrange spectrum
+> estimate accepted by Experiment 010?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -179,10 +191,10 @@ $$
 (\lambda_1,\lambda_2,\lambda_3,\lambda_4),
 $$
 
-rather than only a single largest-exponent estimate. Experiments 007–009 have
+rather than only a single largest-exponent estimate. Experiments 007–010 have
 made the Candidate-A-scaled primitive executable, separated tangent/QR
-discretisation from reference-shadow divergence, and shown substantial but
-incomplete cumulative reconciliation by `320 s`:
+discretisation from reference-shadow divergence, and established compatibility
+for the declared three-shadow Euler–Lagrange ensemble by `640 s`:
 
 $$
 Z=SY,
@@ -193,17 +205,16 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. The next duration test
-should retain the same ensemble and statistical distinction between
-within-shadow settling and between-shadow spread; pointwise reference
-agreement remains irrelevant after decorrelation.
+from the magnitudes of the diagonal entries of $R$. The next stage should be
+an independent formulation cross-check, not another automatic duration
+extension or a broadened physical-initial-condition study.
 
 ## Theoretical structure to test, not target
 
 The autonomous double pendulum has two Hamiltonian degrees of freedom. Its
 asymptotic Lyapunov spectrum is therefore theoretically expected to exhibit
 Hamiltonian structure, generically including exponent pairing and neutral
-directions. If Experiment 007 reaches a numerically resolved regime, quantities
+directions. For the accepted Experiment 010 estimate, quantities
 such as
 
 $$
@@ -218,13 +229,14 @@ $$
 
 may be useful convergence diagnostics.
 
-Experiment 007's baseline `80 s` vector has a small sum and approximate outer
-and inner pairing, with middle magnitudes smaller than at `20 s`. This is an
-observed finite-time trend only. The project has not established the
-Hamiltonian asymptotic spectrum. These expressions remain theoretical
-structural expectations, not target values that a calculation should be
-engineered to reproduce, and finite-time QR estimates in the noncanonical
-Euler–Lagrange representation need not pair perfectly at every time.
+Experiment 010's `640 s` ensemble mean has total sum `-0.000924 s^-1`, outer-
+pair sum `-0.003257 s^-1`, inner-pair sum `0.002333 s^-1`, and middle
+magnitudes `0.012274` and `0.009941 s^-1`. This is supporting finite-time
+evidence only. The project has not independently established the Hamiltonian
+asymptotic spectrum. These expressions remain theoretical structural
+expectations, not target values that a calculation should be engineered to
+reproduce, and finite-time QR estimates in the noncanonical Euler–Lagrange
+representation need not pair perfectly at every time.
 
 ## Conditional horizon
 
@@ -239,8 +251,8 @@ A plausible, evidence-dependent progression is:
   ↓
 009  three decorrelated shadows: strong but incomplete compatibility by 320 s
   ↓
-single predeclared 640 s extension of the same ensemble
-  ↓  only if a common asymptotic spectrum is earned
+010  unchanged 640 s continuation: declared statistical compatibility accepted
+  ↓  only because a common numerical estimate is now earned
 independent Hamiltonian/canonical spectrum cross-check
   ↓  only if both formulations support it
 contrasting initial conditions and carefully bounded chaos classification
