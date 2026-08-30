@@ -3,7 +3,7 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after the accepted completion of Experiment 006. It records the current
+strand after the accepted QR-primitive completion of Experiment 007. It records the current
 evidence boundary and the next question earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -33,11 +33,12 @@ direct tangent formulation:
 | [004](004_finite_time_exponential_growth/README.md) | **Established:** reproducible local growth and small-perturbation collapse. **Rejected:** a defensible common approximately exponential interval under the predeclared rule. | Its finite-window rates are descriptive, not Lyapunov exponents. |
 | [005](005_renormalised_local_stretching/README.md) | **Established:** direction-preserving finite-shadow resets and signed growth accumulation work mechanically. Audit-driven repair removed winding-dependent coordinates, uncontrolled step size, and reconstruction loss. **Unresolved:** the repaired long-time accumulated rate still failed tolerance and duration convergence. | No converged accumulated rate or maximal Lyapunov exponent was accepted; further finite-shadow tuning was not justified. |
 | [006](006_variational_dynamics_validation/README.md) | **Established:** the independently validated Euler–Lagrange Jacobian reproduces the finite-shadow local limit in norm and signed direction as perturbation size decreases. Direct tangent evolution was materially more stable under the tested short-time tolerance and step refinements. | Acceptance covers the established `0–1.29 s` local regime and capped solver protocol only. No long-time tangent renormalisation, full spectrum, or maximal Lyapunov exponent was computed. |
+| [007](007_full_matrix_qr_tangent_dynamics/README.md) | **Established:** physical-coordinate full-matrix tangent evolution and Candidate-A-scaled periodic QR have internally consistent orthonormality, reconstruction, accumulation, reference-validity, and deterministic-repeat bookkeeping in one modest run. | Its four finite-time values are diagnostic and unsorted. No duration or numerical-policy convergence, Hamiltonian structure, or Lyapunov exponent was established. |
 
-Experiment 006 is the current boundary. The immediate question is no longer
-whether direct tangent dynamics represents the local perturbation correctly.
-It is whether the validated tangent flow supports numerically converged
-long-time Lyapunov-spectrum estimates.
+Experiment 007 is the current boundary. Direct tangent dynamics is locally
+validated and its full-matrix QR primitive is executable. The unresolved
+question is whether its cumulative finite-time estimates converge under a
+separate, predeclared long-time numerical study.
 
 ## Established results
 
@@ -72,6 +73,10 @@ The following statements are supported by the experiment chain:
    checked the production-derived symbolic Jacobian with directional finite
    differences and angular-periodicity tests, then observed finite shadows
    converge toward the tangent prediction in both norm and signed direction.
+7. A physical-coordinate tangent matrix $Y$ can be periodically
+   orthonormalised in Candidate-A-scaled coordinates using
+   $SY^-=QR$ and $Y^+=S^{-1}Q$ with machine-precision reconstruction and
+   metric orthonormality in the tested Experiment 007 primitive.
 
 No finite-time scalar reported by Experiments 004–006 is an accepted Lyapunov
 exponent.
@@ -133,11 +138,11 @@ No numerical acceptance thresholds for these questions have yet been earned.
 
 ## Next justified question
 
-The currently justified candidate for Experiment 007 is:
+The next justified research question is:
 
-> Does periodic QR renormalisation of the validated Euler–Lagrange tangent flow
-> yield a four-dimensional Lyapunov spectrum whose cumulative finite-time
-> estimates converge under appropriate numerical refinement?
+> Do the cumulative full-matrix QR estimates from the validated
+> Euler–Lagrange tangent flow converge under predeclared duration, tolerance,
+> step-cap, QR-interval, and tangent-basis checks?
 
 The natural object is now the full tangent matrix and spectrum
 
@@ -147,8 +152,8 @@ $$
 (\lambda_1,\lambda_2,\lambda_3,\lambda_4),
 $$
 
-rather than only a single largest-exponent estimate. A motivated continuation
-of the Candidate-A contract is to orthonormalise in scaled coordinates:
+rather than only a single largest-exponent estimate. Experiment 007 has made
+the Candidate-A-scaled primitive executable:
 
 $$
 Z=SY,
@@ -159,9 +164,9 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. This is a proposed
-formulation for Experiment 007 to evaluate, not an implementation choice that
-the experiment is forbidden to question.
+from the magnitudes of the diagonal entries of $R$. The separate convergence
+experiment should retain the right to question numerical policies and interval
+choices; primitive coherence does not pre-accept their long-time use.
 
 ## Theoretical structure to test, not target
 
@@ -196,8 +201,10 @@ A plausible, evidence-dependent progression is:
 ```text
 006  validated local variational dynamics
   ↓
-007  long-time Euler–Lagrange QR-spectrum convergence
-  ↓  only if earned by 007
+007  internally coherent full-matrix scaled-QR primitive
+  ↓
+separate long-time Euler–Lagrange QR-spectrum convergence study
+  ↓  only if earned by that study
 independent Hamiltonian/canonical spectrum cross-check
   ↓  only if both formulations support it
 contrasting initial conditions and carefully bounded chaos classification
@@ -206,5 +213,5 @@ state-space or parameter-space exploration
 ```
 
 This is orientation, not a reserved sequence of experiment numbers or a rigid
-roadmap. Experiment 007 may reject convergence, reveal a new defect, or change
-the next justified experiment entirely.
+roadmap. The convergence study may reject the estimates, reveal a new defect,
+or change the next justified experiment entirely.

@@ -99,3 +99,10 @@ original Experiment 005 evidence.
   baseline/strict and half-step policies agree within the predeclared bounds,
   but no long-time tangent renormalisation or maximal Lyapunov exponent is
   included.
+
+- `007_full_matrix_qr_tangent_dynamics/` - extends the validated Experiment
+  006 tangent flow to a physical-coordinate `4x4` basis and performs periodic
+  QR in Candidate-A-scaled coordinates. Status: accepted for the internal QR
+  primitive only; orthonormality, reconstruction, accumulation, reference
+  validity, and exact-repeat checks pass for one modest run, but the four
+  finite-time values are not a converged Lyapunov spectrum.

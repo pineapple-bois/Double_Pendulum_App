@@ -49,8 +49,9 @@ The current chronology is:
 | `004_finite_time_exponential_growth/` | Audit whether the controlled local divergence has a reproducible approximately exponential interval. | Completed with valid rejection: no defensible common interval under the predeclared rule |
 | `005_renormalised_local_stretching/` | Test direction-preserving perturbation resets and convergence of accumulated local stretching. | Repaired iteration Outcome C: coordinate/step defects removed, but strict-tolerance and duration convergence still fail |
 | `006_variational_dynamics_validation/` | Validate direct Euler–Lagrange tangent evolution against the finite-shadow local limit and repaired numerical policies. | Accepted for the limited short-time formulation claim; a long-time tangent-Lyapunov study is not included |
+| `007_full_matrix_qr_tangent_dynamics/` | Extend the validated EL tangent flow to a Candidate-A-scaled full-matrix QR primitive. | Accepted for internal primitive coherence in one modest run; convergence remains untested |
 
-The living Lyapunov-strand status through Experiment 006 is maintained in
+The living Lyapunov-strand status through Experiment 007 is maintained in
 [`experiments/LYAPUNOV_STATUS.md`](experiments/LYAPUNOV_STATUS.md). The
 historical finite-shadow audit remains in
 [`experiments/LYAPUNOV_REVIEW.md`](experiments/LYAPUNOV_REVIEW.md).
