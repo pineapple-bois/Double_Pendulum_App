@@ -48,6 +48,12 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
+The living scientific position of the Lyapunov strand through Experiment 006,
+including the next question currently earned, is recorded in
+[`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
+[`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
+original Experiment 005 evidence.
+
 - `001_hamiltonian_poincare/` - the chronologically first executable Phase 10
   artifact: a minimal, self-contained simple-Hamiltonian Poincare-section
   experiment with explicit state, section, solver, and energy-drift
