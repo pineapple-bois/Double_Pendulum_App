@@ -51,8 +51,9 @@ The current chronology is:
 | `006_variational_dynamics_validation/` | Validate direct Euler–Lagrange tangent evolution against the finite-shadow local limit and repaired numerical policies. | Accepted for the limited short-time formulation claim; a long-time tangent-Lyapunov study is not included |
 | `007_full_matrix_qr_tangent_dynamics/` | Extend the validated EL tangent flow to Candidate-A-scaled full-matrix QR and test cumulative-spectrum convergence. | QR primitive accepted; `20/40/80 s` convergence matrix numerically unresolved under duration and policy refinement |
 | `008_common_reference_qr_isolation/` | Hold one validated reference history fixed while isolating tangent tolerance, tangent step-cap, and QR-cadence effects. | Accepted for the limited diagnostic claim that reference-shadow divergence is the primary observed source of Experiment 007's policy separation |
+| `009_independent_shadow_spectrum_compatibility/` | Test within-shadow settling and between-shadow compatibility across three independently integrated, decorrelated numerical references through `320 s`. | Unresolved: compatibility improves strongly, but late fluctuation and spread remain marginally above the predeclared limits |
 
-The living Lyapunov-strand status through Experiment 008 is maintained in
+The living Lyapunov-strand status through Experiment 009 is maintained in
 [`experiments/LYAPUNOV_STATUS.md`](experiments/LYAPUNOV_STATUS.md). The
 historical finite-shadow audit remains in
 [`experiments/LYAPUNOV_REVIEW.md`](experiments/LYAPUNOV_REVIEW.md).

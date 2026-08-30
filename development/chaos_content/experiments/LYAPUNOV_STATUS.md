@@ -3,9 +3,9 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 008 isolated the source of Experiment 007's numerical-
-policy separation. It records the current evidence boundary and the next
-question earned by that evidence.
+strand after Experiment 009 tested long-time statistical compatibility across
+decorrelated numerical reference shadows. It records the current evidence
+boundary and the next question earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -36,14 +36,15 @@ direct tangent formulation:
 | [006](006_variational_dynamics_validation/README.md) | **Established:** the independently validated Euler–Lagrange Jacobian reproduces the finite-shadow local limit in norm and signed direction as perturbation size decreases. Direct tangent evolution was materially more stable under the tested short-time tolerance and step refinements. | Acceptance covers the established `0–1.29 s` local regime and capped solver protocol only. No long-time tangent renormalisation, full spectrum, or maximal Lyapunov exponent was computed. |
 | [007](007_full_matrix_qr_tangent_dynamics/README.md) | **Established:** physical-coordinate full-matrix tangent evolution and Candidate-A-scaled periodic QR have internally consistent orthonormality, reconstruction, accumulation, and reference-validity bookkeeping. **Unresolved:** through `80 s`, the cumulative spectrum fails the predeclared duration, tolerance, step-cap, QR-interval, and one-vector agreement criteria. | All long-time runs remain numerically valid, but their four finite-time values are policy-dependent diagnostics. No converged spectrum or Lyapunov exponent was established. |
 | [008](008_common_reference_qr_isolation/README.md) | **Established:** when all tangent/QR variants are driven by one locally refined piecewise-dense reference history, Experiment 007's `0.082–0.157 s^-1` policy separation collapses to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$ at `80 s`. Numerical reference-shadow divergence is therefore the primary observed source of the prior separation. | The result is conditional on one common numerical reference history. Its finite-time vector is not a converged spectrum, and independently integrated long-time shadows need not agree pointwise. |
+| [009](009_independent_shadow_spectrum_compatibility/README.md) | **Established:** three independently integrated reference shadows decorrelate by `40 s`, remain numerically valid through `320 s`, and become substantially more compatible than at `80 s`. **Unresolved:** residual late-window fluctuation and final/late between-shadow spread remain marginally above the predeclared limits. | No statistically compatible spectrum is accepted at `320 s`; the result is neither accepted nor clearly incompatible. |
 
-Experiment 008 is the current boundary. Direct tangent dynamics and the QR
-primitive are validated, and their declared tangent tolerance, step-cap, and
-QR-cadence effects are negligible on a common reference history. Experiment
-007's unresolved result is therefore attributable primarily to the different
-chaotic numerical reference shadows sampled by its independently integrated
-policies. It remains unknown whether cumulative statistics from such separated
-shadows reconcile at substantially longer durations.
+Experiment 009 is the current boundary. Direct tangent dynamics and QR remain
+numerically valid, while three decorrelated reference shadows show strong but
+incomplete long-time statistical reconciliation. From `80` to `320 s`, the
+maximum between-shadow component range falls from `0.157` to `0.0573 s^-1`,
+and every checkpoint-drift criterion passes. Compatibility remains unresolved
+because late outer-component fluctuation and spread still exceed the stricter
+acceptance limits.
 
 ## Established results
 
@@ -94,8 +95,15 @@ The following statements are supported by the experiment chain:
    final differences are only $3.32\times10^{-8}$ to
    $6.37\times10^{-7}\ \mathrm{s^{-1}}$. This isolates reference-shadow
    divergence as the primary observed source of Experiment 007's separation.
+10. Experiment 009 follows baseline, strict, and half-step numerical shadows
+    independently through `320 s`. All pairs decorrelate by `40 s`; all runs
+    remain valid; the ensemble-mean `240→320 s` change is only
+    `0.0146 s^-1`; and the `320 s` mean is approximately
+    `(0.9822, 0.0124, -0.0083, -0.9878) s^-1`. The maximum final range is
+    `0.0573 s^-1` and maximum late-window range is `0.0967 s^-1`, so the
+    predeclared compatibility claim remains unresolved.
 
-No finite-time scalar or vector reported by Experiments 004–008 is an accepted
+No finite-time scalar or vector reported by Experiments 004–009 is an accepted
 Lyapunov exponent or spectrum.
 
 ## Current mathematical contract
@@ -137,10 +145,10 @@ remain locally rebased; winding remains separate.
 The project has not established:
 
 - convergence of any long-time tangent Lyapunov estimate or spectrum beyond
-  the failed `20/40/80 s` ladder;
+  the unresolved `320 s` three-shadow ensemble;
 - the integration duration required for convergence;
-- whether independently integrated long-time reference shadows eventually
-  produce statistically compatible cumulative spectra;
+- whether the marginal outer-component drift and between-shadow spread fall
+  below the compatibility limits by `640 s`;
 - whether the common-reference QR-interval and tangent-policy collapse remains
   negligible at substantially longer duration;
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
@@ -159,9 +167,9 @@ No acceptance boundary has been declared for the longer-duration question.
 
 The next justified research question is:
 
-> Do substantially longer independently integrated Euler–Lagrange QR runs
-> yield cumulative spectra that statistically reconcile after their reference
-> shadows decorrelate?
+> Does one predeclared extension of the same three-shadow ensemble to `640 s`
+> reduce outer-exponent late-window drift and between-shadow spread below the
+> compatibility limits?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -171,10 +179,10 @@ $$
 (\lambda_1,\lambda_2,\lambda_3,\lambda_4),
 $$
 
-rather than only a single largest-exponent estimate. Experiments 007 and 008
-have made the Candidate-A-scaled primitive executable, shown that `80 s` is not
-sufficient for cumulative convergence, and separated tangent/QR discretisation
-from reference-shadow divergence:
+rather than only a single largest-exponent estimate. Experiments 007–009 have
+made the Candidate-A-scaled primitive executable, separated tangent/QR
+discretisation from reference-shadow divergence, and shown substantial but
+incomplete cumulative reconciliation by `320 s`:
 
 $$
 Z=SY,
@@ -185,10 +193,10 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. A longer study should not
-require chaotic references to remain pointwise close. It must instead ask
-whether independently sampled numerical shadows yield compatible cumulative
-statistics under predeclared duration and policy criteria.
+from the magnitudes of the diagonal entries of $R$. The next duration test
+should retain the same ensemble and statistical distinction between
+within-shadow settling and between-shadow spread; pointwise reference
+agreement remains irrelevant after decorrelation.
 
 ## Theoretical structure to test, not target
 
@@ -229,7 +237,9 @@ A plausible, evidence-dependent progression is:
   ↓
 008  common-reference isolation: reference-shadow divergence is primary observed source
   ↓
-targeted longer-duration independent-shadow statistical convergence question
+009  three decorrelated shadows: strong but incomplete compatibility by 320 s
+  ↓
+single predeclared 640 s extension of the same ensemble
   ↓  only if a common asymptotic spectrum is earned
 independent Hamiltonian/canonical spectrum cross-check
   ↓  only if both formulations support it

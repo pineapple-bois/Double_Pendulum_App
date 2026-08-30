@@ -48,7 +48,7 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
-The living scientific position of the Lyapunov strand through Experiment 008,
+The living scientific position of the Lyapunov strand through Experiment 009,
 including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -115,3 +115,11 @@ original Experiment 005 evidence.
   divergence of independently integrated reference shadows; common-reference
   policy differences collapse to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$.
   No converged spectrum is accepted.
+
+- `009_independent_shadow_spectrum_compatibility/` - integrates baseline,
+  strict-tolerance, and half-step reference+tangent shadows independently to
+  `320 s`, then separates within-shadow cumulative drift from between-shadow
+  spread. Status: unresolved; all runs are valid and agreement improves
+  markedly after decorrelation, but late-window fluctuation and final/late
+  spread remain marginally above the predeclared compatibility limits. No
+  Lyapunov spectrum is accepted.
