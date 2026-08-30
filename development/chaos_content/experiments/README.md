@@ -48,7 +48,7 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
-The living scientific position of the Lyapunov strand through Experiment 006,
+The living scientific position of the Lyapunov strand through Experiment 007,
 including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -102,7 +102,8 @@ original Experiment 005 evidence.
 
 - `007_full_matrix_qr_tangent_dynamics/` - extends the validated Experiment
   006 tangent flow to a physical-coordinate `4x4` basis and performs periodic
-  QR in Candidate-A-scaled coordinates. Status: accepted for the internal QR
-  primitive only; orthonormality, reconstruction, accumulation, reference
-  validity, and exact-repeat checks pass for one modest run, but the four
-  finite-time values are not a converged Lyapunov spectrum.
+  QR in Candidate-A-scaled coordinates. Status: the internal QR primitive is
+  accepted, but the `20/40/80 s` convergence iteration is numerically
+  unresolved: all runs remain valid while duration, tolerance, step-cap,
+  QR-interval, and one-vector agreement criteria fail. No converged Lyapunov
+  spectrum is accepted.

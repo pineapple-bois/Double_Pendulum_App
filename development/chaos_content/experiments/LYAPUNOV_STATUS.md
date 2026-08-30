@@ -3,8 +3,9 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after the accepted QR-primitive completion of Experiment 007. It records the current
-evidence boundary and the next question earned by that evidence.
+strand after Experiment 007's accepted QR primitive and unresolved convergence
+investigation. It records the current evidence boundary and the next question
+earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -17,8 +18,8 @@ The terms below are deliberate:
   scope.
 - **Rejected or unresolved** means a stronger claim failed or has not yet met
   its declared numerical requirements.
-- **Theoretically expected** identifies structure not yet observed by this
-  project.
+- **Theoretically expected** identifies structure not yet established by this
+  project, even if a finite-time diagnostic trends in that direction.
 - **Proposed** identifies a motivated next investigation, not an accepted
   implementation decision.
 
@@ -33,12 +34,14 @@ direct tangent formulation:
 | [004](004_finite_time_exponential_growth/README.md) | **Established:** reproducible local growth and small-perturbation collapse. **Rejected:** a defensible common approximately exponential interval under the predeclared rule. | Its finite-window rates are descriptive, not Lyapunov exponents. |
 | [005](005_renormalised_local_stretching/README.md) | **Established:** direction-preserving finite-shadow resets and signed growth accumulation work mechanically. Audit-driven repair removed winding-dependent coordinates, uncontrolled step size, and reconstruction loss. **Unresolved:** the repaired long-time accumulated rate still failed tolerance and duration convergence. | No converged accumulated rate or maximal Lyapunov exponent was accepted; further finite-shadow tuning was not justified. |
 | [006](006_variational_dynamics_validation/README.md) | **Established:** the independently validated Euler–Lagrange Jacobian reproduces the finite-shadow local limit in norm and signed direction as perturbation size decreases. Direct tangent evolution was materially more stable under the tested short-time tolerance and step refinements. | Acceptance covers the established `0–1.29 s` local regime and capped solver protocol only. No long-time tangent renormalisation, full spectrum, or maximal Lyapunov exponent was computed. |
-| [007](007_full_matrix_qr_tangent_dynamics/README.md) | **Established:** physical-coordinate full-matrix tangent evolution and Candidate-A-scaled periodic QR have internally consistent orthonormality, reconstruction, accumulation, reference-validity, and deterministic-repeat bookkeeping in one modest run. | Its four finite-time values are diagnostic and unsorted. No duration or numerical-policy convergence, Hamiltonian structure, or Lyapunov exponent was established. |
+| [007](007_full_matrix_qr_tangent_dynamics/README.md) | **Established:** physical-coordinate full-matrix tangent evolution and Candidate-A-scaled periodic QR have internally consistent orthonormality, reconstruction, accumulation, and reference-validity bookkeeping. **Unresolved:** through `80 s`, the cumulative spectrum fails the predeclared duration, tolerance, step-cap, QR-interval, and one-vector agreement criteria. | All long-time runs remain numerically valid, but their four finite-time values are policy-dependent diagnostics. No converged spectrum or Lyapunov exponent was established. |
 
 Experiment 007 is the current boundary. Direct tangent dynamics is locally
-validated and its full-matrix QR primitive is executable. The unresolved
-question is whether its cumulative finite-time estimates converge under a
-separate, predeclared long-time numerical study.
+validated and its full-matrix QR primitive is executable, but the first compact
+long-time convergence matrix is unresolved. The immediate issue is no longer
+QR bookkeeping: it is whether cumulative estimates along separated numerical
+shadow paths approach a common asymptotic vector at substantially longer,
+predeclared durations.
 
 ## Established results
 
@@ -77,9 +80,15 @@ The following statements are supported by the experiment chain:
    orthonormalised in Candidate-A-scaled coordinates using
    $SY^-=QR$ and $Y^+=S^{-1}Q$ with machine-precision reconstruction and
    metric orthonormality in the tested Experiment 007 primitive.
+8. At `80 s`, all Experiment 007 reference, energy, QR, conditioning, and
+   accumulation validity checks pass. Nevertheless, the cumulative baseline
+   vector changes by `0.149 s^-1` in its largest component from `40→80 s`,
+   while the declared tolerance, step-cap, and QR-interval variants differ
+   from baseline by `0.082–0.157 s^-1`. The long-time numerical result is
+   therefore unresolved, not an accepted spectrum.
 
-No finite-time scalar reported by Experiments 004–006 is an accepted Lyapunov
-exponent.
+No finite-time scalar or vector reported by Experiments 004–007 is an accepted
+Lyapunov exponent or spectrum.
 
 ## Current mathematical contract
 
@@ -119,12 +128,14 @@ remain locally rebased; winding remains separate.
 
 The project has not established:
 
-- convergence of any long-time tangent Lyapunov estimate or spectrum;
+- convergence of any long-time tangent Lyapunov estimate or spectrum beyond
+  the failed `20/40/80 s` ladder;
 - the integration duration required for convergence;
-- whether Experiment 006's short-time solver-policy agreement survives
-  long-time tangent propagation;
-- an appropriate QR/orthonormalisation interval or robustness to that choice;
-- robustness to further step-cap refinement;
+- whether the policy-separated long-time reference shadows eventually produce
+  a common cumulative spectrum;
+- an appropriate QR/orthonormalisation interval or robustness to the tested
+  `0.125/0.25/0.5 s` choices;
+- robustness to the tested half-step refinement at asymptotic duration;
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
 - agreement between a one-vector tangent estimate and the leading QR estimate;
 - robustness to tangent-basis initialization;
@@ -134,17 +145,18 @@ The project has not established:
 - any broader classification of the trajectory, initial-condition region, or
   double-pendulum system as chaotic.
 
-No numerical acceptance thresholds for these questions have yet been earned.
+The Experiment 007 limits apply only to its completed `20/40/80 s` matrix.
+No acceptance boundary has been declared for the longer-duration question.
 
 ## Next justified question
 
 The next justified research question is:
 
-> Do the cumulative full-matrix QR estimates from the validated
-> Euler–Lagrange tangent flow converge under predeclared duration, tolerance,
-> step-cap, QR-interval, and tangent-basis checks?
+> Do substantially longer, still predeclared Euler–Lagrange QR runs cause the
+> policy-separated cumulative spectra to approach one common asymptotic vector,
+> or does their material separation persist?
 
-The natural object is now the full tangent matrix and spectrum
+The natural object remains the full tangent matrix and cumulative spectrum
 
 $$
 \dot{Y}=J(x)Y,
@@ -153,7 +165,8 @@ $$
 $$
 
 rather than only a single largest-exponent estimate. Experiment 007 has made
-the Candidate-A-scaled primitive executable:
+the Candidate-A-scaled primitive executable and shown that extending a valid
+primitive to `80 s` is not sufficient:
 
 $$
 Z=SY,
@@ -164,9 +177,9 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. The separate convergence
-experiment should retain the right to question numerical policies and interval
-choices; primitive coherence does not pre-accept their long-time use.
+from the magnitudes of the diagonal entries of $R$. A longer study must not
+average away unresolved policy differences silently; it should ask explicitly
+whether those differences decay in cumulative quantities.
 
 ## Theoretical structure to test, not target
 
@@ -188,11 +201,13 @@ $$
 
 may be useful convergence diagnostics.
 
-The project has not observed or established this spectrum. These expressions
-are theoretical structural expectations, not target values that a calculation
-should be engineered to reproduce. Finite-time QR estimates in the noncanonical
-Euler–Lagrange representation need not show perfect pairing or exact neutral
-values at every time.
+Experiment 007's baseline `80 s` vector has a small sum and approximate outer
+and inner pairing, with middle magnitudes smaller than at `20 s`. This is an
+observed finite-time trend only. The project has not established the
+Hamiltonian asymptotic spectrum. These expressions remain theoretical
+structural expectations, not target values that a calculation should be
+engineered to reproduce, and finite-time QR estimates in the noncanonical
+Euler–Lagrange representation need not pair perfectly at every time.
 
 ## Conditional horizon
 
@@ -201,10 +216,10 @@ A plausible, evidence-dependent progression is:
 ```text
 006  validated local variational dynamics
   ↓
-007  internally coherent full-matrix scaled-QR primitive
+007  internally coherent full-matrix QR; first 80 s convergence matrix unresolved
   ↓
-separate long-time Euler–Lagrange QR-spectrum convergence study
-  ↓  only if earned by that study
+targeted longer-duration EL QR shadow-path convergence question
+  ↓  only if a common asymptotic spectrum is earned
 independent Hamiltonian/canonical spectrum cross-check
   ↓  only if both formulations support it
 contrasting initial conditions and carefully bounded chaos classification

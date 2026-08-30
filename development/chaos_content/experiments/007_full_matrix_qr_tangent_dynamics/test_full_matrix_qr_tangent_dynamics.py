@@ -116,6 +116,10 @@ def test_cycle_times_are_integer_indexed_and_reject_partial_cycles() -> None:
     np.testing.assert_array_equal(
         experiment.deterministic_cycle_times(1.0), np.linspace(0.0, 1.0, 5)
     )
+    np.testing.assert_array_equal(
+        experiment.deterministic_cycle_times(0.5, 0.125),
+        np.linspace(0.0, 0.5, 5),
+    )
     with pytest.raises(ValueError):
         experiment.deterministic_cycle_times(1.1)
 
@@ -139,6 +143,20 @@ def test_short_qr_run_has_finite_recomputable_bookkeeping(dynamics) -> None:
     assert np.all(np.isfinite(run["_finite_time_spectrum"]))
 
 
+def test_short_qr_interval_has_complete_nonuniform_diagnostic_sampling(dynamics) -> None:
+    run = experiment.run_qr_primitive(
+        dynamics,
+        run_id="short_qr_sampling",
+        duration=0.25,
+        qr_interval=0.125,
+    )
+
+    assert run["accepted"]
+    assert run["checks"]["global_output_complete"]
+    assert run["cycle_count"] == 2
+    assert len(run["_reference_time"]) == 25
+
+
 def test_exact_repeat_comparison_detects_reproducibility(dynamics) -> None:
     primary = experiment.run_qr_primitive(
         dynamics, run_id="repeat_primary", duration=0.5
@@ -152,3 +170,33 @@ def test_exact_repeat_comparison_detects_reproducibility(dynamics) -> None:
     assert comparison["maximum_cycle_log_difference"] == 0.0
     assert comparison["maximum_finite_time_spectrum_difference"] == 0.0
     assert comparison["final_reference_candidate_a_distance"] == 0.0
+
+
+def test_duration_convergence_uses_cumulative_values_not_cycle_logs() -> None:
+    constant_spectrum = np.array([0.8, 0.0, 0.0, -0.8])
+    cycles = [
+        {
+            "end_time_seconds": 0.25 * index,
+            "cycle_log_growth": [99.0, -99.0, 31.0, -31.0],
+            "cumulative_finite_time_spectrum_per_second": constant_spectrum.tolist(),
+        }
+        for index in range(1, 321)
+    ]
+    analysis = experiment.duration_convergence_analysis({"cycles": cycles})
+
+    assert analysis["accepted"]
+    assert analysis["maximum_component_change_20_to_40_per_second"] == 0.0
+    assert analysis["maximum_component_change_40_to_80_per_second"] == 0.0
+    assert analysis["maximum_final_quarter_range_per_second"] == 0.0
+
+
+def test_one_vector_check_matches_first_qr_column_for_short_run(dynamics) -> None:
+    qr_run = experiment.run_qr_primitive(
+        dynamics, run_id="one_vector_qr", duration=0.5
+    )
+    one_vector = experiment.run_one_vector_renormalisation(dynamics, duration=0.5)
+    comparison = experiment.compare_one_vector_to_qr(qr_run, one_vector)
+
+    assert one_vector["accepted"]
+    assert comparison["accepted"]
+    assert comparison["absolute_difference_per_second"] <= 1.0e-12

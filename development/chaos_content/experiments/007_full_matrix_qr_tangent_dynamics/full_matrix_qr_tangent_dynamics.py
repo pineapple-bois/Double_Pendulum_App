@@ -1,8 +1,4 @@
-"""Demonstrate the minimal full-matrix QR extension of Experiment 006.
-
-The adjacent README fixes the single-run contract and primitive-only claim
-boundary. This module deliberately performs no convergence sweep.
-"""
+"""Run the Experiment 007 QR primitive or its predeclared convergence study."""
 
 from __future__ import annotations
 
@@ -46,8 +42,15 @@ QR_INTERVAL_SECONDS = 0.25
 OUTPUT_INTERVAL_SECONDS = 0.01
 QR_CYCLE_COUNT = int(round(RUN_DURATION_SECONDS / QR_INTERVAL_SECONDS))
 
+CONVERGENCE_DURATION_SECONDS = 80.0
+DURATION_CHECKPOINTS_SECONDS = (20.0, 40.0, 80.0)
+SHORT_QR_INTERVAL_SECONDS = 0.125
+LONG_QR_INTERVAL_SECONDS = 0.5
+
 SOLVER_POLICY = experiment006.SIMPLE_REFERENCE_SOLVER_POLICY
+STRICTER_POLICY = experiment006.STRICTER_POLICY
 MAX_STEP_SECONDS = experiment006.BASELINE_MAX_STEP
+HALF_MAX_STEP_SECONDS = experiment006.REFINED_MAX_STEP
 ENERGY_DRIFT_LIMIT = experiment006.ENERGY_DRIFT_LIMIT
 
 QR_ERROR_LIMIT = 1.0e-12
@@ -55,6 +58,15 @@ BOOKKEEPING_ERROR_LIMIT = 1.0e-12
 REPRODUCIBILITY_ERROR_LIMIT = 1.0e-12
 MINIMUM_R_DIAGONAL = 1.0e-14
 MAXIMUM_PRE_QR_CONDITION_NUMBER = 1.0e12
+
+MAX_DURATION_CHANGE_20_TO_40_PER_SECOND = 0.10
+MAX_DURATION_CHANGE_40_TO_80_PER_SECOND = 0.05
+MAX_FINAL_QUARTER_RANGE_PER_SECOND = 0.05
+CLEAR_NONCONVERGENCE_DURATION_DIFFERENCE_PER_SECOND = 0.10
+MAX_TOLERANCE_SPECTRUM_DIFFERENCE_PER_SECOND = 0.01
+MAX_STEP_SPECTRUM_DIFFERENCE_PER_SECOND = 0.01
+MAX_QR_INTERVAL_SPECTRUM_DIFFERENCE_PER_SECOND = 0.02
+MAX_ONE_VECTOR_DIFFERENCE_PER_SECOND = 0.01
 
 
 def scaling_matrix() -> np.ndarray:
@@ -203,10 +215,15 @@ def qr_reset(tangent_matrix_pre: np.ndarray) -> dict[str, Any]:
     }
 
 
-def deterministic_cycle_times(duration: float = RUN_DURATION_SECONDS) -> np.ndarray:
-    cycle_count = int(round(duration / QR_INTERVAL_SECONDS))
+def deterministic_cycle_times(
+    duration: float = RUN_DURATION_SECONDS,
+    qr_interval: float = QR_INTERVAL_SECONDS,
+) -> np.ndarray:
+    if not np.isfinite(qr_interval) or qr_interval <= 0.0:
+        raise ValueError("QR interval must be positive and finite.")
+    cycle_count = int(round(duration / qr_interval))
     if cycle_count <= 0 or not math.isclose(
-        cycle_count * QR_INTERVAL_SECONDS,
+        cycle_count * qr_interval,
         duration,
         rel_tol=0.0,
         abs_tol=1.0e-13,
@@ -249,10 +266,13 @@ def run_qr_primitive(
     *,
     run_id: str,
     duration: float = RUN_DURATION_SECONDS,
+    qr_interval: float = QR_INTERVAL_SECONDS,
+    policy: Any = SOLVER_POLICY,
+    max_step: float = MAX_STEP_SECONDS,
 ) -> dict[str, Any]:
     """Run one fixed-policy full-matrix QR trajectory."""
 
-    boundaries = deterministic_cycle_times(duration)
+    boundaries = deterministic_cycle_times(duration, qr_interval)
     current_reference = np.array(experiment006.BASE_STATE_RADIANS, copy=True)
     current_tangent = initial_physical_tangent_basis()
     initial_energy = float(experiment006.simple_energy(current_reference))
@@ -276,8 +296,8 @@ def run_qr_primitive(
             ),
             augmented_start,
             requested_time,
-            SOLVER_POLICY,
-            max_step=MAX_STEP_SECONDS,
+            policy,
+            max_step=max_step,
         )
         solver_status = segment["solver_status"] | {
             "accepted": segment["accepted"]
@@ -319,6 +339,7 @@ def run_qr_primitive(
             "cycle_index": cycle_index,
             "start_time_seconds": float(start),
             "end_time_seconds": float(end),
+            "qr_interval_seconds": qr_interval,
             "accepted": all(checks.values()),
             "checks": checks,
             "reference_start": reference_start.tolist(),
@@ -378,6 +399,10 @@ def run_qr_primitive(
         np.max(np.abs(recomputed_spectrum - stored_spectrum))
     )
     maximum_energy_drift = float(np.max(all_energy_drift))
+    expected_output_count = 1 + sum(
+        len(requested_cycle_times(float(start), float(end))) - 1
+        for start, end in zip(boundaries[:-1], boundaries[1:])
+    )
     bookkeeping_checks = {
         "all_cycles_accepted": all(cycle["accepted"] for cycle in cycles),
         "cumulative_logs_recompute_within_limit": bool(
@@ -395,15 +420,16 @@ def run_qr_primitive(
         "global_output_complete": bool(
             math.isclose(all_reference_time[0], 0.0)
             and math.isclose(all_reference_time[-1], duration)
-            and len(all_reference_time)
-            == int(round(duration / OUTPUT_INTERVAL_SECONDS)) + 1
+            and len(all_reference_time) == expected_output_count
         ),
     }
     return {
         "run_id": run_id,
         "accepted": all(bookkeeping_checks.values()),
         "duration_seconds": duration,
-        "qr_interval_seconds": QR_INTERVAL_SECONDS,
+        "qr_interval_seconds": qr_interval,
+        "solver_policy": experiment006.policy_dict(policy),
+        "max_step_seconds": max_step,
         "cycle_count": len(cycles),
         "checks": bookkeeping_checks,
         "cycles": cycles,
@@ -438,7 +464,7 @@ def run_qr_primitive(
             "njev": int(sum(item["njev"] for item in solver_statuses)),
             "nlu": int(sum(item["nlu"] for item in solver_statuses)),
             "all_segments_accepted": all(item["accepted"] for item in solver_statuses),
-            "max_step_seconds": MAX_STEP_SECONDS,
+            "max_step_seconds": max_step,
         },
         "_reference_time": all_reference_time,
         "_reference_state": all_reference_state,
@@ -501,11 +527,299 @@ def compare_exact_repeats(
     }
 
 
+def spectrum_at_time(run: dict[str, Any], time_seconds: float) -> np.ndarray:
+    end_times = np.asarray(
+        [cycle["end_time_seconds"] for cycle in run["cycles"]], dtype=float
+    )
+    matches = np.flatnonzero(
+        np.isclose(end_times, time_seconds, rtol=0.0, atol=1.0e-13)
+    )
+    if len(matches) != 1:
+        raise ValueError(f"Run does not contain one QR boundary at {time_seconds} s.")
+    return np.asarray(
+        run["cycles"][int(matches[0])][
+            "cumulative_finite_time_spectrum_per_second"
+        ],
+        dtype=float,
+    )
+
+
+def hamiltonian_structure_diagnostics(spectrum: np.ndarray) -> dict[str, Any]:
+    """Return non-acceptance structural diagnostics for one four-vector."""
+
+    sorted_spectrum = np.sort(np.asarray(spectrum, dtype=float))[::-1]
+    return {
+        "sorted_spectrum_per_second": sorted_spectrum.tolist(),
+        "sum_per_second": float(np.sum(sorted_spectrum)),
+        "outer_pair_sum_per_second": float(
+            sorted_spectrum[0] + sorted_spectrum[3]
+        ),
+        "inner_pair_sum_per_second": float(
+            sorted_spectrum[1] + sorted_spectrum[2]
+        ),
+        "middle_absolute_values_per_second": [
+            float(abs(sorted_spectrum[1])),
+            float(abs(sorted_spectrum[2])),
+        ],
+        "acceptance_role": "interpretive only; not a finite-time convergence target",
+    }
+
+
+def duration_convergence_analysis(baseline: dict[str, Any]) -> dict[str, Any]:
+    spectra = {
+        f"{int(time_seconds)}s": spectrum_at_time(baseline, time_seconds)
+        for time_seconds in DURATION_CHECKPOINTS_SECONDS
+    }
+    change_20_to_40 = np.abs(spectra["40s"] - spectra["20s"])
+    change_40_to_80 = np.abs(spectra["80s"] - spectra["40s"])
+    late_cycles = [
+        cycle
+        for cycle in baseline["cycles"]
+        if cycle["end_time_seconds"] >= 60.0 - 1.0e-13
+    ]
+    late_spectrum = np.asarray(
+        [
+            cycle["cumulative_finite_time_spectrum_per_second"]
+            for cycle in late_cycles
+        ],
+        dtype=float,
+    )
+    final_quarter_ranges = np.ptp(late_spectrum, axis=0)
+    checks = {
+        "20_to_40_max_component_change_within_0.10_per_second": bool(
+            np.max(change_20_to_40)
+            <= MAX_DURATION_CHANGE_20_TO_40_PER_SECOND
+        ),
+        "40_to_80_max_component_change_within_0.05_per_second": bool(
+            np.max(change_40_to_80)
+            <= MAX_DURATION_CHANGE_40_TO_80_PER_SECOND
+        ),
+        "all_final_quarter_component_ranges_within_0.05_per_second": bool(
+            np.all(final_quarter_ranges <= MAX_FINAL_QUARTER_RANGE_PER_SECOND)
+        ),
+    }
+    clearly_not_converged = bool(
+        np.max(change_40_to_80)
+        > CLEAR_NONCONVERGENCE_DURATION_DIFFERENCE_PER_SECOND
+        or np.max(final_quarter_ranges)
+        > CLEAR_NONCONVERGENCE_DURATION_DIFFERENCE_PER_SECOND
+    )
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "checkpoint_spectra_per_second": {
+            key: value.tolist() for key, value in spectra.items()
+        },
+        "absolute_component_change_20_to_40_per_second": (
+            change_20_to_40.tolist()
+        ),
+        "maximum_component_change_20_to_40_per_second": float(
+            np.max(change_20_to_40)
+        ),
+        "absolute_component_change_40_to_80_per_second": (
+            change_40_to_80.tolist()
+        ),
+        "maximum_component_change_40_to_80_per_second": float(
+            np.max(change_40_to_80)
+        ),
+        "final_quarter_component_ranges_per_second": final_quarter_ranges.tolist(),
+        "maximum_final_quarter_range_per_second": float(
+            np.max(final_quarter_ranges)
+        ),
+        "clearly_not_converged_by_predeclared_rule": clearly_not_converged,
+        "hamiltonian_diagnostics": {
+            key: hamiltonian_structure_diagnostics(value)
+            for key, value in spectra.items()
+        },
+    }
+
+
+def compare_spectrum_runs(
+    baseline: dict[str, Any],
+    comparison: dict[str, Any],
+    *,
+    absolute_limit_per_second: float,
+) -> dict[str, Any]:
+    if not math.isclose(
+        baseline["duration_seconds"],
+        comparison["duration_seconds"],
+        rel_tol=0.0,
+        abs_tol=1.0e-13,
+    ):
+        raise ValueError("Spectrum comparisons require equal durations.")
+    baseline_spectrum = np.asarray(
+        baseline["final_diagnostic_spectrum_per_second"], dtype=float
+    )
+    comparison_spectrum = np.asarray(
+        comparison["final_diagnostic_spectrum_per_second"], dtype=float
+    )
+    component_difference = np.abs(comparison_spectrum - baseline_spectrum)
+    reference_difference = experiment006.wrapped_el_difference(
+        baseline["_reference_state"][-1], comparison["_reference_state"][-1]
+    )
+    reference_distance = float(
+        experiment006.candidate_a_norm(reference_difference)
+    )
+    checks = {
+        "comparison_run_numerically_valid": comparison["accepted"],
+        "whole_spectrum_within_absolute_limit": bool(
+            np.max(component_difference) <= absolute_limit_per_second
+        ),
+    }
+    return {
+        "baseline_run_id": baseline["run_id"],
+        "comparison_run_id": comparison["run_id"],
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "absolute_limit_per_second": absolute_limit_per_second,
+        "comparison_spectrum_per_second": comparison_spectrum.tolist(),
+        "absolute_component_differences_per_second": component_difference.tolist(),
+        "maximum_absolute_component_difference_per_second": float(
+            np.max(component_difference)
+        ),
+        "final_reference_candidate_a_distance": reference_distance,
+        "hamiltonian_diagnostics": hamiltonian_structure_diagnostics(
+            comparison_spectrum
+        ),
+    }
+
+
+def run_one_vector_renormalisation(
+    dynamics: experiment006.VariationalDynamics,
+    *,
+    duration: float = CONVERGENCE_DURATION_SECONDS,
+    qr_interval: float = QR_INTERVAL_SECONDS,
+    policy: Any = SOLVER_POLICY,
+    max_step: float = MAX_STEP_SECONDS,
+) -> dict[str, Any]:
+    """Conventional one-vector check using the first QR basis column."""
+
+    boundaries = deterministic_cycle_times(duration, qr_interval)
+    reference = np.array(experiment006.BASE_STATE_RADIANS, copy=True)
+    tangent = initial_physical_tangent_basis()[:, 0]
+    initial_energy = float(experiment006.simple_energy(reference))
+    cumulative_log = 0.0
+    cycles: list[dict[str, Any]] = []
+    maximum_energy_drift = 0.0
+    solver_statuses: list[dict[str, Any]] = []
+
+    for cycle_index, (start, end) in enumerate(
+        zip(boundaries[:-1], boundaries[1:]), start=1
+    ):
+        augmented_start = np.concatenate((reference, tangent))
+
+        def one_vector_rhs(time_value: float, augmented: np.ndarray) -> np.ndarray:
+            state = augmented[:4]
+            vector = augmented[4:]
+            return np.concatenate(
+                (
+                    dynamics.flow(state, time_value),
+                    dynamics.jacobian(state, time_value) @ vector,
+                )
+            )
+
+        segment = experiment006.solve_one_segment(
+            one_vector_rhs,
+            augmented_start,
+            requested_cycle_times(float(start), float(end)),
+            policy,
+            max_step=max_step,
+        )
+        solver_status = segment["solver_status"] | {
+            "accepted": segment["accepted"]
+        }
+        solver_statuses.append(solver_status)
+        if not segment["accepted"]:
+            raise RuntimeError(f"One-vector cycle {cycle_index} integration failed.")
+        reference_raw = segment["state"][-1, :4]
+        tangent_pre = segment["state"][-1, 4:]
+        scaled_pre = scaling_matrix() @ tangent_pre
+        magnitude = float(np.linalg.norm(scaled_pre))
+        cycle_log = float(math.log(magnitude))
+        cumulative_log += cycle_log
+        tangent = inverse_scaling_matrix() @ (scaled_pre / magnitude)
+        reference = experiment006.canonicalize_state_angles(reference_raw)
+        energy = experiment006.simple_energy(segment["state"][:, :4])
+        segment_energy_drift = float(
+            np.max(np.abs(energy - initial_energy) / experiment006.energy_scale())
+        )
+        maximum_energy_drift = max(maximum_energy_drift, segment_energy_drift)
+        cycles.append(
+            {
+                "cycle_index": cycle_index,
+                "end_time_seconds": float(end),
+                "pre_reset_candidate_a_norm": magnitude,
+                "cycle_log_growth": cycle_log,
+                "cumulative_log_growth": cumulative_log,
+                "cumulative_rate_per_second": cumulative_log / float(end),
+                "post_reset_candidate_a_norm": float(
+                    experiment006.candidate_a_norm(tangent)
+                ),
+                "segment_maximum_normalized_reference_energy_drift": (
+                    segment_energy_drift
+                ),
+                "solver_status": solver_status,
+            }
+        )
+    accepted = bool(
+        all(item["accepted"] for item in solver_statuses)
+        and np.all(np.isfinite([cycle["cycle_log_growth"] for cycle in cycles]))
+        and maximum_energy_drift <= ENERGY_DRIFT_LIMIT
+        and max(
+            abs(cycle["post_reset_candidate_a_norm"] - 1.0) for cycle in cycles
+        )
+        <= QR_ERROR_LIMIT
+    )
+    return {
+        "accepted": accepted,
+        "duration_seconds": duration,
+        "qr_interval_seconds": qr_interval,
+        "solver_policy": experiment006.policy_dict(policy),
+        "max_step_seconds": max_step,
+        "cycle_count": len(cycles),
+        "initial_direction": initial_physical_tangent_basis()[:, 0].tolist(),
+        "final_cumulative_log_growth": cumulative_log,
+        "final_cumulative_rate_per_second": cumulative_log / duration,
+        "maximum_normalized_reference_energy_drift": maximum_energy_drift,
+        "maximum_post_reset_candidate_a_norm_error": max(
+            abs(cycle["post_reset_candidate_a_norm"] - 1.0) for cycle in cycles
+        ),
+        "solver_statistics": {
+            "segments": len(solver_statuses),
+            "nfev": int(sum(item["nfev"] for item in solver_statuses)),
+            "all_segments_accepted": all(item["accepted"] for item in solver_statuses),
+        },
+        "cycles": cycles,
+    }
+
+
+def compare_one_vector_to_qr(
+    baseline: dict[str, Any], one_vector: dict[str, Any]
+) -> dict[str, Any]:
+    qr_first = float(baseline["final_diagnostic_spectrum_per_second"][0])
+    vector_rate = float(one_vector["final_cumulative_rate_per_second"])
+    difference = abs(vector_rate - qr_first)
+    checks = {
+        "one_vector_run_valid": one_vector["accepted"],
+        "first_qr_component_within_0.01_per_second": bool(
+            difference <= MAX_ONE_VECTOR_DIFFERENCE_PER_SECOND
+        ),
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "qr_first_component_per_second": qr_first,
+        "one_vector_rate_per_second": vector_rate,
+        "absolute_difference_per_second": difference,
+        "absolute_limit_per_second": MAX_ONE_VECTOR_DIFFERENCE_PER_SECOND,
+    }
+
+
 def public_run_summary(run: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in run.items() if not key.startswith("_") and key != "cycles"}
 
 
-def run_investigation() -> dict[str, Any]:
+def run_primitive_investigation() -> dict[str, Any]:
     dynamics = experiment006.VariationalDynamics()
     primary = run_qr_primitive(dynamics, run_id="baseline_primary")
     repeat = run_qr_primitive(dynamics, run_id="baseline_exact_repeat")
@@ -603,10 +917,221 @@ def run_investigation() -> dict[str, Any]:
         ),
     }
     return {
+        "mode": "primitive",
         "summary": summary,
         "primary": primary,
         "repeat": repeat,
         "reproducibility": reproducibility,
+    }
+
+
+def run_convergence_investigation() -> dict[str, Any]:
+    """Execute exactly the compact convergence matrix declared in the README."""
+
+    dynamics = experiment006.VariationalDynamics()
+    run_specs = {
+        "baseline": ("baseline_80s", SOLVER_POLICY, MAX_STEP_SECONDS, QR_INTERVAL_SECONDS),
+        "strict_tolerance": (
+            "strict_tolerance_80s",
+            STRICTER_POLICY,
+            MAX_STEP_SECONDS,
+            QR_INTERVAL_SECONDS,
+        ),
+        "half_max_step": (
+            "half_max_step_80s",
+            SOLVER_POLICY,
+            HALF_MAX_STEP_SECONDS,
+            QR_INTERVAL_SECONDS,
+        ),
+        "short_qr_interval": (
+            "short_qr_interval_80s",
+            SOLVER_POLICY,
+            MAX_STEP_SECONDS,
+            SHORT_QR_INTERVAL_SECONDS,
+        ),
+        "long_qr_interval": (
+            "long_qr_interval_80s",
+            SOLVER_POLICY,
+            MAX_STEP_SECONDS,
+            LONG_QR_INTERVAL_SECONDS,
+        ),
+    }
+    runs = {
+        name: run_qr_primitive(
+            dynamics,
+            run_id=run_id,
+            duration=CONVERGENCE_DURATION_SECONDS,
+            qr_interval=qr_interval,
+            policy=policy,
+            max_step=max_step,
+        )
+        for name, (run_id, policy, max_step, qr_interval) in run_specs.items()
+    }
+    baseline = runs["baseline"]
+    one_vector = run_one_vector_renormalisation(
+        dynamics,
+        duration=CONVERGENCE_DURATION_SECONDS,
+        qr_interval=QR_INTERVAL_SECONDS,
+        policy=SOLVER_POLICY,
+        max_step=MAX_STEP_SECONDS,
+    )
+    duration_analysis = duration_convergence_analysis(baseline)
+    comparison_limits = {
+        "strict_tolerance": MAX_TOLERANCE_SPECTRUM_DIFFERENCE_PER_SECOND,
+        "half_max_step": MAX_STEP_SPECTRUM_DIFFERENCE_PER_SECOND,
+        "short_qr_interval": MAX_QR_INTERVAL_SPECTRUM_DIFFERENCE_PER_SECOND,
+        "long_qr_interval": MAX_QR_INTERVAL_SPECTRUM_DIFFERENCE_PER_SECOND,
+    }
+    comparisons = {
+        name: compare_spectrum_runs(
+            baseline,
+            runs[name],
+            absolute_limit_per_second=limit,
+        )
+        for name, limit in comparison_limits.items()
+    }
+    one_vector_comparison = compare_one_vector_to_qr(baseline, one_vector)
+    validity_checks = {
+        f"{name}_primitive_valid": run["accepted"]
+        for name, run in runs.items()
+    } | {"one_vector_valid": one_vector["accepted"]}
+    numerical_policy_checks = {
+        f"{name}_comparison_accepted": comparison["accepted"]
+        for name, comparison in comparisons.items()
+    } | {"one_vector_comparison_accepted": one_vector_comparison["accepted"]}
+    validity_accepted = all(validity_checks.values())
+    policy_accepted = all(numerical_policy_checks.values())
+
+    if not validity_accepted or not policy_accepted:
+        classification = "numerically_unresolved"
+        status = "unresolved_numerical_policy_convergence"
+        strongest_claim = (
+            "The accepted QR primitive remains executable, but the tested long-time "
+            "spectrum is numerically unresolved under at least one declared policy "
+            "or validity comparison."
+        )
+        next_question = (
+            "Do substantially longer, still predeclared Euler-Lagrange QR runs "
+            "cause the policy-separated cumulative spectra to approach one common "
+            "asymptotic vector, or does their separation persist?"
+        )
+    elif duration_analysis["accepted"]:
+        classification = "converged_sufficiently_for_controlled_reference_case"
+        status = "accepted_controlled_reference_qr_spectrum_convergence"
+        strongest_claim = (
+            "For the single declared Euler-Lagrange reference trajectory and "
+            "Candidate-A geometry, the cumulative four-component QR spectrum is "
+            "stable under the predeclared duration and numerical refinements."
+        )
+        next_question = (
+            "Does an independently formulated canonical/Hamiltonian tangent "
+            "calculation reproduce the controlled Euler-Lagrange spectrum?"
+        )
+    elif duration_analysis["clearly_not_converged_by_predeclared_rule"]:
+        classification = "clearly_not_converged"
+        status = "rejected_duration_convergence"
+        strongest_claim = (
+            "The full-matrix QR calculation is numerically controlled under the "
+            "declared policies, but its cumulative spectrum is clearly not converged "
+            "over 20--80 seconds."
+        )
+        next_question = (
+            "Do substantially longer cumulative runs reduce the observed slow "
+            "duration drift without reintroducing numerical-policy disagreement?"
+        )
+    else:
+        classification = "unresolved_at_tested_durations"
+        status = "unresolved_duration_convergence"
+        strongest_claim = (
+            "The full-matrix QR calculation is numerically controlled under the "
+            "declared policies, but spectrum convergence remains unresolved through "
+            "80 seconds."
+        )
+        next_question = (
+            "Does one predeclared duration extension resolve the remaining slow "
+            "finite-time drift while preserving numerical-policy agreement?"
+        )
+
+    accepted = classification == "converged_sufficiently_for_controlled_reference_case"
+    summary = {
+        "experiment": EXPERIMENT_NAME,
+        "iteration": "convergence investigation following accepted QR primitive",
+        "status": status,
+        "classification": classification,
+        "accepted": accepted,
+        "question": (
+            "Does periodic QR renormalisation of the validated Euler-Lagrange tangent "
+            "flow yield a four-dimensional cumulative finite-time spectrum that "
+            "converges under appropriate numerical refinement?"
+        ),
+        "configuration": {
+            "formulation": FORMULATION,
+            "state_order": list(STATE_ORDER),
+            "reference_initial_state_degrees": experiment006.BASE_STATE_DEGREES.tolist(),
+            "candidate_a_geometry": "||delta_x||_EL=||S delta_x||_2",
+            "scaling_matrix_s": scaling_matrix().tolist(),
+            "tangent_matrix_storage": "physical-coordinate columns",
+            "initial_physical_tangent_basis": initial_physical_tangent_basis().tolist(),
+            "jacobian_dependency": "validated Experiment 006 VariationalDynamics",
+            "angular_chart": "reference angles rebased to (-pi, pi] at QR boundaries",
+            "qr_sign_convention": "R diagonal forced positive; columns not sorted",
+            "baseline_duration_seconds": CONVERGENCE_DURATION_SECONDS,
+            "duration_checkpoints_seconds": list(DURATION_CHECKPOINTS_SECONDS),
+            "baseline_solver_policy": experiment006.policy_dict(SOLVER_POLICY),
+            "strict_solver_policy": experiment006.policy_dict(STRICTER_POLICY),
+            "baseline_max_step_seconds": MAX_STEP_SECONDS,
+            "half_max_step_seconds": HALF_MAX_STEP_SECONDS,
+            "baseline_qr_interval_seconds": QR_INTERVAL_SECONDS,
+            "short_qr_interval_seconds": SHORT_QR_INTERVAL_SECONDS,
+            "long_qr_interval_seconds": LONG_QR_INTERVAL_SECONDS,
+            "one_vector_role": "independent check of the first QR column only",
+        },
+        "convergence_criteria": {
+            "duration": {
+                "maximum_component_change_20_to_40_per_second": MAX_DURATION_CHANGE_20_TO_40_PER_SECOND,
+                "maximum_component_change_40_to_80_per_second": MAX_DURATION_CHANGE_40_TO_80_PER_SECOND,
+                "maximum_each_component_range_60_to_80_per_second": MAX_FINAL_QUARTER_RANGE_PER_SECOND,
+                "clear_nonconvergence_threshold_per_second": CLEAR_NONCONVERGENCE_DURATION_DIFFERENCE_PER_SECOND,
+            },
+            "numerical_policy_at_80_seconds": {
+                "strict_tolerance_max_component_difference_per_second": MAX_TOLERANCE_SPECTRUM_DIFFERENCE_PER_SECOND,
+                "half_max_step_max_component_difference_per_second": MAX_STEP_SPECTRUM_DIFFERENCE_PER_SECOND,
+                "each_qr_interval_max_component_difference_per_second": MAX_QR_INTERVAL_SPECTRUM_DIFFERENCE_PER_SECOND,
+                "one_vector_first_component_difference_per_second": MAX_ONE_VECTOR_DIFFERENCE_PER_SECOND,
+            },
+            "criteria_provenance": "predeclared in README before convergence runs",
+            "comparison_geometry": "absolute differences in fixed QR-column order",
+            "hamiltonian_structure_role": "interpretive only",
+        },
+        "refinement_matrix": {
+            name: public_run_summary(run) for name, run in runs.items()
+        },
+        "duration_convergence": duration_analysis,
+        "numerical_policy_comparisons": comparisons,
+        "one_vector_run": public_run_summary(one_vector),
+        "one_vector_comparison": one_vector_comparison,
+        "numerical_validity_checks": validity_checks,
+        "numerical_policy_checks": numerical_policy_checks,
+        "numerical_validity_accepted": validity_accepted,
+        "numerical_policy_accepted": policy_accepted,
+        "strongest_claim": strongest_claim,
+        "claim_boundary": (
+            "The values remain cumulative finite-time QR estimates for one reference "
+            "trajectory in Candidate A. No basis-initialization independence, canonical "
+            "cross-check, multiple-state robustness, maximal Lyapunov exponent, or "
+            "broader chaos classification is established."
+        ),
+        "next_question": next_question,
+    }
+    return {
+        "mode": "convergence",
+        "summary": summary,
+        "primary": baseline,
+        "runs": runs,
+        "one_vector": one_vector,
+        "comparisons": comparisons,
+        "duration_analysis": duration_analysis,
+        "one_vector_comparison": one_vector_comparison,
     }
 
 
@@ -735,6 +1260,109 @@ def write_reference_csv(path: Path, primary: dict[str, Any]) -> None:
             writer.writerow(row)
 
 
+def write_refinement_csv(path: Path, result: dict[str, Any]) -> None:
+    fields = [
+        "case",
+        "accepted",
+        "duration_seconds",
+        "rtol",
+        "atol",
+        "max_step_seconds",
+        "qr_interval_seconds",
+        *[f"lambda_{index}_per_s" for index in range(1, 5)],
+        "spectrum_sum_per_s",
+        "maximum_difference_from_baseline_per_s",
+        "comparison_limit_per_s",
+        "comparison_accepted",
+        "reference_endpoint_distance",
+        "solver_nfev",
+        "maximum_energy_drift",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for name, run in result["runs"].items():
+            policy = run["solver_policy"]
+            comparison = result["comparisons"].get(name)
+            row: dict[str, Any] = {
+                "case": name,
+                "accepted": run["accepted"],
+                "duration_seconds": run["duration_seconds"],
+                "rtol": policy["rtol"],
+                "atol": policy["atol"],
+                "max_step_seconds": run["max_step_seconds"],
+                "qr_interval_seconds": run["qr_interval_seconds"],
+                "spectrum_sum_per_s": run["diagnostic_spectrum_sum_per_second"],
+                "solver_nfev": run["solver_statistics"]["nfev"],
+                "maximum_energy_drift": run[
+                    "maximum_normalized_reference_energy_drift"
+                ],
+            }
+            for index, value in enumerate(
+                run["final_diagnostic_spectrum_per_second"], start=1
+            ):
+                row[f"lambda_{index}_per_s"] = value
+            if comparison is not None:
+                row.update(
+                    {
+                        "maximum_difference_from_baseline_per_s": comparison[
+                            "maximum_absolute_component_difference_per_second"
+                        ],
+                        "comparison_limit_per_s": comparison[
+                            "absolute_limit_per_second"
+                        ],
+                        "comparison_accepted": comparison["accepted"],
+                        "reference_endpoint_distance": comparison[
+                            "final_reference_candidate_a_distance"
+                        ],
+                    }
+                )
+            else:
+                row.update(
+                    {
+                        "maximum_difference_from_baseline_per_s": 0.0,
+                        "comparison_limit_per_s": "",
+                        "comparison_accepted": True,
+                        "reference_endpoint_distance": 0.0,
+                    }
+                )
+            writer.writerow(row)
+
+
+def write_refinement_timeseries_csv(path: Path, result: dict[str, Any]) -> None:
+    fields = [
+        "case",
+        "time_seconds",
+        *[f"lambda_{index}_per_s" for index in range(1, 5)],
+        "spectrum_sum_per_s",
+    ]
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for name, run in result["runs"].items():
+            for cycle in run["cycles"]:
+                values = cycle["cumulative_finite_time_spectrum_per_second"]
+                row: dict[str, Any] = {
+                    "case": name,
+                    "time_seconds": cycle["end_time_seconds"],
+                    "spectrum_sum_per_s": sum(values),
+                }
+                for index, value in enumerate(values, start=1):
+                    row[f"lambda_{index}_per_s"] = value
+                writer.writerow(row)
+
+
+def write_one_vector_json(path: Path, one_vector: dict[str, Any]) -> None:
+    json_write(
+        path,
+        {
+            "experiment": EXPERIMENT_NAME,
+            "role": "independent first-column accumulated-growth check",
+            **one_vector,
+        },
+    )
+
+
 def load_pyplot():
     import matplotlib.pyplot as plt
 
@@ -822,6 +1450,61 @@ def write_plots(output_dir: Path, primary: dict[str, Any]) -> list[Path]:
     return paths
 
 
+def write_convergence_plots(output_dir: Path, result: dict[str, Any]) -> list[Path]:
+    plt = load_pyplot()
+    paths: list[Path] = []
+    run_names = list(result["runs"])
+    spectra = np.asarray(
+        [
+            result["runs"][name]["final_diagnostic_spectrum_per_second"]
+            for name in run_names
+        ],
+        dtype=float,
+    )
+
+    path = output_dir / "03_numerical_refinement_spectra.png"
+    fig, axis = plt.subplots(figsize=(9, 5))
+    x_positions = np.arange(4)
+    for name, values in zip(run_names, spectra):
+        axis.plot(x_positions, values, marker="o", label=name.replace("_", " "))
+    axis.axhline(0.0, color="black", linewidth=0.8)
+    axis.set_xticks(x_positions, ["column 1", "column 2", "column 3", "column 4"])
+    axis.set(
+        ylabel="80 s cumulative value / s$^{-1}$",
+        title="Whole-spectrum numerical refinements",
+    )
+    axis.grid(True, alpha=0.25)
+    axis.legend(fontsize=8)
+    save_figure(fig, path)
+    paths.append(path)
+
+    baseline = result["primary"]
+    time_values = np.asarray(
+        [cycle["end_time_seconds"] for cycle in baseline["cycles"]], dtype=float
+    )
+    sorted_spectra = np.sort(baseline["_finite_time_spectrum"], axis=1)[:, ::-1]
+    structure = {
+        "sum": np.sum(sorted_spectra, axis=1),
+        "outer pair": sorted_spectra[:, 0] + sorted_spectra[:, 3],
+        "inner pair": sorted_spectra[:, 1] + sorted_spectra[:, 2],
+    }
+    path = output_dir / "04_hamiltonian_structure_diagnostics.png"
+    fig, axis = plt.subplots(figsize=(8, 5))
+    for label, values in structure.items():
+        axis.plot(time_values, values, label=label)
+    axis.axhline(0.0, color="black", linewidth=0.8)
+    axis.set(
+        xlabel="time / s",
+        ylabel="diagnostic / s$^{-1}$",
+        title="Hamiltonian-structure diagnostics (interpretive only)",
+    )
+    axis.grid(True, alpha=0.25)
+    axis.legend()
+    save_figure(fig, path)
+    paths.append(path)
+    return paths
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -845,13 +1528,29 @@ def write_output_bundle(
     paths = [summary_path, cycles_json_path, cycles_csv_path, reference_path]
     if plots:
         paths.extend(write_plots(output_dir, result["primary"]))
+    if result["mode"] == "convergence":
+        refinement_path = output_dir / "refinement_matrix.csv"
+        refinement_timeseries_path = output_dir / "refinement_timeseries.csv"
+        one_vector_path = output_dir / "one_vector_cycles.json"
+        write_refinement_csv(refinement_path, result)
+        write_refinement_timeseries_csv(refinement_timeseries_path, result)
+        write_one_vector_json(one_vector_path, result["one_vector"])
+        paths.extend(
+            [refinement_path, refinement_timeseries_path, one_vector_path]
+        )
+        if plots:
+            paths.extend(write_convergence_plots(output_dir, result))
 
     manifest_path = output_dir / "manifest.json"
     manifest = {
         "experiment": EXPERIMENT_NAME,
         "output_role": (
-            "exploratory Experiment 007 QR-primitive evidence; not a converged "
-            "Lyapunov spectrum or production data"
+            "Experiment 007 convergence evidence for cumulative QR estimates"
+            if result["mode"] == "convergence"
+            else "exploratory Experiment 007 QR-primitive evidence"
+        ),
+        "claim_boundary": (
+            "not production data; scientific interpretation is bounded by summary.json"
         ),
         "source": str(Path(__file__).relative_to(REPOSITORY_ROOT)),
         "experiment_006_dependency": str(
@@ -873,48 +1572,83 @@ def write_output_bundle(
     return paths
 
 
+def assert_common_bookkeeping(run: dict[str, Any]) -> None:
+    expected_cycles = int(
+        round(run["duration_seconds"] / run["qr_interval_seconds"])
+    )
+    assert run["cycle_count"] == expected_cycles
+    assert len(run["cycles"]) == expected_cycles
+    recomputed_logs = np.cumsum(run["_cycle_logs"], axis=0)
+    np.testing.assert_allclose(
+        recomputed_logs,
+        run["_cumulative_logs"],
+        rtol=0.0,
+        atol=BOOKKEEPING_ERROR_LIMIT,
+    )
+    end_times = np.asarray(
+        [cycle["end_time_seconds"] for cycle in run["cycles"]]
+    )
+    np.testing.assert_allclose(
+        recomputed_logs / end_times[:, None],
+        run["_finite_time_spectrum"],
+        rtol=0.0,
+        atol=BOOKKEEPING_ERROR_LIMIT,
+    )
+
+
 def assert_self_check(result: dict[str, Any]) -> None:
     summary = result["summary"]
     primary = result["primary"]
-    assert summary["accepted"] == all(summary["acceptance_checks"].values())
-    assert primary["cycle_count"] == QR_CYCLE_COUNT
-    assert len(primary["cycles"]) == QR_CYCLE_COUNT
     np.testing.assert_allclose(
         scaling_matrix() @ initial_physical_tangent_basis(),
         np.eye(4),
         rtol=0.0,
         atol=1.0e-15,
     )
-    recomputed_logs = np.cumsum(primary["_cycle_logs"], axis=0)
-    np.testing.assert_allclose(
-        recomputed_logs,
-        primary["_cumulative_logs"],
-        rtol=0.0,
-        atol=BOOKKEEPING_ERROR_LIMIT,
+    assert_common_bookkeeping(primary)
+    if result["mode"] == "primitive":
+        assert summary["accepted"] == all(summary["acceptance_checks"].values())
+        assert primary["cycle_count"] == QR_CYCLE_COUNT
+        if summary["accepted"]:
+            assert primary["accepted"]
+            assert result["reproducibility"]["accepted"]
+        return
+
+    assert set(result["runs"]) == {
+        "baseline",
+        "strict_tolerance",
+        "half_max_step",
+        "short_qr_interval",
+        "long_qr_interval",
+    }
+    for run in result["runs"].values():
+        assert_common_bookkeeping(run)
+        assert np.all(np.isfinite(run["_finite_time_spectrum"]))
+    duration = duration_convergence_analysis(primary)
+    assert duration["accepted"] == result["duration_analysis"]["accepted"]
+    assert summary["numerical_validity_accepted"] == all(
+        summary["numerical_validity_checks"].values()
     )
-    end_times = np.asarray(
-        [cycle["end_time_seconds"] for cycle in primary["cycles"]]
+    assert summary["numerical_policy_accepted"] == all(
+        summary["numerical_policy_checks"].values()
     )
-    np.testing.assert_allclose(
-        recomputed_logs / end_times[:, None],
-        primary["_finite_time_spectrum"],
-        rtol=0.0,
-        atol=BOOKKEEPING_ERROR_LIMIT,
+    assert summary["accepted"] == (
+        summary["classification"]
+        == "converged_sufficiently_for_controlled_reference_case"
     )
-    if summary["accepted"]:
-        assert primary["accepted"]
-        assert result["reproducibility"]["accepted"]
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--mode",
+        choices=("primitive", "convergence"),
+        default="convergence",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
-        default=(
-            REPOSITORY_ROOT
-            / "development/chaos_content/outputs/full_matrix_qr_tangent_dynamics/baseline"
-        ),
+        default=None,
     )
     parser.add_argument("--no-plots", action="store_true")
     parser.add_argument("--self-check", action="store_true")
@@ -923,21 +1657,34 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    result = run_investigation()
+    result = (
+        run_primitive_investigation()
+        if args.mode == "primitive"
+        else run_convergence_investigation()
+    )
+    output_dir = args.output_dir or (
+        REPOSITORY_ROOT
+        / "development/chaos_content/outputs/full_matrix_qr_tangent_dynamics"
+        / ("baseline" if args.mode == "primitive" else "convergence")
+    )
     if args.self_check:
         assert_self_check(result)
-    paths = write_output_bundle(result, args.output_dir, plots=not args.no_plots)
+    paths = write_output_bundle(result, output_dir, plots=not args.no_plots)
     summary = result["summary"]
+    primary_summary = summary.get(
+        "primary_run", summary.get("refinement_matrix", {}).get("baseline", {})
+    )
     print(
         json.dumps(
             {
                 "status": summary["status"],
                 "accepted": summary["accepted"],
-                "diagnostic_spectrum_per_second": summary["primary_run"][
+                "diagnostic_spectrum_per_second": primary_summary[
                     "final_diagnostic_spectrum_per_second"
                 ],
                 "strongest_claim": summary["strongest_claim"],
-                "output_dir": str(args.output_dir),
+                "classification": summary.get("classification", "primitive_only"),
+                "output_dir": str(output_dir),
                 "files_written": len(paths),
             },
             indent=2,
