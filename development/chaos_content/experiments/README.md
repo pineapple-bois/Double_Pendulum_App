@@ -48,7 +48,7 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
-The living scientific position of the Lyapunov strand through Experiment 009,
+The living scientific position of the Lyapunov strand through Experiment 010,
 including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -123,3 +123,15 @@ original Experiment 005 evidence.
   markedly after decorrelation, but late-window fluctuation and final/late
   spread remain marginally above the predeclared compatibility limits. No
   Lyapunov spectrum is accepted.
+
+- `010_independent_shadow_640s_compatibility/` - extends the unchanged three-
+  shadow Euler–Lagrange QR ensemble to `640 s`. Status: accepted for the
+  declared statistical-compatibility claim; all retained settling, spread,
+  and numerical-validity criteria pass, yielding a bounded numerical spectrum
+  estimate for one initial condition and three deterministic policies.
+
+- `011_hamiltonian_canonical_spectrum_crosscheck/` - inventories production
+  canonical state, Hamiltonian, conversion, solver, and exploratory Poincaré
+  assets for an eventual independent formulation cross-check of Experiment
+  010. Status: scaffolded/in preparation; no canonical tangent dynamics, QR,
+  or Hamiltonian spectrum has been implemented or run.
