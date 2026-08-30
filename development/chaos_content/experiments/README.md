@@ -48,7 +48,7 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
-The living scientific position of the Lyapunov strand through Experiment 007,
+The living scientific position of the Lyapunov strand through Experiment 008,
 including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -107,3 +107,11 @@ original Experiment 005 evidence.
   unresolved: all runs remain valid while duration, tolerance, step-cap,
   QR-interval, and one-vector agreement criteria fail. No converged Lyapunov
   spectrum is accepted.
+
+- `008_common_reference_qr_isolation/` - drives all Experiment 007 tangent and
+  QR policy variants from one strict, half-step, locally refined piecewise-
+  dense Euler–Lagrange reference history. Status: accepted for the limited
+  diagnostic claim that the prior material separation primarily came from
+  divergence of independently integrated reference shadows; common-reference
+  policy differences collapse to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$.
+  No converged spectrum is accepted.

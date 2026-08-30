@@ -3,9 +3,9 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 007's accepted QR primitive and unresolved convergence
-investigation. It records the current evidence boundary and the next question
-earned by that evidence.
+strand after Experiment 008 isolated the source of Experiment 007's numerical-
+policy separation. It records the current evidence boundary and the next
+question earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -35,13 +35,15 @@ direct tangent formulation:
 | [005](005_renormalised_local_stretching/README.md) | **Established:** direction-preserving finite-shadow resets and signed growth accumulation work mechanically. Audit-driven repair removed winding-dependent coordinates, uncontrolled step size, and reconstruction loss. **Unresolved:** the repaired long-time accumulated rate still failed tolerance and duration convergence. | No converged accumulated rate or maximal Lyapunov exponent was accepted; further finite-shadow tuning was not justified. |
 | [006](006_variational_dynamics_validation/README.md) | **Established:** the independently validated Euler–Lagrange Jacobian reproduces the finite-shadow local limit in norm and signed direction as perturbation size decreases. Direct tangent evolution was materially more stable under the tested short-time tolerance and step refinements. | Acceptance covers the established `0–1.29 s` local regime and capped solver protocol only. No long-time tangent renormalisation, full spectrum, or maximal Lyapunov exponent was computed. |
 | [007](007_full_matrix_qr_tangent_dynamics/README.md) | **Established:** physical-coordinate full-matrix tangent evolution and Candidate-A-scaled periodic QR have internally consistent orthonormality, reconstruction, accumulation, and reference-validity bookkeeping. **Unresolved:** through `80 s`, the cumulative spectrum fails the predeclared duration, tolerance, step-cap, QR-interval, and one-vector agreement criteria. | All long-time runs remain numerically valid, but their four finite-time values are policy-dependent diagnostics. No converged spectrum or Lyapunov exponent was established. |
+| [008](008_common_reference_qr_isolation/README.md) | **Established:** when all tangent/QR variants are driven by one locally refined piecewise-dense reference history, Experiment 007's `0.082–0.157 s^-1` policy separation collapses to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$ at `80 s`. Numerical reference-shadow divergence is therefore the primary observed source of the prior separation. | The result is conditional on one common numerical reference history. Its finite-time vector is not a converged spectrum, and independently integrated long-time shadows need not agree pointwise. |
 
-Experiment 007 is the current boundary. Direct tangent dynamics is locally
-validated and its full-matrix QR primitive is executable, but the first compact
-long-time convergence matrix is unresolved. The immediate issue is no longer
-QR bookkeeping: it is whether cumulative estimates along separated numerical
-shadow paths approach a common asymptotic vector at substantially longer,
-predeclared durations.
+Experiment 008 is the current boundary. Direct tangent dynamics and the QR
+primitive are validated, and their declared tangent tolerance, step-cap, and
+QR-cadence effects are negligible on a common reference history. Experiment
+007's unresolved result is therefore attributable primarily to the different
+chaotic numerical reference shadows sampled by its independently integrated
+policies. It remains unknown whether cumulative statistics from such separated
+shadows reconcile at substantially longer durations.
 
 ## Established results
 
@@ -86,8 +88,14 @@ The following statements are supported by the experiment chain:
    while the declared tolerance, step-cap, and QR-interval variants differ
    from baseline by `0.082–0.157 s^-1`. The long-time numerical result is
    therefore unresolved, not an accepted spectrum.
+9. Experiment 008 holds one strict, half-step, locally validated reference
+   history fixed while varying tangent tolerance, tangent step cap, and QR
+   interval. All final and `60–80 s` differences meet the declared limits;
+   final differences are only $3.32\times10^{-8}$ to
+   $6.37\times10^{-7}\ \mathrm{s^{-1}}$. This isolates reference-shadow
+   divergence as the primary observed source of Experiment 007's separation.
 
-No finite-time scalar or vector reported by Experiments 004–007 is an accepted
+No finite-time scalar or vector reported by Experiments 004–008 is an accepted
 Lyapunov exponent or spectrum.
 
 ## Current mathematical contract
@@ -131,11 +139,10 @@ The project has not established:
 - convergence of any long-time tangent Lyapunov estimate or spectrum beyond
   the failed `20/40/80 s` ladder;
 - the integration duration required for convergence;
-- whether the policy-separated long-time reference shadows eventually produce
-  a common cumulative spectrum;
-- an appropriate QR/orthonormalisation interval or robustness to the tested
-  `0.125/0.25/0.5 s` choices;
-- robustness to the tested half-step refinement at asymptotic duration;
+- whether independently integrated long-time reference shadows eventually
+  produce statistically compatible cumulative spectra;
+- whether the common-reference QR-interval and tangent-policy collapse remains
+  negligible at substantially longer duration;
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
 - agreement between a one-vector tangent estimate and the leading QR estimate;
 - robustness to tangent-basis initialization;
@@ -152,9 +159,9 @@ No acceptance boundary has been declared for the longer-duration question.
 
 The next justified research question is:
 
-> Do substantially longer, still predeclared Euler–Lagrange QR runs cause the
-> policy-separated cumulative spectra to approach one common asymptotic vector,
-> or does their material separation persist?
+> Do substantially longer independently integrated Euler–Lagrange QR runs
+> yield cumulative spectra that statistically reconcile after their reference
+> shadows decorrelate?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -164,9 +171,10 @@ $$
 (\lambda_1,\lambda_2,\lambda_3,\lambda_4),
 $$
 
-rather than only a single largest-exponent estimate. Experiment 007 has made
-the Candidate-A-scaled primitive executable and shown that extending a valid
-primitive to `80 s` is not sufficient:
+rather than only a single largest-exponent estimate. Experiments 007 and 008
+have made the Candidate-A-scaled primitive executable, shown that `80 s` is not
+sufficient for cumulative convergence, and separated tangent/QR discretisation
+from reference-shadow divergence:
 
 $$
 Z=SY,
@@ -177,9 +185,10 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. A longer study must not
-average away unresolved policy differences silently; it should ask explicitly
-whether those differences decay in cumulative quantities.
+from the magnitudes of the diagonal entries of $R$. A longer study should not
+require chaotic references to remain pointwise close. It must instead ask
+whether independently sampled numerical shadows yield compatible cumulative
+statistics under predeclared duration and policy criteria.
 
 ## Theoretical structure to test, not target
 
@@ -218,7 +227,9 @@ A plausible, evidence-dependent progression is:
   ↓
 007  internally coherent full-matrix QR; first 80 s convergence matrix unresolved
   ↓
-targeted longer-duration EL QR shadow-path convergence question
+008  common-reference isolation: reference-shadow divergence is primary observed source
+  ↓
+targeted longer-duration independent-shadow statistical convergence question
   ↓  only if a common asymptotic spectrum is earned
 independent Hamiltonian/canonical spectrum cross-check
   ↓  only if both formulations support it
