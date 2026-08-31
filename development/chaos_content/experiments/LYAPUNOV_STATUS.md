@@ -3,10 +3,11 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 011 Phase B independently validated the canonical
-Hamiltonian pullback-QR primitive against the corresponding short-time EL QR
-calculation. It records the current evidence boundary and the next question
-earned by that evidence.
+strand after Experiment 011 Phase C accepted both internal compatibility of a
+three-shadow canonical Hamiltonian ensemble and its predeclared descriptive
+compatibility with Experiment 010's independent EL ensemble at `640 s`. It
+records the current evidence boundary and the next question earned by that
+evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -39,13 +40,14 @@ direct tangent formulation:
 | [008](008_common_reference_qr_isolation/README.md) | **Established:** when all tangent/QR variants are driven by one locally refined piecewise-dense reference history, Experiment 007's `0.082–0.157 s^-1` policy separation collapses to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$ at `80 s`. Numerical reference-shadow divergence is therefore the primary observed source of the prior separation. | The result is conditional on one common numerical reference history. Its finite-time vector is not a converged spectrum, and independently integrated long-time shadows need not agree pointwise. |
 | [009](009_independent_shadow_spectrum_compatibility/README.md) | **Established:** three independently integrated reference shadows decorrelate by `40 s`, remain numerically valid through `320 s`, and become substantially more compatible than at `80 s`. **Unresolved:** residual late-window fluctuation and final/late between-shadow spread remain marginally above the predeclared limits. | No statistically compatible spectrum is accepted at `320 s`; the result is neither accepted nor clearly incompatible. |
 | [010](010_independent_shadow_640s_compatibility/README.md) | **Established:** the unchanged three-shadow ensemble remains numerically valid through `640 s` and satisfies every predeclared within-shadow, final-spread, late-window, and ensemble-mean compatibility limit. | Acceptance supports one statistically compatible numerical Euler–Lagrange QR spectrum estimate for the declared initial condition and three deterministic policies; it is not universal or independently validated in canonical coordinates. |
-| [011 Phases A–B](011_hamiltonian_canonical_spectrum_crosscheck/README.md) | **Established:** Phase A validates the repository Hamiltonian, Legendre state/tangent maps, canonical reference flow, and independently Hamiltonian-derived Jacobian over `0–1.29 s`. Phase B validates state-dependent Candidate-A pullback QR and reproduces the corresponding EL QR cycle-by-cycle over `0–1.25 s` under baseline and refined policies. | No long-time canonical QR spectrum or `640 s` Hamiltonian comparison has been computed. Acceptance covers only the canonical primitives and short validation intervals. |
+| [011 Phases A–C](011_hamiltonian_canonical_spectrum_crosscheck/README.md) | **Established:** Phase A validates the repository Hamiltonian, Legendre state/tangent maps, canonical reference flow, and independently Hamiltonian-derived Jacobian. Phase B validates state-dependent Candidate-A pullback QR and short-time EL equivalence. Phase C's three independently integrated canonical shadows satisfy the frozen `640 s` compatibility criteria, and the canonical ensemble satisfies the separate predeclared descriptive EL/canonical comparison rule. | The result supports one independently cross-formulated numerical spectrum estimate for the declared initial condition and deterministic policies. It is not an infinite-time proof, universal spectrum, or result over initial-condition space. |
 
-Experiment 011 Phase B is the current boundary. It leaves Experiment 010's
-accepted EL ensemble unchanged and establishes the independent canonical
-reference, tangent, and pullback-QR foundations needed to cross-check it. A
-predeclared long-time canonical statistical comparison is now earned but has
-not been run.
+Experiment 011 Phase C is the current boundary. It leaves Experiment 010's EL
+ensemble unchanged and supplies the earned independent canonical cross-check:
+both formulations now support descriptively compatible `640 s` cumulative QR
+ensembles for the one declared physical initial condition. The next question
+therefore moves from formulation validation to bounded physical-case
+generality.
 
 ## Established results
 
@@ -125,13 +127,23 @@ The following statements are supported by the experiment chain:
     canonical cycle logs differ from their corresponding EL values by at most
     `3.55e-15` and `1.85e-13`, respectively; final short diagnostic vectors
     differ by at most `1.50e-13 s^-1`.
+14. Experiment 011 Phase C independently evolves baseline, strict, and
+    half-step canonical shadows through `640 s`. All pairs decorrelate by
+    `37.96 s`, all `7680` QR cycles remain numerically valid, and every
+    inherited within-shadow and between-shadow criterion passes. The canonical
+    mean is approximately
+    `(0.9870, 0.00742, -0.00554, -0.9897) s^-1`, with descriptive half-widths
+    `(0.0206, 0.00355, 0.00272, 0.0211) s^-1`. Its largest componentwise
+    displacement from the EL mean is `0.00485 s^-1`; all predeclared
+    envelope-overlap, absolute-displacement, combined-six-shadow, and late-
+    drift comparison checks pass.
 
 No finite-time scalar or vector reported by Experiments 004–009 was an
-accepted Lyapunov exponent or spectrum. Experiment 010 now supports a
-statistically compatible long-time numerical spectrum estimate within its
-declared three-shadow protocol, with descriptive componentwise half-widths
-`(0.0239, 0.00637, 0.00838, 0.0248) s^-1`. This remains a bounded numerical
-claim, not a universal spectrum for the double pendulum.
+accepted Lyapunov exponent or spectrum. Experiments 010 and 011 Phase C now
+support independently formulated, descriptively compatible long-time
+numerical spectrum estimates within their matched three-shadow protocols.
+This remains a bounded numerical claim for one physical initial condition,
+not a universal spectrum for the double pendulum.
 
 ## Current mathematical contract
 
@@ -175,8 +187,9 @@ z=(q_1,q_2,p_1,p_2),
 $$
 
 Experiment 011 Phase A validates the independently Hamiltonian-derived
-operator $D f_H(z)$. Phase B validates the Candidate-A pullback factor and QR
-reset
+operator $D f_H(z)$. Phases B and C validate the Candidate-A pullback factor
+and QR reset over the short cross-formulation interval and the complete
+three-shadow `640 s` protocol:
 
 $$
 A(z)=S\,\mathrm{D}(z\mapsto x),
@@ -207,12 +220,10 @@ The project has not established:
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
 - agreement between a one-vector tangent estimate and the leading QR estimate;
 - robustness to tangent-basis initialization;
-- agreement of a long-time canonical QR spectrum with the Experiment 010 EL
-  estimate;
-- statistical compatibility across independently integrated canonical
-  numerical shadows;
-- a maximal Lyapunov exponent for the current reference trajectory; or
-- any broader classification of the trajectory, initial-condition region, or
+- a maximal Lyapunov exponent for the current reference trajectory;
+- whether the EL/canonical agreement persists for other predeclared physical
+  initial conditions; or
+- any broader classification of an initial-condition region or the
   double-pendulum system as chaotic.
 
 The accepted Experiment 010 limits apply only to its completed continuation
@@ -223,9 +234,9 @@ confidence interval.
 
 The next justified research question is:
 
-> Under a predeclared long-time canonical shadow/refinement protocol, do
-> cumulative pullback-QR estimates become statistically compatible with one
-> another and with Experiment 010's accepted Euler–Lagrange ensemble estimate?
+> Across a small, predeclared set of additional physical initial conditions,
+> does independent Euler–Lagrange/canonical spectrum agreement persist without
+> retuning the accepted numerical protocol?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -249,12 +260,12 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. Experiment 011 Phase B has
-now validated replacing the constant EL factor $S$ by
-$A(z)=S\,\mathrm{D}(z\mapsto x)$ for the canonical calculation and resetting
-$Y^+=A(z)^{-1}Q$ over a short common physical history. The long-time
-independent statistical comparison is therefore earned, but no duration,
-ensemble, or acceptance contract for it is fixed by Phase B.
+from the magnitudes of the diagonal entries of $R$. Experiment 011 Phase C
+retains $A(z)=S\,\mathrm{D}(z\mapsto x)$ and $Y^+=A(z)^{-1}Q$ through three
+independently decorrelated canonical shadows and accepts the resulting
+cross-formulation comparison. Testing another physical initial condition is
+now methodologically earned, but its cases and acceptance contract are not
+fixed by Experiment 011.
 
 ## Theoretical structure to test, not target
 
@@ -276,14 +287,13 @@ $$
 
 may be useful convergence diagnostics.
 
-Experiment 010's `640 s` ensemble mean has total sum `-0.000924 s^-1`, outer-
-pair sum `-0.003257 s^-1`, inner-pair sum `0.002333 s^-1`, and middle
-magnitudes `0.012274` and `0.009941 s^-1`. This is supporting finite-time
-evidence only. The project has not independently established the Hamiltonian
-asymptotic spectrum. These expressions remain theoretical structural
-expectations, not target values that a calculation should be engineered to
-reproduce, and finite-time QR estimates in the noncanonical Euler–Lagrange
-representation need not pair perfectly at every time.
+Experiment 010's EL `640 s` mean has total sum `-0.000924 s^-1`, while
+Experiment 011 Phase C's canonical mean has total sum `-0.000800 s^-1`,
+outer-pair sum `-0.002684 s^-1`, inner-pair sum `0.001884 s^-1`, and middle
+magnitudes `0.007421` and `0.005537 s^-1`. These are supporting finite-time
+diagnostics only. The project has not proven the Hamiltonian asymptotic
+spectrum. The expressions remain theoretical structural expectations, not
+target values that a calculation should be engineered to reproduce.
 
 ## Conditional horizon
 
@@ -303,9 +313,9 @@ A plausible, evidence-dependent progression is:
 011 Phase A  independent canonical reference/tangent primitive accepted
   ↓
 011 Phase B  canonical pullback-QR primitive and short EL equivalence accepted
-  ↓  only under a separately predeclared long-time statistical contract
-independent long-time Hamiltonian/canonical spectrum cross-check
-  ↓  only if both formulations support it
+  ↓
+011 Phase C  independent canonical ensemble and EL/canonical compatibility accepted
+  ↓  only under a separately predeclared multi-case contract
 contrasting initial conditions and carefully bounded chaos classification
   ↓  only after an individual diagnostic is trusted
 state-space or parameter-space exploration

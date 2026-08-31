@@ -2,14 +2,15 @@
 
 The canonical flow and its Jacobian are derived directly from the repository's
 symbolic simple-model Hamiltonian.  The accepted Experiment 006 Euler--Lagrange
-flow is imported only as an independent comparison reference.  This module
-Phase B adds only a short full-matrix QR comparison.  This module deliberately
-does not implement a long-time Hamiltonian spectrum calculation.
+flow is imported only as an independent comparison reference. Phase B adds a
+short full-matrix QR comparison. Phase C applies that accepted primitive to
+one frozen three-shadow, 640-second canonical/EL compatibility protocol.
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import importlib.util
 import json
@@ -18,6 +19,7 @@ import os
 import sys
 import tempfile
 from dataclasses import asdict, dataclass
+from itertools import combinations
 from pathlib import Path
 from typing import Any, Protocol, Sequence
 
@@ -78,7 +80,7 @@ def _load_experiment007() -> Any:
 
 experiment007 = _load_experiment007()
 
-EXPERIMENT_STATUS = "phases_a_and_b_accepted"
+EXPERIMENT_STATUS = "phases_a_b_and_c_accepted"
 CANONICAL_STATE_ORDER = ("theta1", "theta2", "p_theta_1", "p_theta_2")
 EL_STATE_ORDER = ("theta1", "theta2", "omega1", "omega2")
 EVIDENCE_SEQUENCE = (
@@ -152,6 +154,74 @@ PHASE_B_REFINEMENT_LIMITS = {
     "cumulative_log_absolute": 5.0e-4,
     "final_diagnostic_per_second": 5.0e-4,
 }
+
+PHASE_C_DURATION_SECONDS = 640.0
+PHASE_C_QR_INTERVAL_SECONDS = 0.25
+PHASE_C_CHECKPOINTS_SECONDS = (
+    80.0,
+    160.0,
+    240.0,
+    320.0,
+    400.0,
+    480.0,
+    560.0,
+    640.0,
+)
+PHASE_C_LATE_WINDOW_START_SECONDS = 560.0
+PHASE_C_DECORRELATION_DISTANCE = 1.0
+PHASE_C_DECORRELATION_DEADLINE_SECONDS = 80.0
+
+# The Experiment 009 -> 010 compatibility limits are inherited unchanged.
+PHASE_C_MAX_CHANGE_480_TO_560 = 0.08
+PHASE_C_MAX_CHANGE_560_TO_640 = 0.05
+PHASE_C_MAX_WITHIN_LATE_RANGE = 0.05
+PHASE_C_MAX_FINAL_BETWEEN_RANGE = 0.05
+PHASE_C_MAX_FINAL_BETWEEN_SAMPLE_STD = 0.025
+PHASE_C_MAX_ENSEMBLE_MEAN_CHANGE_560_TO_640 = 0.04
+PHASE_C_MAX_LATE_WINDOW_BETWEEN_RANGE = 0.07
+
+# The separate, symmetric EL/canonical descriptive compatibility rule.
+PHASE_C_CROSS_MAX_MEAN_DISPLACEMENT = 0.05
+PHASE_C_CROSS_MAX_COMBINED_RANGE = 0.07
+PHASE_C_CROSS_MAX_COMBINED_SAMPLE_STD = 0.025
+PHASE_C_CROSS_MAX_LATE_DRIFT_DIFFERENCE = 0.04
+
+PHASE_C_EL_SHADOW_SPECTRA = {
+    "baseline": {
+        "560s": np.array(
+            [0.9709494258667554, 0.008732086581559464,
+             -0.005885748729879787, -0.9747214220438583]
+        ),
+        "640s": np.array(
+            [0.9778962104586896, 0.010174940627774593,
+             -0.00732853603361234, -0.9814938733605064]
+        ),
+    },
+    "strict": {
+        "560s": np.array(
+            [0.9537961850078933, 0.003868905587555358,
+             -0.002601190064398811, -0.9562595788708468]
+        ),
+        "640s": np.array(
+            [0.9776540877769582, 0.009206594746544103,
+             -0.006745952338554654, -0.9810576157103869]
+        ),
+    },
+    "half_step": {
+        "560s": np.array(
+            [0.9906550449611532, 0.011072109870542605,
+             -0.007371903380013738, -0.9944023972256405]
+        ),
+        "640s": np.array(
+            [0.9942765464260072, 0.017439277518285386,
+             -0.015748260833789687, -0.9970454158402113]
+        ),
+    },
+}
+PHASE_C_EL_DESCRIPTIVE_HALF_WIDTH = np.array(
+    [0.023857902769064854, 0.006367167647742781,
+     0.008376357453775948, 0.024798036839540072]
+)
 
 
 @dataclass(frozen=True)
@@ -948,7 +1018,7 @@ def run_canonical_qr_primitive(
     duration: float = PHASE_B_DURATION_SECONDS,
     qr_interval: float = PHASE_B_QR_INTERVAL_SECONDS,
 ) -> dict[str, Any]:
-    """Run the short canonical full-matrix pullback-QR primitive."""
+    """Run the canonical full-matrix pullback-QR primitive for a fixed duration."""
 
     boundaries = experiment007.deterministic_cycle_times(duration, qr_interval)
     current_reference = el_to_canonical(INITIAL_EL_STATE)
@@ -1610,18 +1680,806 @@ def run_phase_b(output_dir: Path | None = None) -> dict[str, Any]:
     return summary
 
 
-def run_crosscheck() -> None:
-    """Deliberately refuse the future long-time spectrum calculation."""
+def phase_c_shadow_specs() -> dict[str, tuple[Any, float]]:
+    """Return the frozen three canonical numerical-shadow policies."""
 
-    raise NotImplementedError(
-        "Experiment 011 Phase B does not implement the long-time canonical "
-        "Hamiltonian spectrum cross-check."
+    return {
+        "baseline": (experiment007.SOLVER_POLICY, BASELINE_MAX_STEP),
+        "strict": (experiment007.STRICTER_POLICY, BASELINE_MAX_STEP),
+        "half_step": (experiment007.SOLVER_POLICY, REFINED_MAX_STEP),
+    }
+
+
+def phase_c_spectrum_at_time(run: dict[str, Any], time_value: float) -> np.ndarray:
+    """Return one cumulative fixed-column canonical diagnostic at a QR event."""
+
+    cycle_index = int(round(time_value / PHASE_C_QR_INTERVAL_SECONDS)) - 1
+    cycle = run["cycles"][cycle_index]
+    if not math.isclose(
+        float(cycle["end_time_seconds"]), time_value, rel_tol=0.0, abs_tol=1.0e-12
+    ):
+        raise ValueError(f"No canonical QR checkpoint at {time_value} seconds.")
+    return np.asarray(
+        cycle["cumulative_finite_time_diagnostic_per_second"], dtype=float
     )
+
+
+def phase_c_reference_decorrelation(
+    runs: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Establish decorrelation of independently integrated physical shadows."""
+
+    names = list(runs)
+    common_time = np.asarray(runs[names[0]]["_reference_time"], dtype=float)
+    times_identical = all(
+        np.array_equal(common_time, np.asarray(runs[name]["_reference_time"]))
+        for name in names[1:]
+    )
+    pairs: dict[str, Any] = {}
+    series: dict[str, np.ndarray] = {}
+    scaling = candidate_a_scaling_matrix()
+    for first_name, second_name in combinations(names, 2):
+        pair_name = f"{first_name}_vs_{second_name}"
+        difference = _wrapped_el_difference(
+            np.asarray(runs[first_name]["_reference_as_el"], dtype=float),
+            np.asarray(runs[second_name]["_reference_as_el"], dtype=float),
+        )
+        distances = np.linalg.norm(difference @ scaling.T, axis=1)
+        crossing_indices = np.flatnonzero(
+            distances >= PHASE_C_DECORRELATION_DISTANCE
+        )
+        first_crossing = (
+            float(common_time[int(crossing_indices[0])])
+            if len(crossing_indices)
+            else None
+        )
+        late = distances[
+            common_time >= PHASE_C_DECORRELATION_DEADLINE_SECONDS - 1.0e-13
+        ]
+        series[pair_name] = distances
+        pairs[pair_name] = {
+            "first_threshold_crossing_seconds": first_crossing,
+            "crossed_by_deadline": bool(
+                first_crossing is not None
+                and first_crossing <= PHASE_C_DECORRELATION_DEADLINE_SECONDS
+            ),
+            "final_candidate_a_distance": float(distances[-1]),
+            "median_candidate_a_distance_after_deadline": float(np.median(late)),
+            "maximum_candidate_a_distance": float(np.max(distances)),
+        }
+    checks = {
+        "reference_sample_times_identical": times_identical,
+        "all_pairs_decorrelated_by_80_seconds": all(
+            pair["crossed_by_deadline"] for pair in pairs.values()
+        ),
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "distance_threshold": PHASE_C_DECORRELATION_DISTANCE,
+        "deadline_seconds": PHASE_C_DECORRELATION_DEADLINE_SECONDS,
+        "pairs": pairs,
+        "_time": common_time,
+        "_distance_series": series,
+    }
+
+
+def phase_c_within_shadow_analysis(run: dict[str, Any]) -> dict[str, Any]:
+    """Apply the frozen Experiment 010 settling limits to one canonical run."""
+
+    checkpoints = {
+        f"{int(time_value)}s": phase_c_spectrum_at_time(run, time_value)
+        for time_value in PHASE_C_CHECKPOINTS_SECONDS
+    }
+    change_480_to_560 = np.abs(checkpoints["560s"] - checkpoints["480s"])
+    change_560_to_640 = np.abs(checkpoints["640s"] - checkpoints["560s"])
+    late_spectra = np.asarray(
+        [
+            cycle["cumulative_finite_time_diagnostic_per_second"]
+            for cycle in run["cycles"]
+            if cycle["end_time_seconds"]
+            >= PHASE_C_LATE_WINDOW_START_SECONDS - 1.0e-13
+        ],
+        dtype=float,
+    )
+    late_ranges = np.ptp(late_spectra, axis=0)
+    checks = {
+        "480_to_560_change_within_0.08_per_second": bool(
+            np.max(change_480_to_560) <= PHASE_C_MAX_CHANGE_480_TO_560
+        ),
+        "560_to_640_change_within_0.05_per_second": bool(
+            np.max(change_560_to_640) <= PHASE_C_MAX_CHANGE_560_TO_640
+        ),
+        "late_component_ranges_within_0.05_per_second": bool(
+            np.all(late_ranges <= PHASE_C_MAX_WITHIN_LATE_RANGE)
+        ),
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "checkpoint_spectra_per_second": checkpoints,
+        "component_change_480_to_560_per_second": change_480_to_560,
+        "maximum_change_480_to_560_per_second": float(
+            np.max(change_480_to_560)
+        ),
+        "component_change_560_to_640_per_second": change_560_to_640,
+        "maximum_change_560_to_640_per_second": float(
+            np.max(change_560_to_640)
+        ),
+        "late_component_ranges_per_second": late_ranges,
+        "maximum_late_component_range_per_second": float(np.max(late_ranges)),
+        "hamiltonian_diagnostics": {
+            key: experiment007.hamiltonian_structure_diagnostics(value)
+            for key, value in checkpoints.items()
+        },
+    }
+
+
+def phase_c_between_shadow_analysis(
+    runs: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    """Apply the frozen Experiment 010 ensemble limits to canonical shadows."""
+
+    checkpoint_statistics: dict[str, Any] = {}
+    ensemble_means: dict[str, np.ndarray] = {}
+    for time_value in PHASE_C_CHECKPOINTS_SECONDS:
+        key = f"{int(time_value)}s"
+        values = np.asarray(
+            [phase_c_spectrum_at_time(run, time_value) for run in runs.values()]
+        )
+        mean = np.mean(values, axis=0)
+        sample_std = np.std(values, axis=0, ddof=1)
+        component_range = np.ptp(values, axis=0)
+        ensemble_means[key] = mean
+        checkpoint_statistics[key] = {
+            "ensemble_mean_per_second": mean,
+            "sample_standard_deviation_per_second": sample_std,
+            "component_range_per_second": component_range,
+            "maximum_component_range_per_second": float(np.max(component_range)),
+            "maximum_sample_standard_deviation_per_second": float(
+                np.max(sample_std)
+            ),
+            "ensemble_mean_hamiltonian_diagnostics": (
+                experiment007.hamiltonian_structure_diagnostics(mean)
+            ),
+        }
+
+    common_end_times = np.asarray(
+        [cycle["end_time_seconds"] for cycle in next(iter(runs.values()))["cycles"]]
+    )
+    late_mask = common_end_times >= PHASE_C_LATE_WINDOW_START_SECONDS - 1.0e-13
+    late_values = np.asarray([run["_diagnostic"][late_mask] for run in runs.values()])
+    late_ranges = np.ptp(late_values, axis=0)
+    maximum_late_range = float(np.max(late_ranges))
+    mean_change = np.abs(ensemble_means["640s"] - ensemble_means["560s"])
+    final_values = np.asarray(
+        [phase_c_spectrum_at_time(run, 640.0) for run in runs.values()]
+    )
+    final_ranges = np.ptp(final_values, axis=0)
+    final_stds = np.std(final_values, axis=0, ddof=1)
+    per_shadow_late_changes = np.asarray(
+        [
+            np.abs(
+                phase_c_spectrum_at_time(run, 640.0)
+                - phase_c_spectrum_at_time(run, 560.0)
+            )
+            for run in runs.values()
+        ]
+    )
+    uncertainty = np.maximum.reduce(
+        [final_stds, final_ranges / 2.0, np.max(per_shadow_late_changes, axis=0)]
+    )
+    checks = {
+        "final_component_ranges_within_0.05_per_second": bool(
+            np.all(final_ranges <= PHASE_C_MAX_FINAL_BETWEEN_RANGE)
+        ),
+        "final_sample_standard_deviations_within_0.025_per_second": bool(
+            np.all(final_stds <= PHASE_C_MAX_FINAL_BETWEEN_SAMPLE_STD)
+        ),
+        "ensemble_mean_change_560_to_640_within_0.04_per_second": bool(
+            np.max(mean_change) <= PHASE_C_MAX_ENSEMBLE_MEAN_CHANGE_560_TO_640
+        ),
+        "late_window_between_range_within_0.07_per_second": bool(
+            maximum_late_range <= PHASE_C_MAX_LATE_WINDOW_BETWEEN_RANGE
+        ),
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "checkpoint_statistics": checkpoint_statistics,
+        "ensemble_mean_component_change_560_to_640_per_second": mean_change,
+        "maximum_ensemble_mean_change_560_to_640_per_second": float(
+            np.max(mean_change)
+        ),
+        "late_window_component_ranges_per_second": np.max(late_ranges, axis=0),
+        "maximum_late_window_between_range_per_second": maximum_late_range,
+        "final_descriptive_uncertainty_half_width_per_second": uncertainty,
+        "uncertainty_definition": (
+            "componentwise maximum of final sample standard deviation, half final "
+            "range, and largest absolute per-shadow 560-to-640 change"
+        ),
+        "_late_times": common_end_times[late_mask],
+        "_late_ranges": late_ranges,
+    }
+
+
+def phase_c_el_evidence() -> dict[str, Any]:
+    """Reconstruct the committed Experiment 010 terminal comparison evidence."""
+
+    values_560 = np.asarray(
+        [item["560s"] for item in PHASE_C_EL_SHADOW_SPECTRA.values()]
+    )
+    values_640 = np.asarray(
+        [item["640s"] for item in PHASE_C_EL_SHADOW_SPECTRA.values()]
+    )
+    mean_560 = np.mean(values_560, axis=0)
+    mean_640 = np.mean(values_640, axis=0)
+    return {
+        "internally_accepted": True,
+        "provenance": (
+            "Experiment 010 README and generated summary.json; values verified "
+            "before the Phase C canonical runs"
+        ),
+        "shadow_values_560_per_second": values_560,
+        "shadow_values_640_per_second": values_640,
+        "ensemble_mean_560_per_second": mean_560,
+        "ensemble_mean_640_per_second": mean_640,
+        "ensemble_mean_change_560_to_640_per_second": mean_640 - mean_560,
+        "sample_standard_deviation_640_per_second": np.std(
+            values_640, axis=0, ddof=1
+        ),
+        "component_range_640_per_second": np.ptp(values_640, axis=0),
+        "descriptive_uncertainty_half_width_per_second": (
+            PHASE_C_EL_DESCRIPTIVE_HALF_WIDTH
+        ),
+    }
+
+
+def phase_c_cross_formulation_analysis(
+    *,
+    canonical_runs: dict[str, dict[str, Any]],
+    canonical_between: dict[str, Any],
+    canonical_internal_accepted: bool,
+) -> dict[str, Any]:
+    """Apply the frozen symmetric descriptive EL/canonical compatibility rule."""
+
+    el = phase_c_el_evidence()
+    canonical_560 = np.asarray(
+        [phase_c_spectrum_at_time(run, 560.0) for run in canonical_runs.values()]
+    )
+    canonical_640 = np.asarray(
+        [phase_c_spectrum_at_time(run, 640.0) for run in canonical_runs.values()]
+    )
+    canonical_mean_560 = np.mean(canonical_560, axis=0)
+    canonical_mean_640 = np.mean(canonical_640, axis=0)
+    canonical_width = np.asarray(
+        canonical_between["final_descriptive_uncertainty_half_width_per_second"]
+    )
+    el_mean_560 = np.asarray(el["ensemble_mean_560_per_second"])
+    el_mean_640 = np.asarray(el["ensemble_mean_640_per_second"])
+    mean_displacement = np.abs(canonical_mean_640 - el_mean_640)
+    envelope_sum = canonical_width + PHASE_C_EL_DESCRIPTIVE_HALF_WIDTH
+    combined_terminal = np.concatenate(
+        [np.asarray(el["shadow_values_640_per_second"]), canonical_640], axis=0
+    )
+    combined_range = np.ptp(combined_terminal, axis=0)
+    combined_std = np.std(combined_terminal, axis=0, ddof=1)
+    canonical_drift = canonical_mean_640 - canonical_mean_560
+    el_drift = el_mean_640 - el_mean_560
+    drift_difference = np.abs(canonical_drift - el_drift)
+    evaluable = bool(canonical_internal_accepted and el["internally_accepted"])
+    checks = {
+        "both_formulation_ensembles_internally_accepted": evaluable,
+        "descriptive_envelopes_overlap_componentwise": bool(
+            np.all(mean_displacement <= envelope_sum)
+        ),
+        "terminal_mean_displacement_within_0.05_per_second": bool(
+            np.all(mean_displacement <= PHASE_C_CROSS_MAX_MEAN_DISPLACEMENT)
+        ),
+        "combined_six_shadow_range_within_0.07_per_second": bool(
+            np.all(combined_range <= PHASE_C_CROSS_MAX_COMBINED_RANGE)
+        ),
+        "combined_six_shadow_sample_std_within_0.025_per_second": bool(
+            np.all(combined_std <= PHASE_C_CROSS_MAX_COMBINED_SAMPLE_STD)
+        ),
+        "late_mean_drift_difference_within_0.04_per_second": bool(
+            np.all(drift_difference <= PHASE_C_CROSS_MAX_LATE_DRIFT_DIFFERENCE)
+        ),
+    }
+    accepted = evaluable and all(checks.values())
+    verdict = (
+        "accepted_descriptive_cross_formulation_compatibility"
+        if accepted
+        else (
+            "rejected_descriptive_cross_formulation_compatibility"
+            if evaluable
+            else "unresolved_cross_formulation_comparison"
+        )
+    )
+    return {
+        "accepted": accepted,
+        "evaluable": evaluable,
+        "verdict": verdict,
+        "checks": checks,
+        "canonical_ensemble_mean_560_per_second": canonical_mean_560,
+        "canonical_ensemble_mean_640_per_second": canonical_mean_640,
+        "el_ensemble_mean_560_per_second": el_mean_560,
+        "el_ensemble_mean_640_per_second": el_mean_640,
+        "terminal_mean_absolute_displacement_per_second": mean_displacement,
+        "descriptive_envelope_sum_per_second": envelope_sum,
+        "terminal_displacement_to_envelope_sum_ratio": np.divide(
+            mean_displacement,
+            envelope_sum,
+            out=np.zeros_like(mean_displacement),
+            where=envelope_sum > 0.0,
+        ),
+        "combined_six_shadow_component_range_per_second": combined_range,
+        "combined_six_shadow_sample_standard_deviation_per_second": combined_std,
+        "canonical_ensemble_mean_change_560_to_640_per_second": canonical_drift,
+        "el_ensemble_mean_change_560_to_640_per_second": el_drift,
+        "late_mean_drift_absolute_difference_per_second": drift_difference,
+        "el_evidence": el,
+        "criterion_role": (
+            "symmetric descriptive numerical compatibility; not a confidence "
+            "interval or formal hypothesis test"
+        ),
+    }
+
+
+def phase_c_public_run_summary(run: dict[str, Any]) -> dict[str, Any]:
+    """Keep provenance and extrema while excluding long private arrays/cycles."""
+
+    return {
+        key: value
+        for key, value in run.items()
+        if not key.startswith("_") and key != "cycles"
+    }
+
+
+def phase_c_numerical_extrema(runs: dict[str, dict[str, Any]]) -> dict[str, float]:
+    """Summarize inherited Phase B numerical guards over all Phase C cycles."""
+
+    return {
+        "maximum_normalized_hamiltonian_drift": max(
+            run["maximum_normalized_reference_energy_drift"] for run in runs.values()
+        ),
+        "maximum_pullback_factor_condition_number": max(
+            run["maximum_pullback_factor_condition_number"] for run in runs.values()
+        ),
+        "minimum_pullback_factor_singular_value": min(
+            run["minimum_pullback_factor_singular_value"] for run in runs.values()
+        ),
+        "maximum_pre_qr_condition_number": max(
+            run["maximum_pre_qr_condition_number"] for run in runs.values()
+        ),
+        "minimum_positive_r_diagonal": min(
+            run["minimum_r_diagonal"] for run in runs.values()
+        ),
+        "maximum_q_orthonormality_error": max(
+            run["maximum_q_orthonormality_error"] for run in runs.values()
+        ),
+        "maximum_scaled_reconstruction_relative_error": max(
+            run["maximum_scaled_reconstruction_relative_error"]
+            for run in runs.values()
+        ),
+        "maximum_canonical_reconstruction_relative_error": max(
+            run["maximum_coordinate_reconstruction_relative_error"]
+            for run in runs.values()
+        ),
+        "maximum_physical_reconstruction_relative_error": max(
+            run["maximum_physical_reconstruction_relative_error"]
+            for run in runs.values()
+        ),
+        "maximum_post_pullback_orthonormality_error": max(
+            run["maximum_post_pullback_orthonormality_error"]
+            for run in runs.values()
+        ),
+        "maximum_reset_identity_error": max(
+            run["maximum_reset_identity_error"] for run in runs.values()
+        ),
+        "maximum_cumulative_bookkeeping_error": max(
+            run["cumulative_bookkeeping_error"] for run in runs.values()
+        ),
+        "maximum_diagnostic_bookkeeping_error": max(
+            run["diagnostic_bookkeeping_error"] for run in runs.values()
+        ),
+    }
+
+
+def phase_c_internal_verdict(
+    *,
+    numerical_validity_accepted: bool,
+    decorrelation_accepted: bool,
+    within: dict[str, dict[str, Any]],
+    between: dict[str, Any],
+) -> str:
+    if not numerical_validity_accepted or not decorrelation_accepted:
+        return "numerically_unresolved_canonical_compatibility"
+    if all(item["accepted"] for item in within.values()) and between["accepted"]:
+        return "accepted_canonical_internal_compatibility_at_640_seconds"
+    return "unresolved_or_incompatible_canonical_settling_at_640_seconds"
+
+
+def _phase_c_write_json(path: Path, value: Any) -> None:
+    path.write_text(
+        json.dumps(_public(value), indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def write_phase_c_output_bundle(
+    result: dict[str, Any], output_dir: Path
+) -> list[Path]:
+    """Write compact but reconstructible Phase C machine evidence."""
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = output_dir / "summary.json"
+    checkpoint_path = output_dir / "checkpoint_spectra.csv"
+    cumulative_path = output_dir / "cumulative_timeseries.csv"
+    reference_path = output_dir / "reference_pair_distances.csv"
+    cycles_path = output_dir / "cycles.json"
+    _phase_c_write_json(summary_path, result["summary"])
+
+    with checkpoint_path.open("w", newline="", encoding="utf-8") as handle:
+        fields = [
+            "shadow",
+            "checkpoint_seconds",
+            *[f"lambda_{index}_per_s" for index in range(1, 5)],
+            "sum_per_s",
+            "outer_pair_sum_per_s",
+            "inner_pair_sum_per_s",
+        ]
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for name, analysis in result["within"].items():
+            for checkpoint_key, spectrum in analysis[
+                "checkpoint_spectra_per_second"
+            ].items():
+                diagnostics = analysis["hamiltonian_diagnostics"][checkpoint_key]
+                row = {
+                    "shadow": name,
+                    "checkpoint_seconds": float(checkpoint_key.removesuffix("s")),
+                    "sum_per_s": diagnostics["sum_per_second"],
+                    "outer_pair_sum_per_s": diagnostics[
+                        "outer_pair_sum_per_second"
+                    ],
+                    "inner_pair_sum_per_s": diagnostics[
+                        "inner_pair_sum_per_second"
+                    ],
+                }
+                for index, value in enumerate(spectrum, start=1):
+                    row[f"lambda_{index}_per_s"] = value
+                writer.writerow(row)
+
+    with cumulative_path.open("w", newline="", encoding="utf-8") as handle:
+        fields = [
+            "shadow",
+            "time_seconds",
+            *[f"lambda_{index}_per_s" for index in range(1, 5)],
+        ]
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for name, run in result["runs"].items():
+            for cycle in run["cycles"]:
+                row = {"shadow": name, "time_seconds": cycle["end_time_seconds"]}
+                for index, value in enumerate(
+                    cycle["cumulative_finite_time_diagnostic_per_second"], start=1
+                ):
+                    row[f"lambda_{index}_per_s"] = value
+                writer.writerow(row)
+
+    decorrelation = result["decorrelation"]
+    with reference_path.open("w", newline="", encoding="utf-8") as handle:
+        fields = ["time_seconds", *decorrelation["_distance_series"].keys()]
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for index, time_value in enumerate(decorrelation["_time"]):
+            writer.writerow(
+                {"time_seconds": time_value}
+                | {
+                    name: values[index]
+                    for name, values in decorrelation["_distance_series"].items()
+                }
+            )
+
+    cycle_fields = (
+        "cycle_index",
+        "start_time_seconds",
+        "end_time_seconds",
+        "accepted",
+        "checks",
+        "cycle_log_growth",
+        "cumulative_log_growth",
+        "cumulative_finite_time_diagnostic_per_second",
+        "pullback_factor_condition_number",
+        "pullback_factor_minimum_singular_value",
+        "pre_qr_condition_number",
+        "r_diagonal",
+        "q_orthonormality_error",
+        "scaled_reconstruction_relative_error",
+        "coordinate_reconstruction_relative_error",
+        "physical_reconstruction_relative_error",
+        "post_pullback_orthonormality_error",
+        "reset_identity_error",
+        "segment_maximum_normalized_reference_energy_drift",
+        "solver_status",
+    )
+    _phase_c_write_json(
+        cycles_path,
+        {
+            "experiment": "011_hamiltonian_canonical_spectrum_crosscheck",
+            "phase": "C_long_time_canonical_ensemble",
+            "shadows": {
+                name: [
+                    {field: cycle[field] for field in cycle_fields}
+                    for cycle in run["cycles"]
+                ]
+                for name, run in result["runs"].items()
+            },
+        },
+    )
+    paths = [summary_path, checkpoint_path, cumulative_path, reference_path, cycles_path]
+    manifest_path = output_dir / "manifest.json"
+    manifest = {
+        "experiment": "011_hamiltonian_canonical_spectrum_crosscheck",
+        "phase": "C_long_time_canonical_ensemble",
+        "output_role": "frozen 640-second canonical/EL compatibility evidence",
+        "source": str(Path(__file__).relative_to(REPOSITORY_ROOT)),
+        "files": [
+            {
+                "path": path.name,
+                "bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            for path in paths
+        ],
+    }
+    _phase_c_write_json(manifest_path, manifest)
+    paths.append(manifest_path)
+    return paths
+
+
+def run_phase_c(output_dir: Path | None = None) -> dict[str, Any]:
+    """Execute the frozen three-shadow 640-second canonical protocol."""
+
+    dynamics = CanonicalDynamics()
+    runs = {
+        name: run_canonical_qr_primitive(
+            dynamics,
+            run_id=f"phase_c_canonical_{name}_640s",
+            duration=PHASE_C_DURATION_SECONDS,
+            qr_interval=PHASE_C_QR_INTERVAL_SECONDS,
+            policy=policy,
+            max_step=max_step,
+        )
+        for name, (policy, max_step) in phase_c_shadow_specs().items()
+    }
+    decorrelation = phase_c_reference_decorrelation(runs)
+    within = {
+        name: phase_c_within_shadow_analysis(run) for name, run in runs.items()
+    }
+    between = phase_c_between_shadow_analysis(runs)
+    numerical_validity_checks = {
+        f"{name}_numerically_valid": run["accepted"]
+        for name, run in runs.items()
+    }
+    numerical_validity_accepted = all(numerical_validity_checks.values())
+    internal_verdict = phase_c_internal_verdict(
+        numerical_validity_accepted=numerical_validity_accepted,
+        decorrelation_accepted=decorrelation["accepted"],
+        within=within,
+        between=between,
+    )
+    internal_accepted = internal_verdict.startswith("accepted_")
+    cross = phase_c_cross_formulation_analysis(
+        canonical_runs=runs,
+        canonical_between=between,
+        canonical_internal_accepted=internal_accepted,
+    )
+    final_stats = between["checkpoint_statistics"]["640s"]
+    if internal_accepted and cross["accepted"]:
+        overall_verdict = (
+            "accepted_canonical_internal_and_el_canonical_compatibility"
+        )
+        strongest_claim = (
+            "Independently integrated, decorrelated canonical Hamiltonian shadows "
+            "produce compatible 640-second cumulative pullback-QR estimates, and "
+            "the resulting canonical ensemble is descriptively compatible with "
+            "the independently obtained Euler-Lagrange ensemble under the frozen rule."
+        )
+        next_question = (
+            "Across a small, predeclared set of additional physical initial "
+            "conditions, does independent EL/canonical agreement persist without "
+            "retuning the numerical protocol?"
+        )
+    elif internal_accepted:
+        overall_verdict = "accepted_canonical_internal_but_cross_formulation_incompatible"
+        strongest_claim = (
+            "The canonical shadows satisfy their internal 640-second compatibility "
+            "criteria, but the canonical and Euler-Lagrange ensembles fail the "
+            "predeclared descriptive cross-formulation rule."
+        )
+        next_question = (
+            "Which long-time increment or finite-time metric effect accounts for "
+            "the accepted ensembles' cross-formulation displacement?"
+        )
+    else:
+        overall_verdict = "canonical_internal_compatibility_unresolved_at_640_seconds"
+        strongest_claim = (
+            "The frozen canonical protocol does not establish internal statistical "
+            "compatibility at 640 seconds, so the EL/canonical ensemble comparison "
+            "remains unresolved."
+        )
+        next_question = (
+            "Which failed canonical settling, decorrelation, or numerical-validity "
+            "condition must be understood before another cross-formulation test?"
+        )
+    summary = {
+        "experiment": "011_hamiltonian_canonical_spectrum_crosscheck",
+        "phase": "C_long_time_canonical_ensemble",
+        "overall_verdict": overall_verdict,
+        "canonical_internal_verdict": internal_verdict,
+        "canonical_internal_accepted": internal_accepted,
+        "el_canonical_cross_formulation_verdict": cross["verdict"],
+        "el_canonical_cross_formulation_accepted": cross["accepted"],
+        "question": (
+            "Under a predeclared long-time canonical shadow/refinement protocol, "
+            "do independently integrated cumulative canonical pullback-QR spectrum "
+            "estimates become compatible with one another and with Experiment 010?"
+        ),
+        "frozen_protocol": {
+            "shadow_count": 3,
+            "shadow_names": list(runs),
+            "duration_seconds": PHASE_C_DURATION_SECONDS,
+            "checkpoints_seconds": list(PHASE_C_CHECKPOINTS_SECONDS),
+            "late_window_seconds": [
+                PHASE_C_LATE_WINDOW_START_SECONDS,
+                PHASE_C_DURATION_SECONDS,
+            ],
+            "qr_interval_seconds": PHASE_C_QR_INTERVAL_SECONDS,
+            "canonical_state_order": CANONICAL_STATE_ORDER,
+            "physical_initial_state_degrees": experiment006.BASE_STATE_DEGREES,
+            "metric": "A(z)=S D(Phi)(z); QR of A(z)Y",
+            "qr_sign": "positive R diagonal; no tangent-column sorting",
+            "shadow_policies": {
+                name: experiment006.policy_dict(policy)
+                | {"max_step_seconds": max_step}
+                for name, (policy, max_step) in phase_c_shadow_specs().items()
+            },
+            "criteria_frozen_before_first_long_time_canonical_run": True,
+        },
+        "criteria": {
+            "canonical_internal": {
+                "maximum_change_480_to_560_per_second": (
+                    PHASE_C_MAX_CHANGE_480_TO_560
+                ),
+                "maximum_change_560_to_640_per_second": (
+                    PHASE_C_MAX_CHANGE_560_TO_640
+                ),
+                "maximum_within_late_range_per_second": (
+                    PHASE_C_MAX_WITHIN_LATE_RANGE
+                ),
+                "maximum_final_between_range_per_second": (
+                    PHASE_C_MAX_FINAL_BETWEEN_RANGE
+                ),
+                "maximum_final_between_sample_std_per_second": (
+                    PHASE_C_MAX_FINAL_BETWEEN_SAMPLE_STD
+                ),
+                "maximum_ensemble_mean_change_560_to_640_per_second": (
+                    PHASE_C_MAX_ENSEMBLE_MEAN_CHANGE_560_TO_640
+                ),
+                "maximum_late_window_between_range_per_second": (
+                    PHASE_C_MAX_LATE_WINDOW_BETWEEN_RANGE
+                ),
+                "decorrelation_distance": PHASE_C_DECORRELATION_DISTANCE,
+                "decorrelation_deadline_seconds": (
+                    PHASE_C_DECORRELATION_DEADLINE_SECONDS
+                ),
+                "phase_b_qr_and_reconstruction_limits_retained": True,
+            },
+            "el_canonical_cross_formulation": {
+                "descriptive_envelope_overlap_required": True,
+                "maximum_terminal_mean_displacement_per_second": (
+                    PHASE_C_CROSS_MAX_MEAN_DISPLACEMENT
+                ),
+                "maximum_combined_six_shadow_range_per_second": (
+                    PHASE_C_CROSS_MAX_COMBINED_RANGE
+                ),
+                "maximum_combined_six_shadow_sample_std_per_second": (
+                    PHASE_C_CROSS_MAX_COMBINED_SAMPLE_STD
+                ),
+                "maximum_late_mean_drift_difference_per_second": (
+                    PHASE_C_CROSS_MAX_LATE_DRIFT_DIFFERENCE
+                ),
+                "interpretation": (
+                    "symmetric descriptive compatibility, not confidence intervals "
+                    "or a formal hypothesis test"
+                ),
+            },
+        },
+        "shadow_runs": {
+            name: phase_c_public_run_summary(run) for name, run in runs.items()
+        },
+        "reference_decorrelation": decorrelation,
+        "within_shadow": within,
+        "between_shadow": between,
+        "canonical_ensemble_spectrum_estimate_per_second": final_stats[
+            "ensemble_mean_per_second"
+        ],
+        "canonical_descriptive_uncertainty_half_width_per_second": between[
+            "final_descriptive_uncertainty_half_width_per_second"
+        ],
+        "canonical_ensemble_hamiltonian_diagnostics": (
+            experiment007.hamiltonian_structure_diagnostics(
+                np.asarray(final_stats["ensemble_mean_per_second"])
+            )
+        ),
+        "el_canonical_cross_formulation": cross,
+        "numerical_validity_checks": numerical_validity_checks,
+        "numerical_validity_accepted": numerical_validity_accepted,
+        "numerical_extrema": phase_c_numerical_extrema(runs),
+        "strongest_claim": strongest_claim,
+        "claim_boundary": (
+            "One 640-second, three-policy canonical ensemble and its descriptive "
+            "comparison with the committed Experiment 010 EL ensemble only; not an "
+            "infinite-time proof, universal spectrum, or chaos classification."
+        ),
+        "next_question": next_question,
+    }
+    result = {
+        "summary": summary,
+        "runs": runs,
+        "decorrelation": decorrelation,
+        "within": within,
+        "between": between,
+        "cross": cross,
+    }
+    if output_dir is not None:
+        write_phase_c_output_bundle(result, output_dir)
+    return result
+
+
+def assert_phase_c_self_check(result: dict[str, Any]) -> None:
+    """Check consistency without requiring a scientifically positive verdict."""
+
+    summary = result["summary"]
+    expected_cycles = int(
+        round(PHASE_C_DURATION_SECONDS / PHASE_C_QR_INTERVAL_SECONDS)
+    )
+    for run in result["runs"].values():
+        if run["cycle_count"] != expected_cycles:
+            raise AssertionError("Phase C cycle count is incomplete.")
+        np.testing.assert_allclose(
+            np.cumsum(run["_cycle_logs"], axis=0),
+            run["_cumulative_logs"],
+            rtol=0.0,
+            atol=PHASE_B_BOOKKEEPING_LIMIT,
+        )
+        if not np.all(np.isfinite(run["_diagnostic"])):
+            raise AssertionError("Phase C cumulative diagnostics are non-finite.")
+    recomputed_internal = phase_c_internal_verdict(
+        numerical_validity_accepted=summary["numerical_validity_accepted"],
+        decorrelation_accepted=result["decorrelation"]["accepted"],
+        within=result["within"],
+        between=result["between"],
+    )
+    if recomputed_internal != summary["canonical_internal_verdict"]:
+        raise AssertionError("Phase C internal verdict bookkeeping changed.")
+    if result["cross"]["verdict"] != summary[
+        "el_canonical_cross_formulation_verdict"
+    ]:
+        raise AssertionError("Phase C cross-formulation verdict bookkeeping changed.")
+
+
+def run_crosscheck(output_dir: Path | None = None) -> dict[str, Any]:
+    """Run the Phase C long-time canonical spectrum cross-check."""
+
+    return run_phase_c(output_dir)
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--phase", choices=("a", "b"), default="a")
+    parser.add_argument("--phase", choices=("a", "b", "c"), default="a")
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -1637,15 +2495,27 @@ if __name__ == "__main__":
         output_dir = (
             REPOSITORY_ROOT
             / "development/chaos_content/outputs"
-            / (
-                "hamiltonian_canonical_phase_a/baseline"
-                if args.phase == "a"
-                else "hamiltonian_canonical_phase_b/short_qr"
-            )
+            / {
+                "a": "hamiltonian_canonical_phase_a/baseline",
+                "b": "hamiltonian_canonical_phase_b/short_qr",
+                "c": "hamiltonian_canonical_phase_c/640s_ensemble",
+            }[args.phase]
         )
     else:
         output_dir = args.output_dir
-    result = run_phase_a(output_dir) if args.phase == "a" else run_phase_b(output_dir)
-    if args.self_check:
-        assert_self_check(result)
-    print(json.dumps(_public(result), indent=2, sort_keys=True))
+    if args.phase == "a":
+        result = run_phase_a(output_dir)
+        if args.self_check:
+            assert_self_check(result)
+        printed = result
+    elif args.phase == "b":
+        result = run_phase_b(output_dir)
+        if args.self_check:
+            assert_self_check(result)
+        printed = result
+    else:
+        result = run_phase_c(output_dir)
+        if args.self_check:
+            assert_phase_c_self_check(result)
+        printed = result["summary"]
+    print(json.dumps(_public(printed), indent=2, sort_keys=True))

@@ -521,3 +521,26 @@ primitive are now locally validated. The remaining scientific question is
 long-time statistical compatibility across independently integrated canonical
 shadows and comparison with the accepted Experiment 010 EL ensemble. No such
 integration or Hamiltonian spectrum is present in Experiment 011 Phases A–B.
+
+## Phase C long-time pullback-metric evidence
+
+**Independently verified in Phase C:** the same state-dependent factor
+
+$$
+A(z)=S\,\mathrm{D}\Phi(z)
+$$
+
+remains finite and nonsingular across three independently integrated
+`640 s` canonical reference histories and `7680` aggregate QR events. The
+largest observed $\kappa_2(A)$ is `81.1977`, the minimum singular value is
+`0.0633315`, and the largest pre-QR scaled-basis condition number is `687.475`.
+The maximum post-reset pullback-orthonormality error is `1.29e-14`; the maximum
+canonical and mapped-physical reconstruction errors are `4.17e-15` and
+`1.07e-15` respectively. Thus no long-time singularity or conditioning failure
+of the accepted pullback metric is observed under this specific physical
+initial condition and numerical protocol.
+
+This is a reusable numerical fact about the tested pullback construction, not
+a proof that $A(z)$ is globally well-conditioned throughout canonical state
+space. Phase C's spectrum and formulation-compatibility conclusions remain in
+the Experiment 011 README rather than this mathematical inventory.
