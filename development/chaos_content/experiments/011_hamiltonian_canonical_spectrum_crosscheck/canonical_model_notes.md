@@ -2,9 +2,10 @@
 
 ## Purpose and evidence labels
 
-This inventory answers a narrow preparatory question: which repository assets
-can support an independent canonical Hamiltonian cross-check of Experiment
-010, and which parts still have to be validated before any spectrum run?
+This inventory began by answering a narrow preparatory question: which
+repository assets can support an independent canonical Hamiltonian cross-check
+of Experiment 010? It now also records which claims Phase A independently
+verified before any spectrum run.
 
 The labels used below are epistemic:
 
@@ -15,6 +16,8 @@ The labels used below are epistemic:
 3. **Requires independent verification** — a formula, derivative, coordinate
    map, or numerical policy that Experiment 011 must earn before using it for
    a spectrum comparison.
+4. **Independently verified in Phase A** — checked by the predeclared
+   Experiment 011 algebraic, finite-difference, or synchronized-flow tests.
 
 No historic implementation is promoted by this document.
 
@@ -38,6 +41,9 @@ No historic implementation is promoted by this document.
 | Poincaré experiment's own limitation statement | `development/chaos_content/experiments/001_hamiltonian_poincare/README.md:111-123` | Explicitly un-cross-validated prior work |
 | Accepted EL target parameters and local chart constants | `development/chaos_content/experiments/006_variational_dynamics_validation/variational_dynamics_validation.py:47-63` | Existing accepted Lyapunov-strand fixture retained through Experiment 010 |
 | Accepted EL spectrum target and uncertainty | `development/chaos_content/experiments/010_independent_shadow_640s_compatibility/README.md`, “Ensemble estimate and uncertainty” | Accepted only within Experiment 010's declared ensemble |
+| Experiment-local canonical state/tangent maps | `development/chaos_content/experiments/011_hamiltonian_canonical_spectrum_crosscheck/canonical_spectrum_crosscheck.py`, `el_to_canonical`, `canonical_to_el`, `forward_tangent_map`, `inverse_tangent_map` | Independently verified in Phase A; not production code |
+| Experiment-local canonical flow and Jacobian | same file, `CanonicalDynamics` | Derived from production $H$, independently checked in Phase A; not production code |
+| Phase A evidence | ignored `development/chaos_content/outputs/hamiltonian_canonical_phase_a/baseline/{summary.json,jacobian_validation.json,manifest.json}` | Reproducible Experiment 011 evidence; no QR or spectrum |
 
 ## Accepted production/model conventions
 
@@ -201,9 +207,10 @@ numeric conventions are split between:
   $\tfrac12p^{\mathsf T}B^{-1}p+V$ at
   `development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py:171-182`.
 
-Experiment 011 therefore needs an experiment-local numeric evaluator derived
-from the production symbolic $H$ and independently checked against both
-equivalent forms. That work is not present in this scaffold.
+Phase A supplies an experiment-local numeric evaluator derived from the
+production symbolic $H$ and checks it independently against both the EL
+mechanical energy and direct matrix evaluation. This does not create a new
+production energy API.
 
 ### Solver conventions
 
@@ -295,15 +302,19 @@ $$
 or $\nabla^2H$. Experiment 006's validated Jacobian is for the EL state and
 must not be relabelled as a canonical Jacobian.
 
-A future implementation may derive the canonical tangent operator from the
-production Hamiltonian, for example through the canonical symplectic matrix
-and a validated Hessian, or differentiate the validated canonical RHS by
-another defensible method. The choice and its independent directional finite-
-difference checks remain open.
+Phase A resolves this experiment-local gap without changing production. It
+constructs independent canonical symbols, substitutes the accepted parameters
+into production's $H$, forms $f_H=J_s\nabla H$, and differentiates that flow to
+obtain $D f_H=J_s\nabla^2H$ in `CanonicalDynamics`. The construction does not
+transform Experiment 006's EL Jacobian. Directional finite differences and the
+Hamiltonian-matrix identity independently validate the result over the fixed
+test set.
 
-## Formulas requiring independent verification
+## Scaffold-era validation requirements
 
-The following are mathematically motivated but not yet Experiment 011 facts:
+The scaffold listed the following mathematically motivated requirements. Phase
+A has now satisfied all five over its declared representative states and
+`0–1.29 s` interval; they are not claims about long-time QR.
 
 1. **Full state equivalence.** Validate both directions
    $(q,\omega)\leftrightarrow(q,p)$ at representative nonzero velocities and
@@ -325,7 +336,7 @@ The following are mathematically motivated but not yet Experiment 011 facts:
 5. **Hamiltonian structural identity.** Symplectic/Hamiltonian identities may
    be useful checks, but are not substitutes for RHS/Jacobian validation.
 
-## Unresolved choices that affect the future comparison
+## Scaffold-era choices affecting the future comparison
 
 - **Canonical QR geometry.** Raw Euclidean QR in
   $(\theta_1,\theta_2,p_{\theta_1},p_{\theta_2})$ mixes units. A future contract
@@ -360,7 +371,79 @@ No repository evidence blocks an independent canonical formulation in
 principle: the state, Legendre map, Hamiltonian, and Hamilton equations exist.
 The material gaps are validation work, not missing physical definitions.
 
-The two highest-risk gaps are the absent canonical Jacobian/Hessian and the
-absence of an already accepted, dimensionally coherent canonical QR metric
-that is comparable to Candidate A. Until those are resolved, a long-time
-canonical spectrum run would be premature.
+The scaffold identified the absent canonical Jacobian/Hessian and canonical QR
+metric as its highest-risk gaps. Phase A resolves the first and recommends a
+controlled metric contract for testing, but it does not validate QR. A
+long-time canonical spectrum run therefore remains premature.
+
+## Phase A independently verified results
+
+### State and energy
+
+The production state order, inertia matrix, forward Legendre map, Hamiltonian,
+parameters, and Hamilton-equation order in the earlier inventory were
+confirmed; no scaffold formula required correction. The experiment-local
+inverse map is $\omega=B(q)^{-1}p$. State round trips and tangent-map inverse
+products have maximum absolute error `4.44e-16`; directional finite
+differences of the forward state map have maximum relative error `4.46e-10`.
+The production forward momentum helper agrees exactly at all four
+representative states.
+
+The canonical initial state for the established physical case is
+$(179^\circ,179^\circ,0,0)$, with its angular entries converted to radians.
+Canonical $H$, EL mechanical energy, and direct
+$\tfrac12p^{\mathsf T}B^{-1}p+V$ agree within `1.21e-16` after normalization.
+
+### Flow, periodicity, and tangent operator
+
+Independent integer $2\pi$ shifts change canonical energy, flow, and Jacobian
+by at most `4.11e-14`. At the refined solver policy, the synchronized
+canonical reference converted to EL coordinates stays within `6.04e-15` in
+Candidate-A distance of the EL reference; the baseline maximum is `2.76e-14`.
+The two canonical policies differ by at most `8.55e-14`. Maximum normalized
+energy drift is `1.45e-15`.
+
+Across four fixed states and three fixed trajectory samples, three directions
+per state, the maximum central-difference Jacobian error at $h=10^{-6}$ is
+`1.01e-9` relative. The maximum
+$\lVert Df_H^{\mathsf T}J_s+J_sDf_H\rVert_\infty$ residual is numerically zero.
+The full $h=10^{-2}\ldots10^{-8}$ records expose the expected truncation-to-
+roundoff transition in `jacobian_validation.json`.
+
+For the refined pure-$\theta_2$ tangent, the canonical vector mapped back to
+EL coordinates agrees with direct EL tangent evolution to `1.42e-14` in
+relative Candidate-A norm and log growth, `2.84e-14` in scaled direction
+components, with minimum signed cosine `0.9999999999999996`.
+
+### Chosen future QR convention
+
+**Chosen experimental convention:** for the primary formulation comparison,
+pull Candidate A back through $\Phi:z\mapsto x$:
+
+$$
+G_z(z)=C(z)^{\mathsf T}S^{\mathsf T}S C(z),
+\qquad C(z)=\mathrm{D}\Phi(z),
+$$
+
+using factor $A(z)=SC(z)$. A future reset would evaluate
+$A(z_k)Y_k^-=Q_kR_k$ and set $Y_k^+=A(z_k)^{-1}Q_k$. This removes a metric
+change as a confound while retaining an independently Hamiltonian-derived
+flow and tangent operator. The tested factor has maximum condition number
+`12.40`, minimum absolute determinant `0.05097`, and reconstruction error
+`4.44e-16` over Phase A.
+
+**Remaining convention:** a fixed dimensionless canonical scaling is also
+mathematically defensible and should yield the same asymptotic exponents when
+the coordinate/norm change stays regular and bounded, but finite-time QR
+columns and estimates are metric-dependent. It is not the primary comparison
+because its characteristic momentum scales are conventional. No metric has
+been chosen to imitate the Experiment 010 numbers.
+
+### Current blocker and next gate
+
+No ambiguity or inconsistency now blocks the canonical state transformation,
+reference flow, or tangent primitive. The remaining gate is a tested full-
+matrix canonical QR primitive in the pullback geometry, including
+orthonormality, reconstruction, deterministic signs, accumulation, and a
+short-time comparison with the corresponding EL QR evolution. Phase A does
+not supply that primitive or any Hamiltonian spectrum.

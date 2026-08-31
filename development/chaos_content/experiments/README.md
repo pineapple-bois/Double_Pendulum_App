@@ -48,7 +48,8 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
-The living scientific position of the Lyapunov strand through Experiment 010,
+The living scientific position of the Lyapunov strand through Experiment 011
+Phase A,
 including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -130,8 +131,9 @@ original Experiment 005 evidence.
   and numerical-validity criteria pass, yielding a bounded numerical spectrum
   estimate for one initial condition and three deterministic policies.
 
-- `011_hamiltonian_canonical_spectrum_crosscheck/` - inventories production
-  canonical state, Hamiltonian, conversion, solver, and exploratory Poincaré
-  assets for an eventual independent formulation cross-check of Experiment
-  010. Status: scaffolded/in preparation; no canonical tangent dynamics, QR,
-  or Hamiltonian spectrum has been implemented or run.
+- `011_hamiltonian_canonical_spectrum_crosscheck/` - preserves its source
+  inventory, then derives the canonical reference and tangent flow directly
+  from the repository Hamiltonian and validates state/tangent maps, energy,
+  periodicity, short EL/canonical reference agreement, and the canonical
+  Jacobian. Status: Phase A accepted for the limited canonical reference/tangent
+  primitive claim; no canonical QR or Hamiltonian spectrum has been computed.
