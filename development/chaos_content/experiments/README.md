@@ -140,8 +140,8 @@ original Experiment 005 evidence.
   and descriptively compatible with Experiment 010's independent EL ensemble
   for one physical initial condition.
 
-- `012_initial_condition_spectrum_robustness/` - scaffolds the next bounded
+- `012_initial_condition_spectrum_robustness/` - preregisters the next bounded
   question: whether independent EL/canonical long-time spectrum agreement
-  persists across a small, predeclared set of additional physical initial
-  conditions without retuning the accepted protocol. Status: planned/scaffolded;
-  no final condition set, acceptance contract, runner, or numerical result.
+  persists across three geometry-selected conditions in the zero-initial-
+  velocity configuration slice without retuning the accepted protocol.
+  Status: protocol frozen and not executed; no runner or numerical result.
