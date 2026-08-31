@@ -49,8 +49,7 @@ directories unless a local README records a specific exception.
 ## Experiment Chronology
 
 The living scientific position of the Lyapunov strand through Experiment 011
-Phase A,
-including the next question currently earned, is recorded in
+Phase C, including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 evidence.
@@ -135,5 +134,14 @@ original Experiment 005 evidence.
   inventory, then derives the canonical reference and tangent flow directly
   from the repository Hamiltonian and validates state/tangent maps, energy,
   periodicity, short EL/canonical reference agreement, and the canonical
-  Jacobian. Status: Phase A accepted for the limited canonical reference/tangent
-  primitive claim; no canonical QR or Hamiltonian spectrum has been computed.
+  Jacobian. It then validates Candidate-A pullback QR and completes a frozen
+  three-shadow `640 s` canonical comparison. Status: Phases A–C accepted within
+  their declared boundaries; the canonical ensemble is internally compatible
+  and descriptively compatible with Experiment 010's independent EL ensemble
+  for one physical initial condition.
+
+- `012_initial_condition_spectrum_robustness/` - scaffolds the next bounded
+  question: whether independent EL/canonical long-time spectrum agreement
+  persists across a small, predeclared set of additional physical initial
+  conditions without retuning the accepted protocol. Status: planned/scaffolded;
+  no final condition set, acceptance contract, runner, or numerical result.
