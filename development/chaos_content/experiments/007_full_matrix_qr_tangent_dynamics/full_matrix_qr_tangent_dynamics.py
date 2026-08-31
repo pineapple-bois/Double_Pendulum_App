@@ -270,10 +270,41 @@ def run_qr_primitive(
     policy: Any = SOLVER_POLICY,
     max_step: float = MAX_STEP_SECONDS,
     initial_reference: np.ndarray | None = None,
+    initial_tangent_matrix: np.ndarray | None = None,
+    initial_cumulative_log_growth: np.ndarray | None = None,
+    start_time_seconds: float = 0.0,
+    completed_cycle_count: int = 0,
+    diagnostic_energy_baseline: float | None = None,
 ) -> dict[str, Any]:
-    """Run one fixed-policy full-matrix QR trajectory."""
+    """Run one fixed-policy full-matrix QR trajectory.
 
-    boundaries = deterministic_cycle_times(duration, qr_interval)
+    The default path retains the original Experiment 007 semantics.  The
+    optional boundary-state arguments resume a previously completed QR run;
+    in that mode the saved locally canonical reference and post-QR tangent
+    matrix are consumed without reconstruction.
+    """
+
+    if not np.isfinite(start_time_seconds) or start_time_seconds < 0.0:
+        raise ValueError("start_time_seconds must be finite and nonnegative.")
+    if not isinstance(completed_cycle_count, int) or completed_cycle_count < 0:
+        raise ValueError("completed_cycle_count must be a nonnegative integer.")
+    if not math.isclose(
+        completed_cycle_count * qr_interval,
+        start_time_seconds,
+        rel_tol=0.0,
+        abs_tol=1.0e-13,
+    ):
+        raise ValueError("Cycle count and elapsed time do not identify one QR boundary.")
+    continuation_requested = bool(
+        start_time_seconds > 0.0
+        or completed_cycle_count > 0
+        or initial_tangent_matrix is not None
+        or initial_cumulative_log_growth is not None
+        or diagnostic_energy_baseline is not None
+    )
+    if continuation_requested and initial_reference is None:
+        raise ValueError("A continuation requires an explicit terminal EL reference.")
+    boundaries = start_time_seconds + deterministic_cycle_times(duration, qr_interval)
     current_reference = np.array(
         experiment006.BASE_STATE_RADIANS
         if initial_reference is None
@@ -283,20 +314,51 @@ def run_qr_primitive(
     )
     if current_reference.shape != (4,) or not np.all(np.isfinite(current_reference)):
         raise ValueError("Initial EL reference must be one finite four-state.")
-    current_reference = experiment006.canonicalize_state_angles(current_reference)
+    if continuation_requested:
+        if np.any(current_reference[:2] <= -math.pi) or np.any(
+            current_reference[:2] > math.pi
+        ):
+            raise ValueError("Restart EL angles must already use the local principal chart.")
+    else:
+        current_reference = experiment006.canonicalize_state_angles(current_reference)
     initial_reference_state = np.array(current_reference, copy=True)
-    current_tangent = initial_physical_tangent_basis()
-    initial_energy = float(experiment006.simple_energy(current_reference))
-    cumulative_logs = np.zeros(4)
+    current_tangent = np.array(
+        initial_physical_tangent_basis()
+        if initial_tangent_matrix is None
+        else initial_tangent_matrix,
+        dtype=float,
+        copy=True,
+    )
+    if current_tangent.shape != (4, 4) or not np.all(np.isfinite(current_tangent)):
+        raise ValueError("Initial EL tangent matrix must be one finite 4x4 array.")
+    initial_tangent_state = np.array(current_tangent, copy=True)
+    initial_energy = float(
+        experiment006.simple_energy(current_reference)
+        if diagnostic_energy_baseline is None
+        else diagnostic_energy_baseline
+    )
+    if not np.isfinite(initial_energy):
+        raise ValueError("Diagnostic energy baseline must be finite.")
+    cumulative_logs = np.array(
+        np.zeros(4)
+        if initial_cumulative_log_growth is None
+        else initial_cumulative_log_growth,
+        dtype=float,
+        copy=True,
+    )
+    if cumulative_logs.shape != (4,) or not np.all(np.isfinite(cumulative_logs)):
+        raise ValueError("Initial cumulative log growth must be one finite four-vector.")
+    initial_cumulative_logs = np.array(cumulative_logs, copy=True)
     cycles: list[dict[str, Any]] = []
     reference_times: list[np.ndarray] = []
     reference_states: list[np.ndarray] = []
     reference_energy_drifts: list[np.ndarray] = []
     solver_statuses: list[dict[str, Any]] = []
 
-    for cycle_index, (start, end) in enumerate(
+    for local_cycle_index, (start, end) in enumerate(
         zip(boundaries[:-1], boundaries[1:]), start=1
     ):
+        cycle_index = completed_cycle_count + local_cycle_index
         reference_start = np.array(current_reference, copy=True)
         tangent_start = np.array(current_tangent, copy=True)
         augmented_start = pack_augmented_state(reference_start, tangent_start)
@@ -371,7 +433,7 @@ def run_qr_primitive(
         cycles.append(cycle)
 
         stored_reference = experiment006.canonicalize_state_angles(segment_reference)
-        if cycle_index > 1:
+        if local_cycle_index > 1:
             requested_time = requested_time[1:]
             stored_reference = stored_reference[1:]
             energy_drift = energy_drift[1:]
@@ -388,7 +450,9 @@ def run_qr_primitive(
     cycle_logs_array = np.asarray(
         [cycle["cycle_log_growth"] for cycle in cycles], dtype=float
     )
-    recomputed_cumulative = np.cumsum(cycle_logs_array, axis=0)
+    recomputed_cumulative = initial_cumulative_logs + np.cumsum(
+        cycle_logs_array, axis=0
+    )
     stored_cumulative = np.asarray(
         [cycle["cumulative_log_growth"] for cycle in cycles], dtype=float
     )
@@ -429,25 +493,35 @@ def run_qr_primitive(
             np.all(np.diff(all_reference_time) > 0.0)
         ),
         "global_output_complete": bool(
-            math.isclose(all_reference_time[0], 0.0)
-            and math.isclose(all_reference_time[-1], duration)
+            math.isclose(all_reference_time[0], start_time_seconds)
+            and math.isclose(all_reference_time[-1], boundaries[-1])
             and len(all_reference_time) == expected_output_count
         ),
     }
     return {
         "run_id": run_id,
         "accepted": all(bookkeeping_checks.values()),
-        "duration_seconds": duration,
+        "duration_seconds": float(boundaries[-1]),
+        "integration_span_seconds": duration,
+        "start_time_seconds": start_time_seconds,
+        "elapsed_time_seconds": float(boundaries[-1]),
         "qr_interval_seconds": qr_interval,
         "solver_policy": experiment006.policy_dict(policy),
         "max_step_seconds": max_step,
-        "cycle_count": len(cycles),
+        "cycle_count": completed_cycle_count + len(cycles),
+        "segment_cycle_count": len(cycles),
+        "completed_cycle_count_at_start": completed_cycle_count,
+        "continued_from_qr_boundary": continuation_requested,
         "initial_reference": initial_reference_state.tolist(),
-        "initial_tangent_basis": initial_physical_tangent_basis().tolist(),
+        "initial_tangent_basis": initial_tangent_state.tolist(),
+        "initial_cumulative_log_growth": initial_cumulative_logs.tolist(),
+        "diagnostic_energy_baseline_joules": initial_energy,
         "checks": bookkeeping_checks,
         "cycles": cycles,
         "final_cumulative_log_growth": stored_cumulative[-1].tolist(),
         "final_diagnostic_spectrum_per_second": stored_spectrum[-1].tolist(),
+        "terminal_reference_state": current_reference.tolist(),
+        "terminal_tangent_matrix_post_qr": current_tangent.tolist(),
         "diagnostic_spectrum_sum_per_second": float(np.sum(stored_spectrum[-1])),
         "maximum_normalized_reference_energy_drift": maximum_energy_drift,
         "maximum_q_orthonormality_error": max(
@@ -485,6 +559,8 @@ def run_qr_primitive(
         "_cycle_logs": cycle_logs_array,
         "_cumulative_logs": stored_cumulative,
         "_finite_time_spectrum": stored_spectrum,
+        "_terminal_reference_state": np.array(current_reference, copy=True),
+        "_terminal_tangent_matrix_post_qr": np.array(current_tangent, copy=True),
     }
 
 

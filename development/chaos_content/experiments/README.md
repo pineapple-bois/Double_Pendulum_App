@@ -48,8 +48,8 @@ directories unless a local README records a specific exception.
 
 ## Experiment Chronology
 
-The living scientific position of the Lyapunov strand through Experiment 011
-Phase C, including the next question currently earned, is recorded in
+The living scientific position of the Lyapunov strand through Experiment 012,
+including the next question currently earned, is recorded in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 evidence.
@@ -146,3 +146,11 @@ original Experiment 005 evidence.
   without demonstrated shadow independence; the early-decorrelated IC-1 and
   IC-3 ensembles remain unsettled at `640 s`. Status: full selected-set
   formulation robustness unresolved at the declared duration.
+
+- `013_restart_grade_qr_continuation/` - adds an explicit, provenance-bound
+  QR-boundary checkpoint schema and continuation inputs to the accepted EL and
+  canonical tangent-QR primitives. Status: Phase A accepted; lossless NPZ
+  serialization and short `0.5→1.0 s` split runs reproduce the corresponding
+  uninterrupted calculations with zero observed numerical difference for both
+  formulations. No long-time Lyapunov evidence or Experiment 012 settling
+  claim is added.

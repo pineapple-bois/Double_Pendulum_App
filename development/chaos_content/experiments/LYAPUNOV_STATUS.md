@@ -145,6 +145,13 @@ The following statements are supported by the experiment chain:
     numerical-shadow pairs reaches Candidate-A distance `1`; its accepted
     claim is therefore policy-stable formulation agreement without
     demonstrated shadow independence.
+16. Experiment 013 Phase A adds restart-grade QR-boundary state for both
+    formulations: locally rebased reference coordinates, post-QR tangent
+    matrix, cumulative logs, elapsed cycle bookkeeping, energy baseline, and
+    source/runtime provenance. Lossless serialization followed by a short
+    `0.5→1.0 s` resume reproduces uninterrupted EL and canonical cycle data
+    with zero observed numerical difference in the tested runtime. This is
+    infrastructure validation, not new long-time Lyapunov evidence.
 
 No finite-time scalar or vector reported by Experiments 004–009 was an
 accepted Lyapunov exponent or spectrum. Experiments 010 and 011 Phase C now
@@ -280,8 +287,8 @@ cross-formulation comparison. Experiment 012 has now tested the fixed
 three-condition design. Its limiting evidence is long-time ensemble settling
 at IC-1 and IC-3 rather than local QR validity or an observed EL/canonical
 mean displacement. A future continuation would require a separately frozen
-duration and checkpoint contract; Experiment 012 does not authorize it
-automatically.
+duration and acceptance contract; Experiment 013 Phase A now supplies the
+validated checkpoint mechanism but does not authorize that scientific run.
 
 ## Theoretical structure to test, not target
 
@@ -334,6 +341,8 @@ A plausible, evidence-dependent progression is:
   ↓
 012  three-condition protocol numerically valid; IC-2 limited agreement accepted,
      IC-1/IC-3 ensemble settling unresolved at 640 s
+  ↓
+013 Phase A  restart-grade EL/canonical QR-boundary continuation accepted
   ↓  only under a separately predeclared duration-continuation contract
 IC-1/IC-3 long-time settling question
   ↓  only if the selected-set formulation result becomes interpretable
