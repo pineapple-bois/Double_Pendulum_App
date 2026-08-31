@@ -3,11 +3,9 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 011 Phase C accepted both internal compatibility of a
-three-shadow canonical Hamiltonian ensemble and its predeclared descriptive
-compatibility with Experiment 010's independent EL ensemble at `640 s`. It
-records the current evidence boundary and the next question earned by that
-evidence.
+strand after Experiment 012 executed the frozen three-condition,
+zero-initial-velocity EL/canonical robustness protocol. It records the current
+evidence boundary and the next question earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -41,13 +39,14 @@ direct tangent formulation:
 | [009](009_independent_shadow_spectrum_compatibility/README.md) | **Established:** three independently integrated reference shadows decorrelate by `40 s`, remain numerically valid through `320 s`, and become substantially more compatible than at `80 s`. **Unresolved:** residual late-window fluctuation and final/late between-shadow spread remain marginally above the predeclared limits. | No statistically compatible spectrum is accepted at `320 s`; the result is neither accepted nor clearly incompatible. |
 | [010](010_independent_shadow_640s_compatibility/README.md) | **Established:** the unchanged three-shadow ensemble remains numerically valid through `640 s` and satisfies every predeclared within-shadow, final-spread, late-window, and ensemble-mean compatibility limit. | Acceptance supports one statistically compatible numerical Euler–Lagrange QR spectrum estimate for the declared initial condition and three deterministic policies; it is not universal or independently validated in canonical coordinates. |
 | [011 Phases A–C](011_hamiltonian_canonical_spectrum_crosscheck/README.md) | **Established:** Phase A validates the repository Hamiltonian, Legendre state/tangent maps, canonical reference flow, and independently Hamiltonian-derived Jacobian. Phase B validates state-dependent Candidate-A pullback QR and short-time EL equivalence. Phase C's three independently integrated canonical shadows satisfy the frozen `640 s` compatibility criteria, and the canonical ensemble satisfies the separate predeclared descriptive EL/canonical comparison rule. | The result supports one independently cross-formulated numerical spectrum estimate for the declared initial condition and deterministic policies. It is not an infinite-time proof, universal spectrum, or result over initial-condition space. |
+| [012](012_initial_condition_spectrum_robustness/README.md) | **Established:** all `18` frozen EL/canonical runs across three new zero-velocity conditions are numerically valid. IC-2 satisfies settling and same-IC formulation compatibility without demonstrating shadow independence. **Unresolved:** IC-1 and IC-3 decorrelate early but fail the `640 s` between-shadow settling limits. | The full selected-set formulation-robustness claim is unresolved. IC-2 is not classified as regular, and no result is generalized beyond the three selected conditions or to nonzero velocity. |
 
-Experiment 011 Phase C is the current boundary. It leaves Experiment 010's EL
-ensemble unchanged and supplies the earned independent canonical cross-check:
-both formulations now support descriptively compatible `640 s` cumulative QR
-ensembles for the one declared physical initial condition. The next question
-therefore moves from formulation validation to bounded physical-case
-generality.
+Experiment 012 is the current boundary. It leaves Experiments 010–011's
+accepted anchor unchanged and shows that the inherited machinery remains
+numerically valid at all three new conditions. It does not yet establish
+formulation robustness across the complete selected set because the two
+early-decorrelating ensembles have not satisfied the frozen long-time spread
+criteria.
 
 ## Established results
 
@@ -137,13 +136,24 @@ The following statements are supported by the experiment chain:
     displacement from the EL mean is `0.00485 s^-1`; all predeclared
     envelope-overlap, absolute-displacement, combined-six-shadow, and late-
     drift comparison checks pass.
+15. Experiment 012 executes `18` additional `640 s` runs and all `46,080` QR
+    cycles pass the declared validity guards. IC-1 and IC-3 reference shadows
+    decorrelate by `32.6 s` and `18.3 s`, respectively, but their final/late
+    between-shadow outer-component spread remains above the frozen limits in
+    both formulations. IC-2 satisfies both formulation settling contracts and
+    the same-IC EL/canonical rule to near machine precision, while none of its
+    numerical-shadow pairs reaches Candidate-A distance `1`; its accepted
+    claim is therefore policy-stable formulation agreement without
+    demonstrated shadow independence.
 
 No finite-time scalar or vector reported by Experiments 004–009 was an
 accepted Lyapunov exponent or spectrum. Experiments 010 and 011 Phase C now
 support independently formulated, descriptively compatible long-time
 numerical spectrum estimates within their matched three-shadow protocols.
-This remains a bounded numerical claim for one physical initial condition,
-not a universal spectrum for the double pendulum.
+Experiment 012 extends numerical-validity evidence to three additional states
+and accepts limited same-IC agreement at IC-2, but does not accept the full
+selected-set robustness claim. None of these results is a universal spectrum
+for the double pendulum.
 
 ## Current mathematical contract
 
@@ -221,8 +231,10 @@ The project has not established:
 - agreement between a one-vector tangent estimate and the leading QR estimate;
 - robustness to tangent-basis initialization;
 - a maximal Lyapunov exponent for the current reference trajectory;
-- whether the EL/canonical agreement persists for other predeclared physical
-  initial conditions; or
+- whether the early-decorrelated IC-1 and IC-3 ensembles settle under a
+  separately preregistered longer-duration continuation;
+- whether EL/canonical robustness holds across the complete Experiment 012
+  selected set once settling is resolved; or
 - any broader classification of an initial-condition region or the
   double-pendulum system as chaotic.
 
@@ -234,9 +246,10 @@ confidence interval.
 
 The next justified research question is:
 
-> Across a small, predeclared set of additional physical initial conditions,
-> does independent Euler–Lagrange/canonical spectrum agreement persist without
-> retuning the accepted numerical protocol?
+> Under a separately preregistered duration continuation of the unchanged
+> IC-1 and IC-3 numerical shadows, do their between-shadow cumulative-spectrum
+> spreads fall below the existing settling limits, or remain materially
+> unresolved?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -263,9 +276,12 @@ with a deterministic QR sign convention and accumulated logarithmic growth
 from the magnitudes of the diagonal entries of $R$. Experiment 011 Phase C
 retains $A(z)=S\,\mathrm{D}(z\mapsto x)$ and $Y^+=A(z)^{-1}Q$ through three
 independently decorrelated canonical shadows and accepts the resulting
-cross-formulation comparison. Testing another physical initial condition is
-now methodologically earned, but its cases and acceptance contract are not
-fixed by Experiment 011.
+cross-formulation comparison. Experiment 012 has now tested the fixed
+three-condition design. Its limiting evidence is long-time ensemble settling
+at IC-1 and IC-3 rather than local QR validity or an observed EL/canonical
+mean displacement. A future continuation would require a separately frozen
+duration and checkpoint contract; Experiment 012 does not authorize it
+automatically.
 
 ## Theoretical structure to test, not target
 
@@ -315,8 +331,13 @@ A plausible, evidence-dependent progression is:
 011 Phase B  canonical pullback-QR primitive and short EL equivalence accepted
   ↓
 011 Phase C  independent canonical ensemble and EL/canonical compatibility accepted
-  ↓  only under a separately predeclared multi-case contract
-contrasting initial conditions and carefully bounded chaos classification
+  ↓
+012  three-condition protocol numerically valid; IC-2 limited agreement accepted,
+     IC-1/IC-3 ensemble settling unresolved at 640 s
+  ↓  only under a separately predeclared duration-continuation contract
+IC-1/IC-3 long-time settling question
+  ↓  only if the selected-set formulation result becomes interpretable
+carefully bounded chaos classification
   ↓  only after an individual diagnostic is trusted
 state-space or parameter-space exploration
 ```

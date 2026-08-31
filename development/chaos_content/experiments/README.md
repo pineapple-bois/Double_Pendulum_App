@@ -140,8 +140,9 @@ original Experiment 005 evidence.
   and descriptively compatible with Experiment 010's independent EL ensemble
   for one physical initial condition.
 
-- `012_initial_condition_spectrum_robustness/` - preregisters the next bounded
-  question: whether independent EL/canonical long-time spectrum agreement
-  persists across three geometry-selected conditions in the zero-initial-
-  velocity configuration slice without retuning the accepted protocol.
-  Status: protocol frozen and not executed; no runner or numerical result.
+- `012_initial_condition_spectrum_robustness/` - executes the frozen
+  three-condition zero-initial-velocity EL/canonical robustness protocol. All
+  `18` runs are numerically valid. IC-2 has settled formulation agreement
+  without demonstrated shadow independence; the early-decorrelated IC-1 and
+  IC-3 ensembles remain unsettled at `640 s`. Status: full selected-set
+  formulation robustness unresolved at the declared duration.

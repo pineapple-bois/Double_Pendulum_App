@@ -1017,11 +1017,23 @@ def run_canonical_qr_primitive(
     max_step: float,
     duration: float = PHASE_B_DURATION_SECONDS,
     qr_interval: float = PHASE_B_QR_INTERVAL_SECONDS,
+    initial_el_state: Sequence[float] | None = None,
 ) -> dict[str, Any]:
     """Run the canonical full-matrix pullback-QR primitive for a fixed duration."""
 
     boundaries = experiment007.deterministic_cycle_times(duration, qr_interval)
-    current_reference = el_to_canonical(INITIAL_EL_STATE)
+    el_reference = np.asarray(
+        INITIAL_EL_STATE if initial_el_state is None else initial_el_state,
+        dtype=float,
+    )
+    if el_reference.shape != (4,) or not np.all(np.isfinite(el_reference)):
+        raise ValueError("Initial EL state must be one finite four-state.")
+    el_reference = experiment006.canonicalize_state_angles(el_reference)
+    current_reference = el_to_canonical(el_reference)
+    initial_canonical_reference = np.array(current_reference, copy=True)
+    initial_canonical_tangent = np.linalg.solve(
+        candidate_a_pullback_factor(current_reference), np.eye(4)
+    )
     current_tangent = np.linalg.solve(
         candidate_a_pullback_factor(current_reference), np.eye(4)
     )
@@ -1171,11 +1183,9 @@ def run_canonical_qr_primitive(
         "max_step_seconds": max_step,
         "checks": checks,
         "cycles": cycles,
-        "initial_canonical_reference": el_to_canonical(INITIAL_EL_STATE),
-        "initial_canonical_tangent_basis": np.linalg.solve(
-            candidate_a_pullback_factor(el_to_canonical(INITIAL_EL_STATE)),
-            np.eye(4),
-        ),
+        "initial_el_reference": el_reference,
+        "initial_canonical_reference": initial_canonical_reference,
+        "initial_canonical_tangent_basis": initial_canonical_tangent,
         "final_cumulative_log_growth": stored_cumulative[-1],
         "final_diagnostic_vector_per_second": stored_diagnostic[-1],
         "maximum_normalized_reference_energy_drift": float(

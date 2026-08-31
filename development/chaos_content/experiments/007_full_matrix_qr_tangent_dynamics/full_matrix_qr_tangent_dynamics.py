@@ -269,11 +269,22 @@ def run_qr_primitive(
     qr_interval: float = QR_INTERVAL_SECONDS,
     policy: Any = SOLVER_POLICY,
     max_step: float = MAX_STEP_SECONDS,
+    initial_reference: np.ndarray | None = None,
 ) -> dict[str, Any]:
     """Run one fixed-policy full-matrix QR trajectory."""
 
     boundaries = deterministic_cycle_times(duration, qr_interval)
-    current_reference = np.array(experiment006.BASE_STATE_RADIANS, copy=True)
+    current_reference = np.array(
+        experiment006.BASE_STATE_RADIANS
+        if initial_reference is None
+        else initial_reference,
+        dtype=float,
+        copy=True,
+    )
+    if current_reference.shape != (4,) or not np.all(np.isfinite(current_reference)):
+        raise ValueError("Initial EL reference must be one finite four-state.")
+    current_reference = experiment006.canonicalize_state_angles(current_reference)
+    initial_reference_state = np.array(current_reference, copy=True)
     current_tangent = initial_physical_tangent_basis()
     initial_energy = float(experiment006.simple_energy(current_reference))
     cumulative_logs = np.zeros(4)
@@ -431,6 +442,8 @@ def run_qr_primitive(
         "solver_policy": experiment006.policy_dict(policy),
         "max_step_seconds": max_step,
         "cycle_count": len(cycles),
+        "initial_reference": initial_reference_state.tolist(),
+        "initial_tangent_basis": initial_physical_tangent_basis().tolist(),
         "checks": bookkeeping_checks,
         "cycles": cycles,
         "final_cumulative_log_growth": stored_cumulative[-1].tolist(),
