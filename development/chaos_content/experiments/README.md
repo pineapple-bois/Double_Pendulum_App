@@ -154,3 +154,11 @@ original Experiment 005 evidence.
   uninterrupted calculations with zero observed numerical difference for both
   formulations. No long-time Lyapunov evidence or Experiment 012 settling
   claim is added.
+
+- `014_unsettled_shadow_duration_convergence/` - executes a frozen, from-zero
+  EL-only `1280 s` duration extension for Experiment 012's outcome-conditioned
+  IC-1 and IC-3 ensembles, with restart-grade evidence at every analysis
+  checkpoint. Status: executed; all six runs are numerically valid and
+  decorrelated. IC-1 satisfies every settling limit, while IC-3 retains an
+  outer-component final range of `0.08894 s^-1` and remains unsettled. The
+  targeted long-time investigation therefore closes with only IC-1 accepted.

@@ -215,6 +215,26 @@ def qr_reset(tangent_matrix_pre: np.ndarray) -> dict[str, Any]:
     }
 
 
+def replay_cumulative_log_growth(
+    initial_cumulative_log_growth: np.ndarray,
+    cycle_log_growth: np.ndarray,
+) -> np.ndarray:
+    """Replay the runner's componentwise accumulation order exactly.
+
+    A continued run begins with nonzero accumulated logs. Adding that initial
+    vector after ``np.cumsum`` changes floating-point association and can make
+    a correct restart fail the absolute bookkeeping check. The runner itself
+    updates one cycle at a time, so its independent check must do the same.
+    """
+
+    running = np.asarray(initial_cumulative_log_growth, dtype=float).copy()
+    rows = []
+    for cycle_logs in np.asarray(cycle_log_growth, dtype=float):
+        running = running + cycle_logs
+        rows.append(running.copy())
+    return np.asarray(rows, dtype=float)
+
+
 def deterministic_cycle_times(
     duration: float = RUN_DURATION_SECONDS,
     qr_interval: float = QR_INTERVAL_SECONDS,
@@ -450,8 +470,8 @@ def run_qr_primitive(
     cycle_logs_array = np.asarray(
         [cycle["cycle_log_growth"] for cycle in cycles], dtype=float
     )
-    recomputed_cumulative = initial_cumulative_logs + np.cumsum(
-        cycle_logs_array, axis=0
+    recomputed_cumulative = replay_cumulative_log_growth(
+        initial_cumulative_logs, cycle_logs_array
     )
     stored_cumulative = np.asarray(
         [cycle["cumulative_log_growth"] for cycle in cycles], dtype=float

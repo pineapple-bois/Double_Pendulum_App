@@ -3,8 +3,8 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 012 executed the frozen three-condition,
-zero-initial-velocity EL/canonical robustness protocol. It records the current
+strand after Experiment 014 completed the targeted `1280 s` EL duration study
+for Experiment 012's unsettled IC-1 and IC-3 ensembles. It records the current
 evidence boundary and the next question earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
@@ -40,13 +40,14 @@ direct tangent formulation:
 | [010](010_independent_shadow_640s_compatibility/README.md) | **Established:** the unchanged three-shadow ensemble remains numerically valid through `640 s` and satisfies every predeclared within-shadow, final-spread, late-window, and ensemble-mean compatibility limit. | Acceptance supports one statistically compatible numerical Euler–Lagrange QR spectrum estimate for the declared initial condition and three deterministic policies; it is not universal or independently validated in canonical coordinates. |
 | [011 Phases A–C](011_hamiltonian_canonical_spectrum_crosscheck/README.md) | **Established:** Phase A validates the repository Hamiltonian, Legendre state/tangent maps, canonical reference flow, and independently Hamiltonian-derived Jacobian. Phase B validates state-dependent Candidate-A pullback QR and short-time EL equivalence. Phase C's three independently integrated canonical shadows satisfy the frozen `640 s` compatibility criteria, and the canonical ensemble satisfies the separate predeclared descriptive EL/canonical comparison rule. | The result supports one independently cross-formulated numerical spectrum estimate for the declared initial condition and deterministic policies. It is not an infinite-time proof, universal spectrum, or result over initial-condition space. |
 | [012](012_initial_condition_spectrum_robustness/README.md) | **Established:** all `18` frozen EL/canonical runs across three new zero-velocity conditions are numerically valid. IC-2 satisfies settling and same-IC formulation compatibility without demonstrating shadow independence. **Unresolved:** IC-1 and IC-3 decorrelate early but fail the `640 s` between-shadow settling limits. | The full selected-set formulation-robustness claim is unresolved. IC-2 is not classified as regular, and no result is generalized beyond the three selected conditions or to nonzero velocity. |
+| [013 Phase A](013_restart_grade_qr_continuation/README.md) | **Established:** lossless QR-boundary serialization and restart reproduce uninterrupted short EL and canonical calculations with zero observed difference. | Infrastructure validation only; it adds no long-time Lyapunov evidence and cannot retrofit missing restart arrays into Experiment 012. |
+| [014](014_unsettled_shadow_duration_convergence/README.md) | **Established:** all six from-zero EL runs are numerically valid and decorrelated through `1280 s`. IC-1 satisfies every frozen settling criterion. **Unresolved:** IC-3's final outer-component range remains `0.08894 s^-1`, above the `0.05 s^-1` limit. | The outcome-conditioned study supports one IC-specific `1280 s` ensemble claim, not a universal or infinite-time spectrum. Its mixed result closes the requirement for asymptotic settling at every future map point. |
 
-Experiment 012 is the current boundary. It leaves Experiments 010–011's
-accepted anchor unchanged and shows that the inherited machinery remains
-numerically valid at all three new conditions. It does not yet establish
-formulation robustness across the complete selected set because the two
-early-decorrelating ensembles have not satisfied the frozen long-time spread
-criteria.
+Experiment 014 is the current boundary. It leaves Experiments 010–011's
+accepted anchor and Experiment 012's preregistered results unchanged. The
+duration extension resolves IC-1 but not IC-3, despite healthy numerics and
+continued late spread contraction. This is evidence against making an
+asymptotically settled spectrum a mandatory per-pixel teaching-map contract.
 
 ## Established results
 
@@ -152,15 +153,22 @@ The following statements are supported by the experiment chain:
     `0.5→1.0 s` resume reproduces uninterrupted EL and canonical cycle data
     with zero observed numerical difference in the tested runtime. This is
     infrastructure validation, not new long-time Lyapunov evidence.
+17. Experiment 014 executes six new from-zero EL shadows through `1280 s`,
+    accounting for all `30,720` QR cycles and preserving `42` restart-grade
+    checkpoints. IC-1's final maximum component range is `0.03230 s^-1` and
+    all settling limits pass. IC-3's range contracts from `0.15249 s^-1` at
+    `480 s` to `0.08894 s^-1` at `1280 s`, but its final range, final sample
+    SD, and late-window range still fail the frozen limits. Both ensembles
+    demonstrate pairwise reference-shadow independence.
 
 No finite-time scalar or vector reported by Experiments 004–009 was an
 accepted Lyapunov exponent or spectrum. Experiments 010 and 011 Phase C now
 support independently formulated, descriptively compatible long-time
 numerical spectrum estimates within their matched three-shadow protocols.
 Experiment 012 extends numerical-validity evidence to three additional states
-and accepts limited same-IC agreement at IC-2, but does not accept the full
-selected-set robustness claim. None of these results is a universal spectrum
-for the double pendulum.
+and accepts limited same-IC agreement at IC-2. Experiment 014 adds an IC-1
+`1280 s` independent-shadow settling result but leaves IC-3 unresolved. None
+of these results is a universal spectrum for the double pendulum.
 
 ## Current mathematical contract
 
@@ -228,20 +236,18 @@ finite-time metric transient.
 
 The project has not established:
 
-- compatibility beyond the accepted `640 s` three-shadow protocol, or across
-  a larger or probabilistically defined numerical-shadow ensemble;
-- whether `640 s` is generally sufficient under other formulations, norms,
-  tangent bases, or physical initial conditions;
+- compatibility across a larger or probabilistically defined numerical-shadow
+  ensemble;
+- whether any fixed duration is generally sufficient under other
+  formulations, norms, tangent bases, or physical initial conditions;
 - whether the common-reference QR-interval and tangent-policy collapse remains
   negligible at substantially longer duration;
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
 - agreement between a one-vector tangent estimate and the leading QR estimate;
 - robustness to tangent-basis initialization;
 - a maximal Lyapunov exponent for the current reference trajectory;
-- whether the early-decorrelated IC-1 and IC-3 ensembles settle under a
-  separately preregistered longer-duration continuation;
 - whether EL/canonical robustness holds across the complete Experiment 012
-  selected set once settling is resolved; or
+  selected set, because IC-3 remains unsettled even at `1280 s`; or
 - any broader classification of an initial-condition region or the
   double-pendulum system as chaotic.
 
@@ -251,12 +257,12 @@ confidence interval.
 
 ## Next justified question
 
-The next justified research question is:
+The next justified research question is no longer another automatic duration
+extension. It is:
 
-> Under a separately preregistered duration continuation of the unchanged
-> IC-1 and IC-3 numerical shadows, do their between-shadow cumulative-spectrum
-> spreads fall below the existing settling limits, or remain materially
-> unresolved?
+> What fixed horizon, finite-time tangent-QR observable, and explicit
+> uncertainty/validity labelling form a scientifically honest contract for a
+> teaching-oriented state-space map?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -283,12 +289,13 @@ with a deterministic QR sign convention and accumulated logarithmic growth
 from the magnitudes of the diagonal entries of $R$. Experiment 011 Phase C
 retains $A(z)=S\,\mathrm{D}(z\mapsto x)$ and $Y^+=A(z)^{-1}Q$ through three
 independently decorrelated canonical shadows and accepts the resulting
-cross-formulation comparison. Experiment 012 has now tested the fixed
-three-condition design. Its limiting evidence is long-time ensemble settling
-at IC-1 and IC-3 rather than local QR validity or an observed EL/canonical
-mean displacement. A future continuation would require a separately frozen
-duration and acceptance contract; Experiment 013 Phase A now supplies the
-validated checkpoint mechanism but does not authorize that scientific run.
+cross-formulation comparison. Experiment 012 tested the fixed three-condition
+design, Experiment 013 supplied restart-grade continuation, and Experiment 014
+then extended the two unsettled EL ensembles to `1280 s`. Because IC-1 settles
+but IC-3 does not, further duration is not assumed to be the right default for
+map construction. A map contract should expose a fixed-horizon finite-time
+quantity and its validity boundary rather than silently promote every pixel to
+an asymptotic exponent.
 
 ## Theoretical structure to test, not target
 
@@ -343,14 +350,14 @@ A plausible, evidence-dependent progression is:
      IC-1/IC-3 ensemble settling unresolved at 640 s
   ↓
 013 Phase A  restart-grade EL/canonical QR-boundary continuation accepted
-  ↓  only under a separately predeclared duration-continuation contract
-IC-1/IC-3 long-time settling question
-  ↓  only if the selected-set formulation result becomes interpretable
-carefully bounded chaos classification
-  ↓  only after an individual diagnostic is trusted
-state-space or parameter-space exploration
+  ↓
+014  targeted 1280 s EL extension: IC-1 settles; IC-3 remains unsettled
+  ↓  asymptotic per-pixel settling is not the map contract
+predeclare a fixed-horizon finite-time tangent-QR map observable and validity labels
+  ↓  only after that individual diagnostic contract is accepted
+carefully bounded state-space exploration
 ```
 
 This is orientation, not a reserved sequence of experiment numbers or a rigid
-roadmap. The convergence study may reject the estimates, reveal a new defect,
-or change the next justified experiment entirely.
+roadmap. Experiment 014 closes the targeted duration study with a mixed result;
+future evidence may still change the map contract.
