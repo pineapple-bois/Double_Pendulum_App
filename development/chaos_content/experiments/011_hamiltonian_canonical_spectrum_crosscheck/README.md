@@ -1,8 +1,9 @@
 # 011 Hamiltonian/Canonical Spectrum Cross-Check
 
-**Status: Phase A accepted for the limited canonical reference/tangent
-primitive claim. The original scaffold is retained below; no Hamiltonian QR
-or spectrum comparison is included.**
+**Status: Phases A and B accepted for the limited canonical reference/tangent
+and short pullback-QR primitive claims. The original scaffold and Phase A
+history are retained below; no long-time Hamiltonian spectrum comparison is
+included.**
 
 ## Eventual research question
 
@@ -173,6 +174,18 @@ development/chaos_content/experiments/011_hamiltonian_canonical_spectrum_crossch
 
 Outputs are written beneath the ignored
 `development/chaos_content/outputs/hamiltonian_canonical_phase_a/baseline/`
+directory.
+
+The Phase B self-check is:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
+development/chaos_content/experiments/011_hamiltonian_canonical_spectrum_crosscheck/canonical_spectrum_crosscheck.py \
+--phase b --self-check
+```
+
+Its evidence is written beneath the ignored
+`development/chaos_content/outputs/hamiltonian_canonical_phase_b/short_qr/`
 directory.
 
 ## Phase A validation contract
@@ -433,3 +446,242 @@ The single next question is:
 
 Only an accepted answer to that question would make a predeclared long-time
 canonical spectrum comparison defensible.
+
+## Phase B validation contract
+
+This contract was recorded before the first Phase B numerical run. Phase A's
+canonical flow, Jacobian, state map, tangent map, and Candidate-A pullback are
+fixed inputs; Phase B does not rederive them.
+
+### Question and controlled protocol
+
+Phase B asks:
+
+> Does full-matrix canonical tangent evolution with QR in the Candidate-A
+> pullback metric have internally correct orthonormality, reconstruction, sign,
+> and accumulation bookkeeping, while reproducing the corresponding short-time
+> Euler–Lagrange QR calculation?
+
+The deterministic primary run is deliberately limited to `1.25 s`, five
+`0.25 s` QR cycles, and `0.01 s` diagnostic sampling. This stays inside Phase
+A's accepted `0–1.29 s` EL/canonical comparison interval while exercising the
+same QR cadence as Experiment 007. No duration or cadence sweep is included.
+
+Two matched formulation pairs are predeclared:
+
+| Pair | DOP853 tolerances | `max_step` |
+| --- | --- | ---: |
+| baseline | `rtol=1e-9`, `atol=1e-11` | `0.0099773571 s` |
+| refined | `rtol=1e-11`, `atol=1e-13` | `0.00498867855 s` |
+
+Within each pair, the EL and canonical calculations use identical physical
+initial state, QR boundaries, sample times, tolerance, and step cap. One exact
+repeat of the canonical baseline is used only as a determinism check.
+
+### Basis correspondence and reset
+
+With $C(z)=\mathrm{D}\Phi(z)$ and $A(z)=SC(z)$, initialize
+
+$$
+Y_{\mathrm{EL},0}=S^{-1},
+\qquad
+Y_{H,0}=A(z_0)^{-1}.
+$$
+
+Then
+
+$$
+S Y_{\mathrm{EL},0}=A(z_0)Y_{H,0}=I,
+\qquad
+Y_{\mathrm{EL},0}=C(z_0)Y_{H,0}.
+$$
+
+At every canonical QR event, Phase B recomputes $A(z_k)$ from that event's
+canonical reference state, then applies
+
+$$
+A(z_k)Y_{H,k}^-=Q_kR_k,
+\qquad
+Y_{H,k}^+=A(z_k)^{-1}Q_k.
+$$
+
+The reference angles are locally rebased after each segment. Canonical momenta
+and tangent columns are unchanged by the integer-$2\pi$ chart transition,
+whose derivative is the identity. Lifted winding is not introduced.
+
+Both formulations use Experiment 007's deterministic QR convention: after
+NumPy QR, corresponding columns of $Q$ and rows of $R$ are flipped so every
+$R_{ii}$ is positive. Columns are never sorted.
+
+### Predeclared internal limits
+
+Every canonical cycle must satisfy:
+
+1. successful complete finite reference/tangent integration and normalized
+   Hamiltonian drift at most $10^{-7}$;
+2. finite $A(z_k)$, minimum singular value at least $10^{-6}$, and condition
+   number at most $10^3$;
+3. pre-QR scaled tangent condition number at most $10^{12}$;
+4. $Q$ orthonormality, pullback-metric post-reset orthonormality, and reset-map
+   errors at most $10^{-12}$;
+5. scaled and canonical-coordinate reconstruction relative errors at most
+   $10^{-12}$;
+6. finite positive $R_{ii}\ge10^{-14}$ and finite logarithms; and
+7. independently recomputed cumulative logs and diagnostic rates agreeing
+   with stored values to $10^{-12}$.
+
+The exact canonical repeat must reproduce cycle logs, cumulative logs, final
+diagnostic values, and final physical reference state to $10^{-12}$.
+
+### Predeclared cross-formulation limits
+
+At synchronized events, after applying $C(z)$ and $A(z)$, each baseline and
+refined EL/canonical pair must satisfy:
+
+- maximum reference separation: `1e-7` Candidate A for baseline and `2e-8`
+  for refined;
+- pre-QR scaled and mapped physical tangent-matrix relative differences at
+  most `2e-6`;
+- positive-diagonal $Q$ component and post-reset mapped-basis differences at
+  most `2e-6`;
+- relative $R_{ii}$ and absolute per-cycle log differences at most `2e-6`;
+- cumulative-log difference at most `1e-5`; and
+- final four-component diagnostic-vector difference at most
+  `1e-5 s^-1`.
+
+These are formulation-equivalence limits, not Lyapunov convergence limits.
+They are anchored to Phase A's `1e-6` full tangent-coordinate comparison and
+allow five-cycle accumulation without relaxing Experiment 007's internal
+machine-precision QR requirements.
+
+### Predeclared numerical-refinement limits
+
+For both formulations separately, baseline/refined comparison must keep the
+maximum reference distance at most `1e-6`, maximum cycle-log difference at
+most `1e-4`, maximum cumulative-log difference at most `5e-4`, and final
+diagnostic-vector difference at most `5e-4 s^-1`. The two matched
+cross-formulation comparisons must also pass the tighter limits above. This
+compact refinement distinguishes a formulation/QR discrepancy from ordinary
+short-run solver error; it is not a convergence study.
+
+### Phase B claim boundary
+
+Acceptance establishes only an internally coherent canonical pullback-QR
+primitive and short-time equivalence with the corresponding EL QR calculation.
+It does not establish a long-time canonical spectrum, agreement with the
+Experiment 010 `640 s` estimate, statistical compatibility across canonical
+shadows, or a maximal Lyapunov exponent.
+
+## Phase B result
+
+**Verdict: accepted canonical pullback-QR primitive and short-time EL
+equivalence.** Every predeclared internal, cross-formulation, refinement, and
+exact-repeat check passes. No Phase B threshold was changed after execution.
+
+### Internal pullback-QR validity
+
+At each event the implementation evaluates the current
+$C(z_k)=\mathrm{D}\Phi(z_k)$ and $A(z_k)=SC(z_k)$; no constant-factor shortcut
+is used. It then performs positive-diagonal QR on $A(z_k)Y_{H,k}^-$ and solves
+the current linear system for $Y_{H,k}^+$. Across both policies, the limiting
+internal diagnostics are:
+
+| Diagnostic | Observed bound | Predeclared limit |
+| --- | ---: | ---: |
+| Maximum $\kappa_2(A)$ | `12.1003` | `1e3` |
+| Minimum singular value of $A$ | `0.121953` | `1e-6` minimum |
+| Maximum $\kappa_2(A Y_H^-)$ | `26.6229` | `1e12` |
+| $Q^{\mathsf T}Q-I$ infinity norm | `1.27e-15` | `1e-12` |
+| Scaled $A Y_H^- - QR$ relative error | `3.54e-16` | `1e-12` |
+| Canonical $Y_H^- - Y_H^+R$ relative error | `5.23e-16` | `1e-12` |
+| Mapped physical reconstruction relative error | `4.93e-16` | `1e-12` |
+| Post-reset pullback orthonormality error | `4.61e-15` | `1e-12` |
+| Reset identity $A Y_H^+-Q$ error | `5.62e-16` | `1e-12` |
+| Minimum positive $R_{ii}$ | `0.227361` | `1e-14` minimum |
+| Cumulative-log/rate bookkeeping error | exactly `0.0` | `1e-12` |
+| Maximum normalized Hamiltonian drift | `7.24e-16` | `1e-7` |
+
+All five segments complete with finite reference and tangent states. Every
+$R_{ii}$ is positive after the paired sign resolution, every log is finite,
+and no column sorting occurs. The canonical baseline exact repeat has zero
+recorded difference in cycle logs, cumulative logs, diagnostic vectors, and
+the final physical reference state.
+
+### EL/canonical cycle correspondence
+
+The corresponding EL calculation is Experiment 007's accepted QR primitive,
+restricted to the same five cycles. Canonical tangent matrices are compared
+only after applying $C(z)$ or $A(z)$ as appropriate.
+
+| Maximum discrepancy over five cycles | Baseline | Refined | Declared bound |
+| --- | ---: | ---: | ---: |
+| Reference Candidate-A distance | `1.76e-15` | `1.78e-13` | `1e-7` / `2e-8` |
+| Pre-QR scaled relative difference | `2.79e-15` | `1.75e-13` | `2e-6` |
+| Mapped physical pre-QR relative difference | `3.08e-15` | `2.38e-13` | `2e-6` |
+| Positive-diagonal $Q$ component difference | `2.38e-15` | `1.11e-13` | `2e-6` |
+| Relative $R_{ii}$ difference | `3.56e-15` | `1.85e-13` | `2e-6` |
+| Per-cycle log difference | `3.55e-15` | `1.85e-13` | `2e-6` |
+| Cumulative-log difference | `4.44e-15` | `2.42e-13` | `1e-5` |
+| Final diagnostic-vector difference | `3.11e-15 s^-1` | `1.50e-13 s^-1` | `1e-5 s^-1` |
+
+The baseline cumulative log vectors at `1.25 s` are
+
+$$
+L_{\mathrm{EL}}=
+(4.906391904210701, 3.164484293856641,
+-2.327408630581164, -6.375856172102764),
+$$
+
+$$
+L_H=
+(4.906391904210698, 3.164484293856640,
+-2.327408630581165, -6.375856172102762).
+$$
+
+Dividing by the elapsed `1.25 s` gives the short diagnostic vectors
+
+$$
+\Lambda_{\mathrm{EL}}=
+(3.925113523368561, 2.531587435085313,
+-1.861926904464931, -5.100684937682211) \mathrm{s^{-1}},
+$$
+
+$$
+\Lambda_H=
+(3.925113523368558, 2.531587435085312,
+-1.861926904464932, -5.100684937682209) \mathrm{s^{-1}}.
+$$
+
+These column-ordered values are neither sorted nor interpreted as a converged
+spectrum. Their short duration makes them especially unsuitable as estimates
+of the Experiment 010 result.
+
+### Compact numerical refinement
+
+The baseline-to-refined final diagnostic change is `1.16e-13 s^-1` for EL and
+`3.73e-14 s^-1` for canonical, against the predeclared `5e-4 s^-1` limit.
+Maximum cycle-log changes are `1.43e-13` and `4.05e-14`; maximum cumulative-log
+changes are `1.86e-13` and `5.95e-14`. Baseline/refined reference distances
+remain at most `1.36e-13` for EL and `4.34e-14` for canonical. Thus the observed
+cross-formulation agreement is not hiding a discrepancy at the selected
+solver resolution.
+
+### Phase B claim boundary and next question
+
+Phase B establishes that full-matrix evolution under the independently
+Hamiltonian-derived canonical tangent operator admits internally coherent QR
+in the state-dependent Candidate-A pullback metric. With corresponding initial
+bases and deterministic signs, it reproduces the accepted EL QR calculation
+cycle-by-cycle over `0–1.25 s` under both tested policies.
+
+It does **not** establish a long-time canonical Lyapunov spectrum, agreement
+with Experiment 010 at `640 s`, statistical compatibility across independently
+diverging canonical shadows, or a maximal Lyapunov exponent.
+
+The single next scientific question is:
+
+> Under a predeclared long-time canonical shadow/refinement protocol, do
+> cumulative pullback-QR estimates become statistically compatible with one
+> another and with Experiment 010's accepted Euler–Lagrange ensemble estimate?
+
+That question is now methodologically earned but is not run in Phase B.

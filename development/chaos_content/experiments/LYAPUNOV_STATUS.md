@@ -3,9 +3,10 @@
 ## Purpose
 
 This is the living orientation document for the Chaos sandbox's Lyapunov
-strand after Experiment 011 Phase A independently validated the canonical
-Hamiltonian reference and tangent primitive. It records the current evidence
-boundary and the next question earned by that evidence.
+strand after Experiment 011 Phase B independently validated the canonical
+Hamiltonian pullback-QR primitive against the corresponding short-time EL QR
+calculation. It records the current evidence boundary and the next question
+earned by that evidence.
 
 [`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
 original Experiment 005 finite-shadow calculation. It explains why that result
@@ -38,12 +39,13 @@ direct tangent formulation:
 | [008](008_common_reference_qr_isolation/README.md) | **Established:** when all tangent/QR variants are driven by one locally refined piecewise-dense reference history, Experiment 007's `0.082–0.157 s^-1` policy separation collapses to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$ at `80 s`. Numerical reference-shadow divergence is therefore the primary observed source of the prior separation. | The result is conditional on one common numerical reference history. Its finite-time vector is not a converged spectrum, and independently integrated long-time shadows need not agree pointwise. |
 | [009](009_independent_shadow_spectrum_compatibility/README.md) | **Established:** three independently integrated reference shadows decorrelate by `40 s`, remain numerically valid through `320 s`, and become substantially more compatible than at `80 s`. **Unresolved:** residual late-window fluctuation and final/late between-shadow spread remain marginally above the predeclared limits. | No statistically compatible spectrum is accepted at `320 s`; the result is neither accepted nor clearly incompatible. |
 | [010](010_independent_shadow_640s_compatibility/README.md) | **Established:** the unchanged three-shadow ensemble remains numerically valid through `640 s` and satisfies every predeclared within-shadow, final-spread, late-window, and ensemble-mean compatibility limit. | Acceptance supports one statistically compatible numerical Euler–Lagrange QR spectrum estimate for the declared initial condition and three deterministic policies; it is not universal or independently validated in canonical coordinates. |
-| [011 Phase A](011_hamiltonian_canonical_spectrum_crosscheck/README.md) | **Established:** the repository Hamiltonian, Legendre state/tangent maps, canonical reference flow, and independently Hamiltonian-derived canonical Jacobian reproduce the accepted EL physical flow and local tangent dynamics over `0–1.29 s` under both predeclared solver policies. | No canonical QR or spectrum has been computed. Acceptance covers the primitive and short validation interval only. |
+| [011 Phases A–B](011_hamiltonian_canonical_spectrum_crosscheck/README.md) | **Established:** Phase A validates the repository Hamiltonian, Legendre state/tangent maps, canonical reference flow, and independently Hamiltonian-derived Jacobian over `0–1.29 s`. Phase B validates state-dependent Candidate-A pullback QR and reproduces the corresponding EL QR cycle-by-cycle over `0–1.25 s` under baseline and refined policies. | No long-time canonical QR spectrum or `640 s` Hamiltonian comparison has been computed. Acceptance covers only the canonical primitives and short validation intervals. |
 
-Experiment 011 Phase A is the current boundary. It leaves Experiment 010's
+Experiment 011 Phase B is the current boundary. It leaves Experiment 010's
 accepted EL ensemble unchanged and establishes the independent canonical
-reference/tangent foundation needed to cross-check it. The next gate is the
-canonical QR primitive in a declared metric, not a long-time spectrum run.
+reference, tangent, and pullback-QR foundations needed to cross-check it. A
+predeclared long-time canonical statistical comparison is now earned but has
+not been run.
 
 ## Established results
 
@@ -115,6 +117,14 @@ The following statements are supported by the experiment chain:
     pure-$\theta_2$ tangent all pass the predeclared limits. Refined
     EL/canonical reference separation is at most `6.04e-15` in Candidate A;
     mapped tangent norm and log-growth errors are at most `1.42e-14`.
+13. Experiment 011 Phase B evaluates the state-dependent pullback factor
+    $A(z_k)=S\,\mathrm{D}\Phi(z_k)$ at every QR event, resets with
+    $Y_H^+=A(z_k)^{-1}Q$, and validates metric orthonormality and reconstruction
+    in both canonical and mapped EL tangent coordinates. Over five `0.25 s`
+    cycles, internal errors remain at most `4.61e-15`. Baseline and refined
+    canonical cycle logs differ from their corresponding EL values by at most
+    `3.55e-15` and `1.85e-13`, respectively; final short diagnostic vectors
+    differ by at most `1.50e-13 s^-1`.
 
 No finite-time scalar or vector reported by Experiments 004–009 was an
 accepted Lyapunov exponent or spectrum. Experiment 010 now supports a
@@ -164,9 +174,9 @@ z=(q_1,q_2,p_1,p_2),
 \qquad p=B(q)\omega,
 $$
 
-Experiment 011 Phase A now validates the independently Hamiltonian-derived
-operator $D f_H(z)$. For the future controlled formulation comparison, the
-recommended metric factor is the Candidate-A pullback
+Experiment 011 Phase A validates the independently Hamiltonian-derived
+operator $D f_H(z)$. Phase B validates the Candidate-A pullback factor and QR
+reset
 
 $$
 A(z)=S\,\mathrm{D}(z\mapsto x),
@@ -174,8 +184,14 @@ A(z)=S\,\mathrm{D}(z\mapsto x),
 \lVert\delta z\rVert=\lVert A(z)\delta z\rVert_2.
 $$
 
-This is a chosen comparison convention, not a unique canonical norm. A fixed
-dimensionless canonical metric remains possible but would introduce a
+$$
+A(z_k)Y_{H,k}^-=Q_kR_k,
+\qquad
+Y_{H,k}^+=A(z_k)^{-1}Q_k.
+$$
+
+This is a validated comparison convention, not a unique canonical norm. A
+fixed dimensionless canonical metric remains possible but would introduce a
 finite-time metric transient.
 
 ## Unestablished claims
@@ -191,9 +207,10 @@ The project has not established:
 - convergence toward the asymptotic structure expected of a Hamiltonian flow;
 - agreement between a one-vector tangent estimate and the leading QR estimate;
 - robustness to tangent-basis initialization;
-- internally validated full-matrix canonical QR in the pullback metric;
 - agreement of a long-time canonical QR spectrum with the Experiment 010 EL
   estimate;
+- statistical compatibility across independently integrated canonical
+  numerical shadows;
 - a maximal Lyapunov exponent for the current reference trajectory; or
 - any broader classification of the trajectory, initial-condition region, or
   double-pendulum system as chaotic.
@@ -206,10 +223,9 @@ confidence interval.
 
 The next justified research question is:
 
-> Does full-matrix canonical tangent evolution with QR in the Candidate-A
-> pullback metric have internally correct orthonormality, reconstruction, sign,
-> and accumulation bookkeeping, while reproducing the corresponding short-time
-> Euler–Lagrange QR calculation?
+> Under a predeclared long-time canonical shadow/refinement protocol, do
+> cumulative pullback-QR estimates become statistically compatible with one
+> another and with Experiment 010's accepted Euler–Lagrange ensemble estimate?
 
 The natural object remains the full tangent matrix and cumulative spectrum
 
@@ -233,12 +249,12 @@ Y^+=S^{-1}Q,
 $$
 
 with a deterministic QR sign convention and accumulated logarithmic growth
-from the magnitudes of the diagonal entries of $R$. Experiment 011 Phase A
-recommends replacing the constant EL factor $S$ by
-$A(z)=S\,\mathrm{D}(z\mapsto x)$ for the canonical calculation, then resetting
-$Y^+=A(z)^{-1}Q$. The next stage should validate that primitive over a short
-common physical history. Only then is the long-time independent spectrum
-comparison earned.
+from the magnitudes of the diagonal entries of $R$. Experiment 011 Phase B has
+now validated replacing the constant EL factor $S$ by
+$A(z)=S\,\mathrm{D}(z\mapsto x)$ for the canonical calculation and resetting
+$Y^+=A(z)^{-1}Q$ over a short common physical history. The long-time
+independent statistical comparison is therefore earned, but no duration,
+ensemble, or acceptance contract for it is fixed by Phase B.
 
 ## Theoretical structure to test, not target
 
@@ -285,9 +301,9 @@ A plausible, evidence-dependent progression is:
 010  unchanged 640 s continuation: declared statistical compatibility accepted
   ↓
 011 Phase A  independent canonical reference/tangent primitive accepted
-  ↓  only after short-time QR bookkeeping and formulation equivalence pass
-canonical full-matrix QR primitive in the pullback metric
-  ↓  only if that primitive is accepted
+  ↓
+011 Phase B  canonical pullback-QR primitive and short EL equivalence accepted
+  ↓  only under a separately predeclared long-time statistical contract
 independent long-time Hamiltonian/canonical spectrum cross-check
   ↓  only if both formulations support it
 contrasting initial conditions and carefully bounded chaos classification

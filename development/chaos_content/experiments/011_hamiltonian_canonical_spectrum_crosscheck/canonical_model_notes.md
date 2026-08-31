@@ -441,9 +441,83 @@ been chosen to imitate the Experiment 010 numbers.
 
 ### Current blocker and next gate
 
-No ambiguity or inconsistency now blocks the canonical state transformation,
-reference flow, or tangent primitive. The remaining gate is a tested full-
-matrix canonical QR primitive in the pullback geometry, including
-orthonormality, reconstruction, deterministic signs, accumulation, and a
-short-time comparison with the corresponding EL QR evolution. Phase A does
-not supply that primitive or any Hamiltonian spectrum.
+At the Phase A boundary, no ambiguity or inconsistency blocked the canonical
+state transformation, reference flow, or tangent primitive. The remaining gate
+was a tested full-matrix canonical QR primitive in the pullback geometry.
+Phase B now resolves that gate as recorded below. Neither phase supplies a
+long-time Hamiltonian spectrum.
+
+## Phase B pullback-QR result
+
+### State-dependent metric bookkeeping
+
+**Independently verified in Phase B:** at each QR event, evaluating
+
+$$
+A(z_k)=S\,\mathrm{D}\Phi(z_k)
+$$
+
+at the current canonical reference and applying
+
+$$
+A(z_k)Y_{H,k}^-=Q_kR_k,
+\qquad
+Y_{H,k}^+=A(z_k)^{-1}Q_k
+$$
+
+simultaneously enforces
+
+$$
+(Y_{H,k}^+)^{\mathsf T}A(z_k)^{\mathsf T}A(z_k)Y_{H,k}^+=I,
+$$
+
+$$
+A(z_k)Y_{H,k}^-=Q_kR_k,
+\qquad
+Y_{H,k}^-=Y_{H,k}^+R_k.
+$$
+
+Mapping the last identity with $C(z_k)=\mathrm{D}\Phi(z_k)$ also reconstructs
+the same pre-reset matrix in physical EL tangent coordinates. The state
+dependence is therefore explicit in both factorization and reset; Experiment
+007's constant-$S$ reset is not silently reused for canonical coordinates.
+
+Over the fixed five-cycle Phase B run, the largest pullback-factor condition
+number is `12.1003`, its minimum singular value is `0.121953`, and the largest
+pre-QR scaled-basis condition number is `26.6229`. Maximum $Q$ orthonormality,
+scaled reconstruction, canonical reconstruction, physical reconstruction,
+pullback orthonormality, and reset-identity errors range from `3.54e-16` to
+`4.61e-15`. All are below the predeclared `1e-12` limits.
+
+### Coordinate-equivalent QR factors
+
+**Independently verified in Phase B:** initialize
+
+$$
+Y_{\mathrm{EL},0}=S^{-1},
+\qquad
+Y_{H,0}=A(z_0)^{-1}.
+$$
+
+Then $Y_{\mathrm{EL}}=C(z)Y_H$ and
+$SY_{\mathrm{EL}}=A(z)Y_H$ remain numerically consistent through every
+synchronized QR event over `0–1.25 s`. With a positive-$R_{ii}$ convention and
+no column sorting, the baseline and refined EL/canonical calculations agree in
+pre-QR scaled matrices, $Q$, $R_{ii}$, cycle logs, cumulative logs, and final
+diagnostic vectors. The largest refined per-cycle log difference is
+`1.85e-13`; the largest refined cumulative-log difference is `2.42e-13`; the
+final diagnostic-vector difference is `1.50e-13 s^-1`.
+
+This agreement is a coordinate-equivalence result under the shared pullback
+metric, not independent long-time spectrum evidence. It shows that the chosen
+metric removes finite-time coordinate geometry as a confound for the declared
+comparison. A fixed dimensionless canonical metric remains a different,
+conventional sensitivity question and was not substituted into Phase B.
+
+### Remaining gate
+
+The canonical state, flow, Jacobian, full tangent matrix, and pullback-QR
+primitive are now locally validated. The remaining scientific question is
+long-time statistical compatibility across independently integrated canonical
+shadows and comparison with the accepted Experiment 010 EL ensemble. No such
+integration or Hamiltonian spectrum is present in Experiment 011 Phases A–B.

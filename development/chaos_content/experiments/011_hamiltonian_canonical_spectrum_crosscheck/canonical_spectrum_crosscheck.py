@@ -1,9 +1,10 @@
-"""Experiment 011 Phase A: validate an independent canonical tangent primitive.
+"""Experiment 011: validate canonical tangent and pullback-QR primitives.
 
 The canonical flow and its Jacobian are derived directly from the repository's
 symbolic simple-model Hamiltonian.  The accepted Experiment 006 Euler--Lagrange
 flow is imported only as an independent comparison reference.  This module
-does not implement QR or a long-time spectrum calculation.
+Phase B adds only a short full-matrix QR comparison.  This module deliberately
+does not implement a long-time Hamiltonian spectrum calculation.
 """
 
 from __future__ import annotations
@@ -59,7 +60,25 @@ def _load_experiment006() -> Any:
 
 experiment006 = _load_experiment006()
 
-EXPERIMENT_STATUS = "phase_a_accepted"
+
+def _load_experiment007() -> Any:
+    path = (
+        EXPERIMENT_ROOT.parent
+        / "007_full_matrix_qr_tangent_dynamics"
+        / "full_matrix_qr_tangent_dynamics.py"
+    )
+    spec = importlib.util.spec_from_file_location("experiment007_for_011", path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Cannot load Experiment 007 from {path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+experiment007 = _load_experiment007()
+
+EXPERIMENT_STATUS = "phases_a_and_b_accepted"
 CANONICAL_STATE_ORDER = ("theta1", "theta2", "p_theta_1", "p_theta_2")
 EL_STATE_ORDER = ("theta1", "theta2", "omega1", "omega2")
 EVIDENCE_SEQUENCE = (
@@ -101,6 +120,37 @@ LIMITS = {
     "tangent_direction_component": 1.0e-6,
     "tangent_direction_cosine_shortfall": 1.0e-10,
     "metric_reconstruction_absolute": 1.0e-12,
+}
+
+PHASE_B_DURATION_SECONDS = 1.25
+PHASE_B_QR_INTERVAL_SECONDS = 0.25
+PHASE_B_CYCLE_COUNT = 5
+PHASE_B_QR_LIMIT = 1.0e-12
+PHASE_B_BOOKKEEPING_LIMIT = 1.0e-12
+PHASE_B_REPRODUCIBILITY_LIMIT = 1.0e-12
+PHASE_B_MINIMUM_R_DIAGONAL = 1.0e-14
+PHASE_B_MINIMUM_A_SINGULAR_VALUE = 1.0e-6
+PHASE_B_MAXIMUM_A_CONDITION_NUMBER = 1.0e3
+PHASE_B_MAXIMUM_PRE_QR_CONDITION_NUMBER = 1.0e12
+
+PHASE_B_CROSS_LIMITS = {
+    "baseline_reference_candidate_a": 1.0e-7,
+    "refined_reference_candidate_a": 2.0e-8,
+    "pre_qr_scaled_relative": 2.0e-6,
+    "mapped_physical_pre_relative": 2.0e-6,
+    "q_component_absolute": 2.0e-6,
+    "post_reset_mapped_basis_absolute": 2.0e-6,
+    "r_diagonal_relative": 2.0e-6,
+    "cycle_log_absolute": 2.0e-6,
+    "cumulative_log_absolute": 1.0e-5,
+    "final_diagnostic_per_second": 1.0e-5,
+}
+
+PHASE_B_REFINEMENT_LIMITS = {
+    "reference_candidate_a": 1.0e-6,
+    "cycle_log_absolute": 1.0e-4,
+    "cumulative_log_absolute": 5.0e-4,
+    "final_diagnostic_per_second": 5.0e-4,
 }
 
 
@@ -706,24 +756,876 @@ def run_phase_a(output_dir: Path | None = None) -> dict[str, Any]:
 
 def assert_self_check(summary: dict[str, Any]) -> None:
     if not summary["accepted"]:
-        failed = [name for name, group in summary["groups"].items() if not group["accepted"]]
-        raise AssertionError(f"Phase A validation failed: {failed}")
-    if summary["claim_boundary"] != "No canonical QR or Lyapunov spectrum was computed.":
-        raise AssertionError("Experiment claim boundary changed unexpectedly.")
+        failed = [
+            name
+            for name, group in summary["groups"].items()
+            if isinstance(group, dict) and "accepted" in group and not group["accepted"]
+        ]
+        raise AssertionError(f"Experiment 011 validation failed: {failed}")
+    if "long-time" not in summary["claim_boundary"].lower() and summary["phase"].startswith("B_"):
+        raise AssertionError("Phase B claim boundary changed unexpectedly.")
+    if summary["phase"].startswith("A_") and summary["claim_boundary"] != "No canonical QR or Lyapunov spectrum was computed.":
+        raise AssertionError("Phase A claim boundary changed unexpectedly.")
+
+
+def canonicalize_canonical_state_angles(state: Sequence[float]) -> np.ndarray:
+    """Rebase canonical angles while preserving momenta and tangent coordinates."""
+
+    result = np.array(state, dtype=float, copy=True)
+    if result.shape[-1] != 4:
+        raise ValueError("Canonical states must have four components.")
+    result[..., :2] = experiment006.wrap_angle_difference(result[..., :2])
+    return result
+
+
+def canonical_full_matrix_augmented_rhs(
+    dynamics: CanonicalDynamics,
+    time_value: float,
+    augmented: Sequence[float],
+) -> np.ndarray:
+    """Evolve the canonical reference and four canonical tangent columns."""
+
+    reference, tangent_matrix = experiment007.unpack_augmented_state(
+        np.asarray(augmented, dtype=float)
+    )
+    return experiment007.pack_augmented_state(
+        dynamics.flow(reference, time_value),
+        dynamics.jacobian(reference, time_value) @ tangent_matrix,
+    )
+
+
+def canonical_pullback_qr_reset(
+    reference: Sequence[float], tangent_matrix_pre: Sequence[Sequence[float]]
+) -> dict[str, Any]:
+    """Apply one QR reset in the state-dependent Candidate-A pullback metric."""
+
+    canonical_reference = np.asarray(reference, dtype=float)
+    tangent_pre = np.asarray(tangent_matrix_pre, dtype=float)
+    if canonical_reference.shape != (4,) or tangent_pre.shape != (4, 4):
+        raise ValueError("Canonical QR reset requires one state and one 4x4 matrix.")
+
+    factor = candidate_a_pullback_factor(canonical_reference)
+    singular_values = np.linalg.svd(factor, compute_uv=False)
+    factor_condition = float(np.linalg.cond(factor))
+    factor_determinant = float(np.linalg.det(factor))
+    scaled_pre = factor @ tangent_pre
+    orthogonal, upper = experiment007.positive_diagonal_qr(scaled_pre)
+    diagonal = np.diag(upper)
+    tangent_post = np.linalg.solve(factor, orthogonal)
+    coordinate_map = inverse_tangent_map(canonical_reference)
+    mapped_physical_pre = coordinate_map @ tangent_pre
+    mapped_physical_post = coordinate_map @ tangent_post
+    identity = np.eye(4)
+
+    q_orthonormality_error = float(
+        np.linalg.norm(orthogonal.T @ orthogonal - identity, ord=np.inf)
+    )
+    scaled_reconstruction_error = float(
+        np.linalg.norm(scaled_pre - orthogonal @ upper, ord="fro")
+        / max(1.0, float(np.linalg.norm(scaled_pre, ord="fro")))
+    )
+    coordinate_reconstruction_error = float(
+        np.linalg.norm(tangent_pre - tangent_post @ upper, ord="fro")
+        / max(1.0, float(np.linalg.norm(tangent_pre, ord="fro")))
+    )
+    physical_reconstruction_error = float(
+        np.linalg.norm(
+            mapped_physical_pre - mapped_physical_post @ upper, ord="fro"
+        )
+        / max(1.0, float(np.linalg.norm(mapped_physical_pre, ord="fro")))
+    )
+    scaled_post = factor @ tangent_post
+    metric = factor.T @ factor
+    pullback_orthonormality_error = float(
+        np.linalg.norm(tangent_post.T @ metric @ tangent_post - identity, ord=np.inf)
+    )
+    reset_identity_error = float(
+        np.linalg.norm(scaled_post - orthogonal, ord="fro")
+    )
+    pre_qr_condition = float(np.linalg.cond(scaled_pre))
+    log_diagonal = np.log(diagonal)
+
+    checks = {
+        "finite_reference_tangent_and_factor": bool(
+            np.all(np.isfinite(canonical_reference))
+            and np.all(np.isfinite(tangent_pre))
+            and np.all(np.isfinite(factor))
+            and np.all(np.isfinite(orthogonal))
+            and np.all(np.isfinite(upper))
+            and np.all(np.isfinite(tangent_post))
+        ),
+        "factor_resolved_and_conditioned": bool(
+            singular_values[-1] >= PHASE_B_MINIMUM_A_SINGULAR_VALUE
+            and factor_condition <= PHASE_B_MAXIMUM_A_CONDITION_NUMBER
+            and factor_determinant != 0.0
+        ),
+        "pre_qr_condition_below_guard": bool(
+            np.isfinite(pre_qr_condition)
+            and pre_qr_condition <= PHASE_B_MAXIMUM_PRE_QR_CONDITION_NUMBER
+        ),
+        "q_orthonormal": q_orthonormality_error <= PHASE_B_QR_LIMIT,
+        "scaled_reconstruction": scaled_reconstruction_error <= PHASE_B_QR_LIMIT,
+        "coordinate_reconstruction": coordinate_reconstruction_error
+        <= PHASE_B_QR_LIMIT,
+        "physical_reconstruction": physical_reconstruction_error
+        <= PHASE_B_QR_LIMIT,
+        "post_reset_pullback_orthonormal": pullback_orthonormality_error
+        <= PHASE_B_QR_LIMIT,
+        "reset_identity": reset_identity_error <= PHASE_B_QR_LIMIT,
+        "positive_resolved_diagonal": bool(
+            np.all(np.isfinite(diagonal))
+            and np.all(diagonal >= PHASE_B_MINIMUM_R_DIAGONAL)
+        ),
+        "finite_log_diagonal": bool(np.all(np.isfinite(log_diagonal))),
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "factor": factor,
+        "factor_condition_number": factor_condition,
+        "factor_determinant": factor_determinant,
+        "factor_minimum_singular_value": float(singular_values[-1]),
+        "coordinate_map": coordinate_map,
+        "scaled_pre": scaled_pre,
+        "orthogonal": orthogonal,
+        "upper": upper,
+        "diagonal": diagonal,
+        "log_diagonal": log_diagonal,
+        "tangent_matrix_post": tangent_post,
+        "mapped_physical_pre": mapped_physical_pre,
+        "mapped_physical_post": mapped_physical_post,
+        "q_orthonormality_error": q_orthonormality_error,
+        "scaled_reconstruction_relative_error": scaled_reconstruction_error,
+        "coordinate_reconstruction_relative_error": coordinate_reconstruction_error,
+        "physical_reconstruction_relative_error": physical_reconstruction_error,
+        "post_pullback_orthonormality_error": pullback_orthonormality_error,
+        "reset_identity_error": reset_identity_error,
+        "pre_qr_condition_number": pre_qr_condition,
+    }
+
+
+def _public_canonical_reset(reset: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "checks": reset["checks"],
+        "pullback_factor": reset["factor"],
+        "pullback_factor_condition_number": reset["factor_condition_number"],
+        "pullback_factor_determinant": reset["factor_determinant"],
+        "pullback_factor_minimum_singular_value": reset[
+            "factor_minimum_singular_value"
+        ],
+        "scaled_pre": reset["scaled_pre"],
+        "orthogonal_q": reset["orthogonal"],
+        "upper_r": reset["upper"],
+        "r_diagonal": reset["diagonal"],
+        "log_r_diagonal": reset["log_diagonal"],
+        "tangent_matrix_post": reset["tangent_matrix_post"],
+        "mapped_physical_tangent_pre": reset["mapped_physical_pre"],
+        "mapped_physical_tangent_post": reset["mapped_physical_post"],
+        "q_orthonormality_error": reset["q_orthonormality_error"],
+        "scaled_reconstruction_relative_error": reset[
+            "scaled_reconstruction_relative_error"
+        ],
+        "coordinate_reconstruction_relative_error": reset[
+            "coordinate_reconstruction_relative_error"
+        ],
+        "physical_reconstruction_relative_error": reset[
+            "physical_reconstruction_relative_error"
+        ],
+        "post_pullback_orthonormality_error": reset[
+            "post_pullback_orthonormality_error"
+        ],
+        "reset_identity_error": reset["reset_identity_error"],
+        "pre_qr_condition_number": reset["pre_qr_condition_number"],
+    }
+
+
+def run_canonical_qr_primitive(
+    dynamics: CanonicalDynamics,
+    *,
+    run_id: str,
+    policy: Any,
+    max_step: float,
+    duration: float = PHASE_B_DURATION_SECONDS,
+    qr_interval: float = PHASE_B_QR_INTERVAL_SECONDS,
+) -> dict[str, Any]:
+    """Run the short canonical full-matrix pullback-QR primitive."""
+
+    boundaries = experiment007.deterministic_cycle_times(duration, qr_interval)
+    current_reference = el_to_canonical(INITIAL_EL_STATE)
+    current_tangent = np.linalg.solve(
+        candidate_a_pullback_factor(current_reference), np.eye(4)
+    )
+    initial_energy = dynamics.energy(current_reference)
+    cumulative_logs = np.zeros(4)
+    cycles: list[dict[str, Any]] = []
+    reference_times: list[np.ndarray] = []
+    reference_states: list[np.ndarray] = []
+    energy_drifts: list[np.ndarray] = []
+    solver_statuses: list[dict[str, Any]] = []
+
+    for cycle_index, (start, end) in enumerate(
+        zip(boundaries[:-1], boundaries[1:]), start=1
+    ):
+        reference_start = np.array(current_reference, copy=True)
+        tangent_start = np.array(current_tangent, copy=True)
+        requested_time = experiment007.requested_cycle_times(float(start), float(end))
+        segment = experiment006.solve_one_segment(
+            lambda time_value, augmented: canonical_full_matrix_augmented_rhs(
+                dynamics, time_value, augmented
+            ),
+            experiment007.pack_augmented_state(reference_start, tangent_start),
+            requested_time,
+            policy,
+            max_step=max_step,
+        )
+        solver_status = segment["solver_status"] | {"accepted": segment["accepted"]}
+        solver_statuses.append(solver_status)
+        if not segment["accepted"]:
+            raise RuntimeError(
+                f"Canonical QR cycle {cycle_index} failed: {segment['checks']}"
+            )
+
+        augmented_samples = segment["state"]
+        segment_reference = augmented_samples[:, :4]
+        reference_end_raw, tangent_pre = experiment007.unpack_augmented_state(
+            augmented_samples[-1]
+        )
+        reference_end = canonicalize_canonical_state_angles(reference_end_raw)
+        energy = np.array([dynamics.energy(state) for state in segment_reference])
+        energy_drift = np.abs(energy - initial_energy) / experiment006.energy_scale()
+        segment_energy_drift = float(np.max(energy_drift))
+
+        reset = canonical_pullback_qr_reset(reference_end, tangent_pre)
+        cycle_logs = np.asarray(reset["log_diagonal"], dtype=float)
+        cumulative_logs = cumulative_logs + cycle_logs
+        finite_time_diagnostic = cumulative_logs / float(end)
+        accumulation_finite = bool(
+            np.all(np.isfinite(cycle_logs))
+            and np.all(np.isfinite(cumulative_logs))
+            and np.all(np.isfinite(finite_time_diagnostic))
+        )
+        checks = {
+            "solver_segment_valid": segment["accepted"],
+            "pullback_qr_reset_valid": reset["accepted"],
+            "finite_accumulation": accumulation_finite,
+            "reference_energy_within_limit": segment_energy_drift
+            <= experiment006.ENERGY_DRIFT_LIMIT,
+        }
+        cycle = {
+            "cycle_index": cycle_index,
+            "start_time_seconds": float(start),
+            "end_time_seconds": float(end),
+            "qr_interval_seconds": qr_interval,
+            "accepted": all(checks.values()),
+            "checks": checks,
+            "reference_start": reference_start,
+            "reference_end": reference_end,
+            "tangent_matrix_start": tangent_start,
+            "tangent_matrix_pre_qr": tangent_pre,
+            **_public_canonical_reset(reset),
+            "cycle_log_growth": cycle_logs,
+            "cumulative_log_growth": cumulative_logs.copy(),
+            "cumulative_finite_time_diagnostic_per_second": (
+                finite_time_diagnostic.copy()
+            ),
+            "segment_maximum_normalized_reference_energy_drift": (
+                segment_energy_drift
+            ),
+            "solver_status": solver_status,
+        }
+        cycles.append(cycle)
+
+        stored_reference = canonicalize_canonical_state_angles(segment_reference)
+        if cycle_index > 1:
+            requested_time = requested_time[1:]
+            stored_reference = stored_reference[1:]
+            energy_drift = energy_drift[1:]
+        reference_times.append(requested_time)
+        reference_states.append(stored_reference)
+        energy_drifts.append(energy_drift)
+        current_reference = reference_end
+        current_tangent = reset["tangent_matrix_post"]
+
+    all_time = np.concatenate(reference_times)
+    all_reference = np.concatenate(reference_states)
+    all_energy_drift = np.concatenate(energy_drifts)
+    cycle_logs_array = np.asarray(
+        [cycle["cycle_log_growth"] for cycle in cycles], dtype=float
+    )
+    stored_cumulative = np.asarray(
+        [cycle["cumulative_log_growth"] for cycle in cycles], dtype=float
+    )
+    end_times = np.asarray(
+        [cycle["end_time_seconds"] for cycle in cycles], dtype=float
+    )
+    stored_diagnostic = np.asarray(
+        [
+            cycle["cumulative_finite_time_diagnostic_per_second"]
+            for cycle in cycles
+        ],
+        dtype=float,
+    )
+    recomputed_cumulative = np.cumsum(cycle_logs_array, axis=0)
+    recomputed_diagnostic = recomputed_cumulative / end_times[:, None]
+    cumulative_error = float(
+        np.max(np.abs(recomputed_cumulative - stored_cumulative))
+    )
+    diagnostic_error = float(
+        np.max(np.abs(recomputed_diagnostic - stored_diagnostic))
+    )
+    expected_output_count = 1 + sum(
+        len(experiment007.requested_cycle_times(float(start), float(end))) - 1
+        for start, end in zip(boundaries[:-1], boundaries[1:])
+    )
+    checks = {
+        "all_cycles_accepted": all(cycle["accepted"] for cycle in cycles),
+        "cumulative_logs_recomputed": cumulative_error
+        <= PHASE_B_BOOKKEEPING_LIMIT,
+        "diagnostic_recomputed": diagnostic_error <= PHASE_B_BOOKKEEPING_LIMIT,
+        "global_times_strictly_monotonic": bool(np.all(np.diff(all_time) > 0.0)),
+        "global_output_complete": bool(
+            math.isclose(float(all_time[0]), 0.0)
+            and math.isclose(float(all_time[-1]), duration)
+            and len(all_time) == expected_output_count
+        ),
+        "reference_energy_within_limit": float(np.max(all_energy_drift))
+        <= experiment006.ENERGY_DRIFT_LIMIT,
+    }
+    return {
+        "run_id": run_id,
+        "accepted": all(checks.values()),
+        "duration_seconds": duration,
+        "qr_interval_seconds": qr_interval,
+        "cycle_count": len(cycles),
+        "solver_policy": experiment006.policy_dict(policy),
+        "max_step_seconds": max_step,
+        "checks": checks,
+        "cycles": cycles,
+        "initial_canonical_reference": el_to_canonical(INITIAL_EL_STATE),
+        "initial_canonical_tangent_basis": np.linalg.solve(
+            candidate_a_pullback_factor(el_to_canonical(INITIAL_EL_STATE)),
+            np.eye(4),
+        ),
+        "final_cumulative_log_growth": stored_cumulative[-1],
+        "final_diagnostic_vector_per_second": stored_diagnostic[-1],
+        "maximum_normalized_reference_energy_drift": float(
+            np.max(all_energy_drift)
+        ),
+        "maximum_pullback_factor_condition_number": max(
+            cycle["pullback_factor_condition_number"] for cycle in cycles
+        ),
+        "minimum_pullback_factor_singular_value": min(
+            cycle["pullback_factor_minimum_singular_value"] for cycle in cycles
+        ),
+        "maximum_pre_qr_condition_number": max(
+            cycle["pre_qr_condition_number"] for cycle in cycles
+        ),
+        "minimum_r_diagonal": min(
+            float(np.min(cycle["r_diagonal"])) for cycle in cycles
+        ),
+        "maximum_q_orthonormality_error": max(
+            cycle["q_orthonormality_error"] for cycle in cycles
+        ),
+        "maximum_scaled_reconstruction_relative_error": max(
+            cycle["scaled_reconstruction_relative_error"] for cycle in cycles
+        ),
+        "maximum_coordinate_reconstruction_relative_error": max(
+            cycle["coordinate_reconstruction_relative_error"] for cycle in cycles
+        ),
+        "maximum_physical_reconstruction_relative_error": max(
+            cycle["physical_reconstruction_relative_error"] for cycle in cycles
+        ),
+        "maximum_post_pullback_orthonormality_error": max(
+            cycle["post_pullback_orthonormality_error"] for cycle in cycles
+        ),
+        "maximum_reset_identity_error": max(
+            cycle["reset_identity_error"] for cycle in cycles
+        ),
+        "cumulative_bookkeeping_error": cumulative_error,
+        "diagnostic_bookkeeping_error": diagnostic_error,
+        "solver_statistics": {
+            "segments": len(solver_statuses),
+            "nfev": int(sum(item["nfev"] for item in solver_statuses)),
+            "njev": int(sum(item["njev"] for item in solver_statuses)),
+            "nlu": int(sum(item["nlu"] for item in solver_statuses)),
+            "all_segments_accepted": all(
+                item["accepted"] for item in solver_statuses
+            ),
+        },
+        "_reference_time": all_time,
+        "_reference_state": all_reference,
+        "_reference_as_el": canonical_to_el(all_reference),
+        "_cycle_logs": cycle_logs_array,
+        "_cumulative_logs": stored_cumulative,
+        "_diagnostic": stored_diagnostic,
+    }
+
+
+def compare_el_canonical_qr(
+    el_run: dict[str, Any],
+    canonical_run: dict[str, Any],
+    *,
+    policy_name: str,
+) -> dict[str, Any]:
+    """Compare synchronized EL and canonical QR cycles in Candidate-A geometry."""
+
+    if el_run["cycle_count"] != canonical_run["cycle_count"]:
+        raise ValueError("EL and canonical runs must have the same cycle count.")
+    reference_distances: list[float] = []
+    scaled_pre_relative: list[float] = []
+    physical_pre_relative: list[float] = []
+    q_differences: list[float] = []
+    upper_differences: list[float] = []
+    diagonal_relative: list[float] = []
+    cycle_log_differences: list[float] = []
+    cumulative_differences: list[float] = []
+    post_basis_differences: list[float] = []
+    cycle_records: list[dict[str, Any]] = []
+
+    for el_cycle, canonical_cycle in zip(el_run["cycles"], canonical_run["cycles"]):
+        canonical_reference = np.asarray(canonical_cycle["reference_end"], dtype=float)
+        canonical_as_el = canonical_to_el(canonical_reference)
+        reference_difference = _wrapped_el_difference(
+            np.asarray(el_cycle["reference_end"], dtype=float), canonical_as_el
+        )
+        reference_distance = float(
+            experiment006.candidate_a_norm(reference_difference)
+        )
+        el_scaled_pre = np.asarray(el_cycle["scaled_pre"], dtype=float)
+        canonical_scaled_pre = np.asarray(canonical_cycle["scaled_pre"], dtype=float)
+        scaled_relative = float(
+            np.linalg.norm(canonical_scaled_pre - el_scaled_pre, ord="fro")
+            / max(1.0, float(np.linalg.norm(el_scaled_pre, ord="fro")))
+        )
+        coordinate_map = inverse_tangent_map(canonical_reference)
+        canonical_physical_pre = coordinate_map @ np.asarray(
+            canonical_cycle["tangent_matrix_pre_qr"], dtype=float
+        )
+        el_physical_pre = np.asarray(el_cycle["tangent_matrix_pre_qr"], dtype=float)
+        physical_relative = float(
+            np.linalg.norm(canonical_physical_pre - el_physical_pre, ord="fro")
+            / max(1.0, float(np.linalg.norm(el_physical_pre, ord="fro")))
+        )
+        el_q = np.asarray(el_cycle["orthogonal_q"], dtype=float)
+        canonical_q = np.asarray(canonical_cycle["orthogonal_q"], dtype=float)
+        q_difference = float(np.max(np.abs(canonical_q - el_q)))
+        el_upper = np.asarray(el_cycle["upper_r"], dtype=float)
+        canonical_upper = np.asarray(canonical_cycle["upper_r"], dtype=float)
+        upper_difference = float(np.max(np.abs(canonical_upper - el_upper)))
+        el_diagonal = np.asarray(el_cycle["r_diagonal"], dtype=float)
+        canonical_diagonal = np.asarray(canonical_cycle["r_diagonal"], dtype=float)
+        diagonal_difference = float(
+            np.max(
+                np.abs(canonical_diagonal - el_diagonal)
+                / np.maximum(np.abs(el_diagonal), PHASE_B_MINIMUM_R_DIAGONAL)
+            )
+        )
+        el_logs = np.asarray(el_cycle["cycle_log_growth"], dtype=float)
+        canonical_logs = np.asarray(canonical_cycle["cycle_log_growth"], dtype=float)
+        log_difference = float(np.max(np.abs(canonical_logs - el_logs)))
+        el_cumulative = np.asarray(el_cycle["cumulative_log_growth"], dtype=float)
+        canonical_cumulative = np.asarray(
+            canonical_cycle["cumulative_log_growth"], dtype=float
+        )
+        cumulative_difference = float(
+            np.max(np.abs(canonical_cumulative - el_cumulative))
+        )
+        canonical_post_as_el = coordinate_map @ np.asarray(
+            canonical_cycle["tangent_matrix_post"], dtype=float
+        )
+        el_post = np.asarray(el_cycle["tangent_matrix_post"], dtype=float)
+        post_difference = float(np.max(np.abs(canonical_post_as_el - el_post)))
+
+        reference_distances.append(reference_distance)
+        scaled_pre_relative.append(scaled_relative)
+        physical_pre_relative.append(physical_relative)
+        q_differences.append(q_difference)
+        upper_differences.append(upper_difference)
+        diagonal_relative.append(diagonal_difference)
+        cycle_log_differences.append(log_difference)
+        cumulative_differences.append(cumulative_difference)
+        post_basis_differences.append(post_difference)
+        cycle_records.append(
+            {
+                "cycle_index": el_cycle["cycle_index"],
+                "end_time_seconds": el_cycle["end_time_seconds"],
+                "reference_candidate_a_distance": reference_distance,
+                "pre_qr_scaled_relative_difference": scaled_relative,
+                "mapped_physical_pre_relative_difference": physical_relative,
+                "q_maximum_component_difference": q_difference,
+                "upper_r_maximum_absolute_difference": upper_difference,
+                "r_diagonal_maximum_relative_difference": diagonal_difference,
+                "cycle_log_maximum_absolute_difference": log_difference,
+                "cumulative_log_maximum_absolute_difference": cumulative_difference,
+                "post_reset_mapped_basis_maximum_absolute_difference": post_difference,
+            }
+        )
+
+    el_final = np.asarray(el_run["final_diagnostic_spectrum_per_second"], dtype=float)
+    canonical_final = np.asarray(
+        canonical_run["final_diagnostic_vector_per_second"], dtype=float
+    )
+    final_difference = float(np.max(np.abs(canonical_final - el_final)))
+    reference_limit = PHASE_B_CROSS_LIMITS[
+        f"{policy_name}_reference_candidate_a"
+    ]
+    checks = {
+        "both_runs_valid": el_run["accepted"] and canonical_run["accepted"],
+        "reference_correspondence": max(reference_distances) <= reference_limit,
+        "pre_qr_scaled_correspondence": max(scaled_pre_relative)
+        <= PHASE_B_CROSS_LIMITS["pre_qr_scaled_relative"],
+        "mapped_physical_pre_correspondence": max(physical_pre_relative)
+        <= PHASE_B_CROSS_LIMITS["mapped_physical_pre_relative"],
+        "positive_diagonal_q_correspondence": max(q_differences)
+        <= PHASE_B_CROSS_LIMITS["q_component_absolute"],
+        "post_reset_mapped_basis_correspondence": max(post_basis_differences)
+        <= PHASE_B_CROSS_LIMITS["post_reset_mapped_basis_absolute"],
+        "r_diagonal_correspondence": max(diagonal_relative)
+        <= PHASE_B_CROSS_LIMITS["r_diagonal_relative"],
+        "cycle_log_correspondence": max(cycle_log_differences)
+        <= PHASE_B_CROSS_LIMITS["cycle_log_absolute"],
+        "cumulative_log_correspondence": max(cumulative_differences)
+        <= PHASE_B_CROSS_LIMITS["cumulative_log_absolute"],
+        "final_diagnostic_correspondence": final_difference
+        <= PHASE_B_CROSS_LIMITS["final_diagnostic_per_second"],
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "policy_name": policy_name,
+        "cycle_comparisons": cycle_records,
+        "maximum_reference_candidate_a_distance": max(reference_distances),
+        "maximum_pre_qr_scaled_relative_difference": max(scaled_pre_relative),
+        "maximum_mapped_physical_pre_relative_difference": max(
+            physical_pre_relative
+        ),
+        "maximum_q_component_difference": max(q_differences),
+        "maximum_upper_r_absolute_difference": max(upper_differences),
+        "maximum_r_diagonal_relative_difference": max(diagonal_relative),
+        "maximum_cycle_log_absolute_difference": max(cycle_log_differences),
+        "maximum_cumulative_log_absolute_difference": max(cumulative_differences),
+        "maximum_post_reset_mapped_basis_absolute_difference": max(
+            post_basis_differences
+        ),
+        "final_el_diagnostic_vector_per_second": el_final,
+        "final_canonical_diagnostic_vector_per_second": canonical_final,
+        "maximum_final_diagnostic_difference_per_second": final_difference,
+    }
+
+
+def compare_phase_b_refinement(
+    baseline: dict[str, Any],
+    refined: dict[str, Any],
+    *,
+    formulation: str,
+) -> dict[str, Any]:
+    """Compare the compact baseline/refined QR policies within one formulation."""
+
+    if formulation == "canonical":
+        baseline_reference = baseline["_reference_as_el"]
+        refined_reference = refined["_reference_as_el"]
+        baseline_final = np.asarray(
+            baseline["final_diagnostic_vector_per_second"], dtype=float
+        )
+        refined_final = np.asarray(
+            refined["final_diagnostic_vector_per_second"], dtype=float
+        )
+    elif formulation == "el":
+        baseline_reference = baseline["_reference_state"]
+        refined_reference = refined["_reference_state"]
+        baseline_final = np.asarray(
+            baseline["final_diagnostic_spectrum_per_second"], dtype=float
+        )
+        refined_final = np.asarray(
+            refined["final_diagnostic_spectrum_per_second"], dtype=float
+        )
+    else:
+        raise ValueError("Formulation must be 'canonical' or 'el'.")
+
+    reference_distance = experiment006.candidate_a_norm(
+        _wrapped_el_difference(baseline_reference, refined_reference)
+    )
+    cycle_log_difference = np.abs(
+        np.asarray(baseline["_cycle_logs"]) - np.asarray(refined["_cycle_logs"])
+    )
+    cumulative_difference = np.abs(
+        np.asarray(baseline["_cumulative_logs"])
+        - np.asarray(refined["_cumulative_logs"])
+    )
+    final_difference = np.abs(refined_final - baseline_final)
+    maxima = {
+        "maximum_reference_candidate_a_distance": float(np.max(reference_distance)),
+        "maximum_cycle_log_absolute_difference": float(np.max(cycle_log_difference)),
+        "maximum_cumulative_log_absolute_difference": float(
+            np.max(cumulative_difference)
+        ),
+        "maximum_final_diagnostic_difference_per_second": float(
+            np.max(final_difference)
+        ),
+    }
+    checks = {
+        "both_runs_valid": baseline["accepted"] and refined["accepted"],
+        "reference_refinement": maxima["maximum_reference_candidate_a_distance"]
+        <= PHASE_B_REFINEMENT_LIMITS["reference_candidate_a"],
+        "cycle_log_refinement": maxima["maximum_cycle_log_absolute_difference"]
+        <= PHASE_B_REFINEMENT_LIMITS["cycle_log_absolute"],
+        "cumulative_log_refinement": maxima[
+            "maximum_cumulative_log_absolute_difference"
+        ]
+        <= PHASE_B_REFINEMENT_LIMITS["cumulative_log_absolute"],
+        "final_diagnostic_refinement": maxima[
+            "maximum_final_diagnostic_difference_per_second"
+        ]
+        <= PHASE_B_REFINEMENT_LIMITS["final_diagnostic_per_second"],
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "formulation": formulation,
+        **maxima,
+        "baseline_final_diagnostic_vector_per_second": baseline_final,
+        "refined_final_diagnostic_vector_per_second": refined_final,
+        "componentwise_final_difference_per_second": final_difference,
+    }
+
+
+def compare_canonical_exact_repeats(
+    primary: dict[str, Any], repeat: dict[str, Any]
+) -> dict[str, Any]:
+    """Verify deterministic reproducibility of the new canonical primitive."""
+
+    cycle_error = float(
+        np.max(np.abs(primary["_cycle_logs"] - repeat["_cycle_logs"]))
+    )
+    cumulative_error = float(
+        np.max(np.abs(primary["_cumulative_logs"] - repeat["_cumulative_logs"]))
+    )
+    diagnostic_error = float(
+        np.max(np.abs(primary["_diagnostic"] - repeat["_diagnostic"]))
+    )
+    reference_distance = float(
+        experiment006.candidate_a_norm(
+            _wrapped_el_difference(
+                primary["_reference_as_el"][-1], repeat["_reference_as_el"][-1]
+            )
+        )
+    )
+    checks = {
+        "repeat_valid": repeat["accepted"],
+        "cycle_logs": cycle_error <= PHASE_B_REPRODUCIBILITY_LIMIT,
+        "cumulative_logs": cumulative_error <= PHASE_B_REPRODUCIBILITY_LIMIT,
+        "diagnostic": diagnostic_error <= PHASE_B_REPRODUCIBILITY_LIMIT,
+        "physical_reference": reference_distance <= PHASE_B_REPRODUCIBILITY_LIMIT,
+    }
+    return {
+        "accepted": all(checks.values()),
+        "checks": checks,
+        "maximum_cycle_log_difference": cycle_error,
+        "maximum_cumulative_log_difference": cumulative_error,
+        "maximum_diagnostic_difference_per_second": diagnostic_error,
+        "final_reference_candidate_a_distance": reference_distance,
+    }
+
+
+def run_phase_b(output_dir: Path | None = None) -> dict[str, Any]:
+    """Run the predeclared short canonical/EL full-matrix QR validation."""
+
+    canonical_dynamics = CanonicalDynamics()
+    el_dynamics = experiment006.VariationalDynamics()
+    configurations = {
+        "baseline": (experiment007.SOLVER_POLICY, BASELINE_MAX_STEP),
+        "refined": (experiment007.STRICTER_POLICY, REFINED_MAX_STEP),
+    }
+    el_runs: dict[str, Any] = {}
+    canonical_runs: dict[str, Any] = {}
+    cross_comparisons: dict[str, Any] = {}
+    for name, (policy, max_step) in configurations.items():
+        el_runs[name] = experiment007.run_qr_primitive(
+            el_dynamics,
+            run_id=f"phase_b_el_{name}",
+            duration=PHASE_B_DURATION_SECONDS,
+            qr_interval=PHASE_B_QR_INTERVAL_SECONDS,
+            policy=policy,
+            max_step=max_step,
+        )
+        canonical_runs[name] = run_canonical_qr_primitive(
+            canonical_dynamics,
+            run_id=f"phase_b_canonical_{name}",
+            duration=PHASE_B_DURATION_SECONDS,
+            qr_interval=PHASE_B_QR_INTERVAL_SECONDS,
+            policy=policy,
+            max_step=max_step,
+        )
+        cross_comparisons[name] = compare_el_canonical_qr(
+            el_runs[name], canonical_runs[name], policy_name=name
+        )
+
+    canonical_repeat = run_canonical_qr_primitive(
+        canonical_dynamics,
+        run_id="phase_b_canonical_baseline_repeat",
+        duration=PHASE_B_DURATION_SECONDS,
+        qr_interval=PHASE_B_QR_INTERVAL_SECONDS,
+        policy=experiment007.SOLVER_POLICY,
+        max_step=BASELINE_MAX_STEP,
+    )
+    reproducibility = compare_canonical_exact_repeats(
+        canonical_runs["baseline"], canonical_repeat
+    )
+    refinements = {
+        "el": compare_phase_b_refinement(
+            el_runs["baseline"], el_runs["refined"], formulation="el"
+        ),
+        "canonical": compare_phase_b_refinement(
+            canonical_runs["baseline"],
+            canonical_runs["refined"],
+            formulation="canonical",
+        ),
+    }
+    groups = {
+        "canonical_baseline_internal": {
+            "accepted": canonical_runs["baseline"]["accepted"]
+        },
+        "canonical_refined_internal": {
+            "accepted": canonical_runs["refined"]["accepted"]
+        },
+        "el_baseline_internal": {"accepted": el_runs["baseline"]["accepted"]},
+        "el_refined_internal": {"accepted": el_runs["refined"]["accepted"]},
+        "baseline_cross_formulation": cross_comparisons["baseline"],
+        "refined_cross_formulation": cross_comparisons["refined"],
+        "el_numerical_refinement": refinements["el"],
+        "canonical_numerical_refinement": refinements["canonical"],
+        "canonical_exact_reproducibility": reproducibility,
+    }
+    accepted = all(group["accepted"] for group in groups.values())
+    summary = {
+        "experiment": "011_hamiltonian_canonical_spectrum_crosscheck",
+        "phase": "B_canonical_pullback_full_matrix_qr",
+        "accepted": accepted,
+        "verdict": (
+            "accepted_canonical_pullback_qr_and_short_time_el_equivalence"
+            if accepted
+            else "unresolved_or_rejected_phase_b"
+        ),
+        "claim_boundary": (
+            "No long-time canonical spectrum, 640 s comparison, or maximal "
+            "Lyapunov exponent was computed."
+        ),
+        "duration_seconds": PHASE_B_DURATION_SECONDS,
+        "qr_interval_seconds": PHASE_B_QR_INTERVAL_SECONDS,
+        "cycle_count": PHASE_B_CYCLE_COUNT,
+        "initial_basis_contract": {
+            "el": "Y_EL,0=S^-1",
+            "canonical": "Y_H,0=A(z0)^-1",
+            "correspondence": "Y_EL=C(z)Y_H and S Y_EL=A(z)Y_H=I",
+        },
+        "qr_sign_convention": (
+            "R diagonal forced positive by paired Q-column/R-row flips; "
+            "columns are not sorted"
+        ),
+        "policies": {
+            name: experiment006.policy_dict(policy) | {"max_step_seconds": max_step}
+            for name, (policy, max_step) in configurations.items()
+        },
+        "predeclared_limits": {
+            "qr_internal": {
+                "qr_and_reconstruction": PHASE_B_QR_LIMIT,
+                "bookkeeping": PHASE_B_BOOKKEEPING_LIMIT,
+                "reproducibility": PHASE_B_REPRODUCIBILITY_LIMIT,
+                "minimum_r_diagonal": PHASE_B_MINIMUM_R_DIAGONAL,
+                "minimum_pullback_factor_singular_value": (
+                    PHASE_B_MINIMUM_A_SINGULAR_VALUE
+                ),
+                "maximum_pullback_factor_condition_number": (
+                    PHASE_B_MAXIMUM_A_CONDITION_NUMBER
+                ),
+                "maximum_pre_qr_condition_number": (
+                    PHASE_B_MAXIMUM_PRE_QR_CONDITION_NUMBER
+                ),
+                "normalized_energy_drift": experiment006.ENERGY_DRIFT_LIMIT,
+            },
+            "cross_formulation": PHASE_B_CROSS_LIMITS,
+            "numerical_refinement": PHASE_B_REFINEMENT_LIMITS,
+        },
+        "canonical_runs": canonical_runs,
+        "el_runs": el_runs,
+        "cross_formulation": cross_comparisons,
+        "refinement": refinements,
+        "canonical_reproducibility": reproducibility,
+        "groups": groups,
+        "experiment_010_target_not_tested": asdict(EXPERIMENT_010_TARGET),
+    }
+    public_summary = _public(summary)
+    if output_dir is not None:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        summary_path = output_dir / "summary.json"
+        cycles_path = output_dir / "cycles.json"
+        summary_without_cycles = dict(public_summary)
+        summary_without_cycles["canonical_runs"] = {
+            name: {key: value for key, value in run.items() if key != "cycles"}
+            for name, run in public_summary["canonical_runs"].items()
+        }
+        summary_without_cycles["el_runs"] = {
+            name: {key: value for key, value in run.items() if key != "cycles"}
+            for name, run in public_summary["el_runs"].items()
+        }
+        summary_path.write_text(
+            json.dumps(summary_without_cycles, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        cycles_path.write_text(
+            json.dumps(
+                {
+                    "canonical_runs": {
+                        name: run["cycles"]
+                        for name, run in public_summary["canonical_runs"].items()
+                    },
+                    "el_runs": {
+                        name: run["cycles"]
+                        for name, run in public_summary["el_runs"].items()
+                    },
+                    "cross_formulation": public_summary["cross_formulation"],
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        manifest = {
+            "experiment": public_summary["experiment"],
+            "phase": public_summary["phase"],
+            "accepted": accepted,
+            "files": {
+                path.name: {
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    "bytes": path.stat().st_size,
+                }
+                for path in (summary_path, cycles_path)
+            },
+        }
+        (output_dir / "manifest.json").write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+    return summary
 
 
 def run_crosscheck() -> None:
     """Deliberately refuse the future long-time spectrum calculation."""
 
-    raise NotImplementedError("Experiment 011 Phase A does not implement canonical QR or a Hamiltonian spectrum.")
+    raise NotImplementedError(
+        "Experiment 011 Phase B does not implement the long-time canonical "
+        "Hamiltonian spectrum cross-check."
+    )
 
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--phase", choices=("a", "b"), default="a")
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=REPOSITORY_ROOT / "development/chaos_content/outputs/hamiltonian_canonical_phase_a/baseline",
+        default=None,
     )
     parser.add_argument("--self-check", action="store_true")
     return parser.parse_args()
@@ -731,7 +1633,19 @@ def _parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = _parse_args()
-    result = run_phase_a(args.output_dir)
+    if args.output_dir is None:
+        output_dir = (
+            REPOSITORY_ROOT
+            / "development/chaos_content/outputs"
+            / (
+                "hamiltonian_canonical_phase_a/baseline"
+                if args.phase == "a"
+                else "hamiltonian_canonical_phase_b/short_qr"
+            )
+        )
+    else:
+        output_dir = args.output_dir
+    result = run_phase_a(output_dir) if args.phase == "a" else run_phase_b(output_dir)
     if args.self_check:
         assert_self_check(result)
     print(json.dumps(_public(result), indent=2, sort_keys=True))
