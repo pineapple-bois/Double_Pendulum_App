@@ -57,6 +57,10 @@ framework:
 - `compiled.py` re-expresses only the explicit Euler--Lagrange flow and exact
   Jacobian-vector product as a Numba kernel while retaining the reference
   SciPy DOP853 driver, renormalisation, diagnostics, and result contracts;
+- `fortran_dop853.py` composes that validated Numba RHS/JVP with the compiled
+  Fortran DOP853 segment boundary accepted by Experiment 015, observes
+  accepted steps for the energy diagnostic, and returns the same result and
+  scalar-evaluation contracts;
 - `compiled_equivalence.py` owns the bounded center-plus-corners equivalence
   assessment and separates first-call compilation cost from warmed evaluator
   throughput;
@@ -256,13 +260,30 @@ The first compiled equivalent is exposed through the matching adapter:
 evaluation = evaluate_renormalized_tangent_compiled(spec)
 ```
 
-It is intentionally a compiled-RHS evaluator, not yet a wholly compiled
-integrator. Both adapters execute the same shared fixed-horizon driver. The
-reference builds its flow and exact symbolic Jacobian from the accepted
-production mechanics; the Numba path writes the same simple-model flow
-explicitly and propagates its directional derivative directly as
-`J(x) delta_x`. Focused tests compare that eight-component RHS with the
-symbolic oracle for default and non-default physical parameters.
+This remains the compiled-RHS plus `solve_ivp` DOP853 oracle for the promoted
+integration boundary. Both solve_ivp adapters execute the same shared
+fixed-horizon driver. The reference builds its flow and exact symbolic
+Jacobian from the accepted production mechanics; the Numba path writes the
+same simple-model flow explicitly and propagates its directional derivative
+directly as `J(x) delta_x`. Focused tests compare that eight-component RHS
+with the symbolic oracle for default and non-default physical parameters.
+
+The Experiment 015 boundary is exposed separately:
+
+```python
+result = run_renormalized_tangent_compiled_fortran(spec)
+evaluation = evaluate_renormalized_tangent_compiled_fortran(spec)
+```
+
+It uses the same Numba RHS/JVP and shared evolve / measure / renormalise
+driver, but integrates each `0.25 s` segment once with SciPy's compiled
+Fortran DOP853 implementation. Accepted solver steps supply the reference
+states used by the unchanged energy-drift calculation. The solve_ivp oracle
+instead observes the uniform `0.01 s` diagnostic grid. Experiment 015 showed
+that both diagnostics remain below the unchanged validity limit and their
+maxima agree within the existing `1e-8` comparison tolerance across the five
+mechanically selected `T=5 s` conditions. The distinction remains provenance;
+the reference result contract has not been redefined.
 
 The 1-D orchestration API is:
 
@@ -402,15 +423,21 @@ work has therefore begun with reference-versus-compiled equivalence rather
 than silently replacing this implementation.
 
 That first pointwise equivalence step is now established for the declared
-five-condition validation set. This supports a next bounded compiled
-batch/grid apparatus test. It does not yet justify a tile executor or a claim
-that the Python/SciPy per-cell driver is the final large-field execution shape.
+five-condition validation set. Experiment 015 additionally established and
+this strand now exposes a compiled-Fortran DOP853 segment runner for the same
+fixed-horizon contract. The current solve_ivp paths remain available as
+scientific and integration-boundary oracles.
+
+This promotion supports a next bounded compiled batch/grid apparatus test. It
+does not establish equivalence for arbitrary horizons or the full periodic
+domain, threaded execution safety, high-resolution map production, or a tile
+executor.
 
 ## Deliberately absent
 
 There is no simulator/manager/engine abstraction, plugin system, inheritance
 tree, generic N-dimensional framework, adaptive/refined grid, interpolation,
 state-space classification, QR/full-spectrum API, selected map horizon, fully
-compiled integrator, compiled batch kernel, tile executor, persistent
+compiled end-to-end observable or batch kernel, tile executor, persistent
 large-map dataset, Dash integration, or production `/chaos` integration. Those
 decisions require later prototype questions and evidence.

@@ -43,6 +43,11 @@ from .compiled import (
     evaluate_renormalized_tangent_compiled,
     run_renormalized_tangent_compiled,
 )
+from .fortran_dop853 import (
+    COMPILED_FORTRAN_EVALUATOR,
+    evaluate_renormalized_tangent_compiled_fortran,
+    run_renormalized_tangent_compiled_fortran,
+)
 from development.chaos_content.prototypes.state_space_fields import (
     EvaluationStatus,
     LineSample,
@@ -96,6 +101,9 @@ __all__ = [
     "compiled_reference_and_tangent_rhs",
     "evaluate_renormalized_tangent_compiled",
     "run_renormalized_tangent_compiled",
+    "COMPILED_FORTRAN_EVALUATOR",
+    "evaluate_renormalized_tangent_compiled_fortran",
+    "run_renormalized_tangent_compiled_fortran",
     "Theta1SweepResult",
     "Theta1SweepSpec",
     "run_theta1_sweep",

@@ -820,6 +820,21 @@ that requirement over its declared pointwise validation set. Bounded compiled
 field evaluation is the next separate apparatus test before compiled execution
 is used for larger field generation.
 
+Experiment 015 subsequently isolated and accepted the next implementation
+boundary. The Numba Euler--Lagrange RHS/JVP can be composed with SciPy's
+compiled Fortran DOP853 segment integrator while retaining the shared
+Candidate-A evolve / measure / renormalise driver and result semantics. The
+compiled-RHS plus Python `solve_ivp` DOP853 path remains the
+integration-boundary oracle; the original NumPy/SymPy/SciPy path remains the
+mathematical oracle.
+
+The promoted Fortran path observes accepted adaptive steps for its energy
+diagnostic, whereas the solve_ivp oracle observes a uniform `0.01 s` grid.
+Experiment 015 validated the unchanged energy limit and agreement of the two
+reported maxima within the predeclared tolerance across the five-condition,
+`T=5 s` fixture. This distinction is retained as provenance rather than
+silently redefining the reference diagnostic.
+
 Wall-clock duration is provenance, not part of scientific equivalence. A
 compiled path may have a one-time compilation or setup cost. The equivalence
 task should report that cost separately from warmed per-evaluation timing so a
@@ -981,20 +996,27 @@ integration should therefore not dictate scientific field storage prematurely.
 
 # 30. Current boundary and next earned question
 
-The architecture now includes a first validated compiled equivalent of the
-finite-time tangent observable. It compiles the explicit Euler--Lagrange flow
-and exact Jacobian-vector product with Numba, then reuses the reference SciPy
-DOP853 integration, Candidate-A renormalisation, diagnostics, and result
-driver. A mechanically declared five-condition center-plus-corners set agrees
-pointwise with the NumPy/SymPy/SciPy oracle inside predeclared tolerances, and
-the compiled evaluator composes with the existing rectangular sampler.
+The architecture now contains two validated compiled equivalents around the
+same finite-time tangent contract:
 
-This is evidence for the evaluator seam, not yet for a final large-field
-engine. The architecture currently stops at pointwise compiled-RHS evaluation,
-small reference sampling, JSON field persistence, and diagnostic rendering.
-It deliberately does not include:
+``` text
+NumPy/SymPy RHS/Jacobian + solve_ivp DOP853       mathematical oracle
+Numba RHS/JVP + solve_ivp DOP853                 integration-boundary oracle
+Numba RHS/JVP + compiled Fortran DOP853          promoted fast evaluator
+```
 
-- a wholly compiled integrator or batch kernel;
+All three retain the shared Candidate-A renormalisation, signed-log
+accumulation, fixed-horizon result, and validity semantics. The promoted
+Fortran boundary is earned only for the declared five-condition `T=5 s`
+fixture. It is not evidence for arbitrary horizons, the full periodic domain,
+threaded execution, or high-resolution production fields.
+
+This remains evidence for the evaluator seam, not yet for a final large-field
+engine. The architecture currently stops at pointwise compiled/Fortran
+evaluation, small reference sampling, JSON field persistence, and diagnostic
+rendering. It deliberately does not include:
+
+- an end-to-end compiled observable or compiled batch kernel;
 - batch or tile executors;
 - multiprocessing or GPU execution;
 - HDF5 or Zarr storage;
@@ -1002,8 +1024,9 @@ It deliberately does not include:
 - additional observables;
 - production integration.
 
-The next earned task is a bounded compiled batch/grid apparatus test. It
-should measure how much Python/SciPy per-cell orchestration remains visible and
-whether a compiled integration/batch boundary is needed before designing tile
-execution. Tiling remains a later seam: pointwise speedup alone does not yet
-earn scheduling, resumability, or persistent chunk-storage machinery.
+The next earned task is a bounded compiled batch/grid apparatus test using the
+promoted evaluator without changing its scientific specification. That test
+should measure remaining per-cell Python orchestration and execution shape
+before any tile design. Tiling remains a later seam: pointwise speedup alone
+does not yet earn scheduling, resumability, or persistent chunk-storage
+machinery.
