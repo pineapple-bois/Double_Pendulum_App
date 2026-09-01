@@ -551,8 +551,20 @@ def run_renormalized_tangent(
     """
 
     spec = spec or RenormalizedTangentSpec()
-    metric = CandidateAMetric(spec.characteristic_length, spec.parameters.gravity)
     dynamics = EulerLagrangeDynamics(spec.parameters)
+    return _run_renormalized_tangent_with_rhs(
+        spec,
+        dynamics.reference_and_tangent_rhs,
+    )
+
+
+def _run_renormalized_tangent_with_rhs(
+    spec: RenormalizedTangentSpec,
+    reference_and_tangent_rhs: Callable[[float, np.ndarray], np.ndarray],
+) -> RenormalizedTangentResult:
+    """Run the accepted observable with one validated augmented-state RHS."""
+
+    metric = CandidateAMetric(spec.characteristic_length, spec.parameters.gravity)
     initial_tangent = np.asarray(spec.initial_tangent, dtype=float)
     initial_unit_tangent = initial_tangent / float(metric.tangent_norm(initial_tangent))
     scaling_matrix = metric.scaling_matrix()
@@ -584,7 +596,7 @@ def run_renormalized_tangent(
         )
         requested = np.linspace(start, end, sample_count)
         augmented, nfev = _solve_segment(
-            dynamics.reference_and_tangent_rhs,
+            reference_and_tangent_rhs,
             np.concatenate((reference, tangent)),
             requested,
             spec.solver,

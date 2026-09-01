@@ -612,12 +612,12 @@ Performance work must not silently redefine the mathematics. A future
 compiled kernel should be validated against the clean reference
 implementation before becoming the map engine.
 
-The completed reference grid has now earned the next question—reference versus
-compiled equivalence—but not permission to replace the reference path. The
-NumPy/SciPy implementation remains the scientific oracle. Any compiled
-evaluator must implement the same observable contract and pass explicit
-pointwise and field-level equivalence tests before performance comparisons can
-affect execution architecture.
+The completed reference grid earned the reference-versus-compiled question.
+The first Numba augmented-RHS path has now passed bounded pointwise
+equivalence, but that does not replace the reference path. The NumPy/SciPy
+implementation remains the scientific oracle. A compiled evaluator must keep
+passing explicit pointwise and field-level equivalence tests before performance
+comparisons can affect execution architecture.
 
 # 18. Relationship to production
 
@@ -800,7 +800,7 @@ observable specification
          +-------------------------+
          |                         |
          v                         v
-NumPy/SciPy reference       future compiled evaluator
+NumPy/SciPy reference       validated compiled evaluator
          |                         |
          +---- equivalence tests --+
                        |
@@ -813,11 +813,12 @@ Candidate-A geometry, renormalisation semantics, signed logarithmic
 accumulation, horizon, and validity policy must not be changed merely to ease
 compilation.
 
-A future compiled implementation may use a different internal representation,
-but it must accept the same scientific specification in all relevant respects
-and produce an equivalent scalar evaluation outcome. Reference-versus-compiled
-equivalence is a separate scientific validation task and must precede use of a
-compiled path for field generation.
+A compiled implementation may use a different internal representation, but it
+must accept the same scientific specification in all relevant respects and
+produce an equivalent scalar evaluation outcome. The first Numba path meets
+that requirement over its declared pointwise validation set. Bounded compiled
+field evaluation is the next separate apparatus test before compiled execution
+is used for larger field generation.
 
 Wall-clock duration is provenance, not part of scientific equivalence. A
 compiled path may have a one-time compilation or setup cost. The equivalence
@@ -980,10 +981,20 @@ integration should therefore not dictate scientific field storage prematurely.
 
 # 30. Current boundary and next earned question
 
-The architecture currently stops at small reference sampling, JSON field
-persistence, and diagnostic rendering. It deliberately does not include:
+The architecture now includes a first validated compiled equivalent of the
+finite-time tangent observable. It compiles the explicit Euler--Lagrange flow
+and exact Jacobian-vector product with Numba, then reuses the reference SciPy
+DOP853 integration, Candidate-A renormalisation, diagnostics, and result
+driver. A mechanically declared five-condition center-plus-corners set agrees
+pointwise with the NumPy/SymPy/SciPy oracle inside predeclared tolerances, and
+the compiled evaluator composes with the existing rectangular sampler.
 
-- compiled/JIT kernels;
+This is evidence for the evaluator seam, not yet for a final large-field
+engine. The architecture currently stops at pointwise compiled-RHS evaluation,
+small reference sampling, JSON field persistence, and diagnostic rendering.
+It deliberately does not include:
+
+- a wholly compiled integrator or batch kernel;
 - batch or tile executors;
 - multiprocessing or GPU execution;
 - HDF5 or Zarr storage;
@@ -991,7 +1002,8 @@ persistence, and diagnostic rendering. It deliberately does not include:
 - additional observables;
 - production integration.
 
-The next earned task is reference-versus-compiled equivalence for the existing
-finite-time observable. Only after equivalence is established should timing
-evidence determine whether and how a compiled evaluator participates in larger
-field execution.
+The next earned task is a bounded compiled batch/grid apparatus test. It
+should measure how much Python/SciPy per-cell orchestration remains visible and
+whether a compiled integration/batch boundary is needed before designing tile
+execution. Tiling remains a later seam: pointwise speedup alone does not yet
+earn scheduling, resumability, or persistent chunk-storage machinery.

@@ -37,6 +37,12 @@ from .evaluation import (
     RenormalizedTangentEvaluator,
     evaluate_renormalized_tangent_reference,
 )
+from .compiled import (
+    COMPILED_EVALUATOR,
+    compiled_reference_and_tangent_rhs,
+    evaluate_renormalized_tangent_compiled,
+    run_renormalized_tangent_compiled,
+)
 from development.chaos_content.prototypes.state_space_fields import (
     EvaluationStatus,
     LineSample,
@@ -86,6 +92,10 @@ __all__ = [
     "RenormalizedTangentEvaluation",
     "RenormalizedTangentEvaluator",
     "evaluate_renormalized_tangent_reference",
+    "COMPILED_EVALUATOR",
+    "compiled_reference_and_tangent_rhs",
+    "evaluate_renormalized_tangent_compiled",
+    "run_renormalized_tangent_compiled",
     "Theta1SweepResult",
     "Theta1SweepSpec",
     "run_theta1_sweep",

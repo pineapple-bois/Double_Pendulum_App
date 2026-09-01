@@ -54,6 +54,12 @@ framework:
 - `evaluation.py` adapts that unchanged rich NumPy/SciPy reference result to
   the neutral scalar-evaluation outcome and is the future
   reference-versus-compiled seam;
+- `compiled.py` re-expresses only the explicit Euler--Lagrange flow and exact
+  Jacobian-vector product as a Numba kernel while retaining the reference
+  SciPy DOP853 driver, renormalisation, diagnostics, and result contracts;
+- `compiled_equivalence.py` owns the bounded center-plus-corners equivalence
+  assessment and separates first-call compilation cost from warmed evaluator
+  throughput;
 - `../state_space_fields.py` owns only the earned cross-observable outcome,
   explicit-axis line/rectangle reference sampling, and full periodic
   angular-domain contracts;
@@ -99,6 +105,34 @@ Run the focused tests:
 ```bash
 uv run pytest development/chaos_content/prototypes/lyapunov_exponents/tests
 ```
+
+## Run the reference-versus-compiled assessment
+
+From the repository root:
+
+```bash
+uv run python development/chaos_content/prototypes/lyapunov_exponents/compiled_equivalence.py
+```
+
+This writes the source-relative, intentionally untracked
+`outputs/reference_vs_compiled_equivalence.json`. The assessment fixes the
+existing `T=5 s`, `0.25 s` renormalisation, pure-`theta1` tangent, zero initial
+angular velocities, Candidate-A geometry, and DOP853 policy. Its validation
+set is the center plus four corners of the already declared
+`169 deg`--`189 deg` angle rectangle; it was fixed before compiled results were
+inspected.
+
+The predeclared scalar acceptance tolerance is an absolute
+`1e-8 s^-1`. Cycle log increments, final reference/tangent state, numerical
+validity, energy drift, and solver evaluation counts are also compared. The
+absolute tolerance is used because a defensible finite-time rate may be near
+zero; it is small relative to the observed order-one rates and is ten times
+the reference solver's relative tolerance before allowing wider accumulated
+state comparisons.
+
+The first compiled call includes LLVM compilation plus one evaluation. Warmed
+timings are measured only after both paths have completed the validation set.
+Timing is implementation evidence, not part of scientific equivalence.
 
 ## Run the bounded 1-D sweep
 
@@ -213,8 +247,22 @@ It returns the cross-observable `ScalarEvaluation`: status, optional finite
 value, typed Lyapunov numerical diagnostics, elapsed time, evaluator identity,
 validity issues, and bounded execution-error details. The adapter catches only
 the reference calculation's numerical `RuntimeError`; programming and
-specification errors propagate. A future compiled evaluator must return the
-same outcome semantics and be proven equivalent to this reference adapter.
+specification errors propagate. Any compiled evaluator must return the same
+outcome semantics and be proven equivalent to this reference adapter.
+
+The first compiled equivalent is exposed through the matching adapter:
+
+```python
+evaluation = evaluate_renormalized_tangent_compiled(spec)
+```
+
+It is intentionally a compiled-RHS evaluator, not yet a wholly compiled
+integrator. Both adapters execute the same shared fixed-horizon driver. The
+reference builds its flow and exact symbolic Jacobian from the accepted
+production mechanics; the Numba path writes the same simple-model flow
+explicitly and propagates its directional derivative directly as
+`J(x) delta_x`. Focused tests compare that eight-component RHS with the
+symbolic oracle for default and non-default physical parameters.
 
 The 1-D orchestration API is:
 
@@ -350,13 +398,19 @@ The NumPy/SciPy implementation remains the scientific oracle. Reusable
 sampling, future storage, and rendering concerns are now cross-observable, but
 the Lyapunov specification, Candidate-A geometry, tangent integration, and
 validity diagnostics remain local scientific contracts. High-performance map
-work must begin with reference-versus-compiled equivalence rather than silently
-replacing this implementation.
+work has therefore begun with reference-versus-compiled equivalence rather
+than silently replacing this implementation.
+
+That first pointwise equivalence step is now established for the declared
+five-condition validation set. This supports a next bounded compiled
+batch/grid apparatus test. It does not yet justify a tile executor or a claim
+that the Python/SciPy per-cell driver is the final large-field execution shape.
 
 ## Deliberately absent
 
 There is no simulator/manager/engine abstraction, plugin system, inheritance
 tree, generic N-dimensional framework, adaptive/refined grid, interpolation,
-state-space classification, QR/full-spectrum API, selected map horizon, JIT
-layer, persistent large-map dataset, Dash integration, or production `/chaos`
-integration. Those decisions require later prototype questions and evidence.
+state-space classification, QR/full-spectrum API, selected map horizon, fully
+compiled integrator, compiled batch kernel, tile executor, persistent
+large-map dataset, Dash integration, or production `/chaos` integration. Those
+decisions require later prototype questions and evidence.

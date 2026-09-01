@@ -9,6 +9,7 @@ dependencies = [
     "flask",
     "gunicorn",
     "matplotlib",
+    "numba>=0.67.0",
     "numpy",
     "plotly",
     "scipy",

@@ -9,12 +9,14 @@ from typing import Callable
 if __package__:
     from .reference import (
         RenormalizedTangentDiagnostics,
+        RenormalizedTangentResult,
         RenormalizedTangentSpec,
         run_renormalized_tangent,
     )
 else:
     from reference import (
         RenormalizedTangentDiagnostics,
+        RenormalizedTangentResult,
         RenormalizedTangentSpec,
         run_renormalized_tangent,
     )
@@ -30,6 +32,9 @@ RenormalizedTangentEvaluation = ScalarEvaluation[RenormalizedTangentDiagnostics]
 RenormalizedTangentEvaluator = Callable[
     [RenormalizedTangentSpec], RenormalizedTangentEvaluation
 ]
+RenormalizedTangentRunner = Callable[
+    [RenormalizedTangentSpec], RenormalizedTangentResult
+]
 
 
 def evaluate_renormalized_tangent_reference(
@@ -41,16 +46,31 @@ def evaluate_renormalized_tangent_reference(
     represented as data. Programming and specification exceptions propagate.
     """
 
+    return evaluate_renormalized_tangent_runner(
+        spec,
+        runner=run_renormalized_tangent,
+        evaluator=REFERENCE_EVALUATOR,
+    )
+
+
+def evaluate_renormalized_tangent_runner(
+    spec: RenormalizedTangentSpec,
+    *,
+    runner: RenormalizedTangentRunner,
+    evaluator: str,
+) -> RenormalizedTangentEvaluation:
+    """Adapt one implementation of the observable to the shared outcome."""
+
     started = perf_counter()
     try:
-        result = run_renormalized_tangent(spec)
+        result = runner(spec)
     except RuntimeError as error:
         return ScalarEvaluation(
             status=EvaluationStatus.EXECUTION_ERROR,
             value=None,
             diagnostics=None,
             elapsed_seconds=perf_counter() - started,
-            evaluator=REFERENCE_EVALUATOR,
+            evaluator=evaluator,
             error_type=type(error).__name__,
             error_message=str(error),
         )
@@ -60,7 +80,7 @@ def evaluate_renormalized_tangent_reference(
     finite_rate = math.isfinite(rate)
     validity_issues = list(diagnostics.validity_issues)
     if not diagnostics.numerically_valid and not validity_issues:
-        validity_issues.append("reference evaluator reported numerical invalidity")
+        validity_issues.append("observable evaluator reported numerical invalidity")
     if not finite_rate:
         validity_issues.append("finite-time stretching rate was non-finite")
     return ScalarEvaluation(
@@ -72,6 +92,6 @@ def evaluate_renormalized_tangent_reference(
         value=rate if finite_rate else None,
         diagnostics=diagnostics,
         elapsed_seconds=perf_counter() - started,
-        evaluator=REFERENCE_EVALUATOR,
+        evaluator=evaluator,
         validity_issues=tuple(validity_issues),
     )
