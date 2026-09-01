@@ -561,9 +561,12 @@ def run_renormalized_tangent(
 def _run_renormalized_tangent_with_rhs(
     spec: RenormalizedTangentSpec,
     reference_and_tangent_rhs: Callable[[float, np.ndarray], np.ndarray],
+    *,
+    segment_solver: Callable[..., tuple[np.ndarray, int]] | None = None,
 ) -> RenormalizedTangentResult:
     """Run the accepted observable with one validated augmented-state RHS."""
 
+    solve_segment = _solve_segment if segment_solver is None else segment_solver
     metric = CandidateAMetric(spec.characteristic_length, spec.parameters.gravity)
     initial_tangent = np.asarray(spec.initial_tangent, dtype=float)
     initial_unit_tangent = initial_tangent / float(metric.tangent_norm(initial_tangent))
@@ -595,7 +598,7 @@ def _run_renormalized_tangent_with_rhs(
             2, int(round((end - start) / spec.sampling_interval)) + 1
         )
         requested = np.linspace(start, end, sample_count)
-        augmented, nfev = _solve_segment(
+        augmented, nfev = solve_segment(
             reference_and_tangent_rhs,
             np.concatenate((reference, tangent)),
             requested,
