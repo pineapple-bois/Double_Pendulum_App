@@ -24,7 +24,9 @@ from reference import (
     CandidateAMetric,
     EulerLagrangeDynamics,
     PendulumParameters,
+    RenormalizedTangentSpec,
     SensitivitySpec,
+    run_renormalized_tangent,
     run_sensitivity_to_lyapunov,
     second_bob_separation,
     wrap_angle_difference,
@@ -44,6 +46,11 @@ def result():
 @pytest.fixture(scope="module")
 def dynamics():
     return EulerLagrangeDynamics(PendulumParameters())
+
+
+@pytest.fixture(scope="module")
+def renormalized_result():
+    return run_renormalized_tangent()
 
 
 def test_wrapped_finite_angles_use_deterministic_positive_pi_branch() -> None:
@@ -200,3 +207,80 @@ def test_first_figure_exposes_the_pedagogical_progression(result) -> None:
 
 def test_default_figure_path_is_strand_local() -> None:
     assert DEFAULT_FIGURE_PATH == STRAND_ROOT / "outputs" / "sensitivity_to_lyapunov.png"
+
+
+def test_renormalized_tangent_reproduces_experiment_007_prefix(
+    renormalized_result,
+) -> None:
+    # Trusted one-vector fixtures from Experiment 007 at 0.25, 0.50, and 5 s.
+    np.testing.assert_allclose(
+        renormalized_result.stretch_factor[:2],
+        [3.616321760409443, 4.387214198041842],
+        rtol=0.0,
+        atol=2.0e-10,
+    )
+    np.testing.assert_allclose(
+        renormalized_result.log_stretch_increment[:2],
+        [1.2854574209853458, 1.4786944466228358],
+        rtol=0.0,
+        atol=2.0e-10,
+    )
+    assert renormalized_result.cumulative_log_stretch[-1] == pytest.approx(
+        5.196897087890645, abs=2.0e-10
+    )
+    assert renormalized_result.finite_time_stretching_rate == pytest.approx(
+        1.039379417578129, abs=2.0e-10
+    )
+
+
+def test_renormalized_bookkeeping_and_numerical_invariants(
+    renormalized_result,
+) -> None:
+    result = renormalized_result
+    diagnostics = result.diagnostics
+    assert len(result.cycle_end_time) == diagnostics.segment_count == 20
+    np.testing.assert_allclose(
+        np.log(result.stretch_factor),
+        result.log_stretch_increment,
+        rtol=0.0,
+        atol=2.0e-16,
+    )
+    replayed_cumulative = []
+    cumulative = 0.0
+    for increment in result.log_stretch_increment:
+        cumulative += float(increment)
+        replayed_cumulative.append(cumulative)
+    np.testing.assert_array_equal(result.cumulative_log_stretch, replayed_cumulative)
+    np.testing.assert_allclose(
+        result.cumulative_finite_time_rate,
+        result.cumulative_log_stretch / result.cycle_end_time,
+        rtol=0.0,
+        atol=0.0,
+    )
+    assert np.any(result.log_stretch_increment < 0.0)
+    assert result.metric.tangent_norm(result.initial_unit_tangent) == pytest.approx(1.0)
+    assert result.metric.tangent_norm(result.final_unit_tangent) == pytest.approx(1.0)
+    assert diagnostics.maximum_normalized_reference_energy_drift <= 1.0e-7
+    assert diagnostics.maximum_post_renormalization_norm_error <= 1.0e-12
+    assert diagnostics.numerically_valid
+    assert diagnostics.validity_issues == ()
+
+
+def test_renormalized_and_direct_tangent_logs_agree_over_short_horizon() -> None:
+    renormalized = run_renormalized_tangent(
+        RenormalizedTangentSpec(duration=0.5)
+    )
+    direct = run_sensitivity_to_lyapunov(
+        SensitivitySpec(
+            finite_perturbation=(1.0e-6, 0.0, 0.0, 0.0),
+            duration=0.5,
+        )
+    )
+    assert renormalized.cumulative_log_stretch[-1] == pytest.approx(
+        direct.tangent.log_stretch[-1], abs=2.0e-11
+    )
+
+
+def test_renormalized_spec_requires_complete_intervals() -> None:
+    with pytest.raises(ValueError, match="integer number"):
+        RenormalizedTangentSpec(duration=1.1)

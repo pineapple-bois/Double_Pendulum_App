@@ -260,10 +260,105 @@ $$
 \log\frac{\|S\delta x(T)\|_2}{\|S\delta x(0)\|_2}.
 $$
 
-This prototype neither takes nor claims that limit. It performs no repeated
-renormalisation and no QR evolution. Experiments 007–014 explain why a
-long-time finite value must not be silently promoted to an asymptotic
-exponent.
+This prototype neither takes nor claims that limit. The direct trace is the
+conceptual bridge to the next reusable calculation, but an unrenormalised
+tangent will eventually become inconveniently large or small numerically.
+
+## 6. Repeated evolve / measure / renormalise
+
+Choose a declared renormalisation interval $\tau$ and cycle boundaries
+
+$$
+t_k=k\tau,
+\qquad
+k=0,1,\ldots,n,
+\qquad
+T=n\tau.
+$$
+
+The extracted Experiment 007 reference starts from the same physical state but
+uses the pure-$\theta_1$ Candidate-A unit direction
+
+$$
+\delta x_0=(1,0,0,0).
+$$
+
+That direction is part of the declared finite-time calculation, not an
+assertion that every initial direction gives the same finite-$T$ value.
+
+At the start of a cycle, the physical-coordinate tangent is Candidate-A unit
+normalised:
+
+$$
+\|S\delta x(t_{k-1}^{+})\|_2=1.
+$$
+
+Integrate the reference and direct tangent equations to $t_k$. Immediately
+before resetting, measure the positive Candidate-A stretch factor
+
+$$
+r_k=\|S\delta x(t_k^{-})\|_2,
+$$
+
+and retain its **signed** logarithm
+
+$$
+\ell_k=\log r_k.
+$$
+
+A contracting cycle therefore contributes $\ell_k<0$; it is not discarded or
+replaced by an absolute growth increment. Reset only the tangent magnitude,
+preserving its evolved direction:
+
+$$
+\delta x(t_k^{+})
+=
+S^{-1}
+\frac{S\delta x(t_k^{-})}{r_k}.
+$$
+
+The next cycle begins from this unit tangent and the same continuing reference
+trajectory. Physical reference angles may be moved into the local principal
+chart at cycle boundaries. Tangent angular components remain unwrapped
+coordinate-basis components throughout.
+
+Because tangent evolution is linear, the logarithmic factors add. The
+fixed-horizon observable is
+
+$$
+\Lambda_T^{(1)}
+=
+\frac{1}{T}
+\sum_{k=1}^{n}\log r_k.
+$$
+
+The superscript $(1)$ records that this is a one-vector, one-direction
+calculation. It is not a full tangent-space spectrum and it does not perform a
+QR decomposition. Over a matching short horizon, its accumulated logarithmic
+stretch agrees with the direct unrenormalised tangent trace; renormalisation
+changes the numerical representation, not the underlying linear evolution.
+
+The fast default regression uses $T=5\ \mathrm{s}$ and
+$\tau=0.25\ \mathrm{s}$, inherited from the trusted Experiment 007 prefix,
+with
+
+$$
+h_{\max}
+=
+\min\left(\frac{T_c}{32},\frac{\tau}{25}\right).
+$$
+
+The interval controls how long the tangent evolves before its magnitude is
+reset and therefore helps keep the calculation numerically resolved. It is a
+declared solver policy, not a universal property of the pendulum and not a
+test that $\Lambda_T^{(1)}$ has converged.
+
+Experiments 010–014 sharpen the claim boundary. Their long-time evidence does
+not justify demanding universal asymptotic settling independently at every
+future map initial condition. The reusable scalar therefore answers the
+finite question “what signed tangent stretching rate was accumulated over
+this predeclared $T$?” It does not answer “what is the asymptotic maximal
+Lyapunov exponent?”
 
 ## What the complete story establishes
 
@@ -275,10 +370,14 @@ interval, the learner can see all of the following at the same sample times:
 3. their local finite full-state distance $d_{\mathrm{EL}}(t)$;
 4. the directly integrated unwrapped tangent $\delta x(t)$;
 5. its Candidate-A magnitude $N(t)$ and logarithmic stretch $G(t)$;
-6. the finite-time diagnostic $\Lambda(t)$.
+6. the direct finite-time diagnostic $\Lambda(t)$;
+7. how repeated unit-norm resets produce the fixed-horizon one-vector scalar
+   $\Lambda_T^{(1)}$ without invoking asymptotic convergence.
 
 The strongest supported interpretation is local and directional: the direct
 tangent reproduces the small finite-shadow limit and quantifies finite-time
-stretching along this reference trajectory. It is not a universal statement
-about the double pendulum, an asymptotic exponent, a full spectrum, or a chaos
-map.
+stretching along this reference trajectory. Repeated direct-tangent
+renormalisation then evaluates the same directional stretching over a declared
+finite horizon with bounded tangent magnitude. Neither result is a universal
+statement about the double pendulum, an asymptotic exponent, a full spectrum,
+or a chaos map.

@@ -153,6 +153,51 @@ class SensitivitySpec:
 
 
 @dataclass(frozen=True)
+class RenormalizedTangentSpec:
+    """Specification for one fixed-horizon, one-vector tangent calculation."""
+
+    parameters: PendulumParameters = field(default_factory=PendulumParameters)
+    initial_state: EulerLagrangeState = field(
+        default_factory=lambda: EulerLagrangeState.from_degrees(179.0, 179.0, 0.0, 0.0)
+    )
+    initial_tangent: tuple[float, float, float, float] = (1.0, 0.0, 0.0, 0.0)
+    duration: float = 5.0
+    renormalization_interval: float = 0.25
+    sampling_interval: float = 0.01
+    energy_drift_limit: float = 1.0e-7
+    renormalization_norm_tolerance: float = 1.0e-12
+    characteristic_length: float = 1.0
+    solver: SolverSpec = field(default_factory=SolverSpec)
+
+    def __post_init__(self) -> None:
+        scalar_values = (
+            self.duration,
+            self.renormalization_interval,
+            self.sampling_interval,
+            self.energy_drift_limit,
+            self.renormalization_norm_tolerance,
+            self.characteristic_length,
+        )
+        if not all(math.isfinite(value) and value > 0.0 for value in scalar_values):
+            raise ValueError("Workflow scales, intervals, and limits must be positive and finite.")
+        tangent = np.asarray(self.initial_tangent, dtype=float)
+        if tangent.shape != (4,) or not np.all(np.isfinite(tangent)):
+            raise ValueError("initial_tangent must contain four finite components.")
+        if not np.any(tangent):
+            raise ValueError("initial_tangent must be non-zero.")
+        cycle_count = int(round(self.duration / self.renormalization_interval))
+        if cycle_count <= 0 or not math.isclose(
+            cycle_count * self.renormalization_interval,
+            self.duration,
+            rel_tol=0.0,
+            abs_tol=1.0e-13,
+        ):
+            raise ValueError(
+                "duration must contain an integer number of renormalization intervals."
+            )
+
+
+@dataclass(frozen=True)
 class CandidateAMetric:
     """The accepted dimensionless Euler--Lagrange working geometry."""
 
@@ -247,6 +292,40 @@ class SensitivityToLyapunovResult:
     tangent: TangentTrace
     finite_to_tangent_direction_cosine: np.ndarray
     diagnostics: NumericalDiagnostics
+
+
+@dataclass(frozen=True)
+class RenormalizedTangentDiagnostics:
+    maximum_normalized_reference_energy_drift: float
+    maximum_post_renormalization_norm_error: float
+    max_step_seconds: float
+    segment_count: int
+    solver_function_evaluations: int
+    numerically_valid: bool
+    validity_issues: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class RenormalizedTangentResult:
+    """One-vector Candidate-A stretching record over one declared horizon."""
+
+    spec: RenormalizedTangentSpec
+    metric: CandidateAMetric
+    initial_unit_tangent: np.ndarray
+    cycle_end_time: np.ndarray
+    stretch_factor: np.ndarray
+    log_stretch_increment: np.ndarray
+    cumulative_log_stretch: np.ndarray
+    cumulative_finite_time_rate: np.ndarray
+    final_reference_state: np.ndarray
+    final_unit_tangent: np.ndarray
+    diagnostics: RenormalizedTangentDiagnostics
+
+    @property
+    def finite_time_stretching_rate(self) -> float:
+        """Return the fixed-horizon scalar; no asymptotic limit is implied."""
+
+        return float(self.cumulative_finite_time_rate[-1])
 
 
 class EulerLagrangeDynamics:
@@ -349,11 +428,7 @@ def normalized_energy_drift(
     state: np.ndarray, parameters: PendulumParameters
 ) -> np.ndarray:
     energy = simple_energy(state, parameters)
-    scale = parameters.gravity * (
-        (parameters.mass1 + parameters.mass2) * parameters.length1
-        + parameters.mass2 * parameters.length2
-    )
-    return np.abs(energy - energy[0]) / scale
+    return np.abs(energy - energy[0]) / _energy_scale(parameters)
 
 
 def run_sensitivity_to_lyapunov(
@@ -465,6 +540,112 @@ def run_sensitivity_to_lyapunov(
     )
 
 
+def run_renormalized_tangent(
+    spec: RenormalizedTangentSpec | None = None,
+) -> RenormalizedTangentResult:
+    """Evaluate one fixed-horizon renormalized tangent stretching observable.
+
+    The returned scalar is the signed accumulated Candidate-A logarithmic
+    stretch divided by the declared duration.  It is a finite-time quantity,
+    not an assertion of asymptotic convergence.
+    """
+
+    spec = spec or RenormalizedTangentSpec()
+    metric = CandidateAMetric(spec.characteristic_length, spec.parameters.gravity)
+    dynamics = EulerLagrangeDynamics(spec.parameters)
+    initial_tangent = np.asarray(spec.initial_tangent, dtype=float)
+    initial_unit_tangent = initial_tangent / float(metric.tangent_norm(initial_tangent))
+    scaling_matrix = metric.scaling_matrix()
+    inverse_scaling_matrix = np.linalg.inv(scaling_matrix)
+    reference = spec.initial_state.as_array()
+    tangent = np.array(initial_unit_tangent, copy=True)
+    initial_energy = float(simple_energy(reference, spec.parameters))
+    cycle_count = int(round(spec.duration / spec.renormalization_interval))
+    boundaries = np.linspace(0.0, spec.duration, cycle_count + 1)
+    max_step = _resolved_interval_max_step(
+        spec.solver,
+        spec.characteristic_length,
+        spec.parameters.gravity,
+        spec.renormalization_interval,
+    )
+
+    stretch_factors: list[float] = []
+    log_increments: list[float] = []
+    cumulative_logs: list[float] = []
+    cumulative_rates: list[float] = []
+    maximum_energy_drift = 0.0
+    maximum_norm_error = 0.0
+    cumulative_log = 0.0
+    function_evaluations = 0
+
+    for start, end in zip(boundaries[:-1], boundaries[1:]):
+        sample_count = max(
+            2, int(round((end - start) / spec.sampling_interval)) + 1
+        )
+        requested = np.linspace(start, end, sample_count)
+        augmented, nfev = _solve_segment(
+            dynamics.reference_and_tangent_rhs,
+            np.concatenate((reference, tangent)),
+            requested,
+            spec.solver,
+            max_step,
+        )
+        function_evaluations += nfev
+        reference_samples = augmented[:, :4]
+        reference_raw = reference_samples[-1]
+        tangent_pre = augmented[-1, 4:]
+        scaled_pre = scaling_matrix @ tangent_pre
+        stretch_factor = float(np.linalg.norm(scaled_pre))
+        if not math.isfinite(stretch_factor) or stretch_factor <= 0.0:
+            raise RuntimeError("Tangent stretch factor must remain positive and finite.")
+        log_increment = math.log(stretch_factor)
+        cumulative_log += log_increment
+        tangent = inverse_scaling_matrix @ (scaled_pre / stretch_factor)
+        post_norm_error = abs(float(metric.tangent_norm(tangent)) - 1.0)
+        maximum_norm_error = max(maximum_norm_error, post_norm_error)
+        reference = _rebase_reference_angles(
+            reference_raw[None, :], tangent_components=False
+        )[0]
+
+        energy = simple_energy(reference_samples, spec.parameters)
+        segment_energy_drift = float(
+            np.max(np.abs(energy - initial_energy) / _energy_scale(spec.parameters))
+        )
+        maximum_energy_drift = max(maximum_energy_drift, segment_energy_drift)
+        stretch_factors.append(stretch_factor)
+        log_increments.append(log_increment)
+        cumulative_logs.append(cumulative_log)
+        cumulative_rates.append(cumulative_log / float(end))
+
+    validity_issues: list[str] = []
+    if maximum_energy_drift > spec.energy_drift_limit:
+        validity_issues.append("reference energy drift exceeded its declared limit")
+    if maximum_norm_error > spec.renormalization_norm_tolerance:
+        validity_issues.append("post-renormalization Candidate-A norm error exceeded its limit")
+    diagnostics = RenormalizedTangentDiagnostics(
+        maximum_normalized_reference_energy_drift=maximum_energy_drift,
+        maximum_post_renormalization_norm_error=maximum_norm_error,
+        max_step_seconds=max_step,
+        segment_count=cycle_count,
+        solver_function_evaluations=function_evaluations,
+        numerically_valid=not validity_issues,
+        validity_issues=tuple(validity_issues),
+    )
+    return RenormalizedTangentResult(
+        spec=spec,
+        metric=metric,
+        initial_unit_tangent=initial_unit_tangent,
+        cycle_end_time=boundaries[1:],
+        stretch_factor=np.asarray(stretch_factors),
+        log_stretch_increment=np.asarray(log_increments),
+        cumulative_log_stretch=np.asarray(cumulative_logs),
+        cumulative_finite_time_rate=np.asarray(cumulative_rates),
+        final_reference_state=reference,
+        final_unit_tangent=tangent,
+        diagnostics=diagnostics,
+    )
+
+
 def _time_grid(spec: SensitivitySpec) -> np.ndarray:
     sample_count = int(round(spec.duration / spec.sampling_interval)) + 1
     return np.linspace(0.0, spec.duration, sample_count)
@@ -493,28 +674,7 @@ def _integrate_piecewise(
     for segment_index, (start, end) in enumerate(zip(boundaries[:-1], boundaries[1:])):
         mask = (time >= start - 1.0e-14) & (time <= end + 1.0e-14)
         requested = time[mask]
-        result = solve_ivp(
-            rhs,
-            (float(start), float(end)),
-            current,
-            t_eval=requested,
-            method=spec.solver.method,
-            rtol=spec.solver.rtol,
-            atol=spec.solver.atol,
-            max_step=max_step,
-        )
-        state = np.asarray(result.y.T, dtype=float)
-        expected_shape = (len(requested), len(current))
-        if (
-            not result.success
-            or result.t.shape != requested.shape
-            or not np.allclose(result.t, requested, rtol=0.0, atol=1.0e-13)
-            or state.shape != expected_shape
-            or not np.all(np.isfinite(state))
-        ):
-            raise RuntimeError(
-                f"Piecewise integration failed on [{start}, {end}]: {result.message}"
-            )
+        state, _ = _solve_segment(rhs, current, requested, spec.solver, max_step)
         state = _rebase_reference_angles(state, tangent_components=tangent_components)
         current = state[-1]
         if segment_index:
@@ -527,14 +687,65 @@ def _integrate_piecewise(
 
 
 def _resolved_max_step(spec: SensitivitySpec) -> float:
-    if spec.solver.max_step is not None:
-        return spec.solver.max_step
-    characteristic_time = math.sqrt(
-        spec.characteristic_length / spec.parameters.gravity
+    return _resolved_interval_max_step(
+        spec.solver,
+        spec.characteristic_length,
+        spec.parameters.gravity,
+        spec.chart_rebase_interval,
     )
+
+
+def _resolved_interval_max_step(
+    solver: SolverSpec,
+    characteristic_length: float,
+    gravity: float,
+    interval: float,
+) -> float:
+    if solver.max_step is not None:
+        return solver.max_step
+    characteristic_time = math.sqrt(characteristic_length / gravity)
     return min(
         characteristic_time / 32.0,
-        spec.chart_rebase_interval / 25.0,
+        interval / 25.0,
+    )
+
+
+def _solve_segment(
+    rhs: Callable[[float, np.ndarray], np.ndarray],
+    initial: np.ndarray,
+    requested: np.ndarray,
+    solver: SolverSpec,
+    max_step: float,
+) -> tuple[np.ndarray, int]:
+    start = float(requested[0])
+    end = float(requested[-1])
+    result = solve_ivp(
+        rhs,
+        (start, end),
+        initial,
+        t_eval=requested,
+        method=solver.method,
+        rtol=solver.rtol,
+        atol=solver.atol,
+        max_step=max_step,
+    )
+    state = np.asarray(result.y.T, dtype=float)
+    expected_shape = (len(requested), len(initial))
+    if (
+        not result.success
+        or result.t.shape != requested.shape
+        or not np.allclose(result.t, requested, rtol=0.0, atol=1.0e-13)
+        or state.shape != expected_shape
+        or not np.all(np.isfinite(state))
+    ):
+        raise RuntimeError(f"Integration failed on [{start}, {end}]: {result.message}")
+    return state, int(result.nfev)
+
+
+def _energy_scale(parameters: PendulumParameters) -> float:
+    return parameters.gravity * (
+        (parameters.mass1 + parameters.mass2) * parameters.length1
+        + parameters.mass2 * parameters.length2
     )
 
 
