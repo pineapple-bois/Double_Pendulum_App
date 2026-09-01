@@ -21,6 +21,13 @@ from .reference import (
     second_bob_separation,
     wrap_angle_difference,
 )
+from .sweep import (
+    SweepSampleStatus,
+    Theta1SweepResult,
+    Theta1SweepSample,
+    Theta1SweepSpec,
+    run_theta1_sweep,
+)
 
 __all__ = [
     "CandidateAMetric",
@@ -42,4 +49,9 @@ __all__ = [
     "second_bob_position",
     "second_bob_separation",
     "wrap_angle_difference",
+    "SweepSampleStatus",
+    "Theta1SweepResult",
+    "Theta1SweepSample",
+    "Theta1SweepSpec",
+    "run_theta1_sweep",
 ]

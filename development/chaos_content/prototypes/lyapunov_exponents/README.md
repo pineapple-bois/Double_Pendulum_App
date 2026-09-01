@@ -21,6 +21,11 @@ evolve / measure / renormalise cycles producing one declared fixed-horizon
 finite-time stretching rate. It extends the same mathematics; it is not a
 separate mini-project.
 
+The first repeated-evaluation apparatus is a bounded one-dimensional sweep of
+the initial `theta1` coordinate. It delegates every sample to that existing
+primitive and adds only ordering, per-sample outcome/provenance, timing, and
+diagnostic plot/data composition.
+
 The mathematical narrative lives beside the implementation in
 [`storyboards/sensitivity_to_lyapunov.md`](storyboards/sensitivity_to_lyapunov.md).
 Future visuals in this strand should use similarly story-specific local
@@ -39,8 +44,12 @@ framework:
 - `sensitivity_to_lyapunov.py` composes the structured reference result into
   the first four-panel pedagogical figure; it performs no validation and emits
   no narrated console story;
-- `tests/test_reference.py` checks the mathematical contracts and selected
-  Experiment 006 and 007 regression fixtures;
+- `sweep.py` owns the coordinate-specific 1-D sweep specification, sample
+  outcomes, timing record, and repeated calls to the reference evaluator;
+- `theta1_sweep.py` declares and renders the first small sweep without
+  implementing any Lyapunov mathematics;
+- `tests/` checks the reference contracts, Experiment 006/007 fixtures, sweep
+  substitution, independent-point equivalence, and invalid/error handling;
 - `storyboards/sensitivity_to_lyapunov.md` derives this visual's pedagogical
   progression and claim boundary.
 
@@ -68,6 +77,29 @@ Run the focused tests:
 ```bash
 uv run pytest development/chaos_content/prototypes/lyapunov_exponents/tests
 ```
+
+## Run the bounded 1-D sweep
+
+From the repository root:
+
+```bash
+uv run python development/chaos_content/prototypes/lyapunov_exponents/theta1_sweep.py
+```
+
+This writes two source-relative, intentionally untracked deliverables:
+
+- `outputs/theta1_finite_time_sweep.png` — the diagnostic line plot;
+- `outputs/theta1_finite_time_sweep.json` — the inspectable values,
+  per-sample statuses and diagnostics, fixed specification, and timing.
+
+The executable emits no narrated console story. The demonstration uses 15
+uniform samples of `theta1(0)` from `169 deg` through `189 deg`, including the
+trusted `179 deg` condition. It fixes `theta2(0)=179 deg`, both initial angular
+velocities at zero, the pure-`theta1` initial tangent, `T=5 s`, the `0.25 s`
+renormalisation interval, Candidate-A geometry, and the accepted DOP853 solver
+policy. The interval was selected symmetrically around the reference condition
+before evaluating the completed sweep; it was not chosen to isolate visually
+interesting behaviour.
 
 ## Reusable API and result model
 
@@ -115,6 +147,24 @@ finite-time rates, terminal reference and unit tangent, and numerical
 diagnostics. A future sweep can consume the final scalar without needing to
 know the integration machinery, while validation and diagnostic work can
 inspect the complete accumulation record.
+
+The 1-D orchestration API is:
+
+```python
+sweep = run_theta1_sweep(
+    Theta1SweepSpec(
+        theta1_degrees=(...),
+        observable_spec=RenormalizedTangentSpec(...),
+    )
+)
+```
+
+`Theta1SweepResult` retains the ordered samples, total and mean timing, and the
+unchanged observable specification. Each `Theta1SweepSample` retains its full
+initial state, returned rate when calculation completed, numerical diagnostics,
+elapsed time, and one explicit outcome: completed-valid, completed-invalid, or
+execution-error. Only numerical `RuntimeError` failures are converted into a
+sample outcome; programming and specification exceptions remain visible.
 
 ## Default reference contract
 
@@ -173,9 +223,14 @@ resets meet their declared bounds. It does not mean the scalar has settled as
 future maps should be allowed to evaluate a predeclared fixed horizon without
 requiring independent asymptotic settling at every initial condition.
 
+The sweep plot is an apparatus diagnostic. Variation along its sampled line is
+not interpreted as a general chaos classification, an asymptotic result, or a
+map of the state space.
+
 ## Deliberately absent
 
 There is no simulator/manager/engine abstraction, plugin system, inheritance
-tree, QR/full-spectrum API, selected map horizon, parameter sweep, grid, JIT
-layer, generated dataset, Dash integration, or production `/chaos`
-integration. Those decisions require later prototype questions and evidence.
+tree, generic sweep framework, adaptive sampling, 2-D grid, state-space map,
+QR/full-spectrum API, selected map horizon, JIT layer, persistent map dataset,
+Dash integration, or production `/chaos` integration. Those decisions require
+later prototype questions and evidence.
