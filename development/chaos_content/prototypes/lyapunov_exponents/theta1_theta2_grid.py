@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
+import math
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import matplotlib
@@ -18,7 +19,10 @@ from grid import (
     Theta1Theta2GridSpec,
     run_theta1_theta2_grid,
 )
-from sweep import SweepSampleStatus
+from development.chaos_content.prototypes.state_space_fields import (
+    EvaluationStatus,
+    RectangularCell,
+)
 
 
 PROTOTYPE_ROOT = Path(__file__).resolve().parent
@@ -58,8 +62,8 @@ def build_heatmap(result: Theta1Theta2GridResult) -> Figure:
         label=r"$\Lambda_T^{(1)}$ (s$^{-1}$)",
     )
 
-    invalid = result.statuses == SweepSampleStatus.COMPLETED_INVALID.value
-    failed = result.statuses == SweepSampleStatus.EXECUTION_ERROR.value
+    invalid = result.statuses == EvaluationStatus.COMPLETED_INVALID.value
+    failed = result.statuses == EvaluationStatus.EXECUTION_ERROR.value
     if np.any(invalid):
         invalid_theta2, invalid_theta1 = np.nonzero(invalid)
         axis.scatter(
@@ -108,7 +112,7 @@ def result_payload(result: Theta1Theta2GridResult) -> dict[str, object]:
 
     values = [
         [
-            None if cell.finite_time_stretching_rate is None else cell.finite_time_stretching_rate
+            cell.evaluation.value
             for cell in row
         ]
         for row in result.cells
@@ -133,33 +137,48 @@ def result_payload(result: Theta1Theta2GridResult) -> dict[str, object]:
             "cell_count": result.cell_count,
         },
         "cells": [
-            {
-                "theta2_index": cell.theta2_index,
-                "theta1_index": cell.theta1_index,
-                "theta2_degrees": cell.theta2_degrees,
-                "theta1_degrees": cell.theta1_degrees,
-                "initial_state_radians": asdict(cell.theta1_sample.initial_state),
-                "status": cell.status.value,
-                "finite_time_stretching_rate_per_second": (
-                    cell.finite_time_stretching_rate
-                ),
-                "elapsed_seconds": cell.theta1_sample.elapsed_seconds,
-                "maximum_normalized_reference_energy_drift": (
-                    cell.theta1_sample.maximum_normalized_reference_energy_drift
-                ),
-                "maximum_post_renormalization_norm_error": (
-                    cell.theta1_sample.maximum_post_renormalization_norm_error
-                ),
-                "solver_function_evaluations": (
-                    cell.theta1_sample.solver_function_evaluations
-                ),
-                "validity_issues": list(cell.theta1_sample.validity_issues),
-                "error_type": cell.theta1_sample.error_type,
-                "error_message": cell.theta1_sample.error_message,
-            }
-            for row in result.cells
-            for cell in row
+            _cell_payload(result, cell) for row in result.cells for cell in row
         ],
+    }
+
+
+def _cell_payload(
+    result: Theta1Theta2GridResult,
+    cell: RectangularCell,
+) -> dict[str, object]:
+    evaluation = cell.evaluation
+    diagnostics = evaluation.diagnostics
+    initial_state = replace(
+        result.spec.observable_spec.initial_state,
+        theta1=math.radians(cell.x_coordinate),
+        theta2=math.radians(cell.y_coordinate),
+    )
+    return {
+        "theta2_index": cell.y_index,
+        "theta1_index": cell.x_index,
+        "theta2_degrees": cell.y_coordinate,
+        "theta1_degrees": cell.x_coordinate,
+        "initial_state_radians": asdict(initial_state),
+        "status": evaluation.status.value,
+        "finite_time_stretching_rate_per_second": evaluation.value,
+        "elapsed_seconds": evaluation.elapsed_seconds,
+        "evaluator": evaluation.evaluator,
+        "maximum_normalized_reference_energy_drift": (
+            None
+            if diagnostics is None
+            else diagnostics.maximum_normalized_reference_energy_drift
+        ),
+        "maximum_post_renormalization_norm_error": (
+            None
+            if diagnostics is None
+            else diagnostics.maximum_post_renormalization_norm_error
+        ),
+        "solver_function_evaluations": (
+            None if diagnostics is None else diagnostics.solver_function_evaluations
+        ),
+        "validity_issues": list(evaluation.validity_issues),
+        "error_type": evaluation.error_type,
+        "error_message": evaluation.error_message,
     }
 
 

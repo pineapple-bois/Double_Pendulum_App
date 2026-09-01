@@ -2,8 +2,11 @@
 
 ## Purpose
 
-This document freezes the current architectural and pedagogical
-direction for the next stage of the double-pendulum chaos work.
+This document records the evolving architectural and pedagogical
+direction of the double-pendulum chaos work. Its earlier sections preserve
+the reasoning that guided the first prototype; later sections record the
+stronger boundaries earned by the validated reference observable, 1-D sweep,
+and 2-D reference grid.
 
 The project is deliberately changing mode from **experiments that answer
 scientific questions** toward **purposeful scientific software that
@@ -246,7 +249,7 @@ analysis.
 
 # 7. Prototype architecture
 
-A possible isolated structure is:
+A possible isolated structure considered before implementation was:
 
 ``` text
 development/chaos_content/
@@ -268,6 +271,13 @@ development/chaos_content/
 This is intentionally not production code. Its purpose is to discover
 and validate a clean scientific API that can later be promoted,
 rewritten, optimized, or incorporated into production.
+
+This structure was deliberately provisional. The completed prototype did not
+need the proposed `chaos_core/` package tree. The implementation instead grew
+as one cohesive Lyapunov strand, and only after repeated sweep/grid evaluation
+demonstrated cross-observable pressure was one shared state-space-field module
+earned. This is an example of the intended rule: the architecture follows
+verified use rather than a speculative target tree.
 
 ## 8. Prefer small data types and pure functions
 
@@ -572,6 +582,14 @@ finite-time Lyapunov diagnostic
 These can share the same initial-condition representation and form
 increasingly sophisticated views of the same state-space slice.
 
+The bounded 1-D and 2-D prototype workloads have now exercised the first part
+of this route. A validated `9 x 9` reference field retained ordered axes,
+scalar values, per-cell validity, numerical diagnostics, persistence, and
+rendering provenance. Runtime scaled approximately linearly with cell count.
+That evidence now justifies separating observable evaluation from domain
+sampling; it does not yet justify implementing the later high-resolution
+layers.
+
 # 17. Do not optimize prematurely
 
 Do not initially design the prototype around Numba, multiprocessing, GPU
@@ -593,6 +611,13 @@ $$
 Performance work must not silently redefine the mathematics. A future
 compiled kernel should be validated against the clean reference
 implementation before becoming the map engine.
+
+The completed reference grid has now earned the next question—reference versus
+compiled equivalence—but not permission to replace the reference path. The
+NumPy/SciPy implementation remains the scientific oracle. Any compiled
+evaluator must implement the same observable contract and pass explicit
+pointwise and field-level equivalence tests before performance comparisons can
+affect execution architecture.
 
 # 18. Relationship to production
 
@@ -617,7 +642,7 @@ deliberately around them.
 The prototype acts as a **scientific reference implementation and
 architectural proving ground**.
 
-# 19. Immediate software milestone
+# 19. Historical immediate software milestone
 
 After the remaining long-time convergence question is closed, begin a
 new development strand:
@@ -645,6 +670,13 @@ to express this story.
 
 Do not allow the directory structure or abstractions of the experiments
 to become the architecture by accident.
+
+That milestone is now complete. The Lyapunov strand progressed from the local
+teaching reference through a one-vector fixed-horizon observable, a bounded
+1-D sweep, and a bounded 2-D reference grid. The provisional label
+“Prototype 001” was not adopted as a self-contained mini-project; the code
+instead remains a growing Lyapunov scientific strand with shared machinery
+extracted only where repeated use has earned it.
 
 # 20. Architectural principles to preserve
 
@@ -699,3 +731,267 @@ The first step is not to build everything.
 
 It is to build one small prototype in which the path from **Cartesian
 distance to Lyapunov stretching feels inevitable**.
+
+# 22. Architecture earned by the reference sweep and grid
+
+The completed Lyapunov strand supplied evidence that was unavailable when the
+earlier map architecture was deliberately deferred:
+
+- a trusted single-condition NumPy/SciPy reference calculation;
+- a fixed-horizon scalar observable with explicit numerical validity;
+- a bounded 1-D sampling strategy;
+- a bounded rectangular 2-D sampling strategy;
+- an authoritative saved scalar field and a separately rendered heatmap;
+- measured approximately linear repeated-evaluation cost.
+
+The first 2-D implementation also exposed a concrete defect: a rectangular
+grid cell was represented by wrapping a coordinate-specific 1-D
+`Theta1SweepSample`, and the grid was executed as a collection of theta1
+sweeps. That was useful scaffolding, but it confused two peer sampling
+strategies with a scientific hierarchy.
+
+The smallest earned correction is now:
+
+``` text
+scientific observable specification
+        |
+        v
+observable-specific evaluator
+        |
+        v
+coordinate-neutral scalar evaluation outcome
+        |
+        +-------------------+
+        |                   |
+        v                   v
+explicit-axis        explicit-axis
+  1-D sampling       rectangular 2-D sampling
+```
+
+The shared outcome records a value, validity state, lightweight diagnostics,
+elapsed evaluation time, evaluator identity, and bounded numerical-error
+details. The same small module supplies named ordered axes and reference
+line/rectangle sampling records. Rectangle arrays use explicit y rows and x
+columns. None of these types knows whether the scalar is tangent stretching,
+first-flip time, flip count, or another future observable. Scientific
+specification, coordinate-to-state substitution, and diagnostic types remain
+owned by the observable.
+
+The outcome vocabulary is deliberately small: completed-valid,
+completed-invalid, and execution-error. Sampling catches no exceptions. Each
+observable adapter may translate only its explicitly bounded numerical
+failures into execution-error data; programming and specification defects must
+propagate.
+
+This boundary is implemented minimally in
+`development/chaos_content/prototypes/state_space_fields.py`. The Lyapunov
+strand owns an adapter from its rich reference result to that neutral outcome.
+No inheritance hierarchy, plugin registry, or generic N-dimensional runner is
+needed.
+
+# 23. Reference and compiled evaluator boundary
+
+Sampling must depend on an observable evaluator contract, not directly on one
+integration implementation:
+
+``` text
+observable specification
+         |
+         +-------------------------+
+         |                         |
+         v                         v
+NumPy/SciPy reference       future compiled evaluator
+         |                         |
+         +---- equivalence tests --+
+                       |
+                       v
+             shared sampling strategies
+```
+
+The current NumPy/SciPy path remains authoritative. Its equations, Jacobian,
+Candidate-A geometry, renormalisation semantics, signed logarithmic
+accumulation, horizon, and validity policy must not be changed merely to ease
+compilation.
+
+A future compiled implementation may use a different internal representation,
+but it must accept the same scientific specification in all relevant respects
+and produce an equivalent scalar evaluation outcome. Reference-versus-compiled
+equivalence is a separate scientific validation task and must precede use of a
+compiled path for field generation.
+
+Wall-clock duration is provenance, not part of scientific equivalence. A
+compiled path may have a one-time compilation or setup cost. The equivalence
+task should report that cost separately from warmed per-evaluation timing so a
+cold first call cannot be confused with steady field throughput.
+
+# 24. Periodic angular-domain and resolution contract
+
+The physical angular configuration space is periodic. A full angular axis uses
+the canonical half-open representation
+
+$$
+[-\pi,\pi).
+$$
+
+For $N$ samples, coordinates are
+
+$$
+\theta_k
+=
+-\pi+\frac{2\pi k}{N},
+\qquad
+k=0,\ldots,N-1.
+$$
+
+The endpoint $+\pi$ is excluded because it represents the same physical angle
+as $-\pi$. Including both would duplicate a row or column and distort periodic
+field semantics.
+
+Use `samples`, `samples_per_axis`, and `resolution`, not the ambiguous term
+“steps”. A periodic two-angle domain declares independent resolutions:
+
+``` python
+PeriodicAngularDomain(theta1_samples=32, theta2_samples=48)
+PeriodicAngularDomain.square(samples_per_axis=32)
+```
+
+The human-facing resolution order is
+`(theta1_samples, theta2_samples)`. A scalar field stored with theta2 rows and
+theta1 columns has array shape
+`(theta2_samples, theta1_samples)` and convention
+
+``` text
+values[theta2_index, theta1_index].
+```
+
+Thus `32 x 32` and a future `12000 x 12000` identify the same mathematical
+domain with different discretisations. The current bounded degree-based grid
+is preserved for its validated reference fixtures; it can also be constructed
+from the canonical periodic domain without introducing the duplicate endpoint.
+
+# 25. Cross-observable state-space-field direction
+
+Observable definition and domain sampling are separate responsibilities.
+Finite-time tangent stretching is the first consumer, not the definition of a
+state-space field.
+
+Future first-flip-time or flip-count observables may reuse the neutral outcome,
+periodic domain, status vocabulary, array orientation, and later execution or
+storage layers where their own scientific contracts permit. They should not
+reuse Lyapunov specifications, diagnostics, or tangent machinery.
+
+The intended direction is now:
+
+``` text
+scientific contracts and reference evaluators
+        |
+        v
+validated compiled equivalents
+        |
+        v
+domains and sampling strategies
+        |
+        v
+tile planning and execution
+        |
+        v
+persistent numerical fields
+        |
+        v
+renderers
+        |
+        v
+possible production derivatives
+```
+
+Only the reference-evaluator, neutral-outcome, bounded-sampling, small JSON
+field, and renderer portions exist today. The remaining boxes are direction,
+not implemented architecture.
+
+# 26. Numerical fields and rendering
+
+The persisted numerical scalar field is the authoritative scientific artifact.
+It must retain explicit axes, value/status arrays, observable and numerical
+provenance, and enough validity information to interpret missing or rejected
+values.
+
+PNG, PDF, TIFF, or other visual outputs are derivatives. Changing a colormap,
+normalisation, label, or output format must not require recomputing the
+dynamics. Renderers consume persisted numerical fields; evaluators do not
+depend on renderers.
+
+The current small JSON artifact demonstrates this separation for reference
+grids. JSON is not proposed as the format for large maps.
+
+# 27. Persistent storage direction
+
+Large scalar fields will require chunked persistent storage, but selecting or
+implementing that backend is premature in the current reference pass.
+
+For local scientific storage, HDF5 is the leading candidate because it offers
+mature multidimensional arrays, chunking, compression, metadata, and local
+tooling. This is not a frozen choice. Zarr remains a viable alternative if
+later execution becomes naturally distributed, chunk-object-oriented, or
+object-store based.
+
+The eventual storage boundary must keep observable evaluators independent of
+the backend. Neither HDF5 nor Zarr belongs inside the scientific calculation.
+No dependency on either format should be introduced until a concrete storage
+prototype and comparison are in scope.
+
+# 28. Large-field and tile-oriented execution direction
+
+A possible destination of approximately
+
+$$
+12000\times12000=144{,}000{,}000
+$$
+
+initial conditions changes execution and storage constraints, but it does not
+change the mathematical domain or observable definition.
+
+Execution at that scale is expected to become tile-oriented so later machinery
+can support:
+
+- bounded memory;
+- resumability;
+- progress accounting;
+- retries and failure isolation;
+- parallel execution;
+- tile-level validation and provenance;
+- rendering independently from persisted fields.
+
+No tile planner or executor is implemented yet. The present reference grids
+appropriately retain rich Python objects per evaluation for inspection. A
+144-million-cell field must not. Large storage will instead require compact,
+aligned value and status arrays plus aggregate or tile-level diagnostics and
+provenance.
+
+# 29. Scientific storage and production delivery
+
+Scientific storage and production delivery are separate problems. Scientific
+work may need axes, scalar values, statuses, provenance, and diagnostic data.
+Production may ultimately consume only generated visual assets derived from
+that field.
+
+Interactive delivery of underlying scalar data remains possible, but it is not
+currently a requirement. Production APIs, asset formats, caching, and UI
+integration should therefore not dictate scientific field storage prematurely.
+
+# 30. Current boundary and next earned question
+
+The architecture currently stops at small reference sampling, JSON field
+persistence, and diagnostic rendering. It deliberately does not include:
+
+- compiled/JIT kernels;
+- batch or tile executors;
+- multiprocessing or GPU execution;
+- HDF5 or Zarr storage;
+- resumable large-map orchestration;
+- additional observables;
+- production integration.
+
+The next earned task is reference-versus-compiled equivalence for the existing
+finite-time observable. Only after equivalence is established should timing
+evidence determine whether and how a compiled evaluator participates in larger
+field execution.

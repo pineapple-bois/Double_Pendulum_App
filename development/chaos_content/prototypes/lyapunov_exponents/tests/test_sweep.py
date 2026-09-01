@@ -1,4 +1,4 @@
-"""Focused tests for the bounded initial-theta1 sweep apparatus."""
+"""Focused tests for the bounded initial-theta1 sampling strategy."""
 
 from __future__ import annotations
 
@@ -23,15 +23,20 @@ for path in (STRAND_ROOT, REPOSITORY_ROOT):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-import sweep as sweep_module
+import evaluation as evaluation_module
+from evaluation import evaluate_renormalized_tangent_reference
 from reference import RenormalizedTangentSpec, run_renormalized_tangent
-from sweep import SweepSampleStatus, Theta1SweepSpec, run_theta1_sweep
+from sweep import Theta1SweepSpec, run_theta1_sweep
 from theta1_sweep import (
     DEFAULT_DATA_PATH,
     DEFAULT_FIGURE_PATH,
     DEMONSTRATION_SPEC,
     build_figure,
     save_deliverables,
+)
+from development.chaos_content.prototypes.state_space_fields import (
+    EvaluationStatus,
+    ScalarEvaluation,
 )
 
 
@@ -47,16 +52,10 @@ def short_sweep():
 
 def test_sample_order_and_theta1_substitution_are_exact(short_sweep) -> None:
     np.testing.assert_array_equal(short_sweep.theta1_degrees, [178.0, 179.0, 180.0])
-    fixed_state = short_sweep.spec.observable_spec.initial_state
     for index, sample in enumerate(short_sweep.samples):
         assert sample.index == index
-        assert sample.initial_state.theta1 == pytest.approx(
-            math.radians(sample.theta1_degrees)
-        )
-        assert sample.initial_state.theta2 == fixed_state.theta2
-        assert sample.initial_state.omega1 == fixed_state.omega1
-        assert sample.initial_state.omega2 == fixed_state.omega2
-        assert sample.status is SweepSampleStatus.COMPLETED_VALID
+        assert sample.coordinate == short_sweep.theta1_degrees[index]
+        assert sample.evaluation.status is EvaluationStatus.COMPLETED_VALID
 
 
 def test_sweep_midpoint_reproduces_independent_observable(short_sweep) -> None:
@@ -66,59 +65,112 @@ def test_sweep_midpoint_reproduces_independent_observable(short_sweep) -> None:
         initial_state=replace(base.initial_state, theta1=math.radians(179.0)),
     )
     independent = run_renormalized_tangent(midpoint_spec)
-    assert short_sweep.samples[1].finite_time_stretching_rate == pytest.approx(
+    assert short_sweep.samples[1].evaluation.value == pytest.approx(
         independent.finite_time_stretching_rate,
         rel=0.0,
         abs=0.0,
     )
 
 
-def test_invalid_and_execution_error_samples_remain_distinct(monkeypatch) -> None:
+def test_invalid_and_execution_error_outcomes_remain_distinct() -> None:
     calls = []
 
     def fake_evaluator(spec):
         calls.append(spec)
         if len(calls) == 3:
-            raise RuntimeError("declared integration failure")
+            return ScalarEvaluation(
+                status=EvaluationStatus.EXECUTION_ERROR,
+                value=None,
+                diagnostics=None,
+                elapsed_seconds=0.03,
+                evaluator="test_evaluator",
+                error_type="RuntimeError",
+                error_message="declared integration failure",
+            )
         valid = len(calls) == 1
         diagnostics = SimpleNamespace(
-            numerically_valid=valid,
-            validity_issues=() if valid else ("energy drift exceeded limit",),
-            maximum_normalized_reference_energy_drift=1.0e-10 if valid else 2.0e-7,
+            maximum_normalized_reference_energy_drift=(
+                1.0e-10 if valid else 2.0e-7
+            ),
             maximum_post_renormalization_norm_error=2.0e-16,
             solver_function_evaluations=100,
         )
-        return SimpleNamespace(
-            finite_time_stretching_rate=1.0 + len(calls),
+        return ScalarEvaluation(
+            status=(
+                EvaluationStatus.COMPLETED_VALID
+                if valid
+                else EvaluationStatus.COMPLETED_INVALID
+            ),
+            value=1.0 + len(calls),
             diagnostics=diagnostics,
+            elapsed_seconds=0.01 * len(calls),
+            evaluator="test_evaluator",
+            validity_issues=() if valid else ("energy drift exceeded limit",),
         )
 
-    monkeypatch.setattr(sweep_module, "run_renormalized_tangent", fake_evaluator)
     result = run_theta1_sweep(
-        Theta1SweepSpec(theta1_degrees=(178.0, 179.0, 180.0))
+        Theta1SweepSpec(theta1_degrees=(178.0, 179.0, 180.0)),
+        evaluator=fake_evaluator,
     )
 
-    assert [sample.status for sample in result.samples] == [
-        SweepSampleStatus.COMPLETED_VALID,
-        SweepSampleStatus.COMPLETED_INVALID,
-        SweepSampleStatus.EXECUTION_ERROR,
+    assert [sample.evaluation.status for sample in result.samples] == [
+        EvaluationStatus.COMPLETED_VALID,
+        EvaluationStatus.COMPLETED_INVALID,
+        EvaluationStatus.EXECUTION_ERROR,
     ]
-    assert result.samples[1].finite_time_stretching_rate == 3.0
-    assert result.samples[1].validity_issues == ("energy drift exceeded limit",)
-    assert result.samples[2].finite_time_stretching_rate is None
-    assert result.samples[2].error_type == "RuntimeError"
-    assert result.samples[2].error_message == "declared integration failure"
+    assert result.samples[1].evaluation.value == 3.0
+    assert result.samples[1].evaluation.validity_issues == (
+        "energy drift exceeded limit",
+    )
+    assert result.samples[2].evaluation.value is None
+    assert result.samples[2].evaluation.error_type == "RuntimeError"
+    assert result.samples[2].evaluation.error_message == (
+        "declared integration failure"
+    )
     for expected, called in zip((178.0, 179.0, 180.0), calls):
         assert math.degrees(called.initial_state.theta1) == pytest.approx(expected)
+        fixed = result.spec.observable_spec.initial_state
+        assert called.initial_state.theta2 == fixed.theta2
+        assert called.initial_state.omega1 == fixed.omega1
+        assert called.initial_state.omega2 == fixed.omega2
 
 
-def test_non_numerical_exceptions_are_not_hidden(monkeypatch) -> None:
+def test_sampling_does_not_hide_evaluator_programming_errors() -> None:
     def programming_error(_spec):
         raise ValueError("bad test specification")
 
-    monkeypatch.setattr(sweep_module, "run_renormalized_tangent", programming_error)
     with pytest.raises(ValueError, match="bad test specification"):
-        run_theta1_sweep(Theta1SweepSpec(theta1_degrees=(179.0,)))
+        run_theta1_sweep(
+            Theta1SweepSpec(theta1_degrees=(179.0,)),
+            evaluator=programming_error,
+        )
+
+
+def test_reference_adapter_bounds_runtime_errors_only(monkeypatch) -> None:
+    def numerical_error(_spec):
+        raise RuntimeError("bounded numerical failure")
+
+    monkeypatch.setattr(
+        evaluation_module,
+        "run_renormalized_tangent",
+        numerical_error,
+    )
+    outcome = evaluate_renormalized_tangent_reference(RenormalizedTangentSpec())
+    assert outcome.status is EvaluationStatus.EXECUTION_ERROR
+    assert outcome.value is None
+    assert outcome.error_type == "RuntimeError"
+    assert outcome.error_message == "bounded numerical failure"
+
+    def programming_error(_spec):
+        raise ValueError("programming failure")
+
+    monkeypatch.setattr(
+        evaluation_module,
+        "run_renormalized_tangent",
+        programming_error,
+    )
+    with pytest.raises(ValueError, match="programming failure"):
+        evaluate_renormalized_tangent_reference(RenormalizedTangentSpec())
 
 
 def test_sweep_figure_and_json_preserve_semantics(short_sweep, tmp_path) -> None:
@@ -140,11 +192,18 @@ def test_sweep_figure_and_json_preserve_semantics(short_sweep, tmp_path) -> None
     assert payload["asymptotic_convergence_claimed"] is False
     assert payload["sweep_coordinate"] == "theta1"
     assert payload["timing"]["sample_count"] == 3
+    assert payload["samples"][1]["theta1_degrees"] == 179.0
+    assert payload["samples"][1]["initial_state_radians"]["theta1"] == pytest.approx(
+        math.radians(179.0)
+    )
     assert [sample["status"] for sample in payload["samples"]] == [
         "completed_valid",
         "completed_valid",
         "completed_valid",
     ]
+    assert {sample["evaluator"] for sample in payload["samples"]} == {
+        "numpy_scipy_reference"
+    }
 
 
 def test_demonstration_definition_and_output_paths_are_bounded_and_local() -> None:

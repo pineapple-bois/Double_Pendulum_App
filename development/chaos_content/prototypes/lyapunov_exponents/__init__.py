@@ -22,17 +22,33 @@ from .reference import (
     wrap_angle_difference,
 )
 from .sweep import (
-    SweepSampleStatus,
     Theta1SweepResult,
-    Theta1SweepSample,
     Theta1SweepSpec,
     run_theta1_sweep,
 )
 from .grid import (
-    Theta1Theta2GridCell,
     Theta1Theta2GridResult,
     Theta1Theta2GridSpec,
     run_theta1_theta2_grid,
+)
+from .evaluation import (
+    REFERENCE_EVALUATOR,
+    RenormalizedTangentEvaluation,
+    RenormalizedTangentEvaluator,
+    evaluate_renormalized_tangent_reference,
+)
+from development.chaos_content.prototypes.state_space_fields import (
+    EvaluationStatus,
+    LineSample,
+    LineSamplingResult,
+    PeriodicAngularDomain,
+    RectangularCell,
+    RectangularSamplingResult,
+    SampleAxis,
+    ScalarEvaluation,
+    full_periodic_angle_axis,
+    sample_line,
+    sample_rectangle,
 )
 
 __all__ = [
@@ -55,12 +71,24 @@ __all__ = [
     "second_bob_position",
     "second_bob_separation",
     "wrap_angle_difference",
-    "SweepSampleStatus",
+    "EvaluationStatus",
+    "ScalarEvaluation",
+    "SampleAxis",
+    "LineSample",
+    "LineSamplingResult",
+    "RectangularCell",
+    "RectangularSamplingResult",
+    "sample_line",
+    "sample_rectangle",
+    "PeriodicAngularDomain",
+    "full_periodic_angle_axis",
+    "REFERENCE_EVALUATOR",
+    "RenormalizedTangentEvaluation",
+    "RenormalizedTangentEvaluator",
+    "evaluate_renormalized_tangent_reference",
     "Theta1SweepResult",
-    "Theta1SweepSample",
     "Theta1SweepSpec",
     "run_theta1_sweep",
-    "Theta1Theta2GridCell",
     "Theta1Theta2GridResult",
     "Theta1Theta2GridSpec",
     "run_theta1_theta2_grid",

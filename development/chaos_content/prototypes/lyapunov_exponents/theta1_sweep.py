@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
+import math
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import matplotlib
@@ -14,10 +15,13 @@ import numpy as np
 from matplotlib.figure import Figure
 
 from sweep import (
-    SweepSampleStatus,
     Theta1SweepResult,
     Theta1SweepSpec,
     run_theta1_sweep,
+)
+from development.chaos_content.prototypes.state_space_fields import (
+    EvaluationStatus,
+    LineSample,
 )
 
 
@@ -39,12 +43,15 @@ def build_figure(result: Theta1SweepResult) -> Figure:
     valid = result.valid_mask
     completed_invalid = np.asarray(
         [
-            sample.status is SweepSampleStatus.COMPLETED_INVALID
+            sample.evaluation.status is EvaluationStatus.COMPLETED_INVALID
             for sample in result.samples
         ]
     )
     execution_error = np.asarray(
-        [sample.status is SweepSampleStatus.EXECUTION_ERROR for sample in result.samples]
+        [
+            sample.evaluation.status is EvaluationStatus.EXECUTION_ERROR
+            for sample in result.samples
+        ]
     )
     invalid_with_rate = completed_invalid & np.isfinite(rates)
     invalid_without_rate = completed_invalid & ~np.isfinite(rates)
@@ -132,29 +139,44 @@ def result_payload(result: Theta1SweepResult) -> dict[str, object]:
             "mean_seconds_per_sample": result.mean_seconds_per_sample,
             "sample_count": result.sample_count,
         },
-        "samples": [
-            {
-                "index": sample.index,
-                "theta1_degrees": sample.theta1_degrees,
-                "initial_state_radians": asdict(sample.initial_state),
-                "status": sample.status.value,
-                "finite_time_stretching_rate_per_second": (
-                    sample.finite_time_stretching_rate
-                ),
-                "elapsed_seconds": sample.elapsed_seconds,
-                "maximum_normalized_reference_energy_drift": (
-                    sample.maximum_normalized_reference_energy_drift
-                ),
-                "maximum_post_renormalization_norm_error": (
-                    sample.maximum_post_renormalization_norm_error
-                ),
-                "solver_function_evaluations": sample.solver_function_evaluations,
-                "validity_issues": list(sample.validity_issues),
-                "error_type": sample.error_type,
-                "error_message": sample.error_message,
-            }
-            for sample in result.samples
-        ],
+        "samples": [_sample_payload(result, sample) for sample in result.samples],
+    }
+
+
+def _sample_payload(
+    result: Theta1SweepResult,
+    sample: LineSample,
+) -> dict[str, object]:
+    evaluation = sample.evaluation
+    diagnostics = evaluation.diagnostics
+    initial_state = replace(
+        result.spec.observable_spec.initial_state,
+        theta1=math.radians(sample.coordinate),
+    )
+    return {
+        "index": sample.index,
+        "theta1_degrees": sample.coordinate,
+        "initial_state_radians": asdict(initial_state),
+        "status": evaluation.status.value,
+        "finite_time_stretching_rate_per_second": evaluation.value,
+        "elapsed_seconds": evaluation.elapsed_seconds,
+        "evaluator": evaluation.evaluator,
+        "maximum_normalized_reference_energy_drift": (
+            None
+            if diagnostics is None
+            else diagnostics.maximum_normalized_reference_energy_drift
+        ),
+        "maximum_post_renormalization_norm_error": (
+            None
+            if diagnostics is None
+            else diagnostics.maximum_post_renormalization_norm_error
+        ),
+        "solver_function_evaluations": (
+            None if diagnostics is None else diagnostics.solver_function_evaluations
+        ),
+        "validity_issues": list(evaluation.validity_issues),
+        "error_type": evaluation.error_type,
+        "error_message": evaluation.error_message,
     }
 
 

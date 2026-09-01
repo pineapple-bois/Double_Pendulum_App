@@ -27,15 +27,20 @@ primitive and adds only ordering, per-sample outcome/provenance, timing, and
 diagnostic plot/data composition.
 
 The next apparatus is a tiny rectangular `theta1`–`theta2` reference grid. It
-executes the established 1-D runner once per ordered `theta2` row, preserving
-the same scalar calculation and cell-outcome semantics while making field
-shape and heatmap orientation explicit.
+is a peer of the 1-D sweep: both sampling strategies call the same
+Lyapunov-specific evaluator and retain the same coordinate-neutral scalar
+outcome. The grid is no longer represented as a collection of theta1 sweeps.
 
 The mathematical narrative lives beside the implementation in
 [`storyboards/sensitivity_to_lyapunov.md`](storyboards/sensitivity_to_lyapunov.md).
 Future visuals in this strand should use similarly story-specific local
 documents, allowing their mathematics to coexist without accumulating
 unrelated derivations in this README or a repository-wide document.
+
+Broader cross-observable, compiled-evaluator, tiling, storage, rendering, and
+production-delivery direction lives in
+[`../../notes/chaos_prototype_architecture.md`](../../notes/chaos_prototype_architecture.md).
+This README remains responsible only for the Lyapunov strand.
 
 ## Why this structure
 
@@ -46,19 +51,27 @@ framework:
   physical observables, the production-derived Euler--Lagrange flow/Jacobian,
   bounded piecewise integration, the composed sensitivity calculation, and
   the one-vector renormalised tangent calculation;
+- `evaluation.py` adapts that unchanged rich NumPy/SciPy reference result to
+  the neutral scalar-evaluation outcome and is the future
+  reference-versus-compiled seam;
+- `../state_space_fields.py` owns only the earned cross-observable outcome,
+  explicit-axis line/rectangle reference sampling, and full periodic
+  angular-domain contracts;
 - `sensitivity_to_lyapunov.py` composes the structured reference result into
   the first four-panel pedagogical figure; it performs no validation and emits
   no narrated console story;
-- `sweep.py` owns the coordinate-specific 1-D sweep specification, sample
-  outcomes, timing record, and repeated calls to the reference evaluator;
+- `sweep.py` owns the Lyapunov-specific 1-D specification and initial-state
+  substitution, then composes the neutral line sampler with the evaluator;
 - `theta1_sweep.py` declares and renders the first small sweep without
   implementing any Lyapunov mathematics;
-- `grid.py` owns the coordinate-specific rectangular grid, its row/column
-  convention, and the repeated 1-D row evaluations;
+- `grid.py` owns the Lyapunov-specific rectangular specification and
+  initial-state substitution, then composes the neutral rectangular sampler;
+  it has no dependency on `sweep.py`;
 - `theta1_theta2_grid.py` independently persists the scalar field and renders
   its basic diagnostic heatmap;
-- `tests/` checks the reference contracts, Experiment 006/007 fixtures, sweep
-  substitution, independent-point equivalence, and invalid/error handling;
+- `tests/` checks the reference contracts, Experiment 006/007 fixtures,
+  neutral sampling and periodic domains, coordinate substitution,
+  independent-point equivalence, and invalid/error handling;
 - `storyboards/sensitivity_to_lyapunov.md` derives this visual's pedagogical
   progression and claim boundary.
 
@@ -190,6 +203,19 @@ diagnostics. A future sweep can consume the final scalar without needing to
 know the integration machinery, while validation and diagnostic work can
 inspect the complete accumulation record.
 
+The trusted result is exposed to sampling through one explicit adapter:
+
+```python
+evaluation = evaluate_renormalized_tangent_reference(spec)
+```
+
+It returns the cross-observable `ScalarEvaluation`: status, optional finite
+value, typed Lyapunov numerical diagnostics, elapsed time, evaluator identity,
+validity issues, and bounded execution-error details. The adapter catches only
+the reference calculation's numerical `RuntimeError`; programming and
+specification errors propagate. A future compiled evaluator must return the
+same outcome semantics and be proven equivalent to this reference adapter.
+
 The 1-D orchestration API is:
 
 ```python
@@ -201,12 +227,12 @@ sweep = run_theta1_sweep(
 )
 ```
 
-`Theta1SweepResult` retains the ordered samples, total and mean timing, and the
-unchanged observable specification. Each `Theta1SweepSample` retains its full
-initial state, returned rate when calculation completed, numerical diagnostics,
-elapsed time, and one explicit outcome: completed-valid, completed-invalid, or
-execution-error. Only numerical `RuntimeError` failures are converted into a
-sample outcome; programming and specification exceptions remain visible.
+`Theta1SweepResult` retains the unchanged observable specification and a
+neutral `LineSamplingResult`: its named axis, ordered `(index, coordinate)`
+samples, scalar evaluation outcomes, total timing, and mean timing. The exact
+initial state is reproducible from the fixed specification plus each sampled
+coordinate. The sweep accepts an evaluator callable; it does not own Lyapunov
+integration or failure translation.
 
 The rectangular API is similarly specific:
 
@@ -220,12 +246,40 @@ grid = run_theta1_theta2_grid(
 )
 ```
 
-`Theta1Theta2GridResult` retains both ordered axes, cells, scalar values,
-statuses, validity mask, fixed specification, and timing. Each grid cell wraps
-the corresponding established 1-D sample outcome instead of reimplementing
-evaluation or error handling. JSON persistence and heatmap rendering are
-separate functions, so the numerical field remains available without rerunning
-the observable.
+`Theta1Theta2GridResult` retains the fixed specification and a neutral
+`RectangularSamplingResult`: both named axes, cells, scalar values, statuses,
+validity mask, and timing. Each neutral cell records `(y_index, x_index)`, its
+two coordinates, and one scalar evaluation outcome. The exact Lyapunov initial
+state remains reproducible from the fixed specification and coordinates. The
+grid independently accepts the evaluator and has no dependency on `sweep.py`.
+JSON persistence and heatmap rendering remain separate, so the numerical field
+is available without rerunning the observable.
+
+## Full periodic angular-domain contract
+
+The cross-observable domain API defines a full axis in radians as
+
+```python
+axis = full_periodic_angle_axis(samples=N)
+domain = PeriodicAngularDomain(
+    theta1_samples=N1,
+    theta2_samples=N2,
+)
+```
+
+with
+
+```text
+theta[k] = -pi + 2*pi*k/N,  k = 0, ..., N-1.
+```
+
+The domain is therefore `[-pi, pi)`: `-pi` is included and the physically
+duplicate `+pi` endpoint is not. `resolution` reports
+`(theta1_samples, theta2_samples)` while `field_shape` reports the stored-array
+order `(theta2_samples, theta1_samples)`. The existing bounded demonstrations
+remain degree-based for fixture continuity; `Theta1Theta2GridSpec` can consume
+the periodic domain without duplicating endpoints. No large full-periodic
+field is evaluated by this strand.
 
 ## Default reference contract
 
@@ -291,6 +345,13 @@ map of the state space.
 The same boundary applies to the small grid heatmap: it validates repeated
 evaluation, data orientation, and persistence, but it is not a production
 chaos map and its visual texture is not a classification.
+
+The NumPy/SciPy implementation remains the scientific oracle. Reusable
+sampling, future storage, and rendering concerns are now cross-observable, but
+the Lyapunov specification, Candidate-A geometry, tangent integration, and
+validity diagnostics remain local scientific contracts. High-performance map
+work must begin with reference-versus-compiled equivalence rather than silently
+replacing this implementation.
 
 ## Deliberately absent
 
