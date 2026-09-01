@@ -28,6 +28,12 @@ from .sweep import (
     Theta1SweepSpec,
     run_theta1_sweep,
 )
+from .grid import (
+    Theta1Theta2GridCell,
+    Theta1Theta2GridResult,
+    Theta1Theta2GridSpec,
+    run_theta1_theta2_grid,
+)
 
 __all__ = [
     "CandidateAMetric",
@@ -54,4 +60,8 @@ __all__ = [
     "Theta1SweepSample",
     "Theta1SweepSpec",
     "run_theta1_sweep",
+    "Theta1Theta2GridCell",
+    "Theta1Theta2GridResult",
+    "Theta1Theta2GridSpec",
+    "run_theta1_theta2_grid",
 ]

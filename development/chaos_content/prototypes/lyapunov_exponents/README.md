@@ -26,6 +26,11 @@ the initial `theta1` coordinate. It delegates every sample to that existing
 primitive and adds only ordering, per-sample outcome/provenance, timing, and
 diagnostic plot/data composition.
 
+The next apparatus is a tiny rectangular `theta1`–`theta2` reference grid. It
+executes the established 1-D runner once per ordered `theta2` row, preserving
+the same scalar calculation and cell-outcome semantics while making field
+shape and heatmap orientation explicit.
+
 The mathematical narrative lives beside the implementation in
 [`storyboards/sensitivity_to_lyapunov.md`](storyboards/sensitivity_to_lyapunov.md).
 Future visuals in this strand should use similarly story-specific local
@@ -48,6 +53,10 @@ framework:
   outcomes, timing record, and repeated calls to the reference evaluator;
 - `theta1_sweep.py` declares and renders the first small sweep without
   implementing any Lyapunov mathematics;
+- `grid.py` owns the coordinate-specific rectangular grid, its row/column
+  convention, and the repeated 1-D row evaluations;
+- `theta1_theta2_grid.py` independently persists the scalar field and renders
+  its basic diagnostic heatmap;
 - `tests/` checks the reference contracts, Experiment 006/007 fixtures, sweep
   substitution, independent-point equivalence, and invalid/error handling;
 - `storyboards/sensitivity_to_lyapunov.md` derives this visual's pedagogical
@@ -100,6 +109,39 @@ renormalisation interval, Candidate-A geometry, and the accepted DOP853 solver
 policy. The interval was selected symmetrically around the reference condition
 before evaluating the completed sweep; it was not chosen to isolate visually
 interesting behaviour.
+
+## Run the bounded 2-D reference grid
+
+From the repository root:
+
+```bash
+uv run python development/chaos_content/prototypes/lyapunov_exponents/theta1_theta2_grid.py
+```
+
+This writes two independent, source-relative, intentionally untracked
+deliverables:
+
+- `outputs/theta1_theta2_finite_time_grid.json` — axes, scalar field,
+  per-cell statuses and diagnostics, fixed specification, and timing;
+- `outputs/theta1_theta2_finite_time_grid.png` — a heatmap rendered separately
+  from the persisted field.
+
+The demonstration uses a mechanically selected `9 x 9` square: both initial
+angle axes run uniformly from `169 deg` through `189 deg`, so the trusted
+`(179 deg, 179 deg)` condition is the center cell. Both angular velocities,
+the pure-`theta1` tangent, `T=5 s`, the `0.25 s` renormalisation interval,
+Candidate-A geometry, and the accepted DOP853 policy are fixed across all 81
+cells. The earlier full-policy smoke grid used the same domain at `4 x 4`.
+
+Stored arrays use one declared convention:
+
+```text
+values[theta2_index, theta1_index]
+```
+
+Thus `theta1` is the horizontal heatmap axis and array-column coordinate;
+`theta2` is the vertical heatmap axis and array-row coordinate. Both axes are
+stored explicitly, and the renderer supplies them directly to Matplotlib.
 
 ## Reusable API and result model
 
@@ -166,6 +208,25 @@ elapsed time, and one explicit outcome: completed-valid, completed-invalid, or
 execution-error. Only numerical `RuntimeError` failures are converted into a
 sample outcome; programming and specification exceptions remain visible.
 
+The rectangular API is similarly specific:
+
+```python
+grid = run_theta1_theta2_grid(
+    Theta1Theta2GridSpec(
+        theta1_degrees=(...),
+        theta2_degrees=(...),
+        observable_spec=RenormalizedTangentSpec(...),
+    )
+)
+```
+
+`Theta1Theta2GridResult` retains both ordered axes, cells, scalar values,
+statuses, validity mask, fixed specification, and timing. Each grid cell wraps
+the corresponding established 1-D sample outcome instead of reimplementing
+evaluation or error handling. JSON persistence and heatmap rendering are
+separate functions, so the numerical field remains available without rerunning
+the observable.
+
 ## Default reference contract
 
 The declared first workflow matches the accepted local Experiment 006 case:
@@ -227,10 +288,14 @@ The sweep plot is an apparatus diagnostic. Variation along its sampled line is
 not interpreted as a general chaos classification, an asymptotic result, or a
 map of the state space.
 
+The same boundary applies to the small grid heatmap: it validates repeated
+evaluation, data orientation, and persistence, but it is not a production
+chaos map and its visual texture is not a classification.
+
 ## Deliberately absent
 
 There is no simulator/manager/engine abstraction, plugin system, inheritance
-tree, generic sweep framework, adaptive sampling, 2-D grid, state-space map,
-QR/full-spectrum API, selected map horizon, JIT layer, persistent map dataset,
-Dash integration, or production `/chaos` integration. Those decisions require
-later prototype questions and evidence.
+tree, generic N-dimensional framework, adaptive/refined grid, interpolation,
+state-space classification, QR/full-spectrum API, selected map horizon, JIT
+layer, persistent large-map dataset, Dash integration, or production `/chaos`
+integration. Those decisions require later prototype questions and evidence.
