@@ -1,6 +1,7 @@
 # State-space map computation plan
 
-**Status: planning boundary; Experiments 016--019 are not yet implemented.**
+**Status: completed through Experiment 019; the bounded local-pipeline exit
+condition is earned.**
 
 ## Purpose and destination
 
