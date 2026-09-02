@@ -8,6 +8,7 @@ dependencies = [
     "dash",
     "flask",
     "gunicorn",
+    "h5py>=3.16.0",
     "matplotlib",
     "numba>=0.67.0",
     "numpy",
