@@ -1,6 +1,8 @@
 # 016 Independent-cell execution boundary
 
-**Status: planned; implementation and measurements not yet run.**
+**Status: accepted.** Four spawn-isolated worker processes with per-cell
+dispatch are the earned bounded execution policy. This policy has not been
+promoted into the prototype.
 
 ## Question
 
@@ -373,3 +375,154 @@ includes a machine-readable summary containing:
 
 A timing plot is optional and derivative. No persisted scientific map, tile
 dataset, or production asset belongs to this experiment.
+
+## Implementation and evidence
+
+The experiment-local harness is
+`independent_cell_execution_boundary.py`. It represents every evaluation as a
+module-level, pickleable `CellTask` carrying its linear index, both axis
+indices, and both coordinates. The worker reconstructs the per-condition
+specification from the fixed base specification and calls the existing
+promoted scalar evaluator. It does not contain dynamics, tangent,
+renormalisation, or solver code.
+
+The harness executes the declared sequential, guarded-thread, and explicit
+spawn-process paths, records indexed `CellOutcome` values, applies the
+equivalence and failure-semantics gates, and records timing and coarse process
+resource evidence. The current neutral rectangle sampler is independently
+cross-checked on the `9 x 9` workload.
+
+Run the accepted assessment with:
+
+``` bash
+uv run python development/chaos_content/experiments/016_independent_cell_execution_boundary/independent_cell_execution_boundary.py
+```
+
+The compact ignored evidence is written to:
+
+``` text
+development/chaos_content/outputs/independent_cell_execution_boundary/baseline/summary.json
+```
+
+## Findings
+
+### Runtime and cold boundary
+
+The accepted run used macOS 15.7.9 on arm64, Python 3.12.3, NumPy 2.5.2,
+SciPy 1.18.0, Numba 0.67.0, and an eight-logical-CPU host. Numerical-library
+thread-count environment variables were fixed to one. The experiment module
+import took `0.754 s`. The first complete scalar evaluation, including the
+previously uncompiled Numba kernel, took `0.274 s`.
+
+Spawn workers were not declared ready until each had imported its own runtime,
+compiled/warmed its own Numba kernel, and returned its PID. Worker readiness
+took `1.309 s`, `1.507 s`, and `1.653 s` for widths one, two, and four. The
+evaluation portion of each worker's warm-up was `0.258--0.330 s`; the remainder
+is spawn/import/dispatch cost. Explicit shutdown took `0.697--0.984 s`, and all
+worker processes and executor threads were confirmed stopped.
+
+### Numerical, placement, and error semantics
+
+The current neutral rectangle sampler and the experiment's indexed sequential
+task path produced the same `81` outcomes. Every scalar value and full
+diagnostic record matched exactly. The result digest was
+`4feb4fbb82bb6a3aa2b8826d5611774c97b8005633829c5d0b2a8a5949b65ec6`.
+
+Both guarded thread widths and every spawn-process width and dispatch control
+passed the `9 x 9` comparison. Across each comparison:
+
+- all `81` coordinates occurred exactly once in the declared
+  `values[theta2_index, theta1_index]` association;
+- scalar and energy-diagnostic errors were exactly zero;
+- all `81` scalar values and all `81` diagnostic records matched exactly;
+- status, issues, error fields, evaluator provenance, segment counts,
+  max-step provenance, and solver-evaluation counts agreed exactly; and
+- the largest candidate post-reset norm error was
+  `3.331e-16`, below the unchanged `1e-12` limit.
+
+The completed-invalid probe, bounded numerical `RuntimeError` translation, and
+propagating programming `ValueError` all behaved identically under sequential,
+thread, and process execution. No cell was dropped, duplicated, misplaced, or
+silently converted into another status.
+
+### Warmed throughput
+
+Each entry is the median of three interleaved warmed repetitions. The spread is
+the interquartile range of wall time.
+
+| strategy | width | dispatch | 17 x 17 wall / IQR | 17 x 17 cells/s | 25 x 25 wall / IQR | 25 x 25 cells/s |
+|---|---:|---|---:|---:|---:|---:|
+| sequential | 1 | direct | 2.021 / 0.068 s | 143.0 | 4.313 / 0.050 s | 144.9 |
+| threads | 2 | per cell | 1.995 / 0.080 s | 144.9 | 4.628 / 0.193 s | 135.1 |
+| threads | 4 | per cell | 1.982 / 0.003 s | 145.8 | 4.319 / 0.170 s | 144.7 |
+| spawn processes | 1 | per cell | 2.052 / 0.085 s | 140.9 | 4.463 / 0.055 s | 140.0 |
+| spawn processes | 2 | per cell | 1.021 / 0.003 s | 283.1 | 2.289 / 0.056 s | 273.1 |
+| spawn processes | 4 | per cell | 0.624 / 0.052 s | 463.4 | 1.415 / 0.069 s | 441.7 |
+
+The two-process per-cell path achieved approximately `1.98x` and `1.88x`
+speedups over sequential execution. The four-process path achieved `3.24x`
+and `3.05x`, or approximately 81% and 76% parallel efficiency, on `17 x 17`
+and `25 x 25` respectively. Its improvement was separated from sequential
+run-to-run spread on both workloads.
+
+The mechanical amortisation controls also passed all contracts, but did not
+earn a distinct policy. At width four their `17 x 17` and `25 x 25` medians
+were `0.648 s` and `1.384 s`; their interquartile ranges overlapped the
+per-cell results on both workloads. The simpler `chunksize=1` dispatch is
+therefore retained. Executor batching remains an implementation detail, not a
+tile.
+
+Threads completed their repeated correctness preflights without observed
+Fortran state contamination on this exact software stack. They did not improve
+aggregate throughput. This is consistent with the Python callback and
+non-`nogil` Numba boundary remaining serializing pressure, but the timing does
+not by itself prove which callback or lock dominates.
+
+### Resource interpretation
+
+The serialized fixed specification, indexed task, and representative outcome
+were `843`, `147`, and `844` bytes. Serialization volume was therefore not the
+dominant cost at these cell durations.
+
+Spawn-worker peak RSS began near `221--223 MB` after initialization. The four
+worker processes reached an aggregate lifetime high-water mark of about
+`1.78 GB` during the per-cell measurements, while the later amortized control
+reached about `1.89 GB`. The coordinator's lifetime peak reached about
+`1.95 GB` over the entire interleaved experiment. These are coarse,
+process-lifetime `ru_maxrss` high-water marks: they are neither simultaneous
+live-memory measurements nor evidence of a diagnosed leak. Their growth does
+mean this experiment does not justify indefinitely reusing these workers for a
+large field. Bounded worker lifetime and current-memory behaviour must be
+resolved with the later work-unit boundary before high-resolution execution.
+
+The sum of evaluator-reported elapsed times was approximately `3.92` times the
+four-process wall time on the accepted path, consistent with useful concurrent
+execution rather than coordinator-only timing artifacts.
+
+## Verdict
+
+**ACCEPT: use an explicit spawn-process execution boundary with four warmed,
+isolated workers and per-cell (`chunksize=1`) dispatch for bounded collections
+of the promoted scalar evaluator on this host.**
+
+This policy wins because process isolation provides a defensible owner for
+each Python/Numba/Fortran callback lifecycle, preserves every value, diagnostic,
+status, error, and coordinate contract, and produces a sustained material
+throughput improvement. The pool must be created with spawn, every worker must
+warm before steady measurement or use, results must retain explicit indices,
+and the pool must be shut down explicitly. Startup cost means this is not a
+policy for one or a handful of cells.
+
+The strongest earned claim is narrower than “multiprocessing scales chaos
+maps”: on the declared bounded `[169 deg, 189 deg]^2`, `T=5 s` workload and the
+recorded Python/SciPy/Numba stack, four warm spawn-isolated processes evaluate
+independent promoted finite-time-stretching cells about three times faster than
+sequential execution while returning exactly identical reference result
+records.
+
+This experiment does not promote the harness, establish a tile or worker-
+recycling contract, validate the full periodic domain, explain the rising RSS
+high-water marks, establish performance at other horizons, or support a
+12,000 x 12,000 run. Those remain outside the claim. Experiment 017 may use the
+earned process boundary while investigating a bounded rectangular work unit;
+it must not treat executor chunks as already-earned tile semantics.
