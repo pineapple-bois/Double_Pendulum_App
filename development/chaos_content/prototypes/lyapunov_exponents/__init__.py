@@ -48,6 +48,12 @@ from .fortran_dop853 import (
     evaluate_renormalized_tangent_compiled_fortran,
     run_renormalized_tangent_compiled_fortran,
 )
+from .hybrid import (
+    HYBRID_FALLBACK_EVALUATOR,
+    HYBRID_FAST_ERROR_EVALUATOR,
+    HYBRID_FAST_EVALUATOR,
+    evaluate_renormalized_tangent_hybrid,
+)
 from development.chaos_content.prototypes.state_space_fields import (
     EvaluationStatus,
     LineSample,
@@ -104,6 +110,10 @@ __all__ = [
     "COMPILED_FORTRAN_EVALUATOR",
     "evaluate_renormalized_tangent_compiled_fortran",
     "run_renormalized_tangent_compiled_fortran",
+    "HYBRID_FAST_EVALUATOR",
+    "HYBRID_FALLBACK_EVALUATOR",
+    "HYBRID_FAST_ERROR_EVALUATOR",
+    "evaluate_renormalized_tangent_hybrid",
     "Theta1SweepResult",
     "Theta1SweepSpec",
     "run_theta1_sweep",

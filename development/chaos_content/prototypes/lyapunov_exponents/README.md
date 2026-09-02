@@ -298,6 +298,53 @@ promoted. The accepted-step post-check and bounded execution-error semantics
 remain authoritative; the external numerical policy was neither weakened nor
 reinterpreted.
 
+## Execution paths
+
+The strand now exposes three purposeful evaluation roles:
+
+1. `evaluate_renormalized_tangent_reference` is the NumPy/SymPy plus
+   `solve_ivp` mathematical/scientific oracle.
+2. `evaluate_renormalized_tangent_compiled_fortran` is the promoted Numba
+   RHS/JVP plus compiled-DOP853 fast evaluator. Its numerical and accepted-step
+   policies are unchanged.
+3. `evaluate_renormalized_tangent_hybrid` is a routing/recovery policy around
+   existing evaluators. It returns the fast result normally and uses
+   `evaluate_renormalized_tangent_compiled`, the compiled-RHS plus `solve_ivp`
+   integration-boundary oracle, only after independently verifying the known
+   endpoint `max_step` incompatibility.
+
+The reusable hybrid entry point is:
+
+```python
+evaluation = evaluate_renormalized_tangent_hybrid(spec)
+```
+
+It retains the existing `ScalarEvaluation` contract. The `evaluator` field
+records the actual route as one of:
+
+```text
+compiled_dop853
+compiled_rhs_solve_ivp_fallback
+compiled_dop853_execution_error
+```
+
+The max-step error message is only a prefilter. A fallback additionally
+replays accepted-step observation and requires the reported excess to be the
+sole final accepted step into a completed renormalisation endpoint, with the
+unchanged external cap and the verified legacy `1.01 h` endpoint bound. If
+those mechanics do not verify, the original execution error remains an error.
+Unrelated `RuntimeError` outcomes are not retried and programming or
+specification exceptions continue to propagate.
+
+Experiment 017 accepted this hybrid boundary on the established `17 x 17` and
+`25 x 25` bounded fields: it routed exactly the prior 14 and 19 endpoint errors
+to exact solve_ivp results, preserved all other fast results, remained
+orientation- and tile-invariant, and retained about a `4.5x` field-level
+speedup over all-solve_ivp evaluation. This is a bounded execution claim. The
+fallback frequency and throughput over the full periodic domain are not yet
+established, and the hybrid API does not introduce tile, persistence, or
+production-delivery semantics.
+
 The 1-D orchestration API is:
 
 ```python

@@ -60,14 +60,14 @@ class _AcceptedStepSegment:
     warning_messages: tuple[str, ...]
 
 
-def _integrate_fortran_dop853_segment(
+def _integrate_compiled_dop853_segment_unchecked(
     rhs: Callable[[float, np.ndarray], np.ndarray],
     initial: np.ndarray,
     requested: np.ndarray,
     solver: SolverSpec,
     max_step: float,
 ) -> _AcceptedStepSegment:
-    """Integrate one renormalisation segment and observe accepted steps."""
+    """Integrate one segment while exposing accepted steps before cap checking."""
 
     if solver.method.upper() != "DOP853":
         raise ValueError("The compiled Fortran path supports only DOP853.")
@@ -166,16 +166,6 @@ def _integrate_fortran_dop853_segment(
         or not np.all(np.diff(time) > 0.0)
     ):
         raise RuntimeError("Fortran DOP853 accepted-step output is invalid.")
-    maximum_step_gap = float(np.max(np.diff(time)))
-    allowed_max_step = max_step + _MAX_STEP_FLOATING_POINT_ALLOWANCE * max(
-        1.0, abs(max_step)
-    )
-    if maximum_step_gap > allowed_max_step:
-        raise RuntimeError(
-            "Fortran DOP853 exceeded the declared max_step: "
-            f"{maximum_step_gap} > {max_step}."
-        )
-
     return _AcceptedStepSegment(
         time=time,
         state=state,
@@ -183,6 +173,35 @@ def _integrate_fortran_dop853_segment(
         return_code=return_code,
         warning_messages=warning_messages,
     )
+
+
+def _integrate_fortran_dop853_segment(
+    rhs: Callable[[float, np.ndarray], np.ndarray],
+    initial: np.ndarray,
+    requested: np.ndarray,
+    solver: SolverSpec,
+    max_step: float,
+) -> _AcceptedStepSegment:
+    """Integrate one segment and enforce the external accepted-step cap."""
+
+    segment = _integrate_compiled_dop853_segment_unchecked(
+        rhs,
+        initial,
+        requested,
+        solver,
+        max_step,
+    )
+    maximum_step_gap = float(np.max(np.diff(segment.time)))
+    allowed_max_step = max_step + _MAX_STEP_FLOATING_POINT_ALLOWANCE * max(
+        1.0,
+        abs(max_step),
+    )
+    if maximum_step_gap > allowed_max_step:
+        raise RuntimeError(
+            "Fortran DOP853 exceeded the declared max_step: "
+            f"{maximum_step_gap} > {max_step}."
+        )
+    return segment
 
 
 def _solve_fortran_dop853_segment(
