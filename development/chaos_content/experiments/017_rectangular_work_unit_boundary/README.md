@@ -640,6 +640,60 @@ Compact ignored evidence is written to:
 development/chaos_content/outputs/rectangular_work_unit_boundary/max_step_audit.json
 ```
 
+#### Conservative-cap promotion validation
+
+A subsequent promotion attempt tested the exact proposed translation
+
+``` text
+internal_max_step = nextafter(external_max_step / 1.01, 0)
+```
+
+while retaining the original external value and the unchanged accepted-step
+post-check. The direct endpoint regression behaved as intended: the original
+internal cap reproduced cycle-9 gaps of `0.010018648992311086 s` and
+`0.0100523793288545 s`, while the translated cap limited all four audited
+cases to at most `0.009878571423485916 s`, reached every endpoint, and made
+both former errors complete-valid. All four remained within the Experiment
+015 comparison gates against the compiled-RHS `solve_ivp` oracle.
+
+The complete bounded fields changed only the known `max_step` statuses:
+
+| field | before `(valid, invalid, error)` | translated `(valid, invalid, error)` |
+|---|---:|---:|
+| `17 x 17` | `(275, 0, 14)` | `(289, 0, 0)` |
+| `25 x 25` | `(606, 0, 19)` | `(625, 0, 0)` |
+
+Every changed cell was an existing endpoint-snap `max_step` error becoming
+completed-valid; there were no new invalid or error outcomes. Among cells
+valid under both policies, however, the maximum finite-time-rate changes were
+`3.345e-7 s^-1` and `8.392e-8 s^-1` respectively. Energy-diagnostic changes
+remained below `1.271e-10`.
+
+Most importantly, the trusted Experiment 015 center fixture
+`(179 deg, 179 deg)` failed the unchanged scalar gate: its translated result
+differed from the compiled-RHS `solve_ivp` oracle by
+`1.1507145458722334e-8 s^-1`, exceeding the fixed `1e-8 s^-1` tolerance.
+The other four fixtures passed; the center's cycle-log, final-state, energy,
+and validity gates also passed. The scalar-rate failure alone is decisive and
+was not weakened after observation.
+
+The translated evaluator otherwise retained exact `8 x 8` tiled/untiled
+equivalence on both bounded fields: all `289` and `625` values, statuses,
+diagnostics, coordinates, provenance, and field digests matched. In 21
+interleaved warmed measurements over the three established benchmark cases,
+the original adapter median was `6.876 ms`, the translated candidate median
+was `6.897 ms`, and the compiled-RHS `solve_ivp` oracle median was
+`37.817 ms`. The translation cost was `+0.30%` and it retained a `5.48x`
+speedup over the oracle.
+
+**Promotion verdict: REJECT.** The translation solves the endpoint-step
+mechanism and has negligible measured performance cost, but it does not
+preserve the predeclared numerical-equivalence contract. It has not been
+promoted into the prototype adapter. The adapter continues to pass the
+external cap directly to compiled DOP853, and the accepted-step post-check
+continues to report the audited endpoint overshoots as bounded execution
+errors.
+
 ## Verdict
 
 **ACCEPT: use `8 x 8` nominal rectangular work units, expressed as half-open
@@ -666,5 +720,6 @@ Lyapunov field, persistence backend, or high-resolution production run.
 The next stage may investigate persistence using this earned logical
 completion unit, but it must keep storage chunking conceptually independent.
 The promoted evaluator's bounded `max_step` outcomes have now received the
-focused audit above. Experiment 017 still does not alter or reinterpret their
-status, and the proposed conservative internal cap remains unpromoted.
+focused audit and promotion validation above. Experiment 017 still does not
+alter or reinterpret their status, and the conservative internal cap remains
+unpromoted because it failed the established scalar-equivalence gate.

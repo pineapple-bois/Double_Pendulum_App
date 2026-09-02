@@ -276,14 +276,27 @@ evaluation = evaluate_renormalized_tangent_compiled_fortran(spec)
 ```
 
 It uses the same Numba RHS/JVP and shared evolve / measure / renormalise
-driver, but integrates each `0.25 s` segment once with SciPy's compiled
-Fortran DOP853 implementation. Accepted solver steps supply the reference
+driver, but integrates each `0.25 s` segment once through SciPy's compiled
+DOP853 boundary exposed by `scipy.integrate.ode("dop853")`. Accepted solver
+steps supply the reference
 states used by the unchanged energy-drift calculation. The solve_ivp oracle
 instead observes the uniform `0.01 s` diagnostic grid. Experiment 015 showed
 that both diagnostics remain below the unchanged validity limit and their
 maxima agree within the existing `1e-8` comparison tolerance across the five
 mechanically selected `T=5 s` conditions. The distinction remains provenance;
 the reference result contract has not been redefined.
+
+The adapter passes the externally declared `max_step` directly to that
+compiled boundary and checks every observed accepted-step gap against the same
+external value. Experiment 017 later established that the legacy DOP853
+endpoint rule may enlarge a final segment step by less than one percent to
+land exactly on the endpoint. A proposed conservative internal translation,
+`nextafter(max_step / 1.01, 0)`, removed those endpoint overshoots but exceeded
+the existing `1e-8 s^-1` finite-time-rate equivalence gate at the trusted
+`(179 deg, 179 deg)` fixture. The translation was therefore rejected and not
+promoted. The accepted-step post-check and bounded execution-error semantics
+remain authoritative; the external numerical policy was neither weakened nor
+reinterpreted.
 
 The 1-D orchestration API is:
 
@@ -424,7 +437,7 @@ than silently replacing this implementation.
 
 That first pointwise equivalence step is now established for the declared
 five-condition validation set. Experiment 015 additionally established and
-this strand now exposes a compiled-Fortran DOP853 segment runner for the same
+this strand now exposes a compiled DOP853 segment runner for the same
 fixed-horizon contract. The current solve_ivp paths remain available as
 scientific and integration-boundary oracles.
 
