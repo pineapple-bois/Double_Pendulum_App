@@ -694,6 +694,89 @@ external cap directly to compiled DOP853, and the accepted-step post-check
 continues to report the audited endpoint overshoots as bounded execution
 errors.
 
+#### Verified solve_ivp fallback boundary
+
+The experiment-local `max_step_fallback_boundary.py` next tested a hybrid
+policy without modifying that fast adapter. A fast execution error is only a
+candidate when its evaluator identity, status, exception type, and complete
+error-message shape identify the existing declared-`max_step` post-check; its
+parsed declared value must equal the resolved specification, and its reported
+gap must lie in `(max_step, 1.01 max_step]` within the existing floating-point
+allowance.
+
+That message is only a prefilter. Before fallback, an independent
+accepted-step trace must reproduce the reported gap and establish that every
+violation:
+
+- came from compiled DOP853 configured with the unchanged declared cap;
+- was the final accepted step into a renormalisation endpoint;
+- reached that endpoint successfully with return code `1`;
+- retained finite states; and
+- remained within the verified legacy `1.01 h` endpoint rule.
+
+Only then is the same specification recomputed by the existing compiled-RHS
+plus `solve_ivp` DOP853 evaluator. Its `ScalarEvaluation` is returned
+unchanged. Experiment-local route metadata distinguishes
+`compiled_dop853`, `compiled_rhs_solve_ivp_fallback`, and a retained
+`compiled_dop853_execution_error`. A lookalike `max_step` error whose
+mechanics did not verify remained an execution error; ordinary scalar,
+non-finite-state, missed-endpoint, and return-code errors were rejected by the
+prefilter; and a controlled programming `ValueError` propagated.
+
+Both audited failures took the fallback and exactly equalled independently
+evaluated solve_ivp outcomes, including value, status, diagnostics, issues,
+and error fields. Both neighbours stayed on the unchanged fast path. All five
+Experiment 015 fixtures also stayed fast, were identical to the currently
+promoted evaluations, and retained every original numerical gate.
+
+The complete bounded-field routes were exactly the previously observed status
+partition:
+
+| field | fast | fallback | invalid | remaining error | fallback fraction |
+|---|---:|---:|---:|---:|---:|
+| `17 x 17` | 275 | 14 | 0 | 0 | 4.844% |
+| `25 x 25` | 606 | 19 | 0 | 0 | 3.040% |
+
+Every fallback coordinate equalled a prior fast-path `max_step` error
+coordinate, every fallback result exactly equalled the solve_ivp control, and
+all non-fallback results exactly equalled the fast control. The retained JSON
+records the full coordinate lists. Separate accepted `8 x 8` tiled and
+untiled runs had identical values, statuses, diagnostics, route arrays,
+fallback locations, coordinates, and orientation.
+
+Three warmed four-process field measurements per mode, with pool construction
+outside the timed field region and no pool evaluating more than `625` cells,
+gave:
+
+| field / mode | median wall | cells/s | Q1--Q3 |
+|---|---:|---:|---:|
+| `17 x 17` fast | `0.721 s` | 400.9 | `0.641--0.727 s` |
+| `17 x 17` hybrid | `0.731 s` | 395.2 | `0.730--0.772 s` |
+| `17 x 17` all solve_ivp | `3.301 s` | 87.5 | `3.287--3.383 s` |
+| `25 x 25` fast | `1.431 s` | 436.7 | `1.426--1.461 s` |
+| `25 x 25` hybrid | `1.690 s` | 369.9 | `1.675--1.703 s` |
+| `25 x 25` all solve_ivp | `7.649 s` | 81.7 | `7.644--7.956 s` |
+
+The hybrid was `4.51x` and `4.53x` faster than all-solve_ivp. Relative to the
+fast field it was `1.01x` and `1.18x` slower. In the first retained hybrid
+fields, summed solve_ivp fallback time was `0.576 s` and `0.914 s`; endpoint
+verification added `0.119 s` and `0.190 s`. These are sums across concurrent
+cell evaluations, not additional wall time.
+
+**Fallback verdict: ACCEPT for the declared bounded workloads.** A narrow,
+fail-closed verification boundary can retain the current fast calculation for
+ordinary cells, substitute exact existing solve_ivp outcomes only for the
+verified endpoint incompatibility, preserve tiling and error semantics, and
+retain material field-level throughput. The policy remains experiment-local;
+it is not evidence for the full periodic domain, a final production executor,
+persistence, batching, new tolerances, or a solver replacement.
+
+Compact ignored evidence is written to:
+
+``` text
+development/chaos_content/outputs/rectangular_work_unit_boundary/max_step_fallback_boundary.json
+```
+
 ## Verdict
 
 **ACCEPT: use `8 x 8` nominal rectangular work units, expressed as half-open
@@ -722,4 +805,7 @@ completion unit, but it must keep storage chunking conceptually independent.
 The promoted evaluator's bounded `max_step` outcomes have now received the
 focused audit and promotion validation above. Experiment 017 still does not
 alter or reinterpret their status, and the conservative internal cap remains
-unpromoted because it failed the established scalar-equivalence gate.
+unpromoted because it failed the established scalar-equivalence gate. The
+subsequent verified solve_ivp fallback boundary is accepted only as
+experiment-local evidence and has not changed the prototype evaluator or tile
+API.
