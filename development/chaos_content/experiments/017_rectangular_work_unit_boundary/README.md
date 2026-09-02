@@ -1,6 +1,6 @@
 # 017 Rectangular work-unit boundary
 
-**Status: planned; implementation and measurements not yet run.**
+**Status: accepted.**
 
 ## Question
 
@@ -447,3 +447,161 @@ It should contain:
 
 No persisted scientific field, tile dataset, or rendered map belongs to this
 experiment.
+
+## Implementation and evidence
+
+The experiment-local implementation is
+`rectangular_work_unit_boundary.py`. It imports Experiment 016's accepted
+spawn-worker lifecycle and per-cell evaluator adapter, together with the
+prototype's observable and periodic-domain contracts. It adds no prototype
+API. Its focused tests are in `test_rectangular_work_unit_boundary.py`.
+
+The retained machine-readable evidence is ignored by Git at:
+
+``` text
+development/chaos_content/outputs/rectangular_work_unit_boundary/baseline/summary.json
+```
+
+The accepted run used macOS 15.7.9 on arm64, Python 3.12.3, NumPy 2.5.2,
+SciPy 1.18.0, Numba 0.67.0, eight logical CPUs, four spawn workers, and
+executor `chunksize=1`. Numerical-library thread counts were fixed to one.
+
+### Coordinate, coverage, and order findings
+
+Every candidate exactly covered the coordinate-only `(25, 33)` periodic
+field. All `825` expected global cells occurred once, all local indices mapped
+by offset into `values[theta2_index, theta1_index]`, and all coordinates came
+from the shared half-open axes. No `+pi` endpoint occurred. Reversed tile
+traversal and reversed local traversal produced the same assembled coordinate
+field. Deliberately duplicated and omitted `8 x 8` work units were rejected,
+detecting `64` overlapped and `64` missing cells respectively.
+
+For the accepted `8 x 8` shape, the full-periodic coordinate workload produced
+`20` work units with clipped local shapes `(8, 8)`, `(8, 1)`, `(1, 8)`, and
+`(1, 1)`. This is coordinate-contract evidence only; no full-periodic
+Lyapunov field was evaluated.
+
+Every candidate also reproduced the untiled process result exactly on the
+bounded `17 x 17` and `25 x 25` fields. Across the retained row-major and
+permuted checks there were no missing, duplicate, misplaced, status-mismatched,
+issue-mismatched, error-mismatched, or provenance-mismatched cells. Scalar and
+energy-diagnostic differences were exactly zero. All `289` and `625` scalar
+records and available diagnostic records matched exactly, and the largest
+post-reset Candidate-A norm error was `3.331e-16`, below the unchanged
+`1e-12` limit. Every candidate produced the same `17 x 17` field digest in
+both traversal orders.
+
+### Status and failure findings
+
+The bounded scientific workloads were not all successful: the promoted scalar
+evaluator returned `(valid, invalid, error)` counts of `(275, 0, 14)` for
+`17 x 17` and `(606, 0, 19)` for `25 x 25`. Direct inspection showed that the
+errors were bounded `RuntimeError` outcomes from the promoted evaluator's
+declared `max_step` enforcement. Tiling reproduced their coordinates, status,
+type, message, and absent values exactly; it did not create or hide them.
+Reported field energy maxima (`9.152e-10` and `3.260e-10`) and reset errors
+therefore summarize completed evaluations, not the execution-error cells.
+This pre-existing evaluator behaviour is an explicit limitation to resolve
+before treating a later assembled field as a scientifically complete map.
+
+The controlled `4 x 4` fault workload produced `14` valid cells, one finite
+completed-invalid cell, and one bounded scalar execution-error cell. An
+injected work-unit failure left no partial result for that work unit and did
+not change previously completed units. Reconstructing its immutable identity
+and tasks produced a clean second-attempt result. Reconstructing a plan after
+an in-memory interruption skipped the same two completed work units and
+matched uninterrupted assembly. A controlled programming `ValueError`
+propagated instead of becoming data. These checks earn an in-memory retry and
+completion boundary, not durable resume state.
+
+### Timing findings
+
+Each entry is the median of three interleaved warmed repetitions; brackets
+show the first and third quartiles. Pool startup is excluded.
+
+| policy / tile shape | `17 x 17` wall [Q1, Q3] | cells/s | `25 x 25` wall [Q1, Q3] | cells/s |
+|---|---:|---:|---:|---:|
+| untiled control | 0.526 [0.522, 0.539] s | 549.2 | 1.133 [1.124, 1.169] s | 551.4 |
+| `1 x 1` | 2.039 [2.035, 2.040] s | 141.8 | 4.460 [4.455, 4.545] s | 140.1 |
+| `4 x 4` | 0.562 [0.557, 0.568] s | 514.6 | 1.208 [1.198, 1.267] s | 517.2 |
+| `8 x 8` | 0.552 [0.545, 0.589] s | 523.1 | 1.157 [1.152, 1.213] s | 540.1 |
+| `16 x 16` | 0.549 [0.538, 0.570] s | 526.2 | 1.198 [1.195, 1.209] s | 521.7 |
+| `4 x 16` | 0.637 [0.587, 0.637] s | 453.9 | 1.154 [1.153, 1.187] s | 541.7 |
+| `16 x 4` | 0.537 [0.537, 0.559] s | 537.7 | 1.204 [1.178, 1.274] s | 519.2 |
+
+The fastest median was `16 x 4` on `17 x 17` and `4 x 16` on `25 x 25`, so
+the experiment did not earn an orientation-specific rectangle. The `8 x 8`
+spread overlapped each corresponding fastest spread; `16 x 4` also qualified,
+but both contain `64` cells and the predeclared square preference selects
+`8 x 8`. The `1 x 1` barrier exposed the expected loss of worker occupancy.
+No geometric refinement was triggered because a declared candidate satisfied
+the correctness and overlapping-spread rule on both workloads.
+
+For `8 x 8`, effective median cost was `1.912 ms/cell` and `1.852 ms/cell`.
+The maximum observed tile attempt was `0.204 s` and `0.154 s`; median total
+compaction cost was below `2 ms` per field. Evaluator elapsed sums were about
+`3.76x--3.81x` wall time, consistent with the retained four-worker execution
+policy. Warm tile barriers made `8 x 8` only about 5% slower than the untiled
+control on `17 x 17` and about 2% slower on `25 x 25` in the retained medians.
+
+### Result-representation findings
+
+An `8 x 8` attempt holds at most `64` rich outcomes transiently. On the
+`25 x 25` workload, the maximum rich tile pickle was `14,150` bytes, the
+corresponding compact tile pickle was `3,368` bytes, and its `float64` value
+plus `uint8` status arrays occupied `576` bytes. Summed compact serialization
+was `40,872` bytes versus `140,817` bytes for rich outcomes, a ratio of
+`0.290`. Compact arrays plus sparse exceptional details and tile summaries are
+therefore the accepted in-memory result boundary. This comparison does not
+define a persistence schema or storage dtype contract.
+
+### Memory and lifecycle findings
+
+Live RSS was sampled by PID between tile attempts; `ru_maxrss` remained a
+separate lifetime high-water measure. With one warm pool reused for `2,048`
+evaluations, median worker current RSS rose from about `222.3 MB` at readiness
+to `267.6 MB` after `1,024` cells and `312.5 MB` after `2,048` cells. Total
+growth was `90,226,688` bytes and growth after the midpoint was `44,900,352`
+bytes, exceeding the experiment's predeclared operational material-growth
+checks of 32 MiB total and 16 MiB after `1,024` cells. Coordinator current RSS
+remained `171,851,776` bytes at every lifecycle checkpoint; its observed
+lifetime peak was `188,153,856` bytes.
+
+This activated both declared recycling controls. Recycling after `512` cells
+used four pools and took `11.393 s` end to end. Recycling after `1,024` cells
+used two pools and took `8.054 s`; both preserved exact numerical results,
+stopped every worker, and reset new-pool ready medians to about `222--223 MB`.
+The unrecycled control took `6.115 s`, so recycling has a measurable startup
+cost. The earned lifecycle rule is therefore to recreate the entire pool only
+at tile boundaries after at most `1,024` completed cells. This is a bounded
+operational policy, not a diagnosis of a leak or evidence about indefinite
+worker reuse.
+
+## Verdict
+
+**ACCEPT: use `8 x 8` nominal rectangular work units, expressed as half-open
+global `(theta2, theta1)` index bounds with clipped edge tiles, and recycle the
+four-worker spawn pool at tile boundaries after at most `1,024` cells.**
+
+Each tile is a completion, validation, retry, timing, and compact-result unit;
+it is not assigned to one worker. Its cells retain Experiment 016's indexed
+per-cell dispatch. A completed tile contains local `(theta2, theta1)`
+`float64` values, explicit `uint8` statuses with a reversible vocabulary,
+sparse exceptional-cell details, aggregate diagnostics, evaluator/scientific
+provenance, attempt metadata, and immutable global bounds. Partial outcomes do
+not complete a failed tile.
+
+The strongest earned claim is that, for the two bounded declared workloads on
+the recorded host and stack, this `8 x 8` work-unit contract covers and
+assembles the domain deterministically, is invariant to traversal order,
+exactly preserves the untiled evaluator's values and result semantics, confines
+and retries controlled work-unit failures, keeps rich coordinator retention to
+one tile, and has a measured worker-lifetime bound. It does not claim that
+`8 x 8` is optimal for another host, observable, horizon, full-periodic
+Lyapunov field, persistence backend, or high-resolution production run.
+
+The next stage may investigate persistence using this earned logical
+completion unit, but it must keep storage chunking conceptually independent.
+Before assembled scientific map validation, the promoted evaluator's bounded
+`max_step` execution-error cells found in these workloads require a focused
+contract audit; Experiment 017 does not alter or reinterpret them.
