@@ -577,6 +577,69 @@ at tile boundaries after at most `1,024` completed cells. This is a bounded
 operational policy, not a diagnosis of a leak or evidence about indefinite
 worker reuse.
 
+### Follow-up audit of `max_step` execution errors
+
+The focused follow-up in `max_step_audit.py` selected one failure and its
+left-hand valid neighbour from each bounded resolution:
+
+| case | `(theta1, theta2)` | promoted outcome | segment / maximum accepted gap |
+|---|---:|---|---:|
+| `17 x 17` failure | `(177.75 deg, 170.25 deg)` | execution error | cycle 9, `0.010018648992311086 s` |
+| `17 x 17` neighbour | `(176.5 deg, 170.25 deg)` | valid | no violation |
+| `25 x 25` failure | `(181.5 deg, 170.66666666666666 deg)` | execution error | cycle 9, `0.0100523793288545 s` |
+| `25 x 25` neighbour | `(180.66666666666666 deg, 170.66666666666666 deg)` | valid | no violation |
+
+The unchanged declared limit was `0.009977357137720327 s`. In both failures,
+the only oversized accepted step was the final step of cycle 9, from
+`2.239981351007689` or `2.2399476206711455 s` to the exact `2.25 s`
+endpoint. The Fortran solver reported success, reached the endpoint, and
+returned finite state and tangent components. Its callback counts agreed with
+its accepted-step counters (`39` and `27`); replaying the same segment without
+the accepted-step callback produced the identical final state and counters.
+The callback therefore observes the event but does not cause it.
+
+The installed SciPy 1.18.0 DOP853 source caps a proposed step at `hmax`, then
+may replace it with the exact endpoint remainder when that proposal would land
+within `1.01 h` of the endpoint. That endpoint snap can therefore be larger
+than the literal requested maximum by less than one percent. The promoted
+wrapper passes the declared `max_step` to the solver unchanged and then checks
+the callback-observed accepted gaps. Its rejection is an accurate application
+of the strict Experiment 015 contract, not a mistaken subtraction or status
+translation.
+
+Both compiled-RHS and mathematical `solve_ivp` DOP853 oracles completed all
+four selected conditions without exceeding the declared step limit. When the
+post-check was disabled only in the experiment-local trace, the two raw
+Fortran failure cases also completed as numerically valid. Against the
+compiled-RHS `solve_ivp` oracle, their finite-time-rate errors were
+`1.310e-9 s^-1` and `5.423e-10 s^-1`; maximum cycle-log errors were
+`7.640e-9` and `8.378e-10`; final reference/tangent Candidate-A distances
+were at most `1.210e-9`; and energy-diagnostic differences were at most
+`7.867e-11`. These remain inside the Experiment 015 equivalence gates, but do
+not erase the literal step-policy violation.
+
+This audit therefore reaches narrow conclusion **A**: under the currently
+declared and implemented contract, the promoted outcomes remain authoritative
+execution errors. They do not indicate failed error control or non-finite
+dynamics; they expose a documented integration-boundary difference between
+the Fortran driver and `solve_ivp` at a segment endpoint.
+
+An experiment-local repair probe configured the Fortran driver's internal
+maximum to the next representable value below `max_step / 1.01`, while leaving
+the external declared contract unchanged. It eliminated the oversized gaps in
+all four cases and retained every Experiment 015 numerical gate. This is a
+specific future adapter repair candidate, not a promoted change. Promotion
+would require a source-linked explanation of the `1.01` factor, a direct
+endpoint-snap regression, the five Experiment 015 fixtures, these failures and
+neighbours, the complete bounded `17 x 17` and `25 x 25` status fields, the
+existing tiled/untiled checks, and a warmed performance confirmation.
+
+Compact ignored evidence is written to:
+
+``` text
+development/chaos_content/outputs/rectangular_work_unit_boundary/max_step_audit.json
+```
+
 ## Verdict
 
 **ACCEPT: use `8 x 8` nominal rectangular work units, expressed as half-open
@@ -602,6 +665,6 @@ Lyapunov field, persistence backend, or high-resolution production run.
 
 The next stage may investigate persistence using this earned logical
 completion unit, but it must keep storage chunking conceptually independent.
-Before assembled scientific map validation, the promoted evaluator's bounded
-`max_step` execution-error cells found in these workloads require a focused
-contract audit; Experiment 017 does not alter or reinterpret them.
+The promoted evaluator's bounded `max_step` outcomes have now received the
+focused audit above. Experiment 017 still does not alter or reinterpret their
+status, and the proposed conservative internal cap remains unpromoted.
