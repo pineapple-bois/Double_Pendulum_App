@@ -569,23 +569,160 @@ That arithmetic shows why the candidate is worth measuring; it is not a speedup
 prediction because longer-lived shutdown cost, host memory pressure, and
 full-field behaviour have not been measured under the candidate schedule.
 
-## Cheapest next discriminating measurements
+## Preregistered 1,024-versus-2,048 A/B
 
-The smallest defensible A/B is a fixed 2,048-cell accepted fast-route stream,
-run in three interleaved repetitions under two pool schedules: two 1,024-cell
-pools as the control and one 2,048-cell pool as the candidate. It should retain
-four spawn workers, `chunksize=1`, 64-cell tile-boundary batches, the accepted
-initializer/evaluator, exact result comparisons, per-PID ready/final RSS,
-separate setup/evaluation/shutdown timings, and worker-stop checks. Rotating
-order across repetitions is enough to expose whether avoiding one lifecycle
-produces a repeatable end-to-end benefit while making the measured additional
-RSS explicit. It must not modify the runner or select 2,048 for production.
+### Question and fixed design
 
-This A/B would perform 12,288 measured cells across both policies and all three
-repetitions, or 1.17% of the operational 1024-squared field. A synthetic worker
-cannot answer the scientific-worker resource question. Persistence remains
-outside the probe because it is unchanged by the pool limit and already
-accounts for under 1% of the operational run.
+The A/B asked how much active policy wall time is saved by omitting the
+midpoint four-worker lifecycle, and what worker RSS is added by allowing the
+same pool to cross from 1,024 to 2,048 returned cell outcomes. Policy A was the
+accepted sequence of two 1,024-cell pools; Policy B was one 2,048-cell pool.
+Nothing else changed.
+
+[`probe_worker_lifetime_ab.py`](probe_worker_lifetime_ab.py) used the same
+ordered scientific stream for every run: the eight mechanically selected
+persisted-fast cells from the route probe, repeated cyclically 256 times and
+partitioned into thirty-two ordered 64-cell batches. Its full-stream SHA-256
+was fixed as
+`77ef4095246df80472f0d9ffc852e07670310d6bea18bf729cdeb709e55bb38d`.
+Both policies processed the same first and second 1,024-cell halves; only A
+closed and replaced the pool between them. This isolates worker lifetime and
+does not deliberately overrepresent fallback work.
+
+The preregistered paired order was:
+
+```text
+repetition 1: A then B
+repetition 2: B then A
+repetition 3: A then B
+```
+
+A `--design-only` invocation printed that order and stream digest before any
+timing run. The experiment then ran exactly three A and three B repetitions,
+with no sample expansion. Each A repetition created eight worker-process
+lifetimes and required eight initializer evaluations; each B repetition
+created four lifetimes and required four initializer evaluations. The complete
+measurement therefore contains 12,288 timed scientific cells plus 36 required
+initializer warm-ups.
+
+The primary `active wall` measure is the phase sum
+`setup + scientific evaluation + shutdown`. It excludes RSS subprocesses,
+correctness comparisons, JSON construction, and coordinator garbage collection
+so Policy A is not penalized for the extra observations required by its second
+pool. The separately retained outer wall includes that observation work and
+supports the same conclusion.
+
+### All six runs
+
+| Sequence | Pair/order | Policy | Pools | Setup | Evaluation | Shutdown | Active wall | Evaluation throughput | Maximum endpoint worker RSS |
+| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 1/A-first | A | 2 | 3.269 s | 3.827 s | 0.917 s | 8.013 s | 535.1 cells/s | 265.91 MiB |
+| 2 | 1/B-second | B | 1 | 1.474 s | 4.207 s | 0.520 s | 6.202 s | 486.8 cells/s | 307.34 MiB |
+| 3 | 2/B-first | B | 1 | 1.482 s | 3.803 s | 0.460 s | 5.746 s | 538.5 cells/s | 306.06 MiB |
+| 4 | 2/A-second | A | 2 | 2.885 s | 3.743 s | 0.849 s | 7.476 s | 547.2 cells/s | 264.53 MiB |
+| 5 | 3/A-first | A | 2 | 2.868 s | 4.448 s | 0.826 s | 8.142 s | 460.4 cells/s | 264.75 MiB |
+| 6 | 3/B-second | B | 1 | 1.618 s | 4.629 s | 0.480 s | 6.727 s | 442.5 cells/s | 308.16 MiB |
+
+Policy A's two pool lifetimes, Policy B's 1,024 and 2,048 checkpoints, all
+per-PID current and peak RSS observations, task counts, route/status counts,
+and exact comparisons are retained separately in
+[`worker_lifetime_ab_2048_cells.json`](worker_lifetime_ab_2048_cells.json).
+
+### Paired wall and lifecycle comparison
+
+| Pair | A active wall | B active wall | B saving | B saving | Removed lifecycle | B evaluation penalty |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 8.013 s | 6.202 s | 1.811 s | 22.60% | 2.191 s | 0.380 s |
+| 2 | 7.476 s | 5.746 s | 1.731 s | 23.15% | 1.791 s | 0.060 s |
+| 3 | 8.142 s | 6.727 s | 1.415 s | 17.38% | 1.596 s | 0.181 s |
+
+The candidate saved time in all three pairs. Mean active wall was 7.877 s for
+A and 6.225 s for B: a mean paired saving of 1.652 s, or 21.04% of the
+accepted-policy time. Individual savings ranged from 1.415 to 1.811 s. Outer
+wall including observation averaged 8.078 s for A and 6.383 s for B, a similar
+1.695 s difference.
+
+Mean lifecycle time was 3.871 s for A and 2.012 s for B. Avoiding the midpoint
+pool saved 1.859 s of lifecycle time on average: 1.482 s of setup/warm-up and
+0.377 s of shutdown. B's scientific evaluation phase was 0.207 s slower on
+average, offsetting 11.1% of that lifecycle benefit and leaving the observed
+1.652 s net saving. The expected mechanism therefore explains the total-wall
+result; no unexplained speedup in numerical evaluation is needed.
+
+### Evaluation throughput
+
+The scientific phase was not identical between policies. Mean evaluation time
+was 4.006 s for A and 4.213 s for B. Using aggregate cells divided by aggregate
+evaluation time gives 511.2 cells/s for A and 486.1 cells/s for B, a 4.91%
+lower candidate throughput. B's evaluation time was longer in every pair by
+1.6%, 4.1%, or 9.9%.
+
+This is a modest, consistent paired difference and must not be hidden. It is
+also not evidence that worker age caused the difference: within B, the second
+1,024-cell half was slower than the first in two runs and faster in one, and
+the interleaved host timings varied materially for both policies. With only
+three pairs, the cause and repeatability of the approximately 5% aggregate
+evaluation difference remain unresolved. The lifecycle saving is large enough
+that B still reduced total wall in every pair.
+
+### RSS tradeoff
+
+Within Policy B, median worker RSS rose by 41.75, 42.02, and 42.39 MiB between
+the 1,024 and 2,048 checkpoints. Comparing each run's maximum endpoint worker
+RSS, B incurred 41.44, 41.53, and 43.41 MiB more than paired A, for a 42.13 MiB
+mean additional per-worker endpoint. B's maximum endpoints were
+306.06–308.16 MiB; A's were 264.53–265.91 MiB. The worker-reported lifetime
+peaks agreed with these observed endpoint maxima at the measurement resolution.
+
+One A repetition's second fresh pool ended at an unusually low 227.43 MiB
+median despite completing correctly; its first pool reached the normal 264.75
+MiB maximum. The cause is not instrumented and may reflect allocator or OS
+residency behaviour. The paired resource comparison therefore uses maximum
+endpoint RSS across both A pools rather than silently treating that low
+terminal sample as the protective boundary. The raw terminal observation is
+retained in the evidence.
+
+The candidate's explicit bounded resource price is consequently about 42 MiB
+of additional current RSS per worker, or about 168 MiB across four workers, for
+this task stream. This is consistent with the preceding lifetime probe and is
+not evidence for a plateau, a leak diagnosis, or safety beyond 2,048 cells.
+
+### Correctness and termination
+
+All 12,288 returned cell outcomes preserved the fixed ordered task stream and
+the compiled-DOP853 fast route. Every status remained completed-valid, and
+every value, diagnostics record, issue list, and error field exactly matched
+the prior accepted evidence. There were no correctness failures. All 36 worker
+processes stopped cleanly and were independently confirmed absent after the
+probe.
+
+### Decision and limitations
+
+The A/B is positive for treating 2,048 as a **promoted-runner optimisation
+candidate**, not for changing the runner immediately. It gives a repeatable
+17.38–23.15% active-wall benefit attributable to one removed pool lifecycle,
+with exact scientific stability and a quantified approximately 42 MiB
+per-worker RSS cost. It does not justify unlimited reuse, 4,096 as another
+candidate, or a universal 2,048 limit.
+
+Before changing the promoted default, the candidate still needs a focused
+runner-level validation that:
+
+1. exercises actual `run_scalar_field` tile traversal with the explicit
+   2,048-cell execution spec in a temporary artifact, including create/resume,
+   pool-count, provenance, integrity, and worker-stop assertions;
+2. includes a mechanically fixed representative fast/fallback route mix and
+   oracle checks, because this A/B deliberately isolated lifecycle with
+   fast-only cells;
+3. confirms the roughly 5% evaluation-throughput difference is either
+   repeatable and accepted within the net benefit or attributable to bounded
+   host/order noise; and
+4. makes the approximately 168 MiB aggregate worker-RSS increase an explicit
+   host resource acceptance criterion.
+
+Only after those checks pass should a separate implementation task change the
+accepted default and its documentation/tests. This measurement did not invoke
+the runner, persistence, create, or resume.
 
 Expensive broad profiling, another uniform field, and a 2048 run are not needed
 to answer these next questions.
@@ -604,10 +741,9 @@ useful evidence.
 There is already enough evidence to prioritize **worker lifecycle/setup** as a
 promising optimisation target category. There is not enough evidence to select
 a particular optimisation, and the numerical evaluation bucket remains larger.
-The completed route and worker-lifetime probes make fallback a measured
-secondary cost centre and continuing worker RSS the explicit tradeoff against
-lifecycle savings. The next action is the fixed 1,024-versus-2,048 pool-schedule
-A/B above. No production limit or implementation should change unless that A/B
-shows repeatable end-to-end benefit and its bounded RSS cost is accepted.
-Uniform resolution escalation remains paused until that decision is
-evidence-backed.
+The completed A/B justifies 2,048 as a bounded promoted-runner optimisation
+candidate, not as the new policy. The next action is the focused runner-level
+validation above, with the observed evaluation-throughput difference and
+approximately 168 MiB aggregate worker-RSS increase treated as explicit gates.
+No production limit or implementation should change before that evidence is
+accepted. Uniform resolution escalation remains paused.
