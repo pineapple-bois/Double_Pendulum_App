@@ -1,0 +1,1176 @@
+{
+  "all_routes_agree": true,
+  "all_statuses_agree": true,
+  "cells": [
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.006507041049189866,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 0.0,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6292,
+        "validity_issues": []
+      },
+      "linear_index": 0,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 5.768436622055366,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 5.768436622055366,
+      "population_rank": 0,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 0,
+      "theta1_index": 0,
+      "theta1_radians": -3.141592653589793,
+      "theta2_index": 0,
+      "theta2_radians": -3.141592653589793,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006511416984722018,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.006548083969391882,
+        "hybrid_reported_seconds": 0.006512416992336512,
+        "phase_wrapper_remainder_seconds": 3.666698466986418e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03696437500184402,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.00999217782390005,
+        "verified": true,
+        "violating_segment_numbers": [
+          19
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.00999217782390005 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.007268791028764099,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 1.3766735325996872e-10,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 8296,
+        "validity_issues": []
+      },
+      "linear_index": 12,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.5596078161757845,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.5596078161757845,
+      "population_rank": 0,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 0,
+      "theta1_index": 12,
+      "theta1_radians": -3.067961575771282,
+      "theta2_index": 0,
+      "theta2_radians": -3.141592653589793,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.007277083001099527,
+        "fallback_verification_replay_seconds": 0.006847332988400012,
+        "hybrid_outer_seconds": 0.05111308296909556,
+        "hybrid_reported_seconds": 0.0510950000025332,
+        "phase_wrapper_remainder_seconds": 1.979200169444084e-05,
+        "solve_ivp_fallback_seconds": 0.03696887497790158
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0063537919777445495,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 2.5138195598824884e-12,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6560,
+        "validity_issues": []
+      },
+      "linear_index": 148537,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 2.3506450086199604,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 2.3506450086199604,
+      "population_rank": 143443,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 1,
+      "theta1_index": 57,
+      "theta1_radians": -2.791845033951867,
+      "theta2_index": 145,
+      "theta2_radians": -2.2518837966161214,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006357582984492183,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.006375208031386137,
+        "hybrid_reported_seconds": 0.0063581669819541276,
+        "phase_wrapper_remainder_seconds": 1.7625046893954277e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03655237500788644,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.009978476063757402,
+        "verified": true,
+        "violating_segment_numbers": [
+          1
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.009978476063757402 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.00033191597322002053,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 7.065433676262687e-11,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 8404,
+        "validity_issues": []
+      },
+      "linear_index": 176087,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.5419830592666046,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.5419830592666046,
+      "population_rank": 6352,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 1,
+      "theta1_index": 983,
+      "theta1_radians": 2.890019804376548,
+      "theta2_index": 171,
+      "theta2_radians": -2.0923497946760143,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.0003974999999627471,
+        "fallback_verification_replay_seconds": 0.006925207970198244,
+        "hybrid_outer_seconds": 0.04389558400725946,
+        "hybrid_reported_seconds": 0.043880334007553756,
+        "phase_wrapper_remainder_seconds": 1.6792037058621645e-05,
+        "solve_ivp_fallback_seconds": 0.036556084000039846
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0068359579890966415,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 2.5830510004122907e-11,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 7099,
+        "validity_issues": []
+      },
+      "linear_index": 301083,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.4110133495238333,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.4110133495238333,
+      "population_rank": 286886,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 2,
+      "theta1_index": 27,
+      "theta1_radians": -2.9759227284981438,
+      "theta2_index": 294,
+      "theta2_radians": -1.337631247036279,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006839458015747368,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.006856332998722792,
+        "hybrid_reported_seconds": 0.006839958019554615,
+        "phase_wrapper_remainder_seconds": 1.6874982975423336e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03473941603442654,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.00998895649481829,
+        "verified": true,
+        "violating_segment_numbers": [
+          1
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.00998895649481829 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0003166249953210354,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 6.760175535604079e-15,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 7840,
+        "validity_issues": []
+      },
+      "linear_index": 276950,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 0.39343529068563365,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 0.39343529068563365,
+      "population_rank": 12705,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 2,
+      "theta1_index": 470,
+      "theta1_radians": -0.25770877236478773,
+      "theta2_index": 270,
+      "theta2_radians": -1.4848934026733007,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.0003215829492546618,
+        "fallback_verification_replay_seconds": 0.006146957981400192,
+        "hybrid_outer_seconds": 0.04122637497493997,
+        "hybrid_reported_seconds": 0.04121270898031071,
+        "phase_wrapper_remainder_seconds": 1.5043013263493776e-05,
+        "solve_ivp_fallback_seconds": 0.034742791031021625
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0061590420082211494,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 4.828696811145771e-16,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6292,
+        "validity_issues": []
+      },
+      "linear_index": 450980,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 0.11734274086956054,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 0.11734274086956054,
+      "population_rank": 430330,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 3,
+      "theta1_index": 420,
+      "theta1_radians": -0.5645049299419158,
+      "theta2_index": 440,
+      "theta2_radians": -0.4417864669110645,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006162458972539753,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.0061764169950038195,
+        "hybrid_reported_seconds": 0.006162957986816764,
+        "phase_wrapper_remainder_seconds": 1.3958022464066744e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03629058296792209,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.010044550070537284,
+        "verified": true,
+        "violating_segment_numbers": [
+          10
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.010044550070537284 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.003344333963468671,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 6.866624156805787e-11,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 8332,
+        "validity_issues": []
+      },
+      "linear_index": 398383,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.5339577774432087,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.5339577774432087,
+      "population_rank": 19058,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 3,
+      "theta1_index": 47,
+      "theta1_radians": -2.8532042654672924,
+      "theta2_index": 389,
+      "theta2_radians": -0.7547185476397353,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.003350208979099989,
+        "fallback_verification_replay_seconds": 0.006731499976012856,
+        "hybrid_outer_seconds": 0.0463904999778606,
+        "hybrid_reported_seconds": 0.04637674998957664,
+        "phase_wrapper_remainder_seconds": 1.48330582305789e-05,
+        "solve_ivp_fallback_seconds": 0.036293957964517176
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.006143332982901484,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 6.035871013932214e-16,
+        "maximum_post_renormalization_norm_error": 1.1102230246251565e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6292,
+        "validity_issues": []
+      },
+      "linear_index": 597598,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 0.13565057949971326,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 0.13565057949971326,
+      "population_rank": 573773,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 4,
+      "theta1_index": 606,
+      "theta1_radians": 0.5767767762450009,
+      "theta2_index": 583,
+      "theta2_radians": 0.43565054375952217,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006146542029455304,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.006160790973808616,
+        "hybrid_reported_seconds": 0.006147083011455834,
+        "phase_wrapper_remainder_seconds": 1.4248944353312254e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.035710333031602204,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.010071726544850002,
+        "verified": true,
+        "violating_segment_numbers": [
+          8
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.010071726544850002 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0026506250142119825,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 5.871903559903238e-11,
+        "maximum_post_renormalization_norm_error": 1.1102230246251565e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 8164,
+        "validity_issues": []
+      },
+      "linear_index": 650411,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 0.8797934284925685,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 0.8797934284925685,
+      "population_rank": 25411,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 4,
+      "theta1_index": 171,
+      "theta1_radians": -2.0923497946760143,
+      "theta2_index": 635,
+      "theta2_radians": 0.7547185476397353,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.0026565000298433006,
+        "fallback_verification_replay_seconds": 0.006503459007944912,
+        "hybrid_outer_seconds": 0.044888207979965955,
+        "hybrid_reported_seconds": 0.04487487499136478,
+        "phase_wrapper_remainder_seconds": 1.4498888049274683e-05,
+        "solve_ivp_fallback_seconds": 0.03571375005412847
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.006357875012326986,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 1.3908276501273582e-11,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6607,
+        "validity_issues": []
+      },
+      "linear_index": 747453,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.182009703791986,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.182009703791986,
+      "population_rank": 717217,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 5,
+      "theta1_index": 957,
+      "theta1_radians": 2.7304858024364416,
+      "theta2_index": 729,
+      "theta2_radians": 1.3314953238847362,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006361333013046533,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.00637545803328976,
+        "hybrid_reported_seconds": 0.006361874984577298,
+        "phase_wrapper_remainder_seconds": 1.4125020243227482e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03612420795252547,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.010073090070673807,
+        "verified": true,
+        "violating_segment_numbers": [
+          16
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.010073090070673807 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.005250082991551608,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 3.2904581011806535e-11,
+        "maximum_post_renormalization_norm_error": 1.1102230246251565e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 8284,
+        "validity_issues": []
+      },
+      "linear_index": 772300,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.2300386363736238,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.2300386363736238,
+      "population_rank": 31764,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 5,
+      "theta1_index": 204,
+      "theta1_radians": -1.88986433067511,
+      "theta2_index": 754,
+      "theta2_radians": 1.4848934026733005,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.005297916010022163,
+        "fallback_verification_replay_seconds": 0.006724042003042996,
+        "hybrid_outer_seconds": 0.048164208012167364,
+        "hybrid_reported_seconds": 0.04815062502166256,
+        "phase_wrapper_remainder_seconds": 1.4707969967275858e-05,
+        "solve_ivp_fallback_seconds": 0.03612754202913493
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.00642462499672547,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 1.0551306119454903e-11,
+        "maximum_post_renormalization_norm_error": 1.1102230246251565e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6642,
+        "validity_issues": []
+      },
+      "linear_index": 900030,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 2.1865680295807772,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 2.1865680295807772,
+      "population_rank": 860660,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 6,
+      "theta1_index": 958,
+      "theta1_radians": 2.736621725587984,
+      "theta2_index": 878,
+      "theta2_radians": 2.2457478734645786,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.006427832995541394,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.006441709003411233,
+        "hybrid_reported_seconds": 0.0064283329993486404,
+        "phase_wrapper_remainder_seconds": 1.3876007869839668e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03457533399341628,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.010051821067780076,
+        "verified": true,
+        "violating_segment_numbers": [
+          1
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.010051821067780076 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0003225830150768161,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 1.0997356987384493e-13,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 7840,
+        "validity_issues": []
+      },
+      "linear_index": 873274,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 0.5948178300007286,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 0.5948178300007286,
+      "population_rank": 38117,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 6,
+      "theta1_index": 826,
+      "theta1_radians": 1.9266798695843654,
+      "theta2_index": 852,
+      "theta2_radians": 2.086213871524472,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.0003274169866926968,
+        "fallback_verification_replay_seconds": 0.006142582977190614,
+        "hybrid_outer_seconds": 0.04106308304471895,
+        "hybrid_reported_seconds": 0.04104974999791011,
+        "phase_wrapper_remainder_seconds": 1.4541088603436947e-05,
+        "solve_ivp_fallback_seconds": 0.034578541992232203
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": null,
+      "fallback_verification": null,
+      "fast_attempt": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.006509541999548674,
+        "status": "completed_valid"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 2.729783024760983e-11,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 6736,
+        "validity_issues": []
+      },
+      "linear_index": 1048575,
+      "observed_route": "compiled_dop853",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 2.0100603168448736,
+      "persisted_route": "compiled_dop853",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 2.0100603168448736,
+      "population_rank": 1004104,
+      "population_size": 1004105,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fast",
+      "stratum_rank": 7,
+      "theta1_index": 1023,
+      "theta1_radians": 3.135456730438251,
+      "theta2_index": 1023,
+      "theta2_radians": 3.135456730438251,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.0065127499983645976,
+        "fallback_verification_replay_seconds": null,
+        "hybrid_outer_seconds": 0.006526541954372078,
+        "hybrid_reported_seconds": 0.006513250002171844,
+        "phase_wrapper_remainder_seconds": 1.3791956007480621e-05,
+        "solve_ivp_fallback_seconds": null
+      }
+    },
+    {
+      "absolute_value_difference_per_second": 0.0,
+      "fallback_execution": {
+        "error_message": null,
+        "error_type": null,
+        "evaluator": "numba_rhs_scipy_dop853",
+        "reported_elapsed_seconds": 0.03561258304398507,
+        "status": "completed_valid"
+      },
+      "fallback_verification": {
+        "candidate_message_matched": true,
+        "declared_max_step": 0.009977357137720327,
+        "reported_maximum_gap": 0.01005576712680134,
+        "verified": true,
+        "violating_segment_numbers": [
+          8
+        ]
+      },
+      "fast_attempt": {
+        "error_message": "compiled DOP853 exceeded the declared max_step: 0.01005576712680134 > 0.009977357137720327.",
+        "error_type": "RuntimeError",
+        "evaluator": "numba_rhs_compiled_dop853",
+        "reported_elapsed_seconds": 0.0024670829880051315,
+        "status": "execution_error"
+      },
+      "final_diagnostics": {
+        "max_step_seconds": 0.009977357137720327,
+        "maximum_normalized_reference_energy_drift": 4.4490284526274066e-11,
+        "maximum_post_renormalization_norm_error": 2.220446049250313e-16,
+        "numerically_valid": true,
+        "segment_count": 20,
+        "solver_function_evaluations": 8104,
+        "validity_issues": []
+      },
+      "linear_index": 1048510,
+      "observed_route": "compiled_rhs_solve_ivp_fallback",
+      "observed_status": "completed_valid",
+      "observed_value_per_second": 1.920251603650632,
+      "persisted_route": "compiled_rhs_solve_ivp_fallback",
+      "persisted_status": "completed_valid",
+      "persisted_value_per_second": 1.920251603650632,
+      "population_rank": 44470,
+      "population_size": 44471,
+      "route_agrees": true,
+      "status_agrees": true,
+      "stratum": "persisted_fallback",
+      "stratum_rank": 7,
+      "theta1_index": 958,
+      "theta1_radians": 2.736621725587984,
+      "theta2_index": 1023,
+      "theta2_radians": 3.135456730438251,
+      "timing": {
+        "compiled_fast_attempt_seconds": 0.002472749969456345,
+        "fallback_verification_replay_seconds": 0.0064663749653846025,
+        "hybrid_outer_seconds": 0.04456920799566433,
+        "hybrid_reported_seconds": 0.044555916043464094,
+        "phase_wrapper_remainder_seconds": 1.4375022146850824e-05,
+        "solve_ivp_fallback_seconds": 0.03561570803867653
+      }
+    }
+  ],
+  "created_at_utc": "2026-09-03T21:22:38.656599+00:00",
+  "field_path": "development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_1024.h5",
+  "groups": {
+    "persisted_fallback": {
+      "cell_count": 8,
+      "hybrid_outer_seconds": {
+        "maximum": 0.05111308296909556,
+        "mean": 0.04516378112020902,
+        "median": 0.04472870798781514,
+        "minimum": 0.04106308304471895,
+        "standard_deviation_population": 0.0031673779911653237
+      },
+      "phase_seconds_mean_when_present": {
+        "compiled_fast_attempt_seconds": 0.002762619740678929,
+        "fallback_verification_replay_seconds": 0.0065609322336968035,
+        "phase_wrapper_remainder_seconds": 1.5572884876746684e-05,
+        "solve_ivp_fallback_seconds": 0.035824656260956544
+      },
+      "route_agreement_count": 8,
+      "status_agreement_count": 8
+    },
+    "persisted_fast": {
+      "cell_count": 8,
+      "hybrid_outer_seconds": {
+        "maximum": 0.006856332998722792,
+        "mean": 0.00643256774492329,
+        "median": 0.006408583518350497,
+        "minimum": 0.006160790973808616,
+        "standard_deviation_population": 0.00020852553170812692
+      },
+      "phase_seconds_mean_when_present": {
+        "compiled_fast_attempt_seconds": 0.006414921874238644,
+        "fallback_verification_replay_seconds": null,
+        "phase_wrapper_remainder_seconds": 1.764587068464607e-05,
+        "solve_ivp_fallback_seconds": null
+      },
+      "route_agreement_count": 8,
+      "status_agreement_count": 8
+    }
+  },
+  "method": {
+    "execution": "sequential single-process after one separate warm-up",
+    "hybrid_entry_point": "evaluate_renormalized_tangent_hybrid",
+    "promoted_source_modified": false,
+    "scientific_cells_measured": 16,
+    "timed_existing_boundaries": [
+      "evaluate_renormalized_tangent_compiled_dop853",
+      "_verify_endpoint_max_step_incompatibility",
+      "evaluate_renormalized_tangent_compiled"
+    ]
+  },
+  "probe": "route_stratified_16_cells",
+  "python": "3.12.3",
+  "selection": {
+    "rule": "Within each persisted route stratum, sort cells in row-major (theta2_index, theta1_index) order and select population ranks floor(k * (M - 1) / 7) for k = 0,...,7; evaluate by interleaving fast and fallback strata at each k.",
+    "selected_cells": [
+      {
+        "linear_index": 0,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 5.768436622055366,
+        "population_rank": 0,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 0,
+        "theta1_index": 0,
+        "theta1_radians": -3.141592653589793,
+        "theta2_index": 0,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "linear_index": 12,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.5596078161757845,
+        "population_rank": 0,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 0,
+        "theta1_index": 12,
+        "theta1_radians": -3.067961575771282,
+        "theta2_index": 0,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "linear_index": 148537,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 2.3506450086199604,
+        "population_rank": 143443,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 1,
+        "theta1_index": 57,
+        "theta1_radians": -2.791845033951867,
+        "theta2_index": 145,
+        "theta2_radians": -2.2518837966161214
+      },
+      {
+        "linear_index": 176087,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.5419830592666046,
+        "population_rank": 6352,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 1,
+        "theta1_index": 983,
+        "theta1_radians": 2.890019804376548,
+        "theta2_index": 171,
+        "theta2_radians": -2.0923497946760143
+      },
+      {
+        "linear_index": 301083,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.4110133495238333,
+        "population_rank": 286886,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 2,
+        "theta1_index": 27,
+        "theta1_radians": -2.9759227284981438,
+        "theta2_index": 294,
+        "theta2_radians": -1.337631247036279
+      },
+      {
+        "linear_index": 276950,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 0.39343529068563365,
+        "population_rank": 12705,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 2,
+        "theta1_index": 470,
+        "theta1_radians": -0.25770877236478773,
+        "theta2_index": 270,
+        "theta2_radians": -1.4848934026733007
+      },
+      {
+        "linear_index": 450980,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 0.11734274086956054,
+        "population_rank": 430330,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 3,
+        "theta1_index": 420,
+        "theta1_radians": -0.5645049299419158,
+        "theta2_index": 440,
+        "theta2_radians": -0.4417864669110645
+      },
+      {
+        "linear_index": 398383,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.5339577774432087,
+        "population_rank": 19058,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 3,
+        "theta1_index": 47,
+        "theta1_radians": -2.8532042654672924,
+        "theta2_index": 389,
+        "theta2_radians": -0.7547185476397353
+      },
+      {
+        "linear_index": 597598,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 0.13565057949971326,
+        "population_rank": 573773,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 4,
+        "theta1_index": 606,
+        "theta1_radians": 0.5767767762450009,
+        "theta2_index": 583,
+        "theta2_radians": 0.43565054375952217
+      },
+      {
+        "linear_index": 650411,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 0.8797934284925685,
+        "population_rank": 25411,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 4,
+        "theta1_index": 171,
+        "theta1_radians": -2.0923497946760143,
+        "theta2_index": 635,
+        "theta2_radians": 0.7547185476397353
+      },
+      {
+        "linear_index": 747453,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.182009703791986,
+        "population_rank": 717217,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 5,
+        "theta1_index": 957,
+        "theta1_radians": 2.7304858024364416,
+        "theta2_index": 729,
+        "theta2_radians": 1.3314953238847362
+      },
+      {
+        "linear_index": 772300,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.2300386363736238,
+        "population_rank": 31764,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 5,
+        "theta1_index": 204,
+        "theta1_radians": -1.88986433067511,
+        "theta2_index": 754,
+        "theta2_radians": 1.4848934026733005
+      },
+      {
+        "linear_index": 900030,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 2.1865680295807772,
+        "population_rank": 860660,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 6,
+        "theta1_index": 958,
+        "theta1_radians": 2.736621725587984,
+        "theta2_index": 878,
+        "theta2_radians": 2.2457478734645786
+      },
+      {
+        "linear_index": 873274,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 0.5948178300007286,
+        "population_rank": 38117,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 6,
+        "theta1_index": 826,
+        "theta1_radians": 1.9266798695843654,
+        "theta2_index": 852,
+        "theta2_radians": 2.086213871524472
+      },
+      {
+        "linear_index": 1048575,
+        "persisted_route": "compiled_dop853",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 2.0100603168448736,
+        "population_rank": 1004104,
+        "population_size": 1004105,
+        "stratum": "persisted_fast",
+        "stratum_rank": 7,
+        "theta1_index": 1023,
+        "theta1_radians": 3.135456730438251,
+        "theta2_index": 1023,
+        "theta2_radians": 3.135456730438251
+      },
+      {
+        "linear_index": 1048510,
+        "persisted_route": "compiled_rhs_solve_ivp_fallback",
+        "persisted_status": "completed_valid",
+        "persisted_value_per_second": 1.920251603650632,
+        "population_rank": 44470,
+        "population_size": 44471,
+        "stratum": "persisted_fallback",
+        "stratum_rank": 7,
+        "theta1_index": 958,
+        "theta1_radians": 2.736621725587984,
+        "theta2_index": 1023,
+        "theta2_radians": 3.135456730438251
+      }
+    ],
+    "uses_persisted_timing_for_selection": false
+  },
+  "warmup": {
+    "cell_count": 1,
+    "elapsed_seconds": 0.3293233329895884,
+    "route": "compiled_dop853",
+    "separate_from_measured_cells": true,
+    "specification": {
+      "characteristic_length": 1.0,
+      "duration": 5.0,
+      "energy_drift_limit": 1e-07,
+      "initial_state": {
+        "omega1": 0.0,
+        "omega2": 0.0,
+        "theta1": 3.12413936106985,
+        "theta2": 3.12413936106985
+      },
+      "initial_tangent": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parameters": {
+        "gravity": 9.81,
+        "length1": 1.0,
+        "length2": 1.0,
+        "mass1": 1.0,
+        "mass2": 1.0
+      },
+      "renormalization_interval": 0.25,
+      "renormalization_norm_tolerance": 1e-12,
+      "sampling_interval": 0.01,
+      "solver": {
+        "atol": 1e-11,
+        "max_step": null,
+        "method": "DOP853",
+        "rtol": 1e-09
+      }
+    }
+  }
+}

@@ -230,11 +230,13 @@ small same-host observation, not a general benchmark.
 
 - The 512 total, setup, persistence, shutdown, and oracle-validation times,
   because its JSON manifest is absent.
-- Per-cell or per-route duration distributions. HDF5 retains only a per-tile
-  wall duration and the sum of cell evaluator durations.
-- How fallback time divides among the failed fast attempt, verification replay,
-  and `solve_ivp`, or how much of the fallback association is simply harder
-  dynamics.
+- Population-level per-cell or per-route duration distributions. HDF5 retains
+  only a per-tile wall duration and the sum of cell evaluator durations; the
+  bounded probe below describes 16 fixed cells rather than either full route
+  population.
+- How much of `solve_ivp` fallback time reflects its implementation versus the
+  intrinsic integration difficulty of those trajectories. The bounded probe
+  separates the existing outer phases but does not provide that counterfactual.
 - How pool setup divides among child imports, Numba work, accepted warm-up, and
   handshake delay; the lifecycle probe only bounds combinations of these.
 - How pool shutdown divides among executor coordination and scientific-stack
@@ -253,13 +255,16 @@ Absence of these measurements is not evidence that a cost is negligible.
    This is supported by the real 39.95% wall share and the bounded lifecycle
    probe. The evidence does not yet choose among import reduction, compilation
    reuse, worker-lifetime changes, or another implementation technique.
-2. **Fallback and heterogeneous trajectory difficulty create a material part
-   of the evaluation tail.** The persisted correlation is strong and consistent
-   at both resolutions, but it cannot attribute causality or identify a safe
-   optimisation.
+2. **Fallback creates a material part of the evaluation tail, while a large
+   pre-fallback difficulty effect is not supported by the bounded sample.** The
+   probe below directly locates sampled time in verification and `solve_ivp`,
+   but cannot split fallback-integrator cost from intrinsic difficulty or
+   identify a safe optimisation.
 3. **The accepted integration itself may be the irreducible majority.** Stable
    per-cell solver work and evaluator timing support this as a possibility, not
-   a conclusion; route-stratified timing is still missing.
+   a conclusion. The route-stratified probe below attributes the sampled
+   fallback route's phases, but it does not identify a contract-preserving way
+   to reduce their cost.
 4. **HDF5 tile transactions are not the first target.** Recorded tile
    persistence is under 1% of the 1024 runner time. Integrity and resume
    semantics must not be weakened to pursue that small bucket.
@@ -268,16 +273,132 @@ Absence of these measurements is not evidence that a cost is negligible.
    not separate dispatch from imbalance and is not sufficient to redesign work
    units.
 
-## Cheapest next discriminating measurements
+## Route-stratified 16-cell measurement
 
-The next useful measurement is a route-stratified, single-process timing probe
-over a small fixed set of coordinates selected mechanically from the persisted
-1024 route map—for example eight evenly distributed fast cells and eight
-fallback cells, after one unmeasured warm-up. It should record the unchanged
-hybrid evaluator's total time and, from a sandbox wrapper, the fast attempt,
-endpoint verification, and fallback phases. This would answer whether fallback
-machinery itself explains the tile association or merely marks difficult
-trajectories. Sixteen cells are enough for discrimination; a field is not.
+The bounded probe in
+[`probe_route_stratified_cells.py`](probe_route_stratified_cells.py) used the
+persisted 1024 route map only to stratify the sample. Within each route stratum,
+it sorted cells in row-major `(theta2_index, theta1_index)` order and selected
+population ranks `floor(k * (M - 1) / 7)` for `k = 0,...,7`. This produced eight
+cells from the 1,004,105-cell fast population and eight from the 44,471-cell
+fallback population. A selection-only invocation recorded this fixed set
+before any probe timing was run; persisted timing was not a selection input.
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m \
+  development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_route_stratified_cells \
+  development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_1024.h5 \
+  --selection-only
+
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m \
+  development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_route_stratified_cells \
+  development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_1024.h5
+```
+
+The following are the selected cells and observed phase times. Coordinates are
+in radians, and indices follow the stored `[theta2, theta1]` orientation.
+`Replay` is the full compiled-DOP853 endpoint-verification replay; `Fallback`
+is the accepted compiled-RHS `solve_ivp` calculation.
+
+| Persisted stratum | `theta2, theta1` index | `theta2, theta1` coordinate | Total (ms) | Fast attempt (ms) | Replay (ms) | Fallback (ms) | First violating segment |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Fast | `(0, 0)` | `(-3.141593, -3.141593)` | 6.548 | 6.511 | — | — | — |
+| Fast | `(145, 57)` | `(-2.251884, -2.791845)` | 6.375 | 6.358 | — | — | — |
+| Fast | `(294, 27)` | `(-1.337631, -2.975923)` | 6.856 | 6.839 | — | — | — |
+| Fast | `(440, 420)` | `(-0.441786, -0.564505)` | 6.176 | 6.162 | — | — | — |
+| Fast | `(583, 606)` | `(0.435651, 0.576777)` | 6.161 | 6.147 | — | — | — |
+| Fast | `(729, 957)` | `(1.331495, 2.730486)` | 6.375 | 6.361 | — | — | — |
+| Fast | `(878, 958)` | `(2.245748, 2.736622)` | 6.442 | 6.428 | — | — | — |
+| Fast | `(1023, 1023)` | `(3.135457, 3.135457)` | 6.527 | 6.513 | — | — | — |
+| Fallback | `(0, 12)` | `(-3.141593, -3.067962)` | 51.113 | 7.277 | 6.847 | 36.969 | 19 |
+| Fallback | `(171, 983)` | `(-2.092350, 2.890020)` | 43.896 | 0.397 | 6.925 | 36.556 | 1 |
+| Fallback | `(270, 470)` | `(-1.484893, -0.257709)` | 41.226 | 0.322 | 6.147 | 34.743 | 1 |
+| Fallback | `(389, 47)` | `(-0.754719, -2.853204)` | 46.390 | 3.350 | 6.731 | 36.294 | 10 |
+| Fallback | `(635, 171)` | `(0.754719, -2.092350)` | 44.888 | 2.657 | 6.503 | 35.714 | 8 |
+| Fallback | `(754, 204)` | `(1.484893, -1.889864)` | 48.164 | 5.298 | 6.724 | 36.128 | 16 |
+| Fallback | `(852, 826)` | `(2.086214, 1.926680)` | 41.063 | 0.327 | 6.143 | 34.579 | 1 |
+| Fallback | `(1023, 958)` | `(3.135457, 2.736622)` | 44.569 | 2.473 | 6.466 | 35.616 | 8 |
+
+One separate accepted hybrid call warmed the current process in 0.329 s. The
+16 measured calls then ran sequentially and interleaved the strata at each
+selection rank. Investigation-local wrappers timed the three existing call
+boundaries without replacing their implementations or editing promoted code:
+the compiled fast attempt, `_verify_endpoint_max_step_incompatibility`, and the
+compiled-RHS fallback. The wrapper remainder averaged 0.018 ms for fast cells
+and 0.016 ms for fallback cells. Full cell-level records, including statuses,
+values, diagnostics, and selection ranks, are retained in
+[`route_stratified_16_cells.json`](route_stratified_16_cells.json).
+
+### Measured facts
+
+| Measurement | Persisted fast (8) | Persisted fallback (8) |
+| --- | ---: | ---: |
+| Mean total hybrid time | 6.433 ms | 45.164 ms |
+| Median total hybrid time | 6.409 ms | 44.729 ms |
+| Total-time range | 6.161–6.856 ms | 41.063–51.113 ms |
+| Mean compiled fast attempt | 6.415 ms | 2.763 ms |
+| Mean verification replay | — | 6.561 ms |
+| Mean `solve_ivp` fallback | — | 35.825 ms |
+| Final solver evaluations, mean | 6,565 | 8,158 |
+| Persisted/observed route agreement | 8/8 | 8/8 |
+| Persisted/observed status agreement | 8/8 | 8/8 |
+
+All 16 observed values exactly matched their persisted values at stored
+precision. Each fallback candidate reproduced the accepted maximum-step
+incompatibility, passed endpoint-only verification, and returned through the
+persisted fallback route. The fallback-group mean was 7.02 times the fast-group
+mean, a mean difference of 38.731 ms.
+
+For sampled fallback cells, the two phases entered only because fallback was
+eligible—verification replay plus `solve_ivp`—averaged 42.386 ms, or 93.85% of
+their total hybrid time. The `solve_ivp` phase alone averaged 35.825 ms. This
+directly explains where elapsed time occurs once a cell takes the fallback
+route; it does not make the stronger claim that all `solve_ivp` time is
+avoidable fallback overhead rather than integration work for that trajectory.
+
+### Derived evidence and limits
+
+The verification replay is the cleanest available view of a complete compiled
+calculation for a fallback cell. Its 6.143–6.925 ms range and 6.561 ms mean are
+close to the fast cells' complete compiled-attempt range of 6.147–6.839 ms and
+6.415 ms mean. Within this small mechanically selected sample, there is no
+evidence that fallback trajectories are already materially slower on the
+complete compiled path before fallback. This is evidence against a large
+pre-fallback trajectory-difficulty effect; it is not equivalence proof for the
+full route populations.
+
+Failed fast-attempt duration ranged from 0.322 to 7.277 ms and followed how far
+the evaluator progressed before the first violating segment (segments 1–19).
+Those partial attempts cannot be compared directly with complete fast-route
+evaluations as a measure of intrinsic trajectory difficulty. Likewise, final
+solver-evaluation counts come from different integrator implementations and do
+not isolate trajectory difficulty or cost per solver evaluation.
+
+The sample is fixed, small, unpaired, and timed sequentially in one warmed
+process. It establishes phase composition and route reproducibility for these
+16 cells, not population confidence intervals, worker-process timings, or a
+causal counterfactual in which the same fallback cell completes on the accepted
+fast route. Finer attribution inside `solve_ivp`, or a controlled same-cell
+comparison that bypasses an accepted route decision, would require either
+additional sandbox instrumentation or a different numerical execution and is
+not justified by this measurement.
+
+### Fallback decision
+
+Fallback is a real, reproducibly expensive route, and the extra sampled time is
+observed overwhelmingly after fallback eligibility: replay plus `solve_ivp`.
+It therefore remains a meaningful secondary cost centre. The probe does not
+identify a safe way to remove that work while preserving the verified fallback
+semantics, and fallback represents only 4.241% of the operational 1024 cells.
+It does not yet justify an independent optimisation implementation.
+
+Worker lifecycle remains the primary investigation target because it already
+accounts for 39.95% of the real scalar-runner wall time and has a demonstrated
+accepted-path versus neutral-spawn gap. Fallback should be revisited only when
+a specific contract-preserving alternative can be stated and tested; broad
+fallback profiling is not the next cheapest decision-changing measurement.
+
+## Cheapest next discriminating measurements
 
 If a concrete lifecycle intervention is later proposed, the next check should
 be a three-to-five-pool cold-start A/B using this same probe shape. It must keep
@@ -304,7 +425,8 @@ useful evidence.
 There is already enough evidence to prioritize **worker lifecycle/setup** as a
 promising optimisation target category. There is not enough evidence to select
 a particular optimisation, and the numerical evaluation bucket remains larger.
-Run the proposed 16-cell route-stratified timing probe next, then use its result
-alongside a narrowly decomposed lifecycle measurement to choose—or reject—a
-specific implementation change. Uniform resolution escalation remains paused
-until that decision is evidence-backed.
+The completed route-stratified probe makes fallback a measured secondary cost
+centre but does not expose removable work under the accepted semantics. The
+next action is to formulate one concrete worker-lifecycle hypothesis and test
+it with a bounded cold-start A/B before changing operational code. Uniform
+resolution escalation remains paused until that decision is evidence-backed.
