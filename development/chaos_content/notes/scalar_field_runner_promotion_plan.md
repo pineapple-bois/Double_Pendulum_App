@@ -1,7 +1,7 @@
 # Scalar-field runner promotion plan
 
-**Status: implementation scaffold for the next promotion pass; no runner has
-been promoted yet.**
+**Status: implemented; the reusable runner and first Lyapunov binding are now
+promoted in the prototype layer.**
 
 ## Purpose
 

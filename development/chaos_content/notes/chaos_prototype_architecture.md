@@ -920,9 +920,11 @@ renderers
 possible production derivatives
 ```
 
-Only the reference-evaluator, neutral-outcome, bounded-sampling, small JSON
-field, and renderer portions exist today. The remaining boxes are direction,
-not implemented architecture.
+Experiments 016--019 subsequently earned bounded process execution,
+rectangular work units, HDF5 persistence/resume, and assembled-map validation.
+Those accepted boundaries now have a reusable prototype implementation under
+`prototypes/scalar_field_generation/`; high-resolution production and
+production delivery remain direction rather than implemented architecture.
 
 # 26. Numerical fields and rendering
 
@@ -936,24 +938,22 @@ normalisation, label, or output format must not require recomputing the
 dynamics. Renderers consume persisted numerical fields; evaluators do not
 depend on renderers.
 
-The current small JSON artifact demonstrates this separation for reference
-grids. JSON is not proposed as the format for large maps.
+The small JSON artifact still demonstrates this separation for reference
+grids. The promoted field runner instead writes the authoritative HDF5 format
+accepted by Experiment 018, and downstream rendering reads the closed artifact.
 
 # 27. Persistent storage direction
 
-Large scalar fields will require chunked persistent storage, but selecting or
-implementing that backend is premature in the current reference pass.
+Experiment 018 selected HDF5 for the bounded local scientific pipeline and
+earned explicit axes, compact value/status/route arrays, tile completion
+markers, semantic checksums, deterministic resume, and fail-closed reads. The
+promoted adapter remains independent of observable evaluation and is owned by
+one coordinator writer.
 
-For local scientific storage, HDF5 is the leading candidate because it offers
-mature multidimensional arrays, chunking, compression, metadata, and local
-tooling. This is not a frozen choice. Zarr remains a viable alternative if
-later execution becomes naturally distributed, chunk-object-oriented, or
-object-store based.
-
-The eventual storage boundary must keep observable evaluators independent of
-the backend. Neither HDF5 nor Zarr belongs inside the scientific calculation.
-No dependency on either format should be introduced until a concrete storage
-prototype and comparison are in scope.
+This is not a generic storage-backend commitment. Zarr may still deserve a
+separate investigation if later execution becomes distributed,
+chunk-object-oriented, or object-store based. No backend abstraction is added
+before such evidence exists.
 
 # 28. Large-field and tile-oriented execution direction
 
@@ -977,11 +977,13 @@ can support:
 - tile-level validation and provenance;
 - rendering independently from persisted fields.
 
-No tile planner or executor is implemented yet. The present reference grids
-appropriately retain rich Python objects per evaluation for inspection. A
-144-million-cell field must not. Large storage will instead require compact,
-aligned value and status arrays plus aggregate or tile-level diagnostics and
-provenance.
+The promoted bounded runner now implements the accepted `8 x 8` half-open work
+units, compact value/status/route arrays, four spawn-isolated workers, indexed
+per-cell dispatch, and pool recycling at tile boundaries before 1,024 cells
+would be exceeded. Reference grids still appropriately retain rich Python
+objects per evaluation for inspection. These bounded policies are not claimed
+optimal for a 144-million-cell field; changing them requires new measured
+evidence.
 
 # 29. Scientific storage and production delivery
 
@@ -1011,22 +1013,24 @@ Fortran boundary is earned only for the declared five-condition `T=5 s`
 fixture. It is not evidence for arbitrary horizons, the full periodic domain,
 threaded execution, or high-resolution production fields.
 
-This remains evidence for the evaluator seam, not yet for a final large-field
-engine. The architecture currently stops at pointwise compiled/Fortran
-evaluation, small reference sampling, JSON field persistence, and diagnostic
-rendering. It deliberately does not include:
+Experiments 016--019 now add a bounded four-process execution policy,
+deterministic rectangular work units, HDF5 completion/resume semantics, and an
+accepted `64 x 64` assembled full-periodic validation. The promoted prototype
+runner composes those boundaries without importing Lyapunov science; a thin
+Lyapunov adapter is its first concrete consumer.
+
+The next separately authorised operational run is `512 x 512` over the same
+half-open periodic domain. It remains a measured execution decision, not a new
+scientific claim. The architecture deliberately still excludes:
 
 - an end-to-end compiled observable or compiled batch kernel;
-- batch or tile executors;
-- multiprocessing or GPU execution;
-- HDF5 or Zarr storage;
-- resumable large-map orchestration;
-- additional observables;
-- production integration.
+- distributed or GPU execution;
+- a generic storage-backend or renderer framework;
+- additional observables without their own scientific contracts;
+- arbitrary-horizon or continuous-domain Lyapunov claims; and
+- production application integration.
 
-The next earned task is a bounded compiled batch/grid apparatus test using the
-promoted evaluator without changing its scientific specification. That test
-should measure remaining per-cell Python orchestration and execution shape
-before any tile design. Tiling remains a later seam: pointwise speedup alone
-does not yet earn scheduling, resumability, or persistent chunk-storage
-machinery.
+The `512 x 512` run should measure actual fallback frequency, worker startup
+cost, HDF5 metadata cost, memory, and throughput under the unchanged accepted
+policies. Those measurements may justify a later operational-scale question;
+they must not be used to tune the policies before the run.

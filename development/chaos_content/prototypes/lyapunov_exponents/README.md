@@ -67,6 +67,14 @@ framework:
 - `../state_space_fields.py` owns only the earned cross-observable outcome,
   explicit-axis line/rectangle reference sampling, and full periodic
   angular-domain contracts;
+- `../scalar_field_generation/` owns neutral half-open work units, bounded
+  spawn-process execution, authoritative HDF5 persistence/resume, and
+  dynamics-free field validation;
+- `field_adapter.py` binds exact periodic coordinates and the unchanged hybrid
+  finite-time evaluator to that neutral runner, supplies Lyapunov tile
+  diagnostics, and retains the established oracle gates;
+- `generate_periodic_field.py` is the explicit create/resume CLI for this
+  first concrete scalar-field consumer;
 - `sensitivity_to_lyapunov.py` composes the structured reference result into
   the first four-panel pedagogical figure; it performs no validation and emits
   no narrated console story;
@@ -345,6 +353,50 @@ fallback frequency and throughput over the full periodic domain are not yet
 established, and the hybrid API does not introduce tile, persistence, or
 production-delivery semantics.
 
+## Generate an authoritative periodic scalar field
+
+The promoted field entry point is:
+
+```python
+summary = run_periodic_lyapunov_field(
+    output_path,
+    samples_per_axis,
+    mode="create",  # or "resume"
+)
+```
+
+It composes the unchanged hybrid evaluator with the accepted `8 x 8`
+half-open work units, four spawn workers, per-cell dispatch, 1,024-cell bounded
+worker lifetime, and coordinator-owned HDF5 adapter. The neutral runner does
+not import this strand.
+
+`create` uses exclusive HDF5 creation and refuses an existing path. `resume`
+requires an existing artifact whose axes, field definition, scientific and
+software provenance, work-unit plan, and integrity evidence exactly match the
+requested run. Complete checksum-valid tiles are skipped. Incomplete tiles are
+retried; corrupt complete tiles fail closed.
+
+The first substantial run is separately authorised at `512 x 512`; it is not
+part of prototype validation. Its command is:
+
+```bash
+uv run python development/chaos_content/prototypes/lyapunov_exponents/generate_periodic_field.py \
+  --samples-per-axis 512 \
+  --output development/chaos_content/outputs/lyapunov_finite_time_512.h5 \
+  --create
+```
+
+Use the identical command with `--resume` instead of `--create` after an
+interruption. The command emits a compact run and nine-cell oracle-validation
+summary and writes it beside the artifact as
+`lyapunov_finite_time_512.summary.json`. The HDF5 numerical field remains
+authoritative; the summary and any later heatmap are downstream derivatives
+that must be produced from the closed artifact.
+
+The accepted execution, work-unit, and persistence policies are bounded local
+contracts. They do not establish the fallback frequency, throughput, memory,
+or HDF5 metadata cost of the `512 x 512` field before it is measured.
+
 The 1-D orchestration API is:
 
 ```python
@@ -488,16 +540,17 @@ this strand now exposes a compiled DOP853 segment runner for the same
 fixed-horizon contract. The current solve_ivp paths remain available as
 scientific and integration-boundary oracles.
 
-This promotion supports a next bounded compiled batch/grid apparatus test. It
-does not establish equivalence for arbitrary horizons or the full periodic
-domain, threaded execution safety, high-resolution map production, or a tile
-executor.
+This promotion supports reusable bounded periodic field generation. It does
+not establish scientific equivalence for arbitrary horizons, parameters, or
+continuous initial conditions, nor operational readiness for high-resolution
+production.
 
 ## Deliberately absent
 
 There is no simulator/manager/engine abstraction, plugin system, inheritance
 tree, generic N-dimensional framework, adaptive/refined grid, interpolation,
 state-space classification, QR/full-spectrum API, selected map horizon, fully
-compiled end-to-end observable or batch kernel, tile executor, persistent
-large-map dataset, Dash integration, or production `/chaos` integration. Those
-decisions require later prototype questions and evidence.
+compiled end-to-end observable or batch kernel, distributed executor, storage
+backend abstraction, renderer framework, Dash integration, or production
+`/chaos` integration. Those decisions require later prototype questions and
+evidence.
