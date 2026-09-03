@@ -360,7 +360,7 @@ The implementation pass should add only experiment-local code and focused
 tests beside this README. Expected ignored evidence under
 
 ``` text
-development/chaos_content/outputs/independent_cell_execution_boundary/
+development/chaos_content/experiments/outputs/016/
 ```
 
 includes a machine-readable summary containing:
@@ -401,7 +401,7 @@ uv run python development/chaos_content/experiments/execution_and_acceleration/0
 The compact ignored evidence is written to:
 
 ``` text
-development/chaos_content/outputs/independent_cell_execution_boundary/baseline/summary.json
+development/chaos_content/experiments/outputs/016/baseline/summary.json
 ```
 
 ## Findings

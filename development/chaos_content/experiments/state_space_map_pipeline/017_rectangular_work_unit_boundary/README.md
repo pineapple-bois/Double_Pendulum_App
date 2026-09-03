@@ -429,7 +429,7 @@ modules rather than copied.
 Compact ignored evidence should live under:
 
 ``` text
-development/chaos_content/outputs/rectangular_work_unit_boundary/
+development/chaos_content/experiments/outputs/017/
 ```
 
 It should contain:
@@ -459,7 +459,7 @@ API. Its focused tests are in `test_rectangular_work_unit_boundary.py`.
 The retained machine-readable evidence is ignored by Git at:
 
 ``` text
-development/chaos_content/outputs/rectangular_work_unit_boundary/baseline/summary.json
+development/chaos_content/experiments/outputs/017/baseline/summary.json
 ```
 
 The accepted run used macOS 15.7.9 on arm64, Python 3.12.3, NumPy 2.5.2,
@@ -637,7 +637,7 @@ existing tiled/untiled checks, and a warmed performance confirmation.
 Compact ignored evidence is written to:
 
 ``` text
-development/chaos_content/outputs/rectangular_work_unit_boundary/max_step_audit.json
+development/chaos_content/experiments/outputs/017/max_step_audit.json
 ```
 
 #### Conservative-cap promotion validation
@@ -774,7 +774,7 @@ persistence, batching, new tolerances, or a solver replacement.
 Compact ignored evidence is written to:
 
 ``` text
-development/chaos_content/outputs/rectangular_work_unit_boundary/max_step_fallback_boundary.json
+development/chaos_content/experiments/outputs/017/max_step_fallback_boundary.json
 ```
 
 ## Verdict

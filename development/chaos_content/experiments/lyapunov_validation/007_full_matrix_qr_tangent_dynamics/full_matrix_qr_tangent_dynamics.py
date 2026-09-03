@@ -1776,7 +1776,7 @@ def main() -> int:
     )
     output_dir = args.output_dir or (
         REPOSITORY_ROOT
-        / "development/chaos_content/outputs/full_matrix_qr_tangent_dynamics"
+        / "development/chaos_content/experiments/outputs/007"
         / ("baseline" if args.mode == "primitive" else "convergence")
     )
     if args.self_check:

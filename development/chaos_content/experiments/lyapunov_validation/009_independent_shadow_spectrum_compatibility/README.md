@@ -272,7 +272,7 @@ Experiment 009 does not perform that extension.
 ## Evidence and reproduction
 
 Generated evidence belongs under
-`development/chaos_content/outputs/independent_shadow_spectrum_compatibility/baseline/`.
+`development/chaos_content/experiments/outputs/009/baseline/`.
 It records the summary, checkpoint vectors, full cumulative paths, pairwise
 reference distances, reduced cycle evidence, static diagnostics, and checksum
 manifest.
@@ -282,7 +282,7 @@ From the repository root:
 ```bash
 PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
 development/chaos_content/experiments/lyapunov_validation/009_independent_shadow_spectrum_compatibility/independent_shadow_spectrum_compatibility.py \
---output-dir development/chaos_content/outputs/independent_shadow_spectrum_compatibility/baseline \
+--output-dir development/chaos_content/experiments/outputs/009/baseline \
 --self-check
 ```
 

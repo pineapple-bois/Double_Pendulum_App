@@ -2583,11 +2583,11 @@ if __name__ == "__main__":
     if args.output_dir is None:
         output_dir = (
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs"
+            / "development/chaos_content/experiments/outputs/011"
             / {
-                "a": "hamiltonian_canonical_phase_a/baseline",
-                "b": "hamiltonian_canonical_phase_b/short_qr",
-                "c": "hamiltonian_canonical_phase_c/640s_ensemble",
+                "a": "phase_a/baseline",
+                "b": "phase_b/short_qr",
+                "c": "phase_c/640s_ensemble",
             }[args.phase]
         )
     else:

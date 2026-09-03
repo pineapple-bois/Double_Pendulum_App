@@ -940,8 +940,8 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=(
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs"
-            / "unsettled_shadow_duration_convergence/frozen_1280s"
+            / "development/chaos_content/experiments/outputs/014"
+            / "frozen_1280s"
         ),
     )
     parser.add_argument("--gate-only", action="store_true")

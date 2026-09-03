@@ -181,8 +181,8 @@ They are not long-time spectrum estimates.
 Machine-readable evidence is stored under the ignored tree:
 
 ```text
-development/chaos_content/outputs/
-  restart_grade_qr_continuation/phase_a/
+development/chaos_content/experiments/outputs/013/
+  phase_a/
 ```
 
 Each formulation owns checkpoint JSON, float64 NPZ arrays, a checkpoint

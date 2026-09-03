@@ -303,7 +303,7 @@ XDG_CACHE_HOME=/tmp/double-pendulum-cache \
 PYTHONDONTWRITEBYTECODE=1 \
 .venv/bin/python \
 development/chaos_content/experiments/foundations/006_variational_dynamics_validation/variational_dynamics_validation.py \
---output-dir development/chaos_content/outputs/variational_dynamics_validation/baseline \
+--output-dir development/chaos_content/experiments/outputs/006/baseline \
 --self-check
 ```
 

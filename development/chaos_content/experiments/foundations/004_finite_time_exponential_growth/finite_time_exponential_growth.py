@@ -1191,8 +1191,8 @@ def write_output_bundle(result: dict[str, Any], output_dir: Path, plots: bool) -
                 "uv run python development/chaos_content/experiments/"
                 "004_finite_time_exponential_growth/finite_time_exponential_growth.py "
                 "--self-check "
-                "--output-dir development/chaos_content/outputs/"
-                "finite_time_exponential_growth/baseline --plots"
+                "--output-dir development/chaos_content/experiments/outputs/004/"
+                "baseline --plots"
             ),
             "claim_boundary": result["summary"]["claim_boundary"],
             "notes": [

@@ -43,7 +43,7 @@ No historic implementation is promoted by this document.
 | Accepted EL spectrum target and uncertainty | `development/chaos_content/experiments/lyapunov_validation/010_independent_shadow_640s_compatibility/README.md`, “Ensemble estimate and uncertainty” | Accepted only within Experiment 010's declared ensemble |
 | Experiment-local canonical state/tangent maps | `development/chaos_content/experiments/lyapunov_validation/011_hamiltonian_canonical_spectrum_crosscheck/canonical_spectrum_crosscheck.py`, `el_to_canonical`, `canonical_to_el`, `forward_tangent_map`, `inverse_tangent_map` | Independently verified in Phase A; not production code |
 | Experiment-local canonical flow and Jacobian | same file, `CanonicalDynamics` | Derived from production $H$, independently checked in Phase A; not production code |
-| Phase A evidence | ignored `development/chaos_content/outputs/hamiltonian_canonical_phase_a/baseline/{summary.json,jacobian_validation.json,manifest.json}` | Reproducible Experiment 011 evidence; no QR or spectrum |
+| Phase A evidence | ignored `development/chaos_content/experiments/outputs/011/phase_a/baseline/{summary.json,jacobian_validation.json,manifest.json}` | Reproducible Experiment 011 evidence; no QR or spectrum |
 
 ## Accepted production/model conventions
 

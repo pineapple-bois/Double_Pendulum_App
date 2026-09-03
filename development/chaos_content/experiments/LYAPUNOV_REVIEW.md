@@ -54,9 +54,9 @@ Accordingly, Experiment 005 does establish that **the present numerical protocol
 
 | Stage | Repository evidence | Role in the chain | Audit result |
 | --- | --- | --- | --- |
-| Experiment 003 | `foundations/003_lyapunov_distance_contract/README.md`; `lyapunov_distance_investigation.py`; its tests; `outputs/lyapunov_distance_contract/baseline/{summary,manifest}.json` | Defines the EL state difference, Candidate A, Candidate B, scaling metadata, and locality evidence. | Foundations are internally consistent. |
-| Experiment 004 | `foundations/004_finite_time_exponential_growth/README.md`; `finite_time_exponential_growth.py`; its tests; `outputs/finite_time_exponential_growth/baseline/{summary,manifest}.json` | Tests the unrenormalised local prefix and finite-window inference rule. | Rejection of the predeclared exponential interval remains valid. |
-| Experiment 005 | `foundations/005_renormalised_local_stretching/README.md`; `renormalised_local_stretching.py`; its tests; `outputs/renormalised_local_stretching/baseline/{summary,manifest,cycles}.json` | Implements repeated Candidate-A resets and convergence checks. | Algebraic algorithm is correct; numerical protocol is materially defective. |
+| Experiment 003 | `foundations/003_lyapunov_distance_contract/README.md`; `lyapunov_distance_investigation.py`; its tests; `outputs/003/baseline/{summary,manifest}.json` | Defines the EL state difference, Candidate A, Candidate B, scaling metadata, and locality evidence. | Foundations are internally consistent. |
+| Experiment 004 | `foundations/004_finite_time_exponential_growth/README.md`; `finite_time_exponential_growth.py`; its tests; `outputs/004/baseline/{summary,manifest}.json` | Tests the unrenormalised local prefix and finite-window inference rule. | Rejection of the predeclared exponential interval remains valid. |
+| Experiment 005 | `foundations/005_renormalised_local_stretching/README.md`; `renormalised_local_stretching.py`; its tests; `outputs/005/baseline/{summary,manifest,cycles}.json` | Implements repeated Candidate-A resets and convergence checks. | Algebraic algorithm is correct; numerical protocol is materially defective. |
 | Production EL model | `src/double_pendulum/models/initial_conditions.py`; `lagrangian.py`; `math/functions.py`; `solver_policy.py` | Defines the actual state order, flow, angle kinematics, and `solve_ivp` policy. | State/kinematics match the experiments; solver policy has no step-size control. |
 
 ## Mathematical contract audit

@@ -752,7 +752,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=(
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs/restart_grade_qr_continuation/phase_a"
+            / "development/chaos_content/experiments/outputs/013/phase_a"
         ),
     )
     parser.add_argument("--self-check", action="store_true")

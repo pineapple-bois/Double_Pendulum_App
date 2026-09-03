@@ -805,8 +805,8 @@ def write_output_bundle(run: dict[str, Any], output_dir: Path, include_plots: bo
         "reproduction_command": (
             "uv run python development/chaos_content/experiments/"
             "002_initial_condition_sensitivity/minimal_initial_condition_sensitivity.py "
-            "--output-dir development/chaos_content/outputs/"
-            "initial_condition_sensitivity/principal --plots"
+            "--output-dir development/chaos_content/experiments/outputs/002/"
+            "principal --plots"
         ),
         "contract": (
             "development/chaos_content/experiments/"

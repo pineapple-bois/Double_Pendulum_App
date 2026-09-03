@@ -1267,8 +1267,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=(
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs"
-            / "initial_condition_spectrum_robustness"
+            / "development/chaos_content/experiments/outputs/012"
             / "frozen_640s"
         ),
     )

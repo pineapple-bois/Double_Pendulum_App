@@ -403,7 +403,7 @@ cause the policy-separated cumulative spectra to approach one common
 asymptotic vector or retain material separation.
 
 Machine-readable evidence is generated under
-`development/chaos_content/outputs/full_matrix_qr_tangent_dynamics/convergence/`.
+`development/chaos_content/experiments/outputs/007/convergence/`.
 `summary.json` holds the criteria, matrix, comparisons, decision, and claim
 boundary; `cycles.json`/`cycles.csv` retain baseline per-cycle QR evidence;
 `refinement_matrix.csv` records every final spectrum;
@@ -421,7 +421,7 @@ PYTHONDONTWRITEBYTECODE=1 \
 .venv/bin/python \
 development/chaos_content/experiments/lyapunov_validation/007_full_matrix_qr_tangent_dynamics/full_matrix_qr_tangent_dynamics.py \
 --mode primitive \
---output-dir development/chaos_content/outputs/full_matrix_qr_tangent_dynamics/baseline \
+--output-dir development/chaos_content/experiments/outputs/007/baseline \
 --self-check
 ```
 
@@ -429,7 +429,7 @@ development/chaos_content/experiments/lyapunov_validation/007_full_matrix_qr_tan
 PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
 development/chaos_content/experiments/lyapunov_validation/007_full_matrix_qr_tangent_dynamics/full_matrix_qr_tangent_dynamics.py \
 --mode convergence \
---output-dir development/chaos_content/outputs/full_matrix_qr_tangent_dynamics/convergence \
+--output-dir development/chaos_content/experiments/outputs/007/convergence \
 --self-check
 ```
 

@@ -829,8 +829,8 @@ This experiment does not launch that continuation.
 The ignored evidence tree is:
 
 ```text
-development/chaos_content/outputs/
-  initial_condition_spectrum_robustness/frozen_640s/
+development/chaos_content/experiments/outputs/012/
+  frozen_640s/
 ```
 
 It contains the accepted pre-execution gate, frozen configuration, overall
@@ -842,7 +842,7 @@ SHA-256 manifest covering `72` evidence files. Reproduce the frozen run with:
 PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
   development/chaos_content/experiments/lyapunov_validation/012_initial_condition_spectrum_robustness/initial_condition_spectrum_robustness.py \
   --self-check \
-  --output-dir development/chaos_content/outputs/initial_condition_spectrum_robustness/frozen_640s
+  --output-dir development/chaos_content/experiments/outputs/012/frozen_640s
 ```
 
 The focused tests are:

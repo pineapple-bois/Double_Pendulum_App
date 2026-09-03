@@ -372,7 +372,7 @@ uv run python development/chaos_content/experiments/foundations/002_initial_cond
 Write the principal diagnostic bundle, including the tighter comparison:
 
 ```bash
-uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/principal --plots
+uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/minimal_initial_condition_sensitivity.py --output-dir development/chaos_content/experiments/outputs/002/principal --plots
 ```
 
 The bundle contains:
@@ -495,7 +495,7 @@ uv run python development/chaos_content/experiments/foundations/002_initial_cond
 Write the ignored comparative evidence bundle:
 
 ```bash
-uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
+uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/experiments/outputs/002/regime_selection --plots
 ```
 
 The bundle contains `regime_manifest.json`, `regime_summary.json`,

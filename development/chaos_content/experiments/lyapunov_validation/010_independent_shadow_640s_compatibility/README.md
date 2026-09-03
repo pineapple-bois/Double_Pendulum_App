@@ -271,7 +271,7 @@ Experiment 010 does not begin that cross-check.
 ## Evidence and reproduction
 
 Generated evidence belongs under
-`development/chaos_content/outputs/independent_shadow_640s_compatibility/baseline/`.
+`development/chaos_content/experiments/outputs/010/baseline/`.
 It includes the machine-readable summary, checkpoint vectors, cumulative
 paths, pairwise reference distances, reduced cycle evidence, static plots, and
 checksum manifest.
@@ -281,7 +281,7 @@ From the repository root:
 ```bash
 PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
 development/chaos_content/experiments/lyapunov_validation/010_independent_shadow_640s_compatibility/independent_shadow_640s_compatibility.py \
---output-dir development/chaos_content/outputs/independent_shadow_640s_compatibility/baseline \
+--output-dir development/chaos_content/experiments/outputs/010/baseline \
 --self-check
 ```
 

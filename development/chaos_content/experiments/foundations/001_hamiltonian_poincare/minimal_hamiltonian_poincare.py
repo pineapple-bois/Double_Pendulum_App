@@ -665,7 +665,7 @@ def write_output_bundle(run: ExperimentRun, output_dir: Path, include_plots: boo
         },
         "notes": [
             "Sandbox diagnostic output only; not a production app asset.",
-            "Generated files are reproducible and ignored by development/chaos_content/outputs/.gitignore.",
+            "Generated files are reproducible and ignored by development/chaos_content/experiments/outputs/.gitignore.",
         ],
     }
     _write_json(manifest_path, manifest)

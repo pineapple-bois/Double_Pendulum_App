@@ -1009,7 +1009,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=(
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs/common_reference_qr_isolation/baseline"
+            / "development/chaos_content/experiments/outputs/008/baseline"
         ),
     )
     parser.add_argument("--no-plots", action="store_true")

@@ -1350,7 +1350,7 @@ def _base_summary(max_duration: float, runs: list[dict[str, Any]]) -> dict[str, 
                 "lifted-angle reset reconstruction precision loss",
             ],
             "original_outputs_preserved_at": (
-                "development/chaos_content/outputs/renormalised_local_stretching/baseline"
+                "development/chaos_content/experiments/outputs/005/baseline"
             ),
         },
         "question": (
@@ -1859,8 +1859,8 @@ def write_output_bundle(result: dict[str, Any], output_dir: Path, plots: bool) -
             "reproduction_command": (
                 "uv run python development/chaos_content/experiments/"
                 "005_renormalised_local_stretching/renormalised_local_stretching.py "
-                "--max-duration 80 --self-check --output-dir development/chaos_content/outputs/"
-                "renormalised_local_stretching/repaired --plots"
+                "--max-duration 80 --self-check --output-dir development/chaos_content/experiments/outputs/005/"
+                "repaired --plots"
             ),
             "claim_boundary": result["summary"]["claim_boundary"],
             "notes": [

@@ -95,7 +95,7 @@ uv run python \
 Machine-readable evidence is written to the ignored path:
 
 ```text
-development/chaos_content/outputs/compiled_integration_boundary/baseline/summary.json
+development/chaos_content/experiments/outputs/015/baseline/summary.json
 ```
 
 ## Numerical validity

@@ -476,7 +476,7 @@ uv run python development/chaos_content/experiments/foundations/003_lyapunov_dis
 Write the ignored machine-readable and static evidence bundle:
 
 ```bash
-uv run python development/chaos_content/experiments/foundations/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/outputs/lyapunov_distance_contract/baseline --plots
+uv run python development/chaos_content/experiments/foundations/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/experiments/outputs/003/baseline --plots
 ```
 
 The bundle contains `manifest.json`, `summary.json`,

@@ -1044,8 +1044,8 @@ def write_output_bundle(
             "reproduction_command": (
                 "uv run python development/chaos_content/experiments/"
                 "003_lyapunov_distance_contract/lyapunov_distance_investigation.py "
-                "--output-dir development/chaos_content/outputs/"
-                "lyapunov_distance_contract/baseline --plots"
+                "--output-dir development/chaos_content/experiments/outputs/003/"
+                "baseline --plots"
             ),
             "contract": (
                 "development/chaos_content/experiments/"

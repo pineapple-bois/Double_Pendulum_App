@@ -765,8 +765,8 @@ def write_output_bundle(
         "reproduction_command": (
             "uv run python development/chaos_content/experiments/"
             "002_initial_condition_sensitivity/regime_selection_comparison.py "
-            "--output-dir development/chaos_content/outputs/"
-            "initial_condition_sensitivity/regime_selection --plots"
+            "--output-dir development/chaos_content/experiments/outputs/002/"
+            "regime_selection --plots"
         ),
         "contract": (
             "development/chaos_content/experiments/"

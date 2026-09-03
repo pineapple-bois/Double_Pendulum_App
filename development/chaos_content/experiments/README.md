@@ -51,19 +51,39 @@ persistence, and assembled periodic-field execution and resume semantics.
 - **018 — HDF5 persistence boundary:** accepts a fail-closed HDF5 tile transaction, integrity, and resume contract for local scientific fields.
 - **019 — Assembled map-scale validation:** validates the complete bounded `64 x 64` periodic execution, tiling, persistence, resume, oracle-check, and downstream-rendering pipeline.
 
-The shared generated-output boundary remains
-`development/chaos_content/outputs/`; it is not reorganized by these archival
-strands.
+## Retained output evidence
+
+Ignored, reproducible evidence retained from these experiments lives under
+[`outputs/`](outputs/). Each numbered output directory belongs to the experiment
+with the same chronological number:
+
+| Experiment | Retained output |
+| --- | --- |
+| 001 | `smoke_validation/`, `long_validation/` |
+| 002 | `principal/`, `regime_selection/` |
+| 003–006 | each experiment's `baseline/` bundle; 005 also retains the repaired bundle |
+| 007 | `baseline/`, `convergence/` |
+| 008–010 | each experiment's `baseline/` bundle |
+| 011 | `phase_a/`, `phase_b/`, `phase_c/` |
+| 012 | `frozen_640s/` |
+| 013 | `phase_a/` |
+| 014 | `frozen_1280s/` and the documented invalidated pre-fix evidence |
+| 015–016 | each experiment's `baseline/` bundle |
+| 017–019 | retained work-unit, persistence, and assembled-pipeline evidence |
+
+Only numbers with retained artifacts have an output directory. Experimental
+evidence belongs here; promoted prototype and operational artifacts belong to
+the relevant `development/chaos_content/prototypes/<prototype>/outputs/`
+directory instead.
 
 ## Archive discipline
 
 Each numbered directory owns its question, implementation, focused tests, and
 authoritative README. Experiments may use production model code as a documented
 read-only reference, but production code must never import experiments or
-development prototypes. Generated diagnostics remain under the ignored shared
-outputs tree. A directory number communicates chronology only: status must be
-read from the experiment's own README, and no plot, metric, or API becomes
-production-ready merely by appearing in this archive.
+development prototypes. A directory number communicates chronology only: status
+must be read from the experiment's own README, and no plot, metric, or API
+becomes production-ready merely by appearing in this archive.
 
 The living Lyapunov claim history is summarized in
 [`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The independent audit of the

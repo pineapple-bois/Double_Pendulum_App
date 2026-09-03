@@ -801,7 +801,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=(
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs/independent_shadow_spectrum_compatibility/baseline"
+            / "development/chaos_content/experiments/outputs/009/baseline"
         ),
     )
     parser.add_argument("--no-plots", action="store_true")

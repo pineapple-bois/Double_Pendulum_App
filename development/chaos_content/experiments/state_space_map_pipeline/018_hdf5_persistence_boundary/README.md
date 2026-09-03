@@ -152,7 +152,7 @@ encoding only; they are not measurements of the full periodic Lyapunov field.
 Ignored machine-readable evidence and HDF5 artifacts are written under:
 
 ``` text
-development/chaos_content/outputs/hdf5_persistence_boundary/
+development/chaos_content/experiments/outputs/018/
   reference_scalar_field.h5
   corrupted_scalar_field.h5
   summary.json

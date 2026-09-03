@@ -485,7 +485,7 @@ From the repository root:
 
 ```bash
 UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run pytest development/chaos_content/experiments/foundations/004_finite_time_exponential_growth/test_finite_time_exponential_growth.py -q
-UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/foundations/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/outputs/finite_time_exponential_growth/baseline --plots
+UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/foundations/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/experiments/outputs/004/baseline --plots
 ```
 
 The output directory is ignored. `summary.json` and `manifest.json` preserve

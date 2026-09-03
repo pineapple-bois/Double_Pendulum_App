@@ -1328,7 +1328,7 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=(
             REPOSITORY_ROOT
-            / "development/chaos_content/outputs/variational_dynamics_validation/baseline"
+            / "development/chaos_content/experiments/outputs/006/baseline"
         ),
     )
     parser.add_argument("--no-plots", action="store_true")

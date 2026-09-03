@@ -231,7 +231,7 @@ it.
 ## Evidence and reproduction
 
 Generated evidence belongs under
-`development/chaos_content/outputs/common_reference_qr_isolation/baseline/`.
+`development/chaos_content/experiments/outputs/008/baseline/`.
 It includes `summary.json`, all local reference-validation segments,
 reference and cumulative time series, the final comparison matrix, baseline
 QR cycles, static diagnostics, and a checksum manifest.
@@ -241,7 +241,7 @@ From the repository root:
 ```bash
 PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
 development/chaos_content/experiments/lyapunov_validation/008_common_reference_qr_isolation/common_reference_qr_isolation.py \
---output-dir development/chaos_content/outputs/common_reference_qr_isolation/baseline \
+--output-dir development/chaos_content/experiments/outputs/008/baseline \
 --self-check
 ```
 

@@ -177,7 +177,7 @@ development/chaos_content/experiments/lyapunov_validation/011_hamiltonian_canoni
 ```
 
 Outputs are written beneath the ignored
-`development/chaos_content/outputs/hamiltonian_canonical_phase_a/baseline/`
+`development/chaos_content/experiments/outputs/011/phase_a/baseline/`
 directory.
 
 The Phase B self-check is:
@@ -189,7 +189,7 @@ development/chaos_content/experiments/lyapunov_validation/011_hamiltonian_canoni
 ```
 
 Its evidence is written beneath the ignored
-`development/chaos_content/outputs/hamiltonian_canonical_phase_b/short_qr/`
+`development/chaos_content/experiments/outputs/011/phase_b/short_qr/`
 directory.
 
 ## Phase A validation contract
@@ -993,7 +993,7 @@ Phase C does not begin that investigation.
 The ignored machine-readable bundle is written to
 
 ```text
-development/chaos_content/outputs/hamiltonian_canonical_phase_c/640s_ensemble/
+development/chaos_content/experiments/outputs/011/phase_c/640s_ensemble/
 ```
 
 It contains `summary.json`, all eight checkpoint vectors, the complete
@@ -1006,5 +1006,5 @@ PYTHONDONTWRITEBYTECODE=1 .venv/bin/python \
   development/chaos_content/experiments/lyapunov_validation/011_hamiltonian_canonical_spectrum_crosscheck/canonical_spectrum_crosscheck.py \
   --phase c \
   --self-check \
-  --output-dir development/chaos_content/outputs/hamiltonian_canonical_phase_c/640s_ensemble
+  --output-dir development/chaos_content/experiments/outputs/011/phase_c/640s_ensemble
 ```

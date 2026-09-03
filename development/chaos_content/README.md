@@ -551,7 +551,7 @@ from this sandbox.
   with:
 
   ```bash
-  uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
+  uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/experiments/outputs/002/regime_selection --plots
   ```
 
   No high-excitation case has yet passed the recorded experiment contract, and
@@ -571,7 +571,7 @@ from this sandbox.
   evidence bundle with:
 
   ```bash
-  uv run python development/chaos_content/experiments/foundations/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/outputs/lyapunov_distance_contract/baseline --plots
+  uv run python development/chaos_content/experiments/foundations/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/experiments/outputs/003/baseline --plots
   ```
 
   The experiment-local README owns the accepted, rejected, and unresolved
@@ -585,7 +585,7 @@ from this sandbox.
   Reproduce its ignored evidence bundle with:
 
   ```bash
-  uv run python development/chaos_content/experiments/foundations/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/outputs/finite_time_exponential_growth/baseline --plots
+  uv run python development/chaos_content/experiments/foundations/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/experiments/outputs/004/baseline --plots
   ```
 
   The experiment-local README owns the predeclared inference contract, exact
@@ -599,7 +599,7 @@ from this sandbox.
   ignored evidence with:
 
   ```bash
-  uv run python development/chaos_content/experiments/foundations/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/repaired --plots
+  uv run python development/chaos_content/experiments/foundations/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/experiments/outputs/005/repaired --plots
   ```
 
   The experiment-local README preserves the original rejection, independent
@@ -624,13 +624,13 @@ python development/chaos_content/experiments/foundations/001_hamiltonian_poincar
 Write a local diagnostic bundle:
 
 ```bash
-python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/experiments/outputs/001/smoke_validation --plots
 ```
 
 Write a longer diagnostic bundle with more section points:
 
 ```bash
-python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/experiments/outputs/001/long_validation --plots
 ```
 
 Generated output bundles are ignored by git and are not production assets.

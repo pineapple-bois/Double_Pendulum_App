@@ -31,8 +31,8 @@ finite-time stretching rate than the unrenormalised rate rejected by Experiment
    differs materially. The method remains numerically unresolved.
 
 The original ignored evidence bundle remains at
-`outputs/renormalised_local_stretching/baseline`; the repaired bundle is at
-`outputs/renormalised_local_stretching/repaired`.
+`experiments/outputs/005/baseline`; the repaired bundle is at
+`experiments/outputs/005/repaired`.
 
 ## Prior evidence and question
 
@@ -616,7 +616,7 @@ an invitation to tune more finite-shadow parameters.
 The repaired final bundle is reproduced with:
 
 ```bash
-UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/foundations/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/repaired --plots
+UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run python development/chaos_content/experiments/foundations/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/experiments/outputs/005/repaired --plots
 ```
 
 Generated evidence is ignored and reproducible. `summary.json` owns the final

@@ -79,7 +79,7 @@ python development/chaos_content/experiments/foundations/001_hamiltonian_poincar
 Write a small smoke-test output bundle:
 
 ```bash
-python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/experiments/outputs/001/smoke_validation --plots
 ```
 
 The default 30-second run is intentionally conservative for validation. Its
@@ -89,7 +89,7 @@ number of section points.
 Write a longer diagnostic bundle for a structurally meaningful plot:
 
 ```bash
-python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/experiments/outputs/001/long_validation --plots
 ```
 
 With `--output-dir`, the experiment writes `manifest.json`, `summary.json`, and
@@ -100,7 +100,7 @@ With `--output-dir`, the experiment writes `manifest.json`, `summary.json`, and
 - `theta_timeseries.png`.
 
 Generated outputs are exploratory diagnostics, are ignored under
-`development/chaos_content/outputs/`, and should not be committed unless a
+`development/chaos_content/experiments/outputs/001/`, and should not be committed unless a
 future task explicitly asks for a tiny documented artifact.
 
 The output manifest classifies a bundle as `smoke_test_output` when accepted
