@@ -19,15 +19,15 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[4]
 if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from development.chaos_content.prototypes.lyapunov_exponents.compiled import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled import (
     compiled_rhs,
     run_renormalized_tangent_compiled,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.fortran_dop853 import (
-    COMPILED_FORTRAN_EVALUATOR,
-    evaluate_renormalized_tangent_compiled_fortran,
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_dop853 import (
+    COMPILED_DOP853_EVALUATOR,
+    evaluate_renormalized_tangent_compiled_dop853,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     CandidateAMetric,
     RenormalizedTangentResult,
     RenormalizedTangentSpec,
@@ -497,7 +497,7 @@ def _no_solout_replay(
 
 def _audit_case(case: AuditCase) -> dict[str, object]:
     spec = _spec_for_case(case)
-    promoted = evaluate_renormalized_tangent_compiled_fortran(spec)
+    promoted = evaluate_renormalized_tangent_compiled_dop853(spec)
     compiled_oracle = run_renormalized_tangent_compiled(spec)
     mathematical_oracle = run_renormalized_tangent(spec)
 

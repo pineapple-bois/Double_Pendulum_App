@@ -44,7 +44,7 @@ The repository already contains:
 
 - a NumPy/SymPy plus `solve_ivp` mathematical oracle;
 - a Numba RHS/JVP plus `solve_ivp` integration-boundary oracle;
-- the promoted Numba RHS/JVP plus Fortran DOP853 fast scalar evaluator;
+- the promoted Numba RHS/JVP plus compiled DOP853 fast scalar evaluator;
 - coordinate-neutral completed-valid, completed-invalid, and execution-error
   outcomes for one scalar evaluation;
 - explicit line and sequential rectangular reference sampling;
@@ -79,7 +79,7 @@ grouped, retried, or stored. They must not silently change:
 - `values[theta2_index, theta1_index]` orientation; or
 - the half-open periodic-domain convention.
 
-The promoted Fortran DOP853 evaluator is the current fast implementation. The
+The promoted compiled DOP853 evaluator is the current fast implementation. The
 two `solve_ivp` paths remain the mathematical and integration-boundary oracles.
 For apparatus validation, the current declared `T=5 s`, `0.25 s`
 renormalisation, `(1, 0, 0, 0)` tangent, zero initial angular velocities,
@@ -110,7 +110,7 @@ The acceptance boundary is an execution policy that:
 - isolates only the already bounded numerical execution failures;
 - has measured throughput, setup cost, memory behaviour, and deterministic
   output ordering; and
-- has a justified lifecycle model for Numba and SciPy's Fortran DOP853
+- has a justified lifecycle model for Numba and SciPy's compiled DOP853
   interface.
 
 The earned output is an execution-policy decision for collections of cells,

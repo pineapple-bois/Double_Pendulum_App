@@ -28,26 +28,26 @@ for path in (REPOSITORY_ROOT, EXPERIMENT_ROOT, EXECUTION_EXPERIMENT_ROOT):
 import independent_cell_execution_boundary as execution
 import max_step_audit as max_step_audit
 import rectangular_work_unit_boundary as work_units
-from development.chaos_content.prototypes.lyapunov_exponents.compiled import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled import (
     COMPILED_EVALUATOR,
     compiled_rhs,
     evaluate_renormalized_tangent_compiled,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.compiled_equivalence import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_equivalence import (
     VALIDATION_ANGLE_PAIRS_DEGREES,
     compare_results,
     validation_spec,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.fortran_dop853 import (
-    COMPILED_FORTRAN_EVALUATOR,
-    evaluate_renormalized_tangent_compiled_fortran,
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_dop853 import (
+    COMPILED_DOP853_EVALUATOR,
+    evaluate_renormalized_tangent_compiled_dop853,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentSpec,
     _resolved_interval_max_step,
     _run_renormalized_tangent_with_rhs,
 )
-from development.chaos_content.prototypes.state_space_fields import (
+from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     ScalarEvaluation,
 )
@@ -66,7 +66,7 @@ DEFAULT_EVIDENCE_PATH = (
 BENCHMARK_REPEATS = 3
 TILE_SHAPE = work_units.TileShape(8, 8)
 _MAX_STEP_ERROR = re.compile(
-    r"^Fortran DOP853 exceeded the declared max_step: "
+    r"^compiled DOP853 exceeded the declared max_step: "
     r"(?P<observed>[0-9eE+.-]+) > (?P<declared>[0-9eE+.-]+)\.$"
 )
 
@@ -130,7 +130,7 @@ def _candidate_endpoint_snap_error(
 ) -> tuple[float, float] | None:
     if (
         evaluation.status is not EvaluationStatus.EXECUTION_ERROR
-        or evaluation.evaluator != COMPILED_FORTRAN_EVALUATOR
+        or evaluation.evaluator != COMPILED_DOP853_EVALUATOR
         or evaluation.error_type != "RuntimeError"
         or evaluation.error_message is None
     ):
@@ -214,7 +214,7 @@ def verify_endpoint_snap_incompatibility(
 
 def evaluate_hybrid(spec: RenormalizedTangentSpec) -> HybridEvaluation:
     started = perf_counter()
-    fast = evaluate_renormalized_tangent_compiled_fortran(spec)
+    fast = evaluate_renormalized_tangent_compiled_dop853(spec)
     fast_elapsed = perf_counter() - started
     if fast.status is not EvaluationStatus.EXECUTION_ERROR:
         return HybridEvaluation(
@@ -258,7 +258,7 @@ def _control_evaluation(
 ) -> HybridEvaluation:
     started = perf_counter()
     if mode == "fast":
-        evaluation = evaluate_renormalized_tangent_compiled_fortran(spec)
+        evaluation = evaluate_renormalized_tangent_compiled_dop853(spec)
         route = (
             FAST_ROUTE
             if evaluation.status is not EvaluationStatus.EXECUTION_ERROR
@@ -280,7 +280,7 @@ def _control_evaluation(
 def _initialize_worker(spec: RenormalizedTangentSpec) -> None:
     global _WORKER_SPEC
     _WORKER_SPEC = spec
-    evaluate_renormalized_tangent_compiled_fortran(spec)
+    evaluate_renormalized_tangent_compiled_dop853(spec)
     evaluate_renormalized_tangent_compiled(spec)
 
 
@@ -522,7 +522,7 @@ def assess_known_cases() -> list[dict[str, object]]:
     results = []
     for case in max_step_audit.AUDIT_CASES:
         spec = max_step_audit._spec_for_case(case)
-        fast = evaluate_renormalized_tangent_compiled_fortran(spec)
+        fast = evaluate_renormalized_tangent_compiled_dop853(spec)
         hybrid = evaluate_hybrid(spec)
         oracle = evaluate_renormalized_tangent_compiled(spec)
         is_historical_failure = case.expected_promoted_status == "execution_error"
@@ -563,7 +563,7 @@ def assess_five_fixtures() -> list[dict[str, object]]:
     results = []
     for pair in VALIDATION_ANGLE_PAIRS_DEGREES:
         spec = validation_spec(*pair)
-        fast = evaluate_renormalized_tangent_compiled_fortran(spec)
+        fast = evaluate_renormalized_tangent_compiled_dop853(spec)
         hybrid = evaluate_hybrid(spec)
         oracle_result = max_step_audit.run_renormalized_tangent_compiled(spec)
         fast_result = max_step_audit._run_renormalized_tangent_with_rhs(
@@ -590,9 +590,9 @@ def assess_failure_confinement() -> dict[str, object]:
     spec = RenormalizedTangentSpec()
     unrelated_messages = (
         "controlled ordinary scalar execution error",
-        "Fortran DOP853 returned a non-finite or malformed state.",
-        "Fortran DOP853 did not reach the requested segment endpoint: 0.2 != 0.25.",
-        "Fortran DOP853 failed on [0.0, 0.25] with return code -2.",
+        "compiled DOP853 returned a non-finite or malformed state.",
+        "compiled DOP853 did not reach the requested segment endpoint: 0.2 != 0.25.",
+        "compiled DOP853 failed on [0.0, 0.25] with return code -2.",
     )
     unrelated = tuple(
         ScalarEvaluation(
@@ -600,7 +600,7 @@ def assess_failure_confinement() -> dict[str, object]:
             value=None,
             diagnostics=None,
             elapsed_seconds=0.0,
-            evaluator=COMPILED_FORTRAN_EVALUATOR,
+            evaluator=COMPILED_DOP853_EVALUATOR,
             error_type="RuntimeError",
             error_message=message,
         )
@@ -616,24 +616,24 @@ def assess_failure_confinement() -> dict[str, object]:
         value=None,
         diagnostics=None,
         elapsed_seconds=0.0,
-        evaluator=COMPILED_FORTRAN_EVALUATOR,
+        evaluator=COMPILED_DOP853_EVALUATOR,
         error_type="RuntimeError",
         error_message=(
-            "Fortran DOP853 exceeded the declared max_step: "
+            "compiled DOP853 exceeded the declared max_step: "
             f"{1.005 * declared} > {declared}."
         ),
     )
     lookalike_verification = verify_endpoint_snap_incompatibility(lookalike, spec)
 
-    original_fast = globals()["evaluate_renormalized_tangent_compiled_fortran"]
+    original_fast = globals()["evaluate_renormalized_tangent_compiled_dop853"]
     try:
         preserved = []
         for error in unrelated:
-            globals()["evaluate_renormalized_tangent_compiled_fortran"] = (
+            globals()["evaluate_renormalized_tangent_compiled_dop853"] = (
                 lambda _spec, retained=error: retained
             )
             preserved.append(evaluate_hybrid(spec))
-        globals()["evaluate_renormalized_tangent_compiled_fortran"] = (
+        globals()["evaluate_renormalized_tangent_compiled_dop853"] = (
             lambda _spec: lookalike
         )
         preserved_lookalike = evaluate_hybrid(spec)
@@ -641,14 +641,14 @@ def assess_failure_confinement() -> dict[str, object]:
         def programming_error(_spec):
             raise ValueError("controlled programming error")
 
-        globals()["evaluate_renormalized_tangent_compiled_fortran"] = programming_error
+        globals()["evaluate_renormalized_tangent_compiled_dop853"] = programming_error
         programming_propagated = False
         try:
             evaluate_hybrid(spec)
         except ValueError as error:
             programming_propagated = str(error) == "controlled programming error"
     finally:
-        globals()["evaluate_renormalized_tangent_compiled_fortran"] = original_fast
+        globals()["evaluate_renormalized_tangent_compiled_dop853"] = original_fast
     return {
         "unrelated_errors_preserved": all(
             outcome.evaluation == expected and outcome.route == FAST_ERROR_ROUTE

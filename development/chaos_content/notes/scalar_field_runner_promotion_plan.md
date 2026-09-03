@@ -1,7 +1,9 @@
 # Scalar-field runner promotion plan
 
 **Status: implemented; the reusable runner and first Lyapunov binding are now
-promoted in the prototype layer.**
+promoted under the coherent `prototypes/state_space_maps/` boundary. The
+filesystem sketch below has been updated to show that later structural
+refactor; the earned contracts are unchanged.**
 
 ## Purpose
 
@@ -42,31 +44,35 @@ prototype must not import numbered experiments, and the forensic experiments
 should continue to reproduce their original evidence without importing their
 promoted descendants.
 
-The existing `prototypes/state_space_fields.py` should remain in place. It
-already owns neutral scalar outcomes, exact reference sampling, and periodic
-domain generation, and changing it into a package would create broad import
-churn for no earned benefit.
+The neutral field concepts now live at
+`prototypes/state_space_maps/src/state_space_fields.py`. They remain upstream
+of both generation and observable-specific consumers rather than being folded
+into the generation package.
 
 ## Smallest proposed module structure
 
 Add one sibling neutral strand and one Lyapunov adapter:
 
 ``` text
-development/chaos_content/prototypes/
-    state_space_fields.py                 # existing reference outcomes/domains
-    scalar_field_generation/
+development/chaos_content/prototypes/state_space_maps/
+    src/
+      state_space_fields.py               # reference outcomes/domains
+      generation/
         __init__.py                       # narrow supported exports
         work_units.py                     # tile bounds, planning, coverage, tasks
         hdf5.py                            # accepted Experiment 018 schema/adapter
         runner.py                          # create/resume and process lifecycle
         validation.py                      # dynamics-free completeness/integrity
-        tests/
-    lyapunov_exponents/
+      lyapunov/
         field_adapter.py                  # task -> fixed Lyapunov spec -> hybrid result
-        generate_periodic_field.py        # concrete API/CLI composition
+        ...
+    runners/
+      generate_lyapunov_periodic_field.py # concrete API/CLI composition
+    tests/
 ```
 
-This is not a generic simulation framework. `scalar_field_generation` knows
+This is not a generic simulation framework. `state_space_maps/src/generation`
+knows
 about two ordered axes, rectangular scalar fields, compact statuses/routes,
 work units, process execution, and HDF5. It does not know about Candidate-A,
 tangent dynamics, pendulum parameters, or Lyapunov result internals.
@@ -202,9 +208,9 @@ A concrete CLI should be Lyapunov-specific rather than introduce an observable
 registry:
 
 ``` bash
-uv run python development/chaos_content/prototypes/lyapunov_exponents/generate_periodic_field.py \
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
   --samples-per-axis 512 \
-  --output development/chaos_content/outputs/lyapunov_finite_time_512.h5 \
+  --output development/chaos_content/prototypes/state_space_maps/outputs/lyapunov/lyapunov_finite_time_512.h5 \
   --create
 ```
 
@@ -230,22 +236,22 @@ at this scale remain unmeasured.
 ## Dependency direction
 
 ``` text
-state_space_fields.py
+state_space_maps/src/state_space_fields.py
         ^
         |
-scalar_field_generation/work_units.py
+state_space_maps/src/generation/work_units.py
         ^                 ^
         |                 |
-scalar_field_generation/runner.py -> scalar_field_generation/hdf5.py
+state_space_maps/src/generation/runner.py -> state_space_maps/src/generation/hdf5.py
         ^
         |
-lyapunov_exponents/field_adapter.py -> lyapunov_exponents/hybrid.py
+state_space_maps/src/lyapunov/field_adapter.py -> state_space_maps/src/lyapunov/hybrid.py
         ^
         |
-lyapunov_exponents/generate_periodic_field.py
+state_space_maps/runners/generate_lyapunov_periodic_field.py
 ```
 
-Neutral modules must not import `lyapunov_exponents` or numbered experiments.
+Neutral modules must not import `src/lyapunov` or numbered experiments.
 The Lyapunov adapter may import both neutral generation contracts and the
 existing Lyapunov evaluator. Production application code must not import this
 development prototype.

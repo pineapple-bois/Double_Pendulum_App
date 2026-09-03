@@ -45,29 +45,29 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[4]
 if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from development.chaos_content.prototypes.lyapunov_exponents.compiled import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled import (
     compiled_reference_and_tangent_rhs,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.compiled_equivalence import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_equivalence import (
     ENERGY_DIAGNOSTIC_ABSOLUTE_TOLERANCE,
     RATE_ABSOLUTE_TOLERANCE,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.evaluation import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.evaluation import (
     evaluate_renormalized_tangent_runner,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.fortran_dop853 import (
-    COMPILED_FORTRAN_EVALUATOR,
-    evaluate_renormalized_tangent_compiled_fortran,
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_dop853 import (
+    COMPILED_DOP853_EVALUATOR,
+    evaluate_renormalized_tangent_compiled_dop853,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.grid import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.grid import (
     Theta1Theta2GridSpec,
     run_theta1_theta2_grid,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentDiagnostics,
     RenormalizedTangentSpec,
 )
-from development.chaos_content.prototypes.state_space_fields import (
+from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     ScalarEvaluation,
 )
@@ -164,7 +164,7 @@ def evaluate_cell_task(
     task: CellTask,
     base_spec: RenormalizedTangentSpec,
 ) -> CellOutcome:
-    evaluation = evaluate_renormalized_tangent_compiled_fortran(
+    evaluation = evaluate_renormalized_tangent_compiled_dop853(
         specification_for_task(task, base_spec)
     )
     return CellOutcome(
@@ -179,7 +179,7 @@ def _initialize_process_worker(base_spec: RenormalizedTangentSpec) -> None:
     global _WORKER_SPEC, _WORKER_WARMUP_SECONDS
     _WORKER_SPEC = base_spec
     started = perf_counter()
-    evaluate_renormalized_tangent_compiled_fortran(base_spec)
+    evaluate_renormalized_tangent_compiled_dop853(base_spec)
     _WORKER_WARMUP_SECONDS = perf_counter() - started
 
 
@@ -366,7 +366,7 @@ def current_grid_crosscheck(
             theta2_degrees=axis,
             observable_spec=base_spec,
         ),
-        evaluator=evaluate_renormalized_tangent_compiled_fortran,
+        evaluator=evaluate_renormalized_tangent_compiled_dop853,
     )
     converted = tuple(
         CellOutcome(
@@ -433,7 +433,7 @@ def controlled_outcome_probe(
     base_spec: RenormalizedTangentSpec,
 ) -> ScalarEvaluation[RenormalizedTangentDiagnostics]:
     if kind == "completed_invalid":
-        return evaluate_renormalized_tangent_compiled_fortran(
+        return evaluate_renormalized_tangent_compiled_dop853(
             replace(base_spec, duration=0.25, energy_drift_limit=1.0e-20)
         )
     if kind == "execution_error":
@@ -622,7 +622,7 @@ def run_assessment(benchmark_repeats: int = DEFAULT_BENCHMARK_REPEATS) -> dict[s
 
     numba_was_compiled = bool(compiled_reference_and_tangent_rhs.signatures)
     cold_started = perf_counter()
-    cold_outcome = evaluate_renormalized_tangent_compiled_fortran(base_spec)
+    cold_outcome = evaluate_renormalized_tangent_compiled_dop853(base_spec)
     cold_seconds = perf_counter() - cold_started
     if not cold_outcome.numerically_valid:
         raise RuntimeError("Cold promoted evaluator warm-up was not numerically valid.")
@@ -839,7 +839,7 @@ def run_assessment(benchmark_repeats: int = DEFAULT_BENCHMARK_REPEATS) -> dict[s
         "decision": decision,
         "scientific_contract": {
             "base_specification": asdict(base_spec),
-            "evaluator": COMPILED_FORTRAN_EVALUATOR,
+            "evaluator": COMPILED_DOP853_EVALUATOR,
             "array_convention": "values[theta2_index, theta1_index]",
             "domain_degrees": [ANGLE_MINIMUM_DEGREES, ANGLE_MAXIMUM_DEGREES],
             "full_periodic_domain_claimed": False,

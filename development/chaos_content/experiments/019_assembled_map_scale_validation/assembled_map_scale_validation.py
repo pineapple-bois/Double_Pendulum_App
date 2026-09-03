@@ -72,28 +72,28 @@ from hdf5_field_store import (
     write_completed_tile,
 )
 
-from development.chaos_content.prototypes.lyapunov_exponents.compiled import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled import (
     run_renormalized_tangent_compiled,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.compiled_equivalence import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_equivalence import (
     ENERGY_DIAGNOSTIC_ABSOLUTE_TOLERANCE,
     RATE_ABSOLUTE_TOLERANCE,
     compare_results,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.fortran_dop853 import (
-    run_renormalized_tangent_compiled_fortran,
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_dop853 import (
+    run_renormalized_tangent_compiled_dop853,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.hybrid import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.hybrid import (
     HYBRID_FALLBACK_EVALUATOR,
     HYBRID_FAST_ERROR_EVALUATOR,
     HYBRID_FAST_EVALUATOR,
     evaluate_renormalized_tangent_hybrid,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentDiagnostics,
     RenormalizedTangentSpec,
 )
-from development.chaos_content.prototypes.state_space_fields import (
+from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     PeriodicAngularDomain,
     ScalarEvaluation,
@@ -813,7 +813,7 @@ def oracle_spot_checks(
         )
         fast_full_comparison = None
         if persisted_route == HYBRID_FAST_EVALUATOR:
-            fast = run_renormalized_tangent_compiled_fortran(spec)
+            fast = run_renormalized_tangent_compiled_dop853(spec)
             fast_full_comparison = compare_results(oracle, fast)
         independent_hybrid = evaluate_renormalized_tangent_hybrid(spec)
         comparison_accepted = bool(

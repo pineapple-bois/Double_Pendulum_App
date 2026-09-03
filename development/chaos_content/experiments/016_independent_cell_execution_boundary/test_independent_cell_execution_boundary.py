@@ -17,7 +17,7 @@ if str(EXPERIMENT_ROOT) not in sys.path:
 
 import independent_cell_execution_boundary as experiment
 
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentSpec,
 )
 

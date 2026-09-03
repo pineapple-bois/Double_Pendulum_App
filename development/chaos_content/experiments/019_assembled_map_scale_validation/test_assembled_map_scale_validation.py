@@ -16,11 +16,11 @@ import assembled_map_scale_validation as experiment
 
 from hdf5_field_store import CellState
 
-from development.chaos_content.prototypes.lyapunov_exponents.hybrid import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.hybrid import (
     HYBRID_FAST_ERROR_EVALUATOR,
     HYBRID_FAST_EVALUATOR,
 )
-from development.chaos_content.prototypes.state_space_fields import (
+from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     ScalarEvaluation,
 )

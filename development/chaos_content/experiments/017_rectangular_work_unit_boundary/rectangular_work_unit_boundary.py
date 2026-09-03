@@ -54,13 +54,13 @@ for _path in (REPOSITORY_ROOT, EXPERIMENT_016_ROOT):
 
 import independent_cell_execution_boundary as execution
 
-from development.chaos_content.prototypes.lyapunov_exponents.fortran_dop853 import (
-    COMPILED_FORTRAN_EVALUATOR,
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_dop853 import (
+    COMPILED_DOP853_EVALUATOR,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentSpec,
 )
-from development.chaos_content.prototypes.state_space_fields import (
+from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     PeriodicAngularDomain,
     ScalarEvaluation,
@@ -310,7 +310,7 @@ def bounded_field_context(
         coordinate_unit="degrees",
         periodic=False,
         observable_spec=observable_spec or RenormalizedTangentSpec(),
-        evaluator=COMPILED_FORTRAN_EVALUATOR,
+        evaluator=COMPILED_DOP853_EVALUATOR,
     )
 
 
@@ -1849,7 +1849,7 @@ def run_assessment() -> dict[str, object]:
         },
         "scientific_contract": {
             "observable_specification": asdict(RenormalizedTangentSpec()),
-            "evaluator": COMPILED_FORTRAN_EVALUATOR,
+            "evaluator": COMPILED_DOP853_EVALUATOR,
             "field_orientation": "values[theta2_index, theta1_index]",
             "periodic_domain": "[-pi, pi)",
             "full_periodic_scientific_validation_claimed": False,

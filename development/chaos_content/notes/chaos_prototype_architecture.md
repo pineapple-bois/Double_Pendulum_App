@@ -784,7 +784,7 @@ failures into execution-error data; programming and specification defects must
 propagate.
 
 This boundary is implemented minimally in
-`development/chaos_content/prototypes/state_space_fields.py`. The Lyapunov
+`development/chaos_content/prototypes/state_space_maps/src/state_space_fields.py`. The Lyapunov
 strand owns an adapter from its rich reference result to that neutral outcome.
 No inheritance hierarchy, plugin registry, or generic N-dimensional runner is
 needed.
@@ -822,7 +822,7 @@ is used for larger field generation.
 
 Experiment 015 subsequently isolated and accepted the next implementation
 boundary. The Numba Euler--Lagrange RHS/JVP can be composed with SciPy's
-compiled Fortran DOP853 segment integrator while retaining the shared
+compiled DOP853 segment integrator while retaining the shared
 Candidate-A evolve / measure / renormalise driver and result semantics. The
 compiled-RHS plus Python `solve_ivp` DOP853 path remains the
 integration-boundary oracle; the original NumPy/SymPy/SciPy path remains the
@@ -923,7 +923,7 @@ possible production derivatives
 Experiments 016--019 subsequently earned bounded process execution,
 rectangular work units, HDF5 persistence/resume, and assembled-map validation.
 Those accepted boundaries now have a reusable prototype implementation under
-`prototypes/scalar_field_generation/`; high-resolution production and
+`prototypes/state_space_maps/src/generation/`; high-resolution production and
 production delivery remain direction rather than implemented architecture.
 
 # 26. Numerical fields and rendering
@@ -1004,7 +1004,7 @@ same finite-time tangent contract:
 ``` text
 NumPy/SymPy RHS/Jacobian + solve_ivp DOP853       mathematical oracle
 Numba RHS/JVP + solve_ivp DOP853                 integration-boundary oracle
-Numba RHS/JVP + compiled Fortran DOP853          promoted fast evaluator
+Numba RHS/JVP + compiled DOP853                  promoted fast evaluator
 ```
 
 All three retain the shared Candidate-A renormalisation, signed-log

@@ -24,12 +24,12 @@ for _path in (EXPERIMENT_ROOT, EXPERIMENT_017_ROOT, REPOSITORY_ROOT):
 
 import rectangular_work_unit_boundary as work_units
 
-from development.chaos_content.prototypes.lyapunov_exponents.hybrid import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.hybrid import (
     HYBRID_FALLBACK_EVALUATOR,
     HYBRID_FAST_ERROR_EVALUATOR,
     HYBRID_FAST_EVALUATOR,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentSpec,
 )
 

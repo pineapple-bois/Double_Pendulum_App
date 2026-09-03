@@ -37,12 +37,12 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[4]
 if str(REPOSITORY_ROOT) not in sys.path:
     sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from development.chaos_content.prototypes.lyapunov_exponents.compiled import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled import (
     compiled_reference_and_tangent_rhs,
     compiled_rhs,
     run_renormalized_tangent_compiled,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.compiled_equivalence import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_equivalence import (
     BENCHMARK_ANGLE_PAIRS_DEGREES,
     CYCLE_LOG_ABSOLUTE_TOLERANCE,
     ENERGY_DIAGNOSTIC_ABSOLUTE_TOLERANCE,
@@ -53,7 +53,7 @@ from development.chaos_content.prototypes.lyapunov_exponents.compiled_equivalenc
     compare_results,
     validation_spec,
 )
-from development.chaos_content.prototypes.lyapunov_exponents.reference import (
+from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     RenormalizedTangentResult,
     RenormalizedTangentSpec,
     SolverSpec,
@@ -759,7 +759,7 @@ def run_assessment(benchmark_repeats: int = 7) -> dict[str, object]:
             "scipy_version": scipy.__version__,
             "numba_version": numba.__version__,
             "prototype_oracle_module": (
-                "development.chaos_content.prototypes.lyapunov_exponents.compiled"
+                "development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled"
             ),
             "candidate_location": str(Path(__file__).resolve()),
         },
