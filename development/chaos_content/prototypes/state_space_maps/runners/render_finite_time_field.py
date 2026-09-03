@@ -19,6 +19,12 @@ os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_ROOT / "xdg"))
 import matplotlib
 
 matplotlib.use("Agg")
+matplotlib.rcParams.update(
+    {
+        "font.family": "serif",
+        "text.usetex": True,
+    }
+)
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
@@ -29,6 +35,23 @@ from ..src.generation.hdf5 import (
     read_authoritative_field,
     validate_dataset,
 )
+
+
+ANGLE_TICK_POSITIONS = (
+    -np.pi,
+    -np.pi / 2.0,
+    0.0,
+    np.pi / 2.0,
+    np.pi,
+)
+ANGLE_TICK_LABELS = (
+    r"$-\pi$",
+    r"$-\pi/2$",
+    r"$0$",
+    r"$\pi/2$",
+    r"$\pi$",
+)
+FIELD_COLORMAP = "magma"
 
 
 def derivative_output_paths(dataset_path: Path) -> tuple[Path, Path]:
@@ -55,10 +78,12 @@ def build_figure(snapshot: FieldSnapshot) -> Figure:
         interpolation="nearest",
         extent=(-np.pi, np.pi, -np.pi, np.pi),
         aspect="equal",
-        cmap="viridis",
+        cmap=FIELD_COLORMAP,
     )
-    axis.set_xlabel(r"$\theta_1(0)$ [rad]")
-    axis.set_ylabel(r"$\theta_2(0)$ [rad]")
+    axis.set_xticks(ANGLE_TICK_POSITIONS, ANGLE_TICK_LABELS)
+    axis.set_yticks(ANGLE_TICK_POSITIONS, ANGLE_TICK_LABELS)
+    axis.set_xlabel(r"$\theta_1(0)\;[\mathrm{rad}]$")
+    axis.set_ylabel(r"$\theta_2(0)\;[\mathrm{rad}]$")
     axis.set_title(
         rf"Finite-time one-vector stretching rate, $T={duration:g}\,\mathrm{{s}}$"
     )
@@ -84,7 +109,7 @@ def render_persisted_field(dataset_path: Path) -> dict[str, object]:
     png_path.parent.mkdir(parents=True, exist_ok=True)
     figure = build_figure(snapshot)
     try:
-        figure.savefig(png_path, dpi=150)
+        figure.savefig(png_path, dpi=600)
         figure.savefig(pdf_path)
     finally:
         plt.close(figure)

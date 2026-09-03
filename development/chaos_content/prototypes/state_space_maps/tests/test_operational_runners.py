@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from matplotlib import colors
 
 from development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field import (
     ConsoleProgressReporter,
@@ -19,6 +20,10 @@ from development.chaos_content.prototypes.state_space_maps.runners.generate_lyap
     write_manifest,
 )
 from development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field import (
+    ANGLE_TICK_LABELS,
+    ANGLE_TICK_POSITIONS,
+    FIELD_COLORMAP,
+    build_figure,
     derivative_output_paths,
     render_persisted_field,
 )
@@ -260,6 +265,40 @@ def test_renderer_writes_png_and_pdf_from_persisted_hdf5(tmp_path: Path) -> None
     assert result["dynamics_evaluator_imported"] is False
     assert png_path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
     assert pdf_path.read_bytes().startswith(b"%PDF")
+
+
+def test_renderer_uses_tex_pi_ticks_and_linear_magma_scale(tmp_path: Path) -> None:
+    import matplotlib
+
+    from development.chaos_content.prototypes.state_space_maps.src.generation import (
+        read_authoritative_field,
+    )
+
+    dataset = tmp_path / "finite_time_field_2.h5"
+    _synthetic_completed_field(dataset)
+    figure = build_figure(read_authoritative_field(dataset))
+    axis = figure.axes[0]
+    image = axis.images[0]
+
+    assert matplotlib.rcParams["text.usetex"] is True
+    np.testing.assert_allclose(axis.get_xticks(), ANGLE_TICK_POSITIONS)
+    np.testing.assert_allclose(axis.get_yticks(), ANGLE_TICK_POSITIONS)
+    assert [label.get_text() for label in axis.get_xticklabels()] == list(
+        ANGLE_TICK_LABELS
+    )
+    assert [label.get_text() for label in axis.get_yticklabels()] == list(
+        ANGLE_TICK_LABELS
+    )
+    assert image.get_cmap().name == FIELD_COLORMAP == "magma"
+    assert type(image.norm) is colors.Normalize
+    assert axis.get_xlim() == (-np.pi, np.pi)
+    assert axis.get_ylim() == (-np.pi, np.pi)
+    assert axis.get_xlabel() == r"$\theta_1(0)\;[\mathrm{rad}]$"
+    assert axis.get_ylabel() == r"$\theta_2(0)\;[\mathrm{rad}]$"
+    assert figure.axes[1].get_ylabel() == (
+        r"$\Lambda_T^{(1)}$ [$\mathrm{s}^{-1}$]"
+    )
+    matplotlib.pyplot.close(figure)
 
 
 def test_renderer_refuses_an_incomplete_field(tmp_path: Path) -> None:
