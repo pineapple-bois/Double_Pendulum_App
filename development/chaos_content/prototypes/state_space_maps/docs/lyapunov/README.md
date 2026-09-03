@@ -390,12 +390,14 @@ uv run python -m development.chaos_content.prototypes.state_space_maps.runners.g
 ```
 
 Use the identical command with `--resume` instead of `--create` after an
-interruption. The command emits a compact run and nine-cell oracle-validation
-summary to standard output. Its default authoritative destination is
-`outputs/finite_time_field/finite_time_field_512.h5`. After completion,
+interruption. The command reports throttled coordinator progress and writes a
+human-readable run/provenance/oracle manifest only after final validation. Its
+default authoritative destination is
+`outputs/finite_time_field/finite_time_field_512.h5`, with the optional manifest
+at `outputs/finite_time_field/finite_time_field_512.json`. After completion,
 `runners/render_finite_time_field.py` reads that closed artifact and writes
 same-stem PNG and PDF derivatives without invoking dynamics. The HDF5 numerical
-field remains authoritative.
+field remains authoritative; neither resume nor rendering depends on the JSON.
 
 The accepted execution, work-unit, and persistence policies are bounded local
 contracts. They do not establish the fallback frequency, throughput, memory,

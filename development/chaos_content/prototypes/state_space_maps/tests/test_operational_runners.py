@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -9,9 +10,13 @@ import numpy as np
 import pytest
 
 from development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field import (
+    ConsoleProgressReporter,
     OPERATIONAL_OUTPUT_DIRECTORY,
+    build_manifest,
     build_parser as build_generation_parser,
     default_output_path,
+    manifest_path,
+    write_manifest,
 )
 from development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field import (
     derivative_output_paths,
@@ -21,6 +26,10 @@ from development.chaos_content.prototypes.state_space_maps.src.generation import
     CellState,
     CompletedTile,
     FieldDefinition,
+    FieldProgress,
+    FieldRunSummary,
+    ProcessExecutionSpec,
+    ScalarFieldValidation,
     TileShape,
     create_dataset,
     plan_tiles,
@@ -28,6 +37,7 @@ from development.chaos_content.prototypes.state_space_maps.src.generation import
     write_completed_tile,
 )
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.field_adapter import (
+    LyapunovOracleValidation,
     periodic_lyapunov_field_definition,
 )
 
@@ -38,6 +48,9 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 def test_operational_generation_defaults_are_resolution_specific() -> None:
     path = default_output_path(512)
     assert path == OPERATIONAL_OUTPUT_DIRECTORY / "finite_time_field_512.h5"
+    assert manifest_path(path) == (
+        OPERATIONAL_OUTPUT_DIRECTORY / "finite_time_field_512.json"
+    )
     assert "outputs/lyapunov" not in path.as_posix()
 
     arguments = build_generation_parser().parse_args(
@@ -58,6 +71,145 @@ def test_512_definition_and_established_plan_are_calculation_free() -> None:
     assert coverage.accepted
     assert coverage.planned_cell_count == 262_144
     assert len(plan) == 4_096
+
+
+def test_resume_progress_is_immediate_and_milestone_throttled(capsys) -> None:
+    reporter = ConsoleProgressReporter(samples_per_axis=10, process_width=4)
+    reporter(
+        FieldProgress(
+            output_path=Path("finite_time_field_10.h5"),
+            mode="resume",
+            completed_work_units=4,
+            total_work_units=10,
+            completed_cells=40,
+            total_cells=100,
+            evaluated_work_units=0,
+            evaluated_cells=0,
+            elapsed_seconds=0.0,
+        )
+    )
+    initial = capsys.readouterr().out
+    assert "Resuming finite_time_field_10.h5" in initial
+    assert "4/10 work units already complete (40.0%)" in initial
+    assert "6 work units remaining" in initial
+
+    reporter(
+        FieldProgress(
+            output_path=Path("finite_time_field_10.h5"),
+            mode="resume",
+            completed_work_units=4,
+            total_work_units=10,
+            completed_cells=41,
+            total_cells=100,
+            evaluated_work_units=1,
+            evaluated_cells=1,
+            elapsed_seconds=1.0,
+        )
+    )
+    assert capsys.readouterr().out == ""
+
+    reporter(
+        FieldProgress(
+            output_path=Path("finite_time_field_10.h5"),
+            mode="resume",
+            completed_work_units=5,
+            total_work_units=10,
+            completed_cells=50,
+            total_cells=100,
+            evaluated_work_units=2,
+            evaluated_cells=10,
+            elapsed_seconds=2.0,
+        )
+    )
+    milestone = capsys.readouterr().out
+    assert "[ 50.0%] 5/10 work units" in milestone
+    assert "50/100 cells" in milestone
+    assert "5.0 cells/s" in milestone
+    assert "ETA ~" in milestone
+
+
+def test_manifest_uses_run_objects_and_writes_resolution_sidecar(
+    tmp_path: Path,
+) -> None:
+    output_path = tmp_path / "finite_time_field_2.h5"
+    definition = periodic_lyapunov_field_definition(2)
+    execution = ProcessExecutionSpec()
+    validation = ScalarFieldValidation(
+        accepted=True,
+        complete=True,
+        issues=(),
+        status_counts={
+            "not_yet_computed": 0,
+            "completed_valid": 3,
+            "completed_invalid": 1,
+            "execution_error": 0,
+        },
+        route_counts={"compiled_dop853": 4},
+        valid_value_range=(0.1, 0.4),
+    )
+    summary = FieldRunSummary(
+        output_path=output_path,
+        mode="create",
+        total_seconds=2.0,
+        setup_seconds=0.2,
+        evaluation_seconds=1.5,
+        persistence_seconds=0.2,
+        shutdown_seconds=0.1,
+        evaluated_cells=4,
+        preexisting_completed_cells=0,
+        completed_tiles_before=0,
+        pending_tiles_before=1,
+        completed_tiles_after=1,
+        pending_tiles_after=0,
+        pool_count=1,
+        recycling_events=0,
+        all_workers_stopped=True,
+        cells_per_second=2.0,
+        maximum_worker_peak_rss_bytes=1,
+        coordinator_peak_rss_bytes=1,
+        artifact_bytes=1,
+        validation=validation,
+    )
+    oracle = LyapunovOracleValidation(
+        accepted=True,
+        selected_indices=((0, 0),),
+        maximum_rate_error_per_second=0.0,
+        maximum_energy_diagnostic_error=0.0,
+        comparisons=(),
+    )
+
+    payload = build_manifest(
+        output_path=output_path,
+        definition=definition,
+        execution=execution,
+        summary=summary,
+        oracle=oracle,
+        completed_at_utc="2026-09-03T12:00:00+00:00",
+        operation_wall_seconds=2.5,
+    )
+    path = write_manifest(output_path, payload)
+    stored = json.loads(path.read_text(encoding="utf-8"))
+
+    assert path == tmp_path / "finite_time_field_2.json"
+    assert stored["artifact"]["hdf5_name"] == "finite_time_field_2.h5"
+    assert stored["field"]["shape_theta2_theta1"] == [2, 2]
+    assert stored["field"]["cell_count"] == 4
+    assert stored["field"]["stored_orientation"] == (
+        "values[theta2_index, theta1_index]"
+    )
+    assert stored["scientific_contract"]["numerical_parameters"] == dict(
+        definition.numerical_parameters
+    )
+    assert stored["execution"]["process_policy"] == {
+        "chunksize": 1,
+        "maximum_cells_per_pool": 1024,
+        "process_width": 4,
+        "start_method": "spawn",
+    }
+    assert stored["persistence"]["schema_version"] == 1
+    assert stored["completion"]["completed_invalid_cells"] == 1
+    assert stored["completion"]["execution_error_cells"] == 0
+    assert stored["oracle_validation"]["accepted"] is True
 
 
 def _synthetic_completed_field(path: Path) -> None:

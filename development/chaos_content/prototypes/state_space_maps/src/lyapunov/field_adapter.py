@@ -17,6 +17,7 @@ from ..generation import (
     CellState,
     EvaluatorBinding,
     FieldDefinition,
+    ProgressCallback,
     FieldRunSummary,
     ProcessExecutionSpec,
     ScalarCellTask,
@@ -222,6 +223,7 @@ def run_periodic_lyapunov_field(
     mode: str,
     spec: RenormalizedTangentSpec | None = None,
     execution: ProcessExecutionSpec | None = None,
+    progress_callback: ProgressCallback | None = None,
 ) -> FieldRunSummary:
     fixed_spec = spec or RenormalizedTangentSpec()
     return run_scalar_field(
@@ -230,6 +232,7 @@ def run_periodic_lyapunov_field(
         lyapunov_evaluator_binding(fixed_spec),
         execution=execution,
         mode=mode,
+        progress_callback=progress_callback,
     )
 
 

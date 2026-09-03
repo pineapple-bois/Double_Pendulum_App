@@ -64,6 +64,7 @@ def test_create_resume_and_interrupted_retry_are_deterministic(tmp_path: Path) -
         _binding(),
         execution=_execution(),
         mode="create",
+        progress_callback=(create_progress := []).append,
     )
 
     assert created.validation.accepted
@@ -77,6 +78,13 @@ def test_create_resume_and_interrupted_retry_are_deterministic(tmp_path: Path) -
         "completed_invalid": 1,
         "execution_error": 1,
     }
+    assert create_progress[0].completed_work_units == 0
+    assert create_progress[0].completed_cells == 0
+    assert create_progress[-1].completed_work_units == 6
+    assert create_progress[-1].completed_cells == 15
+    assert [update.evaluated_work_units for update in create_progress] == list(
+        range(7)
+    )
 
     no_work = run_scalar_field(
         complete_path,
@@ -84,10 +92,14 @@ def test_create_resume_and_interrupted_retry_are_deterministic(tmp_path: Path) -
         _binding(),
         execution=_execution(),
         mode="resume",
+        progress_callback=(no_work_progress := []).append,
     )
     assert no_work.evaluated_cells == 0
     assert no_work.preexisting_completed_cells == 15
     assert no_work.pool_count == 0
+    assert len(no_work_progress) == 1
+    assert no_work_progress[0].completed_work_units == 6
+    assert no_work_progress[0].evaluated_cells == 0
 
     resumed_path = tmp_path / "resumed.h5"
     shutil.copy2(complete_path, resumed_path)
@@ -102,6 +114,7 @@ def test_create_resume_and_interrupted_retry_are_deterministic(tmp_path: Path) -
         _binding(),
         execution=_execution(),
         mode="resume",
+        progress_callback=(resume_progress := []).append,
     )
     complete = read_authoritative_field(complete_path)
     retried = read_authoritative_field(resumed_path)
@@ -109,6 +122,12 @@ def test_create_resume_and_interrupted_retry_are_deterministic(tmp_path: Path) -
     assert resumed.evaluated_cells == 1
     assert resumed.preexisting_completed_cells == 14
     assert resumed.validation.accepted
+    assert resume_progress[0].completed_work_units == 5
+    assert resume_progress[0].completed_cells == 14
+    assert resume_progress[0].evaluated_cells == 0
+    assert resume_progress[-1].completed_work_units == 6
+    assert resume_progress[-1].completed_cells == 15
+    assert resume_progress[-1].evaluated_cells == 1
     assert np.array_equal(complete.values, retried.values, equal_nan=True)
     assert np.array_equal(complete.status, retried.status)
     assert np.array_equal(complete.execution_route, retried.execution_route)

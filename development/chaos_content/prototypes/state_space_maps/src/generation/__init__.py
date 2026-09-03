@@ -22,8 +22,10 @@ from .hdf5 import (
 )
 from .runner import (
     EvaluatorBinding,
+    FieldProgress,
     FieldRunSummary,
     ProcessExecutionSpec,
+    ProgressCallback,
     accepted_process_execution_spec,
     run_scalar_field,
 )
@@ -59,8 +61,10 @@ __all__ = [
     "validate_dataset",
     "write_completed_tile",
     "EvaluatorBinding",
+    "FieldProgress",
     "FieldRunSummary",
     "ProcessExecutionSpec",
+    "ProgressCallback",
     "accepted_process_execution_spec",
     "run_scalar_field",
     "ScalarFieldValidation",

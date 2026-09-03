@@ -133,6 +133,24 @@ class FieldRunSummary:
     validation: ScalarFieldValidation
 
 
+@dataclass(frozen=True)
+class FieldProgress:
+    """Coordinator-observed persisted progress for one create or resume run."""
+
+    output_path: Path
+    mode: str
+    completed_work_units: int
+    total_work_units: int
+    completed_cells: int
+    total_cells: int
+    evaluated_work_units: int
+    evaluated_cells: int
+    elapsed_seconds: float
+
+
+ProgressCallback = Callable[[FieldProgress], None]
+
+
 _WORKER_BINDING: EvaluatorBinding | None = None
 _WORKER_WARMUP_SECONDS: float | None = None
 
@@ -376,6 +394,7 @@ def run_scalar_field(
     *,
     execution: ProcessExecutionSpec | None = None,
     mode: str,
+    progress_callback: ProgressCallback | None = None,
 ) -> FieldRunSummary:
     """Create or resume one authoritative scalar field using bounded workers."""
 
@@ -434,6 +453,25 @@ def run_scalar_field(
     evaluated_cells = 0
     maximum_worker_peak = 0
 
+    def report_progress() -> None:
+        if progress_callback is None:
+            return
+        progress_callback(
+            FieldProgress(
+                output_path=output_path,
+                mode=mode,
+                completed_work_units=(
+                    len(completed_before) + evaluated_work_units
+                ),
+                total_work_units=len(work_units),
+                completed_cells=preexisting_cells + evaluated_cells,
+                total_cells=coverage.planned_cell_count,
+                evaluated_work_units=evaluated_work_units,
+                evaluated_cells=evaluated_cells,
+                elapsed_seconds=perf_counter() - started,
+            )
+        )
+
     def close_current_pool() -> None:
         nonlocal executor, identities, cells_in_pool, shutdown_seconds
         nonlocal all_workers_stopped
@@ -446,6 +484,8 @@ def run_scalar_field(
         identities = ()
         cells_in_pool = 0
 
+    evaluated_work_units = 0
+    report_progress()
     try:
         for tile_index in pending:
             work_unit = work_units[tile_index]
@@ -496,6 +536,8 @@ def run_scalar_field(
             persistence_started = perf_counter()
             write_completed_tile(output_path, tile_index, compact)
             persistence_seconds += perf_counter() - persistence_started
+            evaluated_work_units += 1
+            report_progress()
     finally:
         close_current_pool()
 

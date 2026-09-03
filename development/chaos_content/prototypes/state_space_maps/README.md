@@ -63,7 +63,9 @@ or persistence contracts.
 For `512` samples on each axis, the authoritative array shape is `(512, 512)`
 in stored `[theta2, theta1]` order, containing 262,144 cells. Generation may
 take significant time. Run it manually from the repository root; Codex and the
-rendering command do not start it automatically.
+rendering command do not start it automatically. Generation prints lightweight
+coordinator-level progress at approximately ten-percent milestones, including
+elapsed time, throughput, and an explicitly approximate ETA.
 
 ### Create
 
@@ -75,14 +77,18 @@ uv run python -m development.chaos_content.prototypes.state_space_maps.runners.g
   --create
 ```
 
-This writes:
+After generation and oracle validation succeed, this writes:
 
 ```text
 development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512.h5
+development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512.json
 ```
 
 The HDF5 file is the authoritative scientific artifact. `--create` refuses to
-replace an existing file.
+replace an existing file. The JSON sidecar is a human-readable manifest of the
+field definition, scientific and software provenance, execution policy, run
+timings and throughput, route/status counts, and oracle-validation result. It
+is not authoritative and is not required for resume or rendering.
 
 ### Resume
 
@@ -99,6 +105,9 @@ and tile state. It skips checksum-valid completed tiles, retries interrupted
 tiles, and fails closed instead of replacing an incompatible or corrupt field.
 Keep the same repository revision and locked software environment between
 create and resume because those provenance values are part of compatibility.
+At startup it reports the already-completed and remaining work units, then
+continues with the same lightweight progress milestones. A successful resumed
+run writes or refreshes the JSON manifest only after final validation passes.
 
 ### Render
 
@@ -120,7 +129,8 @@ development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/
 Rendering does not import or invoke the Lyapunov evaluator, scalar-field
 runner, dynamics, or computation workers. PNG and PDF are derivative visual
 representations and may be regenerated; retain the authoritative HDF5 file.
-All operational artifacts in `outputs/finite_time_field/` are ignored by Git.
+The JSON manifest is likewise optional: rendering reads only HDF5. All
+operational artifacts in `outputs/finite_time_field/` are ignored by Git.
 Other resolutions use the same directory and resolution-specific filename,
 for example `finite_time_field_1024.*`; this is a naming convention, not a
 recommendation or performance claim.
