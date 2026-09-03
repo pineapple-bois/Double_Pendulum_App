@@ -43,15 +43,15 @@ The current chronology is:
 
 | Address | Investigation | Current status |
 | --- | --- | --- |
-| `001_hamiltonian_poincare/` | The first executable Phase 10 experiment, retained as exploratory prior work. | Exploratory |
-| `002_initial_condition_sensitivity/` | The nearby-trajectory gateway investigation and its regime-selection extension. | Accepted for a limited close-over-this-interval claim; high-excitation evidence unresolved |
-| `003_lyapunov_distance_contract/` | Compare dimensionally coherent nearby-state distances before estimating growth rates. | Accepted for distance-convention findings; no exponent estimated |
-| `004_finite_time_exponential_growth/` | Audit whether the controlled local divergence has a reproducible approximately exponential interval. | Completed with valid rejection: no defensible common interval under the predeclared rule |
-| `005_renormalised_local_stretching/` | Test direction-preserving perturbation resets and convergence of accumulated local stretching. | Repaired iteration Outcome C: coordinate/step defects removed, but strict-tolerance and duration convergence still fail |
-| `006_variational_dynamics_validation/` | Validate direct Euler–Lagrange tangent evolution against the finite-shadow local limit and repaired numerical policies. | Accepted for the limited short-time formulation claim; a long-time tangent-Lyapunov study is not included |
-| `007_full_matrix_qr_tangent_dynamics/` | Extend the validated EL tangent flow to Candidate-A-scaled full-matrix QR and test cumulative-spectrum convergence. | QR primitive accepted; `20/40/80 s` convergence matrix numerically unresolved under duration and policy refinement |
-| `008_common_reference_qr_isolation/` | Hold one validated reference history fixed while isolating tangent tolerance, tangent step-cap, and QR-cadence effects. | Accepted for the limited diagnostic claim that reference-shadow divergence is the primary observed source of Experiment 007's policy separation |
-| `009_independent_shadow_spectrum_compatibility/` | Test within-shadow settling and between-shadow compatibility across three independently integrated, decorrelated numerical references through `320 s`. | Unresolved: compatibility improves strongly, but late fluctuation and spread remain marginally above the predeclared limits |
+| `experiments/foundations/001_hamiltonian_poincare/` | The first executable Phase 10 experiment, retained as exploratory prior work. | Exploratory |
+| `experiments/foundations/002_initial_condition_sensitivity/` | The nearby-trajectory gateway investigation and its regime-selection extension. | Accepted for a limited close-over-this-interval claim; high-excitation evidence unresolved |
+| `experiments/foundations/003_lyapunov_distance_contract/` | Compare dimensionally coherent nearby-state distances before estimating growth rates. | Accepted for distance-convention findings; no exponent estimated |
+| `experiments/foundations/004_finite_time_exponential_growth/` | Audit whether the controlled local divergence has a reproducible approximately exponential interval. | Completed with valid rejection: no defensible common interval under the predeclared rule |
+| `experiments/foundations/005_renormalised_local_stretching/` | Test direction-preserving perturbation resets and convergence of accumulated local stretching. | Repaired iteration Outcome C: coordinate/step defects removed, but strict-tolerance and duration convergence still fail |
+| `experiments/foundations/006_variational_dynamics_validation/` | Validate direct Euler–Lagrange tangent evolution against the finite-shadow local limit and repaired numerical policies. | Accepted for the limited short-time formulation claim; a long-time tangent-Lyapunov study is not included |
+| `experiments/lyapunov_validation/007_full_matrix_qr_tangent_dynamics/` | Extend the validated EL tangent flow to Candidate-A-scaled full-matrix QR and test cumulative-spectrum convergence. | QR primitive accepted; `20/40/80 s` convergence matrix numerically unresolved under duration and policy refinement |
+| `experiments/lyapunov_validation/008_common_reference_qr_isolation/` | Hold one validated reference history fixed while isolating tangent tolerance, tangent step-cap, and QR-cadence effects. | Accepted for the limited diagnostic claim that reference-shadow divergence is the primary observed source of Experiment 007's policy separation |
+| `experiments/lyapunov_validation/009_independent_shadow_spectrum_compatibility/` | Test within-shadow settling and between-shadow compatibility across three independently integrated, decorrelated numerical references through `320 s`. | Unresolved: compatibility improves strongly, but late fluctuation and spread remain marginally above the predeclared limits |
 
 The living Lyapunov-strand status through Experiment 009 is maintained in
 [`experiments/LYAPUNOV_STATUS.md`](experiments/LYAPUNOV_STATUS.md). The
@@ -135,7 +135,7 @@ sample the flow on a precisely defined section of phase space. Crossing
 direction, coordinate conventions, interpolation, transient removal, solver
 policy, and section residuals must all be explicit and testable.
 
-The existing `experiments/001_hamiltonian_poincare/` work predates this journey
+The existing `experiments/foundations/001_hamiltonian_poincare/` work predates this journey
 map. It is retained as useful exploratory prior work, not as evidence that
 Stage 3 is complete. Moving it later changes development and teaching priority,
 not its mathematical importance. Its assumptions and implementation should be
@@ -538,7 +538,7 @@ from this sandbox.
   fractal; its observable, classification, resolution, colour mapping, and
   numerical validation policy all remain unresolved.
 
-- `experiments/002_initial_condition_sensitivity/` investigates how nearby
+- `experiments/foundations/002_initial_condition_sensitivity/` investigates how nearby
   simple-model trajectories evolve from different regions of initial-state
   space. Its current `theta2 += 0.001 deg`, 20-second, and `d_tip = 0.1`
   conventions are experimental scaffolding, not universal definitions of
@@ -551,7 +551,7 @@ from this sandbox.
   with:
 
   ```bash
-  uv run python development/chaos_content/experiments/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
+  uv run python development/chaos_content/experiments/foundations/002_initial_condition_sensitivity/regime_selection_comparison.py --output-dir development/chaos_content/outputs/initial_condition_sensitivity/regime_selection --plots
   ```
 
   No high-excitation case has yet passed the recorded experiment contract, and
@@ -562,7 +562,7 @@ from this sandbox.
   local README owns the detailed conventions, results, methodology
   reassessment, and limitations.
 
-- `experiments/003_lyapunov_distance_contract/` compares a scaled
+- `experiments/foundations/003_lyapunov_distance_contract/` compares a scaled
   Euler–Lagrange full-state norm, a scaled Cartesian full-state embedding, and
   the bounded second-bob display observable for one controlled nearby pair.
   Both full-state candidates remain plausible despite material finite-time
@@ -571,13 +571,13 @@ from this sandbox.
   evidence bundle with:
 
   ```bash
-  uv run python development/chaos_content/experiments/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/outputs/lyapunov_distance_contract/baseline --plots
+  uv run python development/chaos_content/experiments/foundations/003_lyapunov_distance_contract/lyapunov_distance_investigation.py --output-dir development/chaos_content/outputs/lyapunov_distance_contract/baseline --plots
   ```
 
   The experiment-local README owns the accepted, rejected, and unresolved
   conventions and the self-selection limitation.
 
-- `experiments/004_finite_time_exponential_growth/` audits a predeclared
+- `experiments/foundations/004_finite_time_exponential_growth/` audits a predeclared
   finite growth interval without selecting a visually straight segment. It
   records perturbation collapse, Candidate A/B and scaling dependence, moving
   slopes, endpoint sensitivity, numerical validity, and separate winding-
@@ -585,13 +585,13 @@ from this sandbox.
   Reproduce its ignored evidence bundle with:
 
   ```bash
-  uv run python development/chaos_content/experiments/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/outputs/finite_time_exponential_growth/baseline --plots
+  uv run python development/chaos_content/experiments/foundations/004_finite_time_exponential_growth/finite_time_exponential_growth.py --self-check --output-dir development/chaos_content/outputs/finite_time_exponential_growth/baseline --plots
   ```
 
   The experiment-local README owns the predeclared inference contract, exact
   findings, rejected stronger claims, and unresolved choices.
 
-- `experiments/005_renormalised_local_stretching/` is the first repeated-reset
+- `experiments/foundations/005_renormalised_local_stretching/` is the first repeated-reset
   investigation. It preserves the evolved Candidate-A direction, records every
   signed cycle contribution, and now keeps local solver coordinates separate
   from reference winding history under an explicit max-step policy. The
@@ -599,13 +599,13 @@ from this sandbox.
   ignored evidence with:
 
   ```bash
-  uv run python development/chaos_content/experiments/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/repaired --plots
+  uv run python development/chaos_content/experiments/foundations/005_renormalised_local_stretching/renormalised_local_stretching.py --max-duration 80 --self-check --output-dir development/chaos_content/outputs/renormalised_local_stretching/repaired --plots
   ```
 
   The experiment-local README preserves the original rejection, independent
   audit, repaired evidence, explicit robustness rejections, and claim boundary.
 
-- `experiments/001_hamiltonian_poincare/` contains the first minimal executable
+- `experiments/foundations/001_hamiltonian_poincare/` contains the first minimal executable
   Phase 10 experiment: a self-contained simple-Hamiltonian Poincare-section
   workflow with explicit state, section, interpolation, solver, and
   energy-drift policies.
@@ -618,19 +618,19 @@ policies have already passed final acceptance.
 Run it from the repository root:
 
 ```bash
-python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py
 ```
 
 Write a local diagnostic bundle:
 
 ```bash
-python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --output-dir development/chaos_content/outputs/smoke_run --plots
 ```
 
 Write a longer diagnostic bundle with more section points:
 
 ```bash
-python development/chaos_content/experiments/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
+python development/chaos_content/experiments/foundations/001_hamiltonian_poincare/minimal_hamiltonian_poincare.py --t-stop 300 --sample-count 12001 --discard-before 30 --min-crossings-for-plot 100 --output-dir development/chaos_content/outputs/long_run --plots
 ```
 
 Generated output bundles are ignored by git and are not production assets.

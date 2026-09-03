@@ -1,164 +1,71 @@
-# Chronological Experiment Index
+# Chaos experiment archive
 
-This directory contains Phase 10 mathematical experiments rewritten from clean
-problem statements. Narrowly scoped teaching prototypes live separately under
-`../prototypes/`; numerical experiments and exploratory interactions may inform
-each other, but both remain sandbox work.
+Experiment numbers record chronological order. The directories are grouped by
+the scientific or architectural strand they inform; grouping does not renumber
+the work, change its status, or imply that every result was accepted. Negative,
+rejected, and unresolved experiments remain part of the forensic evidence
+history because they establish claim boundaries and motivate later work.
 
-Numbered directory prefixes record **experiment chronology**: the order in
-which questions were investigated in this sandbox. They do not record the
-current Chaos teaching order, maturity, validity, acceptance, or importance. A
-larger number is only a later address, not a stronger result.
+## Foundations — Experiments 001–006
 
-The chronology intentionally preserves historical truth. Experiment 001 is the
-Hamiltonian Poincare investigation because it happened first, even though the
-current conceptual journey places Poincare sections after sensitivity and
-Lyapunov analysis.
+The foundations strand establishes physical observables, state-space geometry,
+finite-separation limitations, renormalisation mechanics, and validated direct
+tangent dynamics.
 
-Rules for future code:
+- **001 — Hamiltonian Poincaré:** exploratory canonical Poincaré-section prior work whose chronological position predates the later pedagogical sequence.
+- **002 — Initial-condition sensitivity:** tests finite physical separation for controlled nearby trajectories and records both accepted local and unresolved high-excitation evidence.
+- **003 — Lyapunov distance contract:** compares defensible nearby-state metrics and accepts Candidate-A as a working Euler–Lagrange geometry without estimating an exponent.
+- **004 — Finite-time exponential growth:** finds no defensible common approximately exponential finite-shadow interval under its predeclared rule.
+- **005 — Renormalised local stretching:** establishes repeated finite-shadow reset mechanics but leaves the accumulated rate numerically unresolved.
+- **006 — Variational dynamics validation:** validates direct Euler–Lagrange tangent evolution against the accepted short-time finite-shadow limit.
 
-- Keep experiments self-contained inside `development/chaos_content/`.
-- Do not copy legacy code wholesale from `development/chaos_branch/`.
-- Do not import production callbacks, layouts, or assets.
-- If production model code is used as read-only reference, document why in the
-  experiment README or notes before running the experiment.
-- Save generated outputs under the ignored `development/chaos_content/outputs/`
-  tree and label them as exploratory.
-- When an interaction prototype is introduced, state which assumption,
-  observable, or learning question it is intended to explore. Do not imply that
-  its numerical conventions are accepted merely because they make interaction
-  possible.
-- Do not present any metric, dataset, plot, or API as production-ready without
-  mathematical fidelity review.
-- Keep production promotion separate. Production code must not import an
-  experiment or prototype from this directory.
+## Lyapunov validation — Experiments 007–014
 
-## Directory Convention
+This strand develops and audits full-matrix tangent/QR calculations,
+formulation compatibility, initial-condition robustness, restartability, and
+the eventual finite-time rather than universal-asymptotic claim boundary.
 
-Each numbered experiment should ordinarily own a `README.md` plus only the
-implementation, tests, static plotting code, and local fixtures required to
-reproduce that investigation. Its README is the authoritative working record
-for its question, definition, minimal experiment, numerical validity, static
-inspection, acceptance, findings, and next justified experiment.
+- **007 — Full-matrix QR tangent dynamics:** extends the accepted tangent system to a Candidate-A-scaled four-vector QR calculation.
+- **008 — Common-reference QR isolation:** isolates common-reference QR behavior from independent-shadow effects.
+- **009 — Independent-shadow spectrum compatibility:** tests whether independently integrated shadows support compatible spectra.
+- **010 — Independent-shadow 640 s compatibility:** extends the independent-shadow comparison to a predeclared longer horizon.
+- **011 — Hamiltonian canonical spectrum cross-check:** validates canonical tangent/pullback-QR primitives against the Euler–Lagrange reference.
+- **012 — Initial-condition spectrum robustness:** tests the spectrum protocol across mechanically selected initial conditions and numerical shadows.
+- **013 — Restart-grade QR continuation:** validates deterministic, integrity-checked continuation from QR-boundary checkpoints.
+- **014 — Unsettled-shadow duration convergence:** rejects universal long-time settling as a required contract for future fixed-horizon maps.
 
-Use a small human-readable status such as `exploratory`, `active`, `accepted
-for limited claim`, `superseded`, or `deferred`. Do not infer status from the
-directory number. Generated diagnostics do not belong in experiment source
-directories unless a local README records a specific exception.
+## Execution and acceleration — Experiments 015–016
 
-## Experiment Chronology
+This strand identifies a faster scalar integration boundary and a bounded
+policy for evaluating independent cells without changing the observable.
 
-The living scientific position of the Lyapunov strand through Experiment 012,
-including the next question currently earned, is recorded in
-[`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The separate
-[`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md) remains the historical audit of the
-original Experiment 005 evidence.
+- **015 — Compiled integration boundary:** validates the compiled DOP853 segment boundary against the compiled-RHS `solve_ivp` oracle for the declared five-condition fixture.
+- **016 — Independent-cell execution boundary:** accepts four warmed spawn-isolated workers with indexed per-cell dispatch for bounded collections on the tested host and stack.
 
-- `001_hamiltonian_poincare/` - the chronologically first executable Phase 10
-  artifact: a minimal, self-contained simple-Hamiltonian Poincare-section
-  experiment with explicit state, section, solver, and energy-drift
-  conventions. Status: exploratory prior work.
+## State-space-map pipeline — Experiments 017–019
 
-- `002_initial_condition_sensitivity/` - fixed-pair and predeclared regime-selection
-  evidence for how nearby trajectories evolve from different initial states.
-  Its perturbation, duration, threshold, attribution ratio, and binary result
-  labels are reproducible experimental choices rather than universal Stage 1
-  conventions. Status: accepted for a limited close-over-this-interval claim;
-  high-excitation threshold-crossing cases remain numerically unresolved. The
-  teaching prototype under `../prototypes/initial_condition_sensitivity/` is a
-  derived Experiment 002 interaction, not a third mathematical experiment.
+This strand earns deterministic rectangular work units, authoritative local
+persistence, and assembled periodic-field execution and resume semantics.
 
-- `003_lyapunov_distance_contract/` - compares two explicit, dimensionally
-  coherent Euler–Lagrange/Cartesian full-state distances with the bounded
-  second-bob display observable, including controlled perturbation, tolerance,
-  sampling, and scaling checks. Status: accepted for distance-convention
-  findings; no growth rate or exponent estimated.
+- **017 — Rectangular work-unit boundary:** accepts deterministic half-open `8 x 8` work units and contains the associated endpoint-`max_step` audit and targeted-fallback investigation.
+- **018 — HDF5 persistence boundary:** accepts a fail-closed HDF5 tile transaction, integrity, and resume contract for local scientific fields.
+- **019 — Assembled map-scale validation:** validates the complete bounded `64 x 64` periodic execution, tiling, persistence, resume, oracle-check, and downstream-rendering pipeline.
 
-- `004_finite_time_exponential_growth/` - audits whether the Experiment 003
-  nearby-state growth contains a reproducible approximately exponential finite
-  interval. Candidate A remains primary and Candidate B a robustness check;
-  interval selection and provisional thresholds are predeclared. Lifted angles
-  and signed revolutions are retained separately as global history diagnostics.
-  Status: completed with a valid rejection—no defensible common interval under
-  the predeclared rule; no Lyapunov exponent or renormalisation implemented.
+The shared generated-output boundary remains
+`development/chaos_content/outputs/`; it is not reorganized by these archival
+strands.
 
-- `005_renormalised_local_stretching/` - repeatedly restores the scaled
-  Candidate-A perturbation magnitude while retaining its evolved direction and
-  accumulating all signed cycle stretching. Its repaired second numerical
-  iteration uses locally rebased solver coordinates, separate winding history,
-  and an explicit mechanically chosen step cap. Status: Outcome C—the original
-  $10^{-6}$ reconstruction and `0.125 s` energy failures are repaired and
-  max-step refinement is stable, but strict-tolerance and duration convergence
-  still fail; no maximal Lyapunov exponent accepted.
+## Archive discipline
 
-- `006_variational_dynamics_validation/` - directly evolves the infinitesimal
-  Euler–Lagrange tangent vector with a production-derived symbolic Jacobian,
-  validates that Jacobian independently, and compares tangent norm and signed
-  direction with the $10^{-4}$, $10^{-5}$, and $10^{-6}$ finite-shadow local
-  limit. Status: accepted for the limited short-time formulation claim;
-  baseline/strict and half-step policies agree within the predeclared bounds,
-  but no long-time tangent renormalisation or maximal Lyapunov exponent is
-  included.
+Each numbered directory owns its question, implementation, focused tests, and
+authoritative README. Experiments may use production model code as a documented
+read-only reference, but production code must never import experiments or
+development prototypes. Generated diagnostics remain under the ignored shared
+outputs tree. A directory number communicates chronology only: status must be
+read from the experiment's own README, and no plot, metric, or API becomes
+production-ready merely by appearing in this archive.
 
-- `007_full_matrix_qr_tangent_dynamics/` - extends the validated Experiment
-  006 tangent flow to a physical-coordinate `4x4` basis and performs periodic
-  QR in Candidate-A-scaled coordinates. Status: the internal QR primitive is
-  accepted, but the `20/40/80 s` convergence iteration is numerically
-  unresolved: all runs remain valid while duration, tolerance, step-cap,
-  QR-interval, and one-vector agreement criteria fail. No converged Lyapunov
-  spectrum is accepted.
-
-- `008_common_reference_qr_isolation/` - drives all Experiment 007 tangent and
-  QR policy variants from one strict, half-step, locally refined piecewise-
-  dense Euler–Lagrange reference history. Status: accepted for the limited
-  diagnostic claim that the prior material separation primarily came from
-  divergence of independently integrated reference shadows; common-reference
-  policy differences collapse to at most $6.37\times10^{-7}\ \mathrm{s^{-1}}$.
-  No converged spectrum is accepted.
-
-- `009_independent_shadow_spectrum_compatibility/` - integrates baseline,
-  strict-tolerance, and half-step reference+tangent shadows independently to
-  `320 s`, then separates within-shadow cumulative drift from between-shadow
-  spread. Status: unresolved; all runs are valid and agreement improves
-  markedly after decorrelation, but late-window fluctuation and final/late
-  spread remain marginally above the predeclared compatibility limits. No
-  Lyapunov spectrum is accepted.
-
-- `010_independent_shadow_640s_compatibility/` - extends the unchanged three-
-  shadow Euler–Lagrange QR ensemble to `640 s`. Status: accepted for the
-  declared statistical-compatibility claim; all retained settling, spread,
-  and numerical-validity criteria pass, yielding a bounded numerical spectrum
-  estimate for one initial condition and three deterministic policies.
-
-- `011_hamiltonian_canonical_spectrum_crosscheck/` - preserves its source
-  inventory, then derives the canonical reference and tangent flow directly
-  from the repository Hamiltonian and validates state/tangent maps, energy,
-  periodicity, short EL/canonical reference agreement, and the canonical
-  Jacobian. It then validates Candidate-A pullback QR and completes a frozen
-  three-shadow `640 s` canonical comparison. Status: Phases A–C accepted within
-  their declared boundaries; the canonical ensemble is internally compatible
-  and descriptively compatible with Experiment 010's independent EL ensemble
-  for one physical initial condition.
-
-- `012_initial_condition_spectrum_robustness/` - executes the frozen
-  three-condition zero-initial-velocity EL/canonical robustness protocol. All
-  `18` runs are numerically valid. IC-2 has settled formulation agreement
-  without demonstrated shadow independence; the early-decorrelated IC-1 and
-  IC-3 ensembles remain unsettled at `640 s`. Status: full selected-set
-  formulation robustness unresolved at the declared duration.
-
-- `013_restart_grade_qr_continuation/` - adds an explicit, provenance-bound
-  QR-boundary checkpoint schema and continuation inputs to the accepted EL and
-  canonical tangent-QR primitives. Status: Phase A accepted; lossless NPZ
-  serialization and short `0.5→1.0 s` split runs reproduce the corresponding
-  uninterrupted calculations with zero observed numerical difference for both
-  formulations. No long-time Lyapunov evidence or Experiment 012 settling
-  claim is added.
-
-- `014_unsettled_shadow_duration_convergence/` - executes a frozen, from-zero
-  EL-only `1280 s` duration extension for Experiment 012's outcome-conditioned
-  IC-1 and IC-3 ensembles, with restart-grade evidence at every analysis
-  checkpoint. Status: executed; all six runs are numerically valid and
-  decorrelated. IC-1 satisfies every settling limit, while IC-3 retains an
-  outer-component final range of `0.08894 s^-1` and remains unsettled. The
-  targeted long-time investigation therefore closes with only IC-1 accepted.
+The living Lyapunov claim history is summarized in
+[`LYAPUNOV_STATUS.md`](LYAPUNOV_STATUS.md). The independent audit of the
+original Experiment 005 evidence remains in
+[`LYAPUNOV_REVIEW.md`](LYAPUNOV_REVIEW.md).

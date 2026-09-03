@@ -10,7 +10,7 @@ It is an exploratory interaction surface, not a production application feature,
 an accepted Stage 1 numerical contract, or a chaos detector.
 
 This teaching-surface candidate is derived from chronological Experiment 002,
-`../../experiments/002_initial_condition_sensitivity/`. It remains under
+`../../experiments/foundations/002_initial_condition_sensitivity/`. It remains under
 `prototypes/` because its interaction code and assets test pedagogy rather than
 define another mathematical experiment. The separate location does not weaken
 that provenance, and the prototype must not become a production dependency.
