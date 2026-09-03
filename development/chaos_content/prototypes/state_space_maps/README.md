@@ -35,22 +35,25 @@ the separate ignored `outputs/finite_time_field/` boundary.
 
 ## Current validated boundary
 
-The reusable pipeline preserves
-`values[theta2_index, theta1_index]`, exact `[-pi, pi)` periodic axes,
-deterministic `8 x 8` work units with clipped edges, four spawn-isolated
-workers with bounded lifecycle, compact status/route arrays, and fail-closed
-HDF5 tile completion and checksums. The first consumer uses the promoted
-hybrid finite-time Lyapunov evaluator: compiled DOP853 normally, with the
-compiled-RHS `solve_ivp` oracle used only for the independently verified
-endpoint `max_step` incompatibility.
+The validated system combines reusable neutral scalar-field generation with
+one demonstrated scientific consumer: the finite-time one-vector stretching
+rate. It preserves the declared `[theta2, theta1]` storage orientation, exact
+`[-pi, pi)` periodic axes, bounded local execution, and fail-closed persisted
+resume state without making the neutral machinery depend on Lyapunov science.
 
 The HDF5 scalar field is the authoritative scientific artifact. JSON summaries
 and images are derivatives and can be regenerated from a closed, validated
 artifact without rerunning dynamics.
 
-See [the architecture document](docs/architecture.md) for neutral generation
-contracts and [the Lyapunov documentation](docs/lyapunov/README.md) for the
-observable, evaluators, validation evidence, and mathematical storyboard.
+## Documentation
+
+- [Software architecture](docs/architecture.md) explains the neutral field,
+  generation, execution, persistence, and scientific-consumer boundaries.
+- [Finite-time one-vector stretching](docs/science/finite_time_stretching.md)
+  defines the current observable, its provenance, and its claim boundary.
+- [Sensitivity to Lyapunov storyboard](docs/pedagogy/sensitivity_to_lyapunov.md)
+  presents the teaching progression from nearby trajectories to renormalised
+  finite-time stretching.
 
 ## Manual operational finite-time field
 

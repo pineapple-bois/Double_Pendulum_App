@@ -1,142 +1,99 @@
-# Lyapunov finite-time stretching
+# Finite-time one-vector stretching
 
-`../../src/lyapunov/` contains reusable, pre-production scientific references
-for the Lyapunov consumer of the state-space-map prototype. Experiments remain
-the forensic evidence; this code
+This is the canonical scientific reference for the finite-time stretching
+consumer of the state-space-map prototype. It defines the quantity, records
+its numerical and validation provenance, and bounds the claims that may be
+made from it. See the [prototype README](../../README.md) to run the workflow,
+the [software architecture](../architecture.md) for dependency boundaries,
+and the [pedagogical storyboard](../pedagogy/sensitivity_to_lyapunov.md) for
+the teaching progression.
+
+`../../src/lyapunov/` contains the reusable pre-production scientific
+implementation. Experiments remain the forensic evidence; the implementation
 embodies only contracts already earned by that evidence. Production code must
-not import this directory.
+not import this prototype directory.
 
-The first story is **Sensitivity to Lyapunov**:
+## Observable definition
 
-```text
-nearby physical trajectories
-    -> second-bob Cartesian separation
-    -> Candidate-A finite full-state separation
-    -> direct infinitesimal tangent evolution
-    -> logarithmic tangent stretch
-    -> finite-time stretching-rate diagnostic
-```
+The Euler--Lagrange state is
 
-The strand now also extracts the next reusable primitive: repeated one-vector
-evolve / measure / renormalise cycles producing one declared fixed-horizon
-finite-time stretching rate. It extends the same mathematics; it is not a
-separate mini-project.
+$$
+x=(\theta_1,\theta_2,\omega_1,\omega_2).
+$$
 
-The first repeated-evaluation apparatus is a bounded one-dimensional sweep of
-the initial `theta1` coordinate. It delegates every sample to that existing
-primitive and adds only ordering, per-sample outcome/provenance, timing, and
-diagnostic plot/data composition.
+Candidate A supplies the declared tangent-space geometry
 
-The next apparatus is a tiny rectangular `theta1`–`theta2` reference grid. It
-is a peer of the 1-D sweep: both sampling strategies call the same
-Lyapunov-specific evaluator and retain the same coordinate-neutral scalar
-outcome. The grid is no longer represented as a collection of theta1 sweeps.
+$$
+S=\operatorname{diag}(1,1,T_c,T_c),
+\qquad
+T_c=\sqrt{L_c/g},
+$$
 
-The mathematical narrative lives beside the implementation in
-[`storyboards/sensitivity_to_lyapunov.md`](storyboards/sensitivity_to_lyapunov.md).
-Future visuals in this strand should use similarly story-specific local
-documents, allowing their mathematics to coexist without accumulating
-unrelated derivations in this README or a repository-wide document.
+with the experimentally validated convention $L_c=1\ \mathrm{m}$. Candidate A
+is a named, dimensionally coherent working metric; it is not claimed to be a
+unique norm.
 
-Broader cross-observable, compiled-evaluator, tiling, storage, rendering, and
-production-delivery direction lives in
-[`chaos_prototype_architecture.md`](../../../../notes/chaos_prototype_architecture.md).
-This README remains responsible only for the Lyapunov strand.
+The operational field sets both initial angular velocities to zero and starts
+from the Candidate-A unit tangent
 
-## Why this structure
+$$
+\delta x_0=(1,0,0,0).
+$$
 
-The current story needs one small scientific kernel and one composition, not a
-framework. Within `src/lyapunov/`:
+The reference state and tangent evolve together under
 
-- `reference.py` owns semantic specifications/results, Candidate-A geometry,
-  physical observables, the production-derived Euler--Lagrange flow/Jacobian,
-  bounded piecewise integration, the composed sensitivity calculation, and
-  the one-vector renormalised tangent calculation;
-- `evaluation.py` adapts that unchanged rich NumPy/SciPy reference result to
-  the neutral scalar-evaluation outcome and is the future
-  reference-versus-compiled seam;
-- `compiled.py` re-expresses only the explicit Euler--Lagrange flow and exact
-  Jacobian-vector product as a Numba kernel while retaining the reference
-  SciPy DOP853 driver, renormalisation, diagnostics, and result contracts;
-- `compiled_dop853.py` composes that validated Numba RHS/JVP with the compiled
-  DOP853 segment boundary accepted by Experiment 015, observes
-  accepted steps for the energy diagnostic, and returns the same result and
-  scalar-evaluation contracts;
-- `compiled_equivalence.py` owns the bounded center-plus-corners equivalence
-  assessment and separates first-call compilation cost from warmed evaluator
-  throughput;
-- `src/state_space_fields.py` owns only the earned cross-observable outcome,
-  explicit-axis line/rectangle reference sampling, and full periodic
-  angular-domain contracts;
-- `src/generation/` owns neutral half-open work units, bounded
-  spawn-process execution, authoritative HDF5 persistence/resume, and
-  dynamics-free field validation;
-- `field_adapter.py` binds exact periodic coordinates and the unchanged hybrid
-  finite-time evaluator to that neutral runner, supplies Lyapunov tile
-  diagnostics, and retains the established oracle gates;
-- `runners/generate_lyapunov_periodic_field.py` is the explicit create/resume CLI for this
-  first concrete scalar-field consumer;
-- `runners/render_finite_time_field.py` validates and renders a completed
-  authoritative HDF5 field directly to PNG and PDF without importing Lyapunov
-  or generation execution code;
-- `runners/render_sensitivity_to_lyapunov.py` composes the structured reference result into
-  the first four-panel pedagogical figure; it performs no validation and emits
-  no narrated console story;
-- `sweep.py` owns the Lyapunov-specific 1-D specification and initial-state
-  substitution, then composes the neutral line sampler with the evaluator;
-- `runners/render_lyapunov_theta1_sweep.py` declares and renders the first small sweep without
-  implementing any Lyapunov mathematics;
-- `grid.py` owns the Lyapunov-specific rectangular specification and
-  initial-state substitution, then composes the neutral rectangular sampler;
-  it has no dependency on `sweep.py`;
-- `runners/render_lyapunov_reference_grid.py` independently persists the scalar field and renders
-  its basic diagnostic heatmap;
-- `tests/` checks the reference contracts, Experiment 006/007 fixtures,
-  neutral sampling and periodic domains, coordinate substitution,
-  independent-point equivalence, and invalid/error handling;
-- `storyboards/sensitivity_to_lyapunov.md` derives this visual's pedagogical
-  progression and claim boundary.
+$$
+\frac{\mathrm{d}x}{\mathrm{d}t}=f(x),
+\qquad
+\frac{\mathrm{d}\delta x}{\mathrm{d}t}=J(x)\delta x,
+\qquad
+J(x)=\frac{\partial f}{\partial x}.
+$$
 
-This keeps files aligned with scientific responsibilities without splitting a
-small prototype into a speculative `model/state/trajectory/manager` hierarchy.
-The only stateful calculation object is `EulerLagrangeDynamics`, whose single
-job is to compile the accepted flow and its exact symbolic Jacobian.
+At each declared renormalisation boundary $t_k$, the calculation measures the
+positive Candidate-A stretch factor
 
-## Render the first visual
+$$
+r_k=\left\|S\delta x(t_k^-)\right\|_2,
+$$
 
-From the repository root:
+retains the signed logarithmic increment $\log r_k$, and resets only the
+tangent magnitude while preserving its evolved direction:
 
-```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_sensitivity_to_lyapunov
-```
+$$
+\delta x(t_k^+)
+=
+S^{-1}\frac{S\delta x(t_k^-)}{r_k}.
+$$
 
-The command writes the first concrete prototype deliverable to the predictable
-prototype-relative path `outputs/lyapunov/sensitivity_to_lyapunov.png`. Generated files in
-`outputs/` are intentionally ignored by Git. The executable emits no terminal
-narration: numerical regression evidence remains in the focused tests, while
-the mathematical explanation remains in the local storyboard.
+For the fixed horizon $T$, the stored scalar is
 
-Run the focused tests:
+$$
+\Lambda_T^{(1)}
+=
+\frac{1}{T}\sum_{k=1}^{n}\log r_k.
+$$
 
-```bash
-uv run pytest development/chaos_content/prototypes/state_space_maps/tests
-```
+The promoted field uses $T=5\ \mathrm{s}$ and a $0.25\ \mathrm{s}$
+renormalisation interval. The superscript $(1)$ records a one-vector,
+one-direction calculation: this is a fixed-horizon finite-time stretching
+rate, not a full tangent-space spectrum or an asymptotic maximal Lyapunov
+exponent.
 
-## Run the reference-versus-compiled assessment
+## Numerical and scientific provenance
 
-From the repository root:
+The NumPy/SymPy plus SciPy `solve_ivp` path is the mathematical and scientific
+oracle. The compiled implementations preserve the same Candidate-A geometry,
+direct Jacobian-vector evolution, DOP853 numerical policy, renormalisation,
+validity definitions, and result contract. The promoted hybrid evaluator uses
+the compiled DOP853 path normally and invokes the compiled-RHS `solve_ivp`
+oracle only for the independently verified endpoint-step incompatibility.
 
-```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_equivalence
-```
-
-This writes the prototype-relative, intentionally untracked
-`outputs/lyapunov/reference_vs_compiled_equivalence.json`. The assessment fixes the
-existing `T=5 s`, `0.25 s` renormalisation, pure-`theta1` tangent, zero initial
-angular velocities, Candidate-A geometry, and DOP853 policy. Its validation
-set is the center plus four corners of the already declared
-`169 deg`--`189 deg` angle rectangle; it was fixed before compiled results were
-inspected.
+The bounded reference-versus-compiled assessment fixes the existing
+`T=5 s`, `0.25 s` renormalisation, pure-`theta1` tangent, zero initial angular
+velocities, Candidate-A geometry, and DOP853 policy. Its validation set is the
+center plus four corners of the already declared `169 deg`--`189 deg` angle
+rectangle; it was fixed before compiled results were inspected.
 
 The predeclared scalar acceptance tolerance is an absolute
 `1e-8 s^-1`. Cycle log increments, final reference/tangent state, numerical
@@ -150,22 +107,10 @@ The first compiled call includes LLVM compilation plus one evaluation. Warmed
 timings are measured only after both paths have completed the validation set.
 Timing is implementation evidence, not part of scientific equivalence.
 
-## Run the bounded 1-D sweep
+## Bounded sampling evidence
 
-From the repository root:
-
-```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_lyapunov_theta1_sweep
-```
-
-This writes two prototype-relative, intentionally untracked deliverables:
-
-- `outputs/lyapunov/theta1_finite_time_sweep.png` — the diagnostic line plot;
-- `outputs/lyapunov/theta1_finite_time_sweep.json` — the inspectable values,
-  per-sample statuses and diagnostics, fixed specification, and timing.
-
-The executable emits no narrated console story. The demonstration uses 15
-uniform samples of `theta1(0)` from `169 deg` through `189 deg`, including the
+The one-dimensional demonstration uses 15 uniform samples of `theta1(0)` from
+`169 deg` through `189 deg`, including the
 trusted `179 deg` condition. It fixes `theta2(0)=179 deg`, both initial angular
 velocities at zero, the pure-`theta1` initial tangent, `T=5 s`, the `0.25 s`
 renormalisation interval, Candidate-A geometry, and the accepted DOP853 solver
@@ -173,24 +118,9 @@ policy. The interval was selected symmetrically around the reference condition
 before evaluating the completed sweep; it was not chosen to isolate visually
 interesting behaviour.
 
-## Run the bounded 2-D reference grid
-
-From the repository root:
-
-```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_lyapunov_reference_grid
-```
-
-This writes two independent, prototype-relative, intentionally untracked
-deliverables:
-
-- `outputs/lyapunov/theta1_theta2_finite_time_grid.json` — axes, scalar field,
-  per-cell statuses and diagnostics, fixed specification, and timing;
-- `outputs/lyapunov/theta1_theta2_finite_time_grid.png` — a heatmap rendered separately
-  from the persisted field.
-
-The demonstration uses a mechanically selected `9 x 9` square: both initial
-angle axes run uniformly from `169 deg` through `189 deg`, so the trusted
+The two-dimensional demonstration uses a mechanically selected `9 x 9`
+square. Both initial angle axes run uniformly from `169 deg` through `189 deg`,
+so the trusted
 `(179 deg, 179 deg)` condition is the center cell. Both angular velocities,
 the pure-`theta1` tangent, `T=5 s`, the `0.25 s` renormalisation interval,
 Candidate-A geometry, and the accepted DOP853 policy are fixed across all 81
@@ -357,56 +287,7 @@ fallback frequency and throughput over the full periodic domain are not yet
 established, and the hybrid API does not introduce tile, persistence, or
 production-delivery semantics.
 
-## Generate an authoritative periodic scalar field
-
-The promoted field entry point is:
-
-```python
-summary = run_periodic_lyapunov_field(
-    output_path,
-    samples_per_axis,
-    mode="create",  # or "resume"
-)
-```
-
-It composes the unchanged hybrid evaluator with the accepted `8 x 8`
-half-open work units, four spawn workers, per-cell dispatch, 1,024-cell bounded
-worker lifetime, and coordinator-owned HDF5 adapter. The neutral runner does
-not import this strand.
-
-`create` uses exclusive HDF5 creation and refuses an existing path. `resume`
-requires an existing artifact whose axes, field definition, scientific and
-software provenance, work-unit plan, and integrity evidence exactly match the
-requested run. Complete checksum-valid tiles are skipped. Incomplete tiles are
-retried; corrupt complete tiles fail closed.
-
-The operational CLI takes one square-resolution input,
-`--samples-per-axis N`. That value determines the field shape, plan totals,
-progress reporting, manifest metadata, and default same-stem output names. The
-first substantial worked example is separately authorised at `512 x 512`; it
-is not part of prototype validation. Its command is:
-
-```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
-  --samples-per-axis 512 \
-  --create
-```
-
-Use the identical command with `--resume` instead of `--create` after an
-interruption. The command reports throttled coordinator progress and writes a
-human-readable run/provenance/oracle manifest only after final validation. For
-this example, its default authoritative destination is
-`outputs/finite_time_field/finite_time_field_512.h5`, with the optional manifest
-at `outputs/finite_time_field/finite_time_field_512.json`. Other values of `N`
-naturally use `finite_time_field_N.h5` and `finite_time_field_N.json`. After
-completion, `runners/render_finite_time_field.py` reads that closed artifact
-and writes same-stem PNG and PDF derivatives without invoking dynamics. The
-HDF5 numerical field remains authoritative; neither resume nor rendering
-depends on the JSON.
-
-The accepted execution, work-unit, and persistence policies are bounded local
-contracts. They do not establish the fallback frequency, throughput, memory,
-or HDF5 metadata cost of the `512 x 512` field before it is measured.
+## Sampling APIs
 
 The 1-D orchestration API is:
 

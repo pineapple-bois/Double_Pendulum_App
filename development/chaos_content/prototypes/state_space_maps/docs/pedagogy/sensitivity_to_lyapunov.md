@@ -1,8 +1,13 @@
 # Sensitivity to Lyapunov — mathematical storyboard
 
-This is the mathematical companion to the strand's first rendered figure. The
-executable writes that deliverable under `../outputs/`; explanation belongs
-here rather than in terminal narration.
+This is the teaching progression behind the strand's first rendered figure.
+It leads from visible trajectory sensitivity to tangent growth and then to a
+renormalised finite-time stretching rate. The
+[scientific reference](../science/finite_time_stretching.md) owns the exact
+observable definition, conventions, numerical provenance, and claim boundary.
+The executable writes its legacy development deliverable under
+`../../outputs/lyapunov/`; explanation belongs here rather than in terminal
+narration.
 
 ## The learning question
 
