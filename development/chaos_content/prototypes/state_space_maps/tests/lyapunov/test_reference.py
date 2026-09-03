@@ -3,16 +3,9 @@
 from __future__ import annotations
 
 import math
-from pathlib import Path
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-STATE_SPACE_MAPS_ROOT = Path(__file__).resolve().parents[2]
 
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import (
     CandidateAMetric,
@@ -25,7 +18,6 @@ from development.chaos_content.prototypes.state_space_maps.src.lyapunov.referenc
     second_bob_separation,
     wrap_angle_difference,
 )
-from development.chaos_content.prototypes.state_space_maps.runners.render_sensitivity_to_lyapunov import DEFAULT_FIGURE_PATH, build_figure
 from src.double_pendulum.models import (
     SIMPLE_REFERENCE_SOLVER_POLICY,
     DoublePendulumLagrangian,
@@ -187,25 +179,6 @@ def test_default_spec_declares_experiment_006_local_contract() -> None:
     assert spec.chart_rebase_interval == 0.25
     assert spec.local_distance_ceiling == 1.0e-2
     assert spec.finite_perturbation == (0.0, 1.0e-6, 0.0, 0.0)
-
-
-def test_first_figure_exposes_the_pedagogical_progression(result) -> None:
-    figure = build_figure(result)
-    titles = [axis.get_title() for axis in figure.axes]
-    assert "1. Physical Cartesian separation" in titles
-    assert "2. Finite Candidate-A state separation" in titles
-    assert "3. Local tangent stretching" in titles
-    assert any("not an asymptotic exponent" in title for title in titles)
-    plt.close(figure)
-
-
-def test_default_figure_path_is_strand_local() -> None:
-    assert DEFAULT_FIGURE_PATH == (
-        STATE_SPACE_MAPS_ROOT
-        / "outputs"
-        / "lyapunov"
-        / "sensitivity_to_lyapunov.png"
-    )
 
 
 def test_renormalized_tangent_reproduces_experiment_007_prefix(

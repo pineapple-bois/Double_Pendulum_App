@@ -2,32 +2,17 @@
 
 from __future__ import annotations
 
-import json
 import math
 from dataclasses import replace
-from pathlib import Path
 from types import SimpleNamespace
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-STATE_SPACE_MAPS_ROOT = Path(__file__).resolve().parents[2]
 
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov import evaluation as evaluation_module
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.evaluation import evaluate_renormalized_tangent_reference
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import RenormalizedTangentSpec, run_renormalized_tangent
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.sweep import Theta1SweepSpec, run_theta1_sweep
-from development.chaos_content.prototypes.state_space_maps.runners.render_lyapunov_theta1_sweep import (
-    DEFAULT_DATA_PATH,
-    DEFAULT_FIGURE_PATH,
-    DEMONSTRATION_SPEC,
-    build_figure,
-    save_deliverables,
-)
 from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     ScalarEvaluation,
@@ -165,59 +150,6 @@ def test_reference_adapter_bounds_runtime_errors_only(monkeypatch) -> None:
     )
     with pytest.raises(ValueError, match="programming failure"):
         evaluate_renormalized_tangent_reference(RenormalizedTangentSpec())
-
-
-def test_sweep_figure_and_json_preserve_semantics(short_sweep, tmp_path) -> None:
-    figure = build_figure(short_sweep)
-    axis = figure.axes[0]
-    assert "not asymptotic" in axis.get_title()
-    assert axis.get_xlabel() == r"initial angle $\theta_1(0)$ (degrees)"
-    plt.close(figure)
-
-    figure_path = tmp_path / "sweep.png"
-    data_path = tmp_path / "sweep.json"
-    save_deliverables(
-        short_sweep,
-        figure_path=figure_path,
-        data_path=data_path,
-    )
-    payload = json.loads(data_path.read_text(encoding="utf-8"))
-    assert figure_path.is_file()
-    assert payload["asymptotic_convergence_claimed"] is False
-    assert payload["sweep_coordinate"] == "theta1"
-    assert payload["timing"]["sample_count"] == 3
-    assert payload["samples"][1]["theta1_degrees"] == 179.0
-    assert payload["samples"][1]["initial_state_radians"]["theta1"] == pytest.approx(
-        math.radians(179.0)
-    )
-    assert [sample["status"] for sample in payload["samples"]] == [
-        "completed_valid",
-        "completed_valid",
-        "completed_valid",
-    ]
-    assert {sample["evaluator"] for sample in payload["samples"]} == {
-        "numpy_scipy_reference"
-    }
-
-
-def test_demonstration_definition_and_output_paths_are_bounded_and_local() -> None:
-    assert len(DEMONSTRATION_SPEC.theta1_degrees) == 15
-    assert DEMONSTRATION_SPEC.theta1_degrees[0] == 169.0
-    assert DEMONSTRATION_SPEC.theta1_degrees[7] == 179.0
-    assert DEMONSTRATION_SPEC.theta1_degrees[-1] == 189.0
-    assert DEMONSTRATION_SPEC.observable_spec == RenormalizedTangentSpec()
-    assert DEFAULT_FIGURE_PATH == (
-        STATE_SPACE_MAPS_ROOT
-        / "outputs"
-        / "lyapunov"
-        / "theta1_finite_time_sweep.png"
-    )
-    assert DEFAULT_DATA_PATH == (
-        STATE_SPACE_MAPS_ROOT
-        / "outputs"
-        / "lyapunov"
-        / "theta1_finite_time_sweep.json"
-    )
 
 
 def test_sweep_values_must_be_strictly_increasing() -> None:

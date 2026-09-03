@@ -5,9 +5,9 @@ It leads from visible trajectory sensitivity to tangent growth and then to a
 renormalised finite-time stretching rate. The
 [scientific reference](../science/finite_time_stretching.md) owns the exact
 observable definition, conventions, numerical provenance, and claim boundary.
-The executable writes its legacy development deliverable under
-`../../outputs/lyapunov/`; explanation belongs here rather than in terminal
-narration.
+The supported operational field and rendering workflow is documented in the
+[prototype README](../../README.md); this storyboard owns the explanation
+rather than an executable or generated development image.
 
 ## The learning question
 

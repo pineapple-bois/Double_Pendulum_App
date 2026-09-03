@@ -4,30 +4,13 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
-from pathlib import Path
 from types import SimpleNamespace
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
-STATE_SPACE_MAPS_ROOT = Path(__file__).resolve().parents[2]
-
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.grid import Theta1Theta2GridSpec, run_theta1_theta2_grid
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.reference import RenormalizedTangentSpec, run_renormalized_tangent
-from development.chaos_content.prototypes.state_space_maps.runners.render_lyapunov_reference_grid import (
-    DEFAULT_DATA_PATH,
-    DEFAULT_FIGURE_PATH,
-    DEMONSTRATION_SPEC,
-    SMOKE_SPEC,
-    build_heatmap,
-    load_grid_data,
-    save_grid_data,
-    save_heatmap,
-)
 from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
     EvaluationStatus,
     RectangularCell,
@@ -175,97 +158,6 @@ def test_grid_does_not_hide_evaluator_programming_errors() -> None:
             ),
             evaluator=programming_error,
         )
-
-
-def test_persisted_field_reloads_with_identical_axes_values_and_statuses(
-    short_grid, tmp_path
-) -> None:
-    path = save_grid_data(short_grid, tmp_path / "grid.json")
-    payload = load_grid_data(path)
-
-    assert payload["array_convention"] == (
-        "values_per_second[theta2_index][theta1_index]"
-    )
-    assert payload["shape"] == [2, 3]
-    np.testing.assert_array_equal(
-        payload["theta1_axis_degrees"], short_grid.theta1_axis_degrees
-    )
-    np.testing.assert_array_equal(
-        payload["theta2_axis_degrees"], short_grid.theta2_axis_degrees
-    )
-    np.testing.assert_array_equal(payload["values_per_second"], short_grid.values)
-    np.testing.assert_array_equal(payload["statuses"], short_grid.statuses)
-    assert {cell["evaluator"] for cell in payload["cells"]} == {
-        "numpy_scipy_reference"
-    }
-    target = next(
-        cell
-        for cell in payload["cells"]
-        if cell["theta2_index"] == 1 and cell["theta1_index"] == 2
-    )
-    assert target["theta1_degrees"] == 180.0
-    assert target["theta2_degrees"] == 180.0
-    assert target["initial_state_radians"]["theta1"] == pytest.approx(math.pi)
-    assert target["initial_state_radians"]["theta2"] == pytest.approx(math.pi)
-
-
-def test_heatmap_mesh_uses_theta1_columns_and_theta2_rows(short_grid) -> None:
-    figure = build_heatmap(short_grid)
-    axis = figure.axes[0]
-    mesh = axis.collections[0]
-    theta2_index, theta1_index = 1, 2
-    coordinates = mesh.get_coordinates()
-    cell_center = coordinates[
-        theta2_index : theta2_index + 2,
-        theta1_index : theta1_index + 2,
-    ].mean(axis=(0, 1))
-
-    np.testing.assert_allclose(
-        cell_center,
-        [
-            short_grid.theta1_axis_degrees[theta1_index],
-            short_grid.theta2_axis_degrees[theta2_index],
-        ],
-        rtol=0.0,
-        atol=1.0e-12,
-    )
-    np.testing.assert_array_equal(
-        np.ma.getdata(mesh.get_array()).reshape(short_grid.shape),
-        short_grid.values,
-    )
-    assert axis.get_xlabel() == r"initial angle $\theta_1(0)$ (degrees)"
-    assert axis.get_ylabel() == r"initial angle $\theta_2(0)$ (degrees)"
-    plt.close(figure)
-
-
-def test_heatmap_can_be_saved_without_recomputing_grid(short_grid, tmp_path) -> None:
-    path = save_heatmap(short_grid, tmp_path / "grid.png")
-    assert path.is_file()
-    assert path.stat().st_size > 0
-
-
-def test_smoke_and_demonstration_definitions_are_bounded_and_source_local() -> None:
-    assert SMOKE_SPEC.shape == (4, 4)
-    assert DEMONSTRATION_SPEC.shape == (9, 9)
-    assert DEMONSTRATION_SPEC.theta1_degrees[0] == 169.0
-    assert DEMONSTRATION_SPEC.theta1_degrees[4] == 179.0
-    assert DEMONSTRATION_SPEC.theta1_degrees[-1] == 189.0
-    assert DEMONSTRATION_SPEC.theta2_degrees[0] == 169.0
-    assert DEMONSTRATION_SPEC.theta2_degrees[4] == 179.0
-    assert DEMONSTRATION_SPEC.theta2_degrees[-1] == 189.0
-    assert DEMONSTRATION_SPEC.observable_spec == RenormalizedTangentSpec()
-    assert DEFAULT_DATA_PATH == (
-        STATE_SPACE_MAPS_ROOT
-        / "outputs"
-        / "lyapunov"
-        / "theta1_theta2_finite_time_grid.json"
-    )
-    assert DEFAULT_FIGURE_PATH == (
-        STATE_SPACE_MAPS_ROOT
-        / "outputs"
-        / "lyapunov"
-        / "theta1_theta2_finite_time_grid.png"
-    )
 
 
 def test_grid_axes_must_be_strictly_increasing() -> None:
