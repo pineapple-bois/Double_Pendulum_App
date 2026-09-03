@@ -1,0 +1,476 @@
+{
+  "correctness": {
+    "all_routes_statuses_values_diagnostics_stable": true,
+    "checks": 4096,
+    "failures": 0,
+    "mismatch_examples": []
+  },
+  "created_at_utc": "2026-09-03T21:37:19.134541+00:00",
+  "derived": {
+    "after_first_checkpoint_median_rss_bytes": 242909184.0,
+    "cumulative_completed_cells_by_pid": {
+      "17011": 1018,
+      "17012": 1023,
+      "17013": 1026,
+      "17014": 1029
+    },
+    "final_median_rss_bytes": 411721728.0,
+    "first_checkpoint_to_final_median_growth_bytes": 168812544.0,
+    "ready_median_rss_bytes": 232357888.0,
+    "ready_to_final_median_growth_bytes": 179363840.0
+  },
+  "design": {
+    "checkpoint_rationale": "retain Experiment 017 checkpoints through 2048 pool-wide cells and add one predeclared doubling to 4096 to distinguish continued growth from an early plateau in the promoted hybrid worker",
+    "checkpoints_pool_completed_cells": [
+      256,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "chunksize": 1,
+    "measured_scientific_evaluations": 4096,
+    "operational_field_cell_fraction": 0.00390625,
+    "process_width": 4,
+    "production_recycling_limit_not_applied": true,
+    "start_method": "spawn",
+    "task_stream": "non-rectangular repetition of eight accepted fast-route scientific cells",
+    "total_scientific_evaluations": 4100,
+    "warmup_scientific_evaluations": 4
+  },
+  "measurement": {
+    "all_workers_stopped": true,
+    "checkpoints": [
+      {
+        "completed_cells_pool_total": 0,
+        "coordinator_memory": {
+          "current_rss_bytes": 190382080,
+          "peak_rss_bytes": 192217088
+        },
+        "cumulative_completed_by_pid": {
+          "17011": 0,
+          "17012": 0,
+          "17013": 0,
+          "17014": 0
+        },
+        "rss": {
+          "delta_from_ready_bytes_by_pid": {
+            "17011": 0,
+            "17012": 0,
+            "17013": 0,
+            "17014": 0
+          },
+          "errors_by_pid": {},
+          "maximum_rss_bytes": 232914944,
+          "median_delta_from_ready_bytes": 0.0,
+          "median_rss_bytes": 232357888.0,
+          "minimum_rss_bytes": 230604800,
+          "rss_bytes_by_pid": {
+            "17011": 230604800,
+            "17012": 232062976,
+            "17013": 232652800,
+            "17014": 232914944
+          }
+        },
+        "window_cells": 0,
+        "window_cells_per_second": null,
+        "window_evaluator_occupancy_proxy": null,
+        "window_mean_evaluator_seconds": null,
+        "window_seconds": null
+      },
+      {
+        "completed_cells_pool_total": 256,
+        "coordinator_memory": {
+          "current_rss_bytes": 191348736,
+          "peak_rss_bytes": 192217088
+        },
+        "cumulative_completed_by_pid": {
+          "17011": 65,
+          "17012": 64,
+          "17013": 64,
+          "17014": 63
+        },
+        "cumulative_peak_rss_bytes_by_pid": {
+          "17011": 241254400,
+          "17012": 242728960,
+          "17013": 243089408,
+          "17014": 243204096
+        },
+        "rss": {
+          "delta_from_ready_bytes_by_pid": {
+            "17011": 10649600,
+            "17012": 10665984,
+            "17013": 10436608,
+            "17014": 10289152
+          },
+          "errors_by_pid": {},
+          "maximum_rss_bytes": 243204096,
+          "median_delta_from_ready_bytes": 10543104.0,
+          "median_rss_bytes": 242909184.0,
+          "minimum_rss_bytes": 241254400,
+          "rss_bytes_by_pid": {
+            "17011": 241254400,
+            "17012": 242728960,
+            "17013": 243089408,
+            "17014": 243204096
+          }
+        },
+        "window_cells": 256,
+        "window_cells_per_second": 543.6404642803236,
+        "window_completed_by_pid": {
+          "17011": 65,
+          "17012": 64,
+          "17013": 64,
+          "17014": 63
+        },
+        "window_evaluator_occupancy_proxy": 0.9798636046099437,
+        "window_mean_evaluator_seconds": 0.0072096443807367905,
+        "window_peak_rss_bytes_by_pid": {
+          "17011": 241254400,
+          "17012": 242728960,
+          "17013": 243089408,
+          "17014": 243204096
+        },
+        "window_seconds": 0.47089945804327726
+      },
+      {
+        "completed_cells_pool_total": 512,
+        "coordinator_memory": {
+          "current_rss_bytes": 191528960,
+          "peak_rss_bytes": 192217088
+        },
+        "cumulative_completed_by_pid": {
+          "17011": 128,
+          "17012": 127,
+          "17013": 129,
+          "17014": 128
+        },
+        "cumulative_peak_rss_bytes_by_pid": {
+          "17011": 252329984,
+          "17012": 253870080,
+          "17013": 254640128,
+          "17014": 254656512
+        },
+        "rss": {
+          "delta_from_ready_bytes_by_pid": {
+            "17011": 21725184,
+            "17012": 21807104,
+            "17013": 21987328,
+            "17014": 21741568
+          },
+          "errors_by_pid": {},
+          "maximum_rss_bytes": 254656512,
+          "median_delta_from_ready_bytes": 21774336.0,
+          "median_rss_bytes": 254255104.0,
+          "minimum_rss_bytes": 252329984,
+          "rss_bytes_by_pid": {
+            "17011": 252329984,
+            "17012": 253870080,
+            "17013": 254640128,
+            "17014": 254656512
+          }
+        },
+        "window_cells": 256,
+        "window_cells_per_second": 540.0913672487032,
+        "window_completed_by_pid": {
+          "17011": 63,
+          "17012": 63,
+          "17013": 65,
+          "17014": 65
+        },
+        "window_evaluator_occupancy_proxy": 0.9753709705241701,
+        "window_mean_evaluator_seconds": 0.007223747903935873,
+        "window_peak_rss_bytes_by_pid": {
+          "17011": 252329984,
+          "17012": 253870080,
+          "17013": 254640128,
+          "17014": 254656512
+        },
+        "window_seconds": 0.4739938749698922
+      },
+      {
+        "completed_cells_pool_total": 1024,
+        "coordinator_memory": {
+          "current_rss_bytes": 192135168,
+          "peak_rss_bytes": 192217088
+        },
+        "cumulative_completed_by_pid": {
+          "17011": 254,
+          "17012": 255,
+          "17013": 258,
+          "17014": 257
+        },
+        "cumulative_peak_rss_bytes_by_pid": {
+          "17011": 274497536,
+          "17012": 276545536,
+          "17013": 277348352,
+          "17014": 277512192
+        },
+        "rss": {
+          "delta_from_ready_bytes_by_pid": {
+            "17011": 43892736,
+            "17012": 44482560,
+            "17013": 44695552,
+            "17014": 44597248
+          },
+          "errors_by_pid": {},
+          "maximum_rss_bytes": 277512192,
+          "median_delta_from_ready_bytes": 44539904.0,
+          "median_rss_bytes": 276946944.0,
+          "minimum_rss_bytes": 274497536,
+          "rss_bytes_by_pid": {
+            "17011": 274497536,
+            "17012": 276545536,
+            "17013": 277348352,
+            "17014": 277512192
+          }
+        },
+        "window_cells": 512,
+        "window_cells_per_second": 550.0653228905509,
+        "window_completed_by_pid": {
+          "17011": 126,
+          "17012": 128,
+          "17013": 129,
+          "17014": 129
+        },
+        "window_evaluator_occupancy_proxy": 0.9799757652023914,
+        "window_mean_evaluator_seconds": 0.007126250097371667,
+        "window_peak_rss_bytes_by_pid": {
+          "17011": 274497536,
+          "17012": 276545536,
+          "17013": 277348352,
+          "17014": 277512192
+        },
+        "window_seconds": 0.9307985409977846
+      },
+      {
+        "completed_cells_pool_total": 2048,
+        "coordinator_memory": {
+          "current_rss_bytes": 193593344,
+          "peak_rss_bytes": 193593344
+        },
+        "cumulative_completed_by_pid": {
+          "17011": 509,
+          "17012": 511,
+          "17013": 514,
+          "17014": 514
+        },
+        "cumulative_peak_rss_bytes_by_pid": {
+          "17011": 317702144,
+          "17012": 320421888,
+          "17013": 321634304,
+          "17014": 321929216
+        },
+        "rss": {
+          "delta_from_ready_bytes_by_pid": {
+            "17011": 87097344,
+            "17012": 88358912,
+            "17013": 88981504,
+            "17014": 89014272
+          },
+          "errors_by_pid": {},
+          "maximum_rss_bytes": 321929216,
+          "median_delta_from_ready_bytes": 88670208.0,
+          "median_rss_bytes": 321028096.0,
+          "minimum_rss_bytes": 317702144,
+          "rss_bytes_by_pid": {
+            "17011": 317702144,
+            "17012": 320421888,
+            "17013": 321634304,
+            "17014": 321929216
+          }
+        },
+        "window_cells": 1024,
+        "window_cells_per_second": 529.7061338937463,
+        "window_completed_by_pid": {
+          "17011": 255,
+          "17012": 256,
+          "17013": 256,
+          "17014": 257
+        },
+        "window_evaluator_occupancy_proxy": 0.982222774590095,
+        "window_mean_evaluator_seconds": 0.007417114598013086,
+        "window_peak_rss_bytes_by_pid": {
+          "17011": 317702144,
+          "17012": 320421888,
+          "17013": 321634304,
+          "17014": 321929216
+        },
+        "window_seconds": 1.9331473329802975
+      },
+      {
+        "completed_cells_pool_total": 4096,
+        "coordinator_memory": {
+          "current_rss_bytes": 196034560,
+          "peak_rss_bytes": 196034560
+        },
+        "cumulative_completed_by_pid": {
+          "17011": 1018,
+          "17012": 1023,
+          "17013": 1026,
+          "17014": 1029
+        },
+        "cumulative_peak_rss_bytes_by_pid": {
+          "17011": 406716416,
+          "17012": 411025408,
+          "17013": 412418048,
+          "17014": 412925952
+        },
+        "rss": {
+          "delta_from_ready_bytes_by_pid": {
+            "17011": 176128000,
+            "17012": 178962432,
+            "17013": 179765248,
+            "17014": 180011008
+          },
+          "errors_by_pid": {},
+          "maximum_rss_bytes": 412925952,
+          "median_delta_from_ready_bytes": 179363840.0,
+          "median_rss_bytes": 411721728.0,
+          "minimum_rss_bytes": 406732800,
+          "rss_bytes_by_pid": {
+            "17011": 406732800,
+            "17012": 411025408,
+            "17013": 412418048,
+            "17014": 412925952
+          }
+        },
+        "window_cells": 2048,
+        "window_cells_per_second": 538.0392974117271,
+        "window_completed_by_pid": {
+          "17011": 509,
+          "17012": 512,
+          "17013": 512,
+          "17014": 515
+        },
+        "window_evaluator_occupancy_proxy": 0.9823733670959992,
+        "window_mean_evaluator_seconds": 0.007303357742244998,
+        "window_peak_rss_bytes_by_pid": {
+          "17011": 406716416,
+          "17012": 411025408,
+          "17013": 412418048,
+          "17014": 412925952
+        },
+        "window_seconds": 3.8064134159940295
+      }
+    ],
+    "peak_rss_method": "worker-reported resource.getrusage(RUSAGE_SELF).ru_maxrss, platform-normalized by promoted worker wrapper",
+    "rss_method": "ps -o rss= -p PID (KiB converted to bytes)",
+    "setup_seconds_including_worker_warmup_and_handshake": 1.4525680420338176,
+    "shutdown_seconds": 0.6153892920119688,
+    "total_evaluator_seconds": 29.89599047921365,
+    "worker_identities": [
+      {
+        "peak_rss_bytes": 230604800,
+        "process_id": 17011,
+        "warmup_seconds": 0.32764929201221094
+      },
+      {
+        "peak_rss_bytes": 232062976,
+        "process_id": 17012,
+        "warmup_seconds": 0.32730104197980836
+      },
+      {
+        "peak_rss_bytes": 232652800,
+        "process_id": 17013,
+        "warmup_seconds": 0.32668979198206216
+      },
+      {
+        "peak_rss_bytes": 232914944,
+        "process_id": 17014,
+        "warmup_seconds": 0.32694991695461795
+      }
+    ]
+  },
+  "probe": "accepted_worker_lifetime",
+  "promoted_implementation_modified": false,
+  "python": "3.12.3",
+  "scope": "one initialized accepted four-worker pool; no field, persistence, generation, or resume",
+  "selection_evidence": {
+    "path": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/route_stratified_16_cells.json",
+    "rule": "cycle the eight mechanically selected, persisted-fast cells from the completed route-stratified probe",
+    "selected_cells": [
+      {
+        "linear_index": 0,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 0,
+        "theta1_radians": -3.141592653589793,
+        "theta2_index": 0,
+        "theta2_radians": -3.141592653589793,
+        "value_per_second": 5.768436622055366
+      },
+      {
+        "linear_index": 148537,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 57,
+        "theta1_radians": -2.791845033951867,
+        "theta2_index": 145,
+        "theta2_radians": -2.2518837966161214,
+        "value_per_second": 2.3506450086199604
+      },
+      {
+        "linear_index": 301083,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 27,
+        "theta1_radians": -2.9759227284981438,
+        "theta2_index": 294,
+        "theta2_radians": -1.337631247036279,
+        "value_per_second": 1.4110133495238333
+      },
+      {
+        "linear_index": 450980,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 420,
+        "theta1_radians": -0.5645049299419158,
+        "theta2_index": 440,
+        "theta2_radians": -0.4417864669110645,
+        "value_per_second": 0.11734274086956054
+      },
+      {
+        "linear_index": 597598,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 606,
+        "theta1_radians": 0.5767767762450009,
+        "theta2_index": 583,
+        "theta2_radians": 0.43565054375952217,
+        "value_per_second": 0.13565057949971326
+      },
+      {
+        "linear_index": 747453,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 957,
+        "theta1_radians": 2.7304858024364416,
+        "theta2_index": 729,
+        "theta2_radians": 1.3314953238847362,
+        "value_per_second": 1.182009703791986
+      },
+      {
+        "linear_index": 900030,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 958,
+        "theta1_radians": 2.736621725587984,
+        "theta2_index": 878,
+        "theta2_radians": 2.2457478734645786,
+        "value_per_second": 2.1865680295807772
+      },
+      {
+        "linear_index": 1048575,
+        "route": "compiled_dop853",
+        "status": "completed_valid",
+        "theta1_index": 1023,
+        "theta1_radians": 3.135456730438251,
+        "theta2_index": 1023,
+        "theta2_radians": 3.135456730438251,
+        "value_per_second": 2.0100603168448736
+      }
+    ],
+    "sha256": "87b3123fbdc79373273a4b1def5506e34efe5cd4d1939881a06ccaf7bd15a982"
+  }
+}

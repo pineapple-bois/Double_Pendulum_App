@@ -241,6 +241,9 @@ small same-host observation, not a general benchmark.
   handshake delay; the lifecycle probe only bounds combinations of these.
 - How pool shutdown divides among executor coordination and scientific-stack
   interpreter cleanup.
+- What causes worker current RSS to grow: the retained measurements cannot
+  distinguish live Python state, native allocations, allocator retention, or
+  another dependency-level resource effect, and they do not diagnose a leak.
 - Dispatch, serialization, scheduling, CPU availability, thermal effects, and
   within-tile load imbalance as separate quantities.
 - HDF5 creation, final integrity validation, and individual oracle costs.
@@ -253,8 +256,9 @@ Absence of these measurements is not evidence that a cost is negligible.
 
 1. **Worker lifecycle is the clearest contract-preserving target category.**
    This is supported by the real 39.95% wall share and the bounded lifecycle
-   probe. The evidence does not yet choose among import reduction, compilation
-   reuse, worker-lifetime changes, or another implementation technique.
+   probes. The extended-lifetime measurement below shows a real RSS tradeoff,
+   so it supports a bounded longer-lifetime A/B rather than unlimited worker
+   reuse. It does not yet choose a production limit or implementation change.
 2. **Fallback creates a material part of the evaluation tail, while a large
    pre-fallback difficulty effect is not supported by the bounded sample.** The
    probe below directly locates sampled time in verification and `solve_ivp`,
@@ -398,15 +402,190 @@ accepted-path versus neutral-spawn gap. Fallback should be revisited only when
 a specific contract-preserving alternative can be stated and tested; broad
 fallback profiling is not the next cheapest decision-changing measurement.
 
+## Worker-recycling boundary decomposition
+
+### Historical origin and accounting semantics
+
+The lifecycle rule originated in Experiment 017, committed in `8622586`, after
+Experiment 016 had reported rising worker lifetime high-water marks but had
+explicitly declined to call them live memory or a leak. Experiment 017
+predeclared a single warm-pool sequence of 2,048 evaluations, current-RSS
+checkpoints at 256, 512, 1,024, and 2,048 pool-wide cells, material-growth
+checks of 32 MiB overall and 16 MiB after 1,024 cells, and—only if those checks
+triggered—recycling controls at 512 and 1,024 cells.
+
+The historical current-RSS measurements did trigger both checks. Median worker
+RSS rose from 222,257,152 bytes at pool readiness to 267,583,488 bytes after
+1,024 pool-wide evaluations and 312,483,840 bytes after 2,048. That is
+90,226,688 bytes total growth, including 44,900,352 bytes after the midpoint.
+The repeated 64-cell task set remained numerically equivalent throughout and
+the unrecycled 2,048-cell pool stopped normally; the evidence found growth, not
+a failure threshold.
+
+Both predeclared controls reset new-pool ready RSS and preserved exact results.
+The 512-cell control used four pools and took 11.393 s, while the 1,024-cell
+control used two and took 8.054 s; the unrecycled control took 6.115 s. The
+experiment selected the largest successful declared control to retain more
+useful throughput. Thus 1,024 was a conservative accepted operational bound,
+not a scientifically demonstrated cliff, a maximum imposed by the evaluator,
+or proof that 2,048 cells were unsafe.
+
+Experiment 019 (`85fe08d`) then exercised that rule in the assembled `64 x 64`
+pipeline, and the promoted runner copied it in `0b8895c`. The rationale that
+still applies is narrow: bound observed process residency and reset it at a
+deterministic tile boundary while retaining spawn-process failure isolation.
+The historical lifecycle used the then-promoted `numba_rhs_fortran_dop853`
+evaluator. It did not establish the source of the RSS growth, and it preceded
+the current hybrid evaluator, so current-path measurement remained necessary.
+
+The current implementation's variable is `cells_in_pool`, not a per-worker
+counter. After one entire tile's `executor.map` returns, the runner adds
+`len(outcomes)`; before the next tile it recycles if the accumulated returned
+outcomes plus that tile's planned cell count would exceed 1,024. Consequently:
+
+- the unit is cell outcomes returned across the whole four-worker pool;
+- accounting advances only after a complete tile attempt returns normally;
+- all returned statuses count, including a bounded execution-error result;
+- worker initializer warm-ups and identity-handshake tasks do not count;
+- individual workers need not receive equal shares; and
+- recycling occurs between tiles, never partway through one.
+
+For full `8 x 8` tiles, one accepted pool handles 16 tiles, or 1,024 pool-wide
+cells. Even division would be about 256 cells per worker, but that is not the
+contract or an enforced individual limit.
+
+### Current hypothesis and bounded probe
+
+The current hypothesis was that extending a worker lifetime would avoid
+material setup/shutdown cost but might exchange that time for continuing
+per-process RSS growth. The smallest useful probe therefore needed current
+RSS and throughput beyond the accepted boundary, while preserving the actual
+scientific worker initializer and evaluator.
+
+[`probe_worker_lifetime.py`](probe_worker_lifetime.py) opened one accepted
+four-worker spawn pool and cycled the eight mechanically selected fast-route
+cells already retained by the route-stratified probe. This avoids a rectangular
+field, persistence, and unnecessary fallback work while preserving the exact
+accepted finite-time specification. The task stream was fixed before running.
+It retained Experiment 017's 256/512/1,024/2,048 checkpoints and added one
+predeclared doubling to 4,096 pool-wide cells to distinguish an early plateau
+from continuing growth in the promoted hybrid worker.
+
+```bash
+MPLCONFIGDIR=/private/tmp/state_space_maps_lifetime_mpl \
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m \
+  development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_worker_lifetime
+```
+
+Each worker completed the unchanged initializer warm-up before the readiness
+snapshot. Every subsequent window used accepted per-cell dispatch with
+`chunksize=1`. The probe observed individual PIDs with `ps`, retained the
+worker-reported lifetime peak, recorded completed tasks per PID, and compared
+every returned route, status, value, diagnostics record, issues, and error
+fields exactly with the prior accepted evidence.
+
+The retained run performed four initializer evaluations plus 4,096 measured
+cell evaluations, 0.391% of the operational 1024-squared field. An initial
+sandboxed preflight performed four initializer evaluations but stopped before
+any measured task when the sandbox denied `ps`; its four workers were closed
+and later confirmed absent. Total scientific evaluations performed during this
+task were therefore 4,104, of which exactly 4,096 belong to the retained
+lifetime measurement.
+
+### Measured checkpoints
+
+| Pool-wide completed cells | Cumulative cells/worker | Median worker RSS | Median growth from ready | Window throughput | Mean evaluator time | Occupancy proxy |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 0 | 221.59 MiB | 0 | — | — | — |
+| 256 | 63–65 | 231.66 MiB | 10.05 MiB | 543.6 cells/s | 7.210 ms | 97.99% |
+| 512 | 127–129 | 242.48 MiB | 20.77 MiB | 540.1 cells/s | 7.224 ms | 97.54% |
+| 1,024 | 254–258 | 264.12 MiB | 42.48 MiB | 550.1 cells/s | 7.126 ms | 98.00% |
+| 2,048 | 509–514 | 306.16 MiB | 84.56 MiB | 529.7 cells/s | 7.417 ms | 98.22% |
+| 4,096 | 1,018–1,029 | 392.65 MiB | 171.05 MiB | 538.0 cells/s | 7.303 ms | 98.24% |
+
+All four workers grew at every checkpoint. Final current RSS ranged from
+406,732,800 to 412,925,952 bytes, with per-worker growth from readiness ranging
+from 176,128,000 to 180,011,008 bytes. A descriptive linear fit across each
+worker's cumulative task count and RSS growth is 0.1666 MiB per individual
+completed cell with `R² = 0.99992`. This describes the observed bounded shape;
+it is not a leak rate or an extrapolation beyond 4,096 pool-wide cells.
+
+Window throughput ranged from 529.7 to 550.1 cells/s, a 3.77% range around its
+mean, and the final window was 1.0% slower than the first. Mean evaluator time
+varied non-monotonically from 7.126 to 7.417 ms. There is no measured throughput
+degradation with worker age in this run. Coordinator current RSS rose by 5.39
+MiB, far less than the approximately 171 MiB median per-worker growth.
+
+Setup, including four worker warm-ups and the identity handshake, took 1.453 s.
+Final shutdown took 0.615 s, every worker stopped, and all eight PIDs from both
+the aborted preflight and retained run were later absent. One final shutdown
+does not establish how shutdown time scales with worker age.
+
+### Correctness and resource interpretation
+
+All 4,096 measured outcomes retained the compiled-DOP853 route and
+completed-valid status. Every value and diagnostics record matched the prior
+accepted result exactly; no issue or error field changed. There is no evidence
+of stateful scientific drift, route instability, correctness loss, worker
+failure, or performance decay over this bounded task stream.
+
+There is also no plateau in current RSS within the measured range. Growth is
+approximately proportional to work and closely repeats Experiment 017's shape
+through 2,048 cells, despite using the current hybrid evaluator and fast-only
+cells. This strengthens the resource rationale for bounded recycling and shows
+that fallback is not required for the observed growth. It does not identify
+whether the bytes are live state, native-library allocations, allocator
+retention, or another process-local effect, and it must not be called a memory
+leak without that evidence.
+
+The probe is one same-host lifetime over eight repeated fast cells. Repetition
+is appropriate for isolating worker age and was accepted for Experiment 017's
+lifecycle test, but it does not reproduce full-field trajectory heterogeneity.
+It does not test fallback-heavy work, memory pressure on the host, multiple
+concurrent pools, lifetimes beyond 4,096 pool-wide cells, or repeated long-life
+shutdowns. Nothing here supports unbounded worker reuse.
+
+Machine-readable checkpoints and per-PID evidence are retained in
+[`worker_lifetime_4096_cells.json`](worker_lifetime_4096_cells.json).
+
+### Recycling decision
+
+The current boundary is **protective in category but conservative in its exact
+value**. Recycling demonstrably caps and resets continuing worker residency;
+1,024 itself was selected as the larger of two successful predeclared controls,
+not located as a failure threshold. The promoted probe shows that a 2,048-cell
+pool remains correct and maintains throughput, but raises median current RSS by
+84.56 MiB per worker from readiness, versus 42.48 MiB at the accepted boundary.
+
+This is enough evidence to justify testing—not adopting—a 2,048-cell bounded
+lifetime as the first runner optimisation candidate. It is not evidence for
+4,096 as a production limit: that point adds about 171 MiB per worker and was
+included to establish the non-plateau shape.
+
+On a full-tile 1024-squared run, a 2,048-cell schedule would mechanically halve
+the pool count from 1,024 to 512. Applying half of the observed 1,980.999 s
+lifecycle bucket suggests about 990 s of potentially avoidable lifecycle time.
+That arithmetic shows why the candidate is worth measuring; it is not a speedup
+prediction because longer-lived shutdown cost, host memory pressure, and
+full-field behaviour have not been measured under the candidate schedule.
+
 ## Cheapest next discriminating measurements
 
-If a concrete lifecycle intervention is later proposed, the next check should
-be a three-to-five-pool cold-start A/B using this same probe shape. It must keep
-four spawn workers, the accepted initializer result, worker-stop verification,
-and the 1,024-cell lifetime policy unless changing that operational policy is
-separately justified. Synthetic evaluator/persistence probes are lower priority
-because current evidence already places persistence below 1% and shows high
-evaluation occupancy.
+The smallest defensible A/B is a fixed 2,048-cell accepted fast-route stream,
+run in three interleaved repetitions under two pool schedules: two 1,024-cell
+pools as the control and one 2,048-cell pool as the candidate. It should retain
+four spawn workers, `chunksize=1`, 64-cell tile-boundary batches, the accepted
+initializer/evaluator, exact result comparisons, per-PID ready/final RSS,
+separate setup/evaluation/shutdown timings, and worker-stop checks. Rotating
+order across repetitions is enough to expose whether avoiding one lifecycle
+produces a repeatable end-to-end benefit while making the measured additional
+RSS explicit. It must not modify the runner or select 2,048 for production.
+
+This A/B would perform 12,288 measured cells across both policies and all three
+repetitions, or 1.17% of the operational 1024-squared field. A synthetic worker
+cannot answer the scientific-worker resource question. Persistence remains
+outside the probe because it is unchanged by the pool limit and already
+accounts for under 1% of the operational run.
 
 Expensive broad profiling, another uniform field, and a 2048 run are not needed
 to answer these next questions.
@@ -425,8 +604,10 @@ useful evidence.
 There is already enough evidence to prioritize **worker lifecycle/setup** as a
 promising optimisation target category. There is not enough evidence to select
 a particular optimisation, and the numerical evaluation bucket remains larger.
-The completed route-stratified probe makes fallback a measured secondary cost
-centre but does not expose removable work under the accepted semantics. The
-next action is to formulate one concrete worker-lifecycle hypothesis and test
-it with a bounded cold-start A/B before changing operational code. Uniform
-resolution escalation remains paused until that decision is evidence-backed.
+The completed route and worker-lifetime probes make fallback a measured
+secondary cost centre and continuing worker RSS the explicit tradeoff against
+lifecycle savings. The next action is the fixed 1,024-versus-2,048 pool-schedule
+A/B above. No production limit or implementation should change unless that A/B
+shows repeatable end-to-end benefit and its bounded RSS cost is accepted.
+Uniform resolution escalation remains paused until that decision is
+evidence-backed.
