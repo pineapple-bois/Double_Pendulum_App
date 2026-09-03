@@ -380,8 +380,11 @@ software provenance, work-unit plan, and integrity evidence exactly match the
 requested run. Complete checksum-valid tiles are skipped. Incomplete tiles are
 retried; corrupt complete tiles fail closed.
 
-The first substantial run is separately authorised at `512 x 512`; it is not
-part of prototype validation. Its command is:
+The operational CLI takes one square-resolution input,
+`--samples-per-axis N`. That value determines the field shape, plan totals,
+progress reporting, manifest metadata, and default same-stem output names. The
+first substantial worked example is separately authorised at `512 x 512`; it
+is not part of prototype validation. Its command is:
 
 ```bash
 uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
@@ -391,13 +394,15 @@ uv run python -m development.chaos_content.prototypes.state_space_maps.runners.g
 
 Use the identical command with `--resume` instead of `--create` after an
 interruption. The command reports throttled coordinator progress and writes a
-human-readable run/provenance/oracle manifest only after final validation. Its
-default authoritative destination is
+human-readable run/provenance/oracle manifest only after final validation. For
+this example, its default authoritative destination is
 `outputs/finite_time_field/finite_time_field_512.h5`, with the optional manifest
-at `outputs/finite_time_field/finite_time_field_512.json`. After completion,
-`runners/render_finite_time_field.py` reads that closed artifact and writes
-same-stem PNG and PDF derivatives without invoking dynamics. The HDF5 numerical
-field remains authoritative; neither resume nor rendering depends on the JSON.
+at `outputs/finite_time_field/finite_time_field_512.json`. Other values of `N`
+naturally use `finite_time_field_N.h5` and `finite_time_field_N.json`. After
+completion, `runners/render_finite_time_field.py` reads that closed artifact
+and writes same-stem PNG and PDF derivatives without invoking dynamics. The
+HDF5 numerical field remains authoritative; neither resume nor rendering
+depends on the JSON.
 
 The accepted execution, work-unit, and persistence policies are bounded local
 contracts. They do not establish the fallback frequency, throughput, memory,

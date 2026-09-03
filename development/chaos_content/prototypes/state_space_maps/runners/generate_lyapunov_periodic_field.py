@@ -60,8 +60,12 @@ def _format_duration(seconds: float) -> str:
 class ConsoleProgressReporter:
     """Print initial state and approximately ten-percent progress milestones."""
 
-    def __init__(self, samples_per_axis: int, process_width: int) -> None:
-        self.samples_per_axis = samples_per_axis
+    def __init__(
+        self,
+        field_shape: tuple[int, int],
+        process_width: int,
+    ) -> None:
+        self.field_shape = field_shape
         self.process_width = process_width
         self._announced = False
         self._last_decile = -1
@@ -74,8 +78,10 @@ class ConsoleProgressReporter:
         if not self._announced:
             action = "Generating" if progress.mode == "create" else "Resuming"
             print(f"{action} {progress.output_path.name}", flush=True)
+            theta2_samples, theta1_samples = self.field_shape
             print(
-                f"{self.samples_per_axis} × {self.samples_per_axis} cells | "
+                f"{theta1_samples} × {theta2_samples} field | "
+                f"{progress.total_cells} cells | "
                 f"{progress.total_work_units} work units | "
                 f"{self.process_width} workers",
                 flush=True,
@@ -221,7 +227,16 @@ def write_manifest(output_path: Path, payload: dict[str, object]) -> Path:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--samples-per-axis", type=int, required=True)
+    parser.add_argument(
+        "--samples-per-axis",
+        type=int,
+        required=True,
+        metavar="N",
+        help=(
+            "Samples on each angular axis. This determines the square field "
+            "shape and default resolution-specific output name."
+        ),
+    )
     parser.add_argument(
         "--output",
         type=Path,
@@ -257,7 +272,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         specification,
     )
     progress = ConsoleProgressReporter(
-        arguments.samples_per_axis,
+        definition.field_shape,
         execution.process_width,
     )
     operation_started = perf_counter()

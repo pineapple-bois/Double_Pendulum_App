@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import math
 import json
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -50,36 +50,79 @@ from development.chaos_content.prototypes.state_space_maps.src.lyapunov.field_ad
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
 
-def test_operational_generation_defaults_are_resolution_specific() -> None:
-    path = default_output_path(512)
-    assert path == OPERATIONAL_OUTPUT_DIRECTORY / "finite_time_field_512.h5"
+@pytest.mark.parametrize("samples_per_axis", (8, 16))
+def test_operational_generation_defaults_are_resolution_specific(
+    samples_per_axis: int,
+) -> None:
+    path = default_output_path(samples_per_axis)
+    assert path == (
+        OPERATIONAL_OUTPUT_DIRECTORY
+        / f"finite_time_field_{samples_per_axis}.h5"
+    )
     assert manifest_path(path) == (
-        OPERATIONAL_OUTPUT_DIRECTORY / "finite_time_field_512.json"
+        OPERATIONAL_OUTPUT_DIRECTORY
+        / f"finite_time_field_{samples_per_axis}.json"
+    )
+    assert derivative_output_paths(path) == (
+        OPERATIONAL_OUTPUT_DIRECTORY
+        / f"finite_time_field_{samples_per_axis}.png",
+        OPERATIONAL_OUTPUT_DIRECTORY
+        / f"finite_time_field_{samples_per_axis}.pdf",
     )
     assert "outputs/lyapunov" not in path.as_posix()
 
     arguments = build_generation_parser().parse_args(
-        ["--samples-per-axis", "512", "--create"]
+        ["--samples-per-axis", str(samples_per_axis), "--create"]
     )
-    assert arguments.samples_per_axis == 512
+    assert arguments.samples_per_axis == samples_per_axis
     assert arguments.output is None
     assert arguments.create
     assert not arguments.resume
 
 
-def test_512_definition_and_established_plan_are_calculation_free() -> None:
-    definition = periodic_lyapunov_field_definition(512)
-    plan = plan_tiles(definition.field_shape, TileShape(*definition.nominal_tile_shape))
+@pytest.mark.parametrize("samples_per_axis", (8, 16))
+def test_definition_and_plan_follow_requested_resolution(
+    samples_per_axis: int,
+) -> None:
+    definition = periodic_lyapunov_field_definition(samples_per_axis)
+    tile_shape = TileShape(*definition.nominal_tile_shape)
+    plan = plan_tiles(definition.field_shape, tile_shape)
     coverage = validate_tile_plan(definition.field_shape, plan)
 
-    assert definition.field_shape == (512, 512)
+    assert definition.field_shape == (samples_per_axis, samples_per_axis)
     assert coverage.accepted
-    assert coverage.planned_cell_count == 262_144
-    assert len(plan) == 4_096
+    assert coverage.planned_cell_count == samples_per_axis**2
+    assert len(plan) == (
+        math.ceil(definition.field_shape[0] / tile_shape.theta2_cells)
+        * math.ceil(definition.field_shape[1] / tile_shape.theta1_cells)
+    )
+
+
+def test_custom_output_keeps_all_sidecars_on_the_supplied_stem(
+    tmp_path: Path,
+) -> None:
+    custom_hdf5 = tmp_path / "chosen_field.h5"
+    arguments = build_generation_parser().parse_args(
+        [
+            "--samples-per-axis",
+            "16",
+            "--output",
+            str(custom_hdf5),
+            "--create",
+        ]
+    )
+
+    assert arguments.samples_per_axis == 16
+    assert arguments.output == custom_hdf5
+    assert manifest_path(arguments.output) == tmp_path / "chosen_field.json"
+    assert derivative_output_paths(arguments.output) == (
+        tmp_path / "chosen_field.png",
+        tmp_path / "chosen_field.pdf",
+    )
 
 
 def test_resume_progress_is_immediate_and_milestone_throttled(capsys) -> None:
-    reporter = ConsoleProgressReporter(samples_per_axis=10, process_width=4)
+    reporter = ConsoleProgressReporter(field_shape=(10, 10), process_width=4)
     reporter(
         FieldProgress(
             output_path=Path("finite_time_field_10.h5"),
@@ -95,6 +138,7 @@ def test_resume_progress_is_immediate_and_milestone_throttled(capsys) -> None:
     )
     initial = capsys.readouterr().out
     assert "Resuming finite_time_field_10.h5" in initial
+    assert "10 × 10 field | 100 cells | 10 work units | 4 workers" in initial
     assert "4/10 work units already complete (40.0%)" in initial
     assert "6 work units remaining" in initial
 
@@ -133,11 +177,58 @@ def test_resume_progress_is_immediate_and_milestone_throttled(capsys) -> None:
     assert "ETA ~" in milestone
 
 
+@pytest.mark.parametrize("samples_per_axis", (8, 16))
+def test_progress_heading_uses_definition_and_plan_totals(
+    samples_per_axis: int,
+    capsys,
+) -> None:
+    definition = periodic_lyapunov_field_definition(samples_per_axis)
+    plan = plan_tiles(
+        definition.field_shape,
+        TileShape(*definition.nominal_tile_shape),
+    )
+    coverage = validate_tile_plan(definition.field_shape, plan)
+    reporter = ConsoleProgressReporter(
+        field_shape=definition.field_shape,
+        process_width=4,
+    )
+
+    reporter(
+        FieldProgress(
+            output_path=default_output_path(samples_per_axis),
+            mode="create",
+            completed_work_units=0,
+            total_work_units=len(plan),
+            completed_cells=0,
+            total_cells=coverage.planned_cell_count,
+            evaluated_work_units=0,
+            evaluated_cells=0,
+            elapsed_seconds=0.0,
+        )
+    )
+
+    output = capsys.readouterr().out
+    assert f"Generating finite_time_field_{samples_per_axis}.h5" in output
+    assert (
+        f"{samples_per_axis} × {samples_per_axis} field | "
+        f"{samples_per_axis**2} cells | {len(plan)} work units | 4 workers"
+    ) in output
+
+
+@pytest.mark.parametrize("samples_per_axis", (8, 16))
 def test_manifest_uses_run_objects_and_writes_resolution_sidecar(
     tmp_path: Path,
+    samples_per_axis: int,
 ) -> None:
-    output_path = tmp_path / "finite_time_field_2.h5"
-    definition = periodic_lyapunov_field_definition(2)
+    output_path = tmp_path / f"finite_time_field_{samples_per_axis}.h5"
+    definition = periodic_lyapunov_field_definition(samples_per_axis)
+    cell_count = samples_per_axis**2
+    work_unit_count = len(
+        plan_tiles(
+            definition.field_shape,
+            TileShape(*definition.nominal_tile_shape),
+        )
+    )
     execution = ProcessExecutionSpec()
     validation = ScalarFieldValidation(
         accepted=True,
@@ -145,11 +236,11 @@ def test_manifest_uses_run_objects_and_writes_resolution_sidecar(
         issues=(),
         status_counts={
             "not_yet_computed": 0,
-            "completed_valid": 3,
+            "completed_valid": cell_count - 1,
             "completed_invalid": 1,
             "execution_error": 0,
         },
-        route_counts={"compiled_dop853": 4},
+        route_counts={"compiled_dop853": cell_count},
         valid_value_range=(0.1, 0.4),
     )
     summary = FieldRunSummary(
@@ -160,16 +251,16 @@ def test_manifest_uses_run_objects_and_writes_resolution_sidecar(
         evaluation_seconds=1.5,
         persistence_seconds=0.2,
         shutdown_seconds=0.1,
-        evaluated_cells=4,
+        evaluated_cells=cell_count,
         preexisting_completed_cells=0,
         completed_tiles_before=0,
-        pending_tiles_before=1,
-        completed_tiles_after=1,
+        pending_tiles_before=work_unit_count,
+        completed_tiles_after=work_unit_count,
         pending_tiles_after=0,
         pool_count=1,
         recycling_events=0,
         all_workers_stopped=True,
-        cells_per_second=2.0,
+        cells_per_second=cell_count / 2.0,
         maximum_worker_peak_rss_bytes=1,
         coordinator_peak_rss_bytes=1,
         artifact_bytes=1,
@@ -195,10 +286,17 @@ def test_manifest_uses_run_objects_and_writes_resolution_sidecar(
     path = write_manifest(output_path, payload)
     stored = json.loads(path.read_text(encoding="utf-8"))
 
-    assert path == tmp_path / "finite_time_field_2.json"
-    assert stored["artifact"]["hdf5_name"] == "finite_time_field_2.h5"
-    assert stored["field"]["shape_theta2_theta1"] == [2, 2]
-    assert stored["field"]["cell_count"] == 4
+    assert path == tmp_path / f"finite_time_field_{samples_per_axis}.json"
+    assert stored["artifact"]["hdf5_name"] == (
+        f"finite_time_field_{samples_per_axis}.h5"
+    )
+    assert stored["field"]["samples_per_axis"] == samples_per_axis
+    assert stored["field"]["shape_theta2_theta1"] == [
+        samples_per_axis,
+        samples_per_axis,
+    ]
+    assert stored["field"]["cell_count"] == cell_count
+    assert stored["execution"]["work_unit_count"] == work_unit_count
     assert stored["field"]["stored_orientation"] == (
         "values[theta2_index, theta1_index]"
     )

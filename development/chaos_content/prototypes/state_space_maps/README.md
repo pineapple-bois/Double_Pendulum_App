@@ -60,12 +60,18 @@ domain. This packages the established system; it is not a new numbered
 experiment and does not change its scientific, numerical, work-unit, process,
 or persistence contracts.
 
-For `512` samples on each axis, the authoritative array shape is `(512, 512)`
-in stored `[theta2, theta1]` order, containing 262,144 cells. Generation may
-take significant time. Run it manually from the repository root; Codex and the
-rendering command do not start it automatically. Generation prints lightweight
-coordinator-level progress at approximately ten-percent milestones, including
-elapsed time, throughput, and an explicitly approximate ETA.
+The single `--samples-per-axis N` option selects the square resolution. That
+value determines both axes, the field shape and cell/work-unit totals, progress
+reporting, manifest metadata, and the default `finite_time_field_N.h5` and
+`finite_time_field_N.json` names. Generation may take significant time. Run it
+manually from the repository root; Codex and the rendering command do not start
+it automatically. Generation prints lightweight coordinator-level progress at
+approximately ten-percent milestones, including elapsed time, throughput, and
+an explicitly approximate ETA.
+
+The established worked example uses `512` samples on each axis. Its
+authoritative array shape is `(512, 512)` in stored `[theta2, theta1]` order,
+containing 262,144 cells.
 
 ### Create
 
@@ -131,9 +137,26 @@ runner, dynamics, or computation workers. PNG and PDF are derivative visual
 representations and may be regenerated; retain the authoritative HDF5 file.
 The JSON manifest is likewise optional: rendering reads only HDF5. All
 operational artifacts in `outputs/finite_time_field/` are ignored by Git.
-Other resolutions use the same directory and resolution-specific filename,
-for example `finite_time_field_1024.*`; this is a naming convention, not a
-recommendation or performance claim.
+
+### Changing resolution
+
+Choose another square resolution by changing only `--samples-per-axis`. For
+example, creation at `1024 × 1024` is selected with:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
+  --samples-per-axis 1024 \
+  --create
+```
+
+This naturally selects `finite_time_field_1024.h5` and
+`finite_time_field_1024.json` in the same operational output directory. Pass
+that HDF5 path to the same rendering command to obtain matching
+`finite_time_field_1024.png` and `finite_time_field_1024.pdf` derivatives.
+Resume likewise uses the same resolution value. A custom `--output foo.h5`
+keeps all derivative naming coherent: the manifest is `foo.json`, and the
+renderer writes `foo.png` and `foo.pdf`. The `1024` example is a naming and
+usage example, not a recommendation or performance claim.
 
 Inspect the exact CLI options with:
 
