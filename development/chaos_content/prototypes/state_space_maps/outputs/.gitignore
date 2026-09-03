@@ -1,2 +1,5 @@
 *
 !.gitignore
+!finite_time_field/
+finite_time_field/*
+!finite_time_field/.gitignore

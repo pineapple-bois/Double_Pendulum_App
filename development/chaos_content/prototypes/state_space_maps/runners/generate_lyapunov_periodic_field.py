@@ -6,11 +6,21 @@ import argparse
 import json
 from dataclasses import asdict
 from pathlib import Path
+from typing import Sequence
 
-from ..src.lyapunov.field_adapter import (
-    run_periodic_lyapunov_field,
-    validate_lyapunov_oracle_spots,
-)
+PROTOTYPE_ROOT = Path(__file__).resolve().parents[1]
+OPERATIONAL_OUTPUT_DIRECTORY = PROTOTYPE_ROOT / "outputs" / "finite_time_field"
+
+
+def default_output_path(samples_per_axis: int) -> Path:
+    """Return the stable operational HDF5 path for one square resolution."""
+
+    if samples_per_axis <= 0:
+        raise ValueError("samples_per_axis must be positive.")
+    return (
+        OPERATIONAL_OUTPUT_DIRECTORY
+        / f"finite_time_field_{samples_per_axis}.h5"
+    )
 
 
 def _jsonable(value: object) -> object:
@@ -23,21 +33,40 @@ def _jsonable(value: object) -> object:
     return value
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--samples-per-axis", type=int, required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help=(
+            "Authoritative HDF5 destination. By default this is the operational "
+            "outputs/finite_time_field/finite_time_field_<samples>.h5 path."
+        ),
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--create", action="store_true")
     mode.add_argument("--resume", action="store_true")
-    arguments = parser.parse_args()
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    arguments = build_parser().parse_args(argv)
+    from ..src.lyapunov.field_adapter import (
+        run_periodic_lyapunov_field,
+        validate_lyapunov_oracle_spots,
+    )
+
     run_mode = "create" if arguments.create else "resume"
+    output_path = arguments.output or default_output_path(
+        arguments.samples_per_axis
+    )
     summary = run_periodic_lyapunov_field(
-        arguments.output,
+        output_path,
         arguments.samples_per_axis,
         mode=run_mode,
     )
-    oracle = validate_lyapunov_oracle_spots(arguments.output)
+    oracle = validate_lyapunov_oracle_spots(output_path)
     payload = _jsonable(
         {
             "run": asdict(summary),
@@ -45,12 +74,11 @@ def main() -> None:
         }
     )
     encoded = json.dumps(payload, indent=2, sort_keys=True)
-    summary_path = arguments.output.with_suffix(".summary.json")
-    summary_path.write_text(f"{encoded}\n", encoding="utf-8")
     print(encoded)
     if not summary.validation.accepted or not oracle.accepted:
-        raise SystemExit(1)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

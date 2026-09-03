@@ -28,8 +28,10 @@ generation.
 
 Executable composition lives in `runners/`; scientific explanation and the
 architectural detail live in `docs/`. Focused tests mirror those boundaries.
-Generated artifacts live under the ignored `outputs/` tree, with Lyapunov
-artifacts under `outputs/lyapunov/`.
+The existing `outputs/lyapunov/` directory contains legacy development and
+validation artifacts from the prototype-development strand. Preserve those
+files as historical evidence. Manually generated operational deliverables use
+the separate ignored `outputs/finite_time_field/` boundary.
 
 ## Current validated boundary
 
@@ -50,22 +52,85 @@ See [the architecture document](docs/architecture.md) for neutral generation
 contracts and [the Lyapunov documentation](docs/lyapunov/README.md) for the
 observable, evaluators, validation evidence, and mathematical storyboard.
 
-## Separately authorised 512 x 512 run
+## Manual operational finite-time field
 
-The first planned operational field is deliberately bounded to `512 x 512`.
-It has not been run by this refactor. When separately authorised, create it
-from the repository root with:
+The operational runner evaluates the already-validated one-vector Candidate-A
+finite-time tangent-stretching observable over the full periodic initial-angle
+domain. This packages the established system; it is not a new numbered
+experiment and does not change its scientific, numerical, work-unit, process,
+or persistence contracts.
+
+For `512` samples on each axis, the authoritative array shape is `(512, 512)`
+in stored `[theta2, theta1]` order, containing 262,144 cells. Generation may
+take significant time. Run it manually from the repository root; Codex and the
+rendering command do not start it automatically.
+
+### Create
+
+Create the authoritative HDF5 field with:
 
 ```bash
 uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
   --samples-per-axis 512 \
-  --output development/chaos_content/prototypes/state_space_maps/outputs/lyapunov/lyapunov_finite_time_512.h5 \
   --create
 ```
 
-After interruption, use the same command with `--resume`. Create refuses an
-existing artifact; resume requires a compatible existing artifact and skips
-checksum-valid completed tiles.
+This writes:
+
+```text
+development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512.h5
+```
+
+The HDF5 file is the authoritative scientific artifact. `--create` refuses to
+replace an existing file.
+
+### Resume
+
+If generation is interrupted, resume the same artifact with:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
+  --samples-per-axis 512 \
+  --resume
+```
+
+Resume uses the validated compatibility checks, completion markers, checksums,
+and tile state. It skips checksum-valid completed tiles, retries interrupted
+tiles, and fails closed instead of replacing an incompatible or corrupt field.
+Keep the same repository revision and locked software environment between
+create and resume because those provenance values are part of compatibility.
+
+### Render
+
+After generation completes, render the persisted HDF5 field with:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field \
+  development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512.h5
+```
+
+The single render command reads and validates the persisted HDF5 data, then
+saves the same Matplotlib figure directly as:
+
+```text
+development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512.png
+development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512.pdf
+```
+
+Rendering does not import or invoke the Lyapunov evaluator, scalar-field
+runner, dynamics, or computation workers. PNG and PDF are derivative visual
+representations and may be regenerated; retain the authoritative HDF5 file.
+All operational artifacts in `outputs/finite_time_field/` are ignored by Git.
+Other resolutions use the same directory and resolution-specific filename,
+for example `finite_time_field_1024.*`; this is a naming convention, not a
+recommendation or performance claim.
+
+Inspect the exact CLI options with:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field --help
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field --help
+```
 
 ## Nonclaims
 

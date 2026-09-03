@@ -76,6 +76,9 @@ framework. Within `src/lyapunov/`:
   diagnostics, and retains the established oracle gates;
 - `runners/generate_lyapunov_periodic_field.py` is the explicit create/resume CLI for this
   first concrete scalar-field consumer;
+- `runners/render_finite_time_field.py` validates and renders a completed
+  authoritative HDF5 field directly to PNG and PDF without importing Lyapunov
+  or generation execution code;
 - `runners/render_sensitivity_to_lyapunov.py` composes the structured reference result into
   the first four-panel pedagogical figure; it performs no validation and emits
   no narrated console story;
@@ -383,16 +386,16 @@ part of prototype validation. Its command is:
 ```bash
 uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
   --samples-per-axis 512 \
-  --output development/chaos_content/prototypes/state_space_maps/outputs/lyapunov/lyapunov_finite_time_512.h5 \
   --create
 ```
 
 Use the identical command with `--resume` instead of `--create` after an
 interruption. The command emits a compact run and nine-cell oracle-validation
-summary and writes it beside the artifact as
-`lyapunov_finite_time_512.summary.json`. The HDF5 numerical field remains
-authoritative; the summary and any later heatmap are downstream derivatives
-that must be produced from the closed artifact.
+summary to standard output. Its default authoritative destination is
+`outputs/finite_time_field/finite_time_field_512.h5`. After completion,
+`runners/render_finite_time_field.py` reads that closed artifact and writes
+same-stem PNG and PDF derivatives without invoking dynamics. The HDF5 numerical
+field remains authoritative.
 
 The accepted execution, work-unit, and persistence policies are bounded local
 contracts. They do not establish the fallback frequency, throughput, memory,
