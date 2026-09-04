@@ -1,8 +1,8 @@
 # Experiment 020 — First-Flip Event Contract
 
-**Status: reference evaluator implemented; full experiment acceptance pending.**
+**Status: ACCEPT — reference contract validated for transversal, numerically separated first-flip events.**
 
-This directory establishes the reference calculation for a first completed link revolution in the equal-link simple double pendulum. The current implementation has passed a bounded named-trajectory smoke check, including all four signed arm identities and one robust censored trajectory. It has not yet completed the refinement, lift-invariance, horizon-boundary, grazing, near-simultaneous, or focused-test campaign required by [`PLAN.md`](PLAN.md). It therefore does not yet authorize promotion into the state-space-map prototype.
+This directory establishes the reference calculation for a first completed link revolution in the equal-link simple double pendulum. The implementation and focused validation suite satisfy the acceptance requirements in [`PLAN.md`](PLAN.md) for transversal events whose first event is numerically separated from competing event surfaces. The contract is ready for narrow promotion into the state-space-map prototype as a scalar first-flip-time reference. True grazing contact and numerically indistinguishable multi-surface attribution remain explicit limitations rather than silently redefined events.
 
 ## Scientific question
 
@@ -97,7 +97,7 @@ The earliest solver-reported root supplies the scalar time. An identity is `(arm
 - the minimum competing surface margin;
 - raw per-surface event counts.
 
-The result representation can carry multiple identities, but the current terminal-event smoke runs do not validate near-simultaneous attribution. SciPy's event-list order is not accepted as a scientific tie-breaker. A refinement-derived tie policy, short continuation, and nonterminal diagnostic runs remain part of the pending validation work.
+The result representation can carry multiple solver-reported identities. SciPy's event-list order is not accepted as a scientific tie-breaker. The bounded search found no useful physical near-tie candidate, and targeted nonterminal diagnostics confirmed clear separation for the closest screened case. Consequently, scalar first-event time is accepted for numerically separated events, while tied or unresolved physical attribution is not yet empirically certified.
 
 ## Observation horizon and censoring
 
@@ -118,7 +118,7 @@ The result status distinguishes:
 
 Censored results have no fabricated event time, dimensionless time, event state, or event identity. A later map adapter may choose a capped scalar representation, but no cap, mask, HDF5 field, or persistence decision is implemented here.
 
-At present, a root returned by `solve_ivp` at the endpoint is an observed event; a successful endpoint with no root is censored. Whether a later capped scalar should deliberately treat exact-cap events as censored or instead retain an explicit event-observed mask remains unresolved pending the horizon-boundary experiment.
+In the reference API, a root actually returned by `solve_ivp` at the endpoint is an observed physical event; a successful endpoint with no root is censored. The horizon-boundary validation showed that a horizon copied from a separately computed root can classify as censored because its recomputed root lies infinitesimally beyond the copied endpoint. The later capped field should therefore use the strict predicate $\tau_{\mathrm{flip}}<T_{\max}$: values numerically coincident with the cap belong to the capped/censored class. An explicit event-observed mask is required only if a later consumer needs to distinguish an inclusively observed event at exactly the cap from censoring.
 
 ## Dimensionless time
 
@@ -172,7 +172,7 @@ first_flip_time(
 - `atol = 1e-11`;
 - `max_step = t_g / 32`.
 
-This is a starting reference policy, not a validated final acceptance policy. Supplying `SolverSpec(max_step=None)` requests the uncapped adaptive comparison run required later by the plan.
+This policy is accepted as the reference starting policy for the validated named and screened transversal cases. Supplying `SolverSpec(max_step=None)` requests the uncapped adaptive comparison used by the validation matrix. Long-horizon pilot work must recheck the policy rather than extrapolate this bounded result.
 
 `FirstFlipResult` exposes:
 
@@ -238,6 +238,12 @@ uv run python development/chaos_content/experiments/physical_observables/020_fir
 
 The command writes no repository artifact. It performs five independent trajectories and prints evidence to standard output.
 
+Run the focused scientific validation suite:
+
+```bash
+MPLCONFIGDIR=/tmp/double-pendulum-mpl XDG_CACHE_HOME=/tmp/double-pendulum-xdg UV_CACHE_DIR=/tmp/double-pendulum-uv-cache uv run pytest development/chaos_content/experiments/physical_observables/020_first_flip_event_contract/test_first_flip_event_contract.py -q
+```
+
 ## Current implementation evidence
 
 The following baseline observations were reproduced on 2026-09-04 with the default equal-unit parameters, $T_{\max}=5\,\mathrm{s}$, DOP853, `rtol = 1e-9`, `atol = 1e-11`, and `max_step = t_g/32 = 0.0099773571\,\mathrm{s}`.
@@ -264,39 +270,133 @@ This smoke evidence establishes only that:
 
 It does not yet establish accepted solver convergence, lift invariance, general symmetry fidelity, near-horizon stability, grazing completeness, or near-simultaneous attribution.
 
-## Intended validation strategy
+## Validation matrix
 
-The subsequent focused-test and evidence task must follow `PLAN.md`. In summary it must:
+The focused suite compared five event trajectories under four solver policies. All used the same equal-unit physical model and $T_{\max}=5\,\mathrm{s}$.
 
-1. Compare representative events under the baseline, stricter tolerances, halved maximum step, and a meaningful uncapped adaptive run.
-2. Compare event time, identity, state, residual, energy, and accepted angular increments.
-3. Independently bracket and refine selected roots from dense output rather than treating `t_events` as its own oracle.
-4. Check invariance under adding integer multiples of $2\pi$ to either initial angle.
-5. Check the reflection transformation $(\theta_1,\theta_2,0,0)\mapsto(-\theta_1,-\theta_2,0,0)$, expecting equal time, the same arm, and reversed direction.
-6. Keep arm exchange out of the symmetry contract because the first arm supports both masses.
-7. Run horizons below, above, and numerically close to a converged event time.
-8. Inspect event velocities and dense local surfaces for suspected grazing contacts.
-9. Investigate near-simultaneous candidates using all surface residuals, refinement, and short nonterminal continuation.
-10. Derive numerical acceptance and tie scales from the resulting convergence evidence rather than setting them after inspecting a desired result.
+| Policy | DOP853 `rtol` | DOP853 `atol` | Maximum step |
+| --- | ---: | ---: | ---: |
+| Baseline | $10^{-9}$ | $10^{-11}$ | $t_g/32$ |
+| Stricter | $10^{-11}$ | $10^{-13}$ | $t_g/32$ |
+| Half-step | $10^{-9}$ | $10^{-11}$ | $t_g/64$ |
+| Uncapped | $10^{-9}$ | $10^{-11}$ | adaptive, no imposed cap |
 
-The exact upward equilibrium is not the primary no-event reference because it is mathematically stationary but numerically and physically unstable.
+The stricter run is the comparison reference. The four signed named cases and the near-horizon case retained the same event identity under every policy.
 
-## Unresolved questions and limitations
+| Case | Stricter $\tau$ / s | Worst $|\Delta\tau|$ / s | Worst event-state difference | Worst max $\delta_E$ | Largest accepted angular increment / rad |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `arm1_positive` | 2.026429864601 | $1.793\times10^{-9}$ | $1.769\times10^{-8}$ | $1.089\times10^{-9}$ | 0.3272 |
+| `arm1_negative` | 2.026429864601 | $1.793\times10^{-9}$ | $1.769\times10^{-8}$ | $1.089\times10^{-9}$ | 0.3272 |
+| `arm2_positive` | 2.399690432775 | $1.172\times10^{-10}$ | $7.514\times10^{-9}$ | $1.340\times10^{-9}$ | 0.2239 |
+| `arm2_negative` | 2.399690432775 | $1.172\times10^{-10}$ | $7.514\times10^{-9}$ | $1.340\times10^{-9}$ | 0.2239 |
+| `near_horizon` | 4.795325801143 | $1.975\times10^{-8}$ | $1.625\times10^{-7}$ | $1.282\times10^{-9}$ | 0.2687 |
 
-- The starting DOP853 tolerances and $t_g/32$ step cap have not yet been accepted for this observable.
-- The smoke suite has not been rerun under the full refinement matrix.
-- The terminal event detector is naturally reliable for transversal sign-changing roots; true tangential first contact may be missed without additional dense local analysis.
-- No grazing candidate has yet been established.
-- No physical near-simultaneous candidate or refinement-derived tie tolerance has yet been established.
-- The current `unique` attribution describes the solver-reported earliest terminal surface; it is not yet a proof that no numerically indistinguishable competing surface exists.
-- Lift invariance has not yet been exercised by the formal experiment suite.
-- Exact-horizon behavior and later capped-field semantics remain open.
-- The accepted domain is the equal-link simple model only.
-- The timing evidence is insufficient to choose a coarse-pilot horizon or estimate a map cost.
-- No map, persistence schema, renderer, binary threshold product, compiled evaluator, production integration, or teaching UI has been created.
+The gates were chosen after observing the complete matrix:
 
-## Current conclusion
+- event-time agreement: $5\times10^{-8}\,\mathrm{s}$, 2.5 times the worst observed difference;
+- event-state agreement: $5\times10^{-7}$, 3.1 times the worst observed component difference;
+- maximum normalized energy drift: $5\times10^{-9}$, 3.7 times the worst observed drift;
+- event-surface residual: $10^{-10}$, ten times the baseline state absolute tolerance and far above the observed maximum of $1.776\times10^{-15}$;
+- maximum accepted angular increment: $0.5\,\mathrm{rad}$, above the observed $0.3272\,\mathrm{rad}$ envelope and still well below $\pi$.
 
-The implementation is usable as the Experiment 020 reference evaluator and named-case harness. Its current evidence supports proceeding to the focused validation/test deliverable described in `PLAN.md`.
+These are Experiment 020 gates for the declared cases and policies, not universal long-horizon tolerances.
 
-The experiment itself remains **unaccepted**, and promotion into `development/chaos_content/prototypes/state_space_maps/src/first_flip/` remains closed until the full validation campaign produces an explicit verdict.
+## Independent root evidence
+
+The `arm1_positive` and `arm2_positive` trajectories were reintegrated with stricter tolerances and $t_g/64$ maximum step **without event functions**. The test then located the first sign-changing accepted-step bracket independently and solved the dense-output surface with `scipy.optimize.brentq`.
+
+| Case | Terminal root / s | Independent dense root / s | Time difference | Event-state difference | Dense residual | Bracket width / s |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `arm1_positive` | 2.026429864601199 | 2.026429864601199 | 0 | 0 | 0 | 0.004988679 |
+| `arm2_positive` | 2.399690432774539 | 2.399690432774539 | 0 | 0 | $8.882\times10^{-16}$ | 0.004988679 |
+
+For `arm1_positive`, the independent run also found the later first `arm2+` surface at 2.574559699810 s, after the accepted scalar first event. No competing surface preceded either selected root.
+
+## Lift invariance and reflection symmetry
+
+Starting from `arm1_positive`, the suite applied lift offsets $(k_1,k_2)=(1,0)$, $(0,-1)$, and $(1,-1)$ in
+
+$$
+(\theta_1,
+\theta_2)
+\mapsto
+(\theta_1+2k_1\pi,
+\theta_2+2k_2\pi).
+$$
+
+Every shifted run retained `arm1+`. The worst event-time difference was $8.66\times10^{-14}\,\mathrm{s}$ and the worst event-state difference after removing the prescribed lift was $7.29\times10^{-13}$. Energy and triggering velocity were invariant to the same numerical scale.
+
+The positive/negative arm-1 and arm-2 pairs had equal event times to displayed floating-point precision, the same winning arm, reversed direction and angular velocity, sign-reflected event states, and equal energy. No arm-exchange symmetry was assumed or tested.
+
+## Censoring and horizon evidence
+
+The stable downward equilibrium remained `right_censored` at 5 s under all four solver policies. Every run reached exactly 5 s, retained finite state, reported no event data, and had zero energy drift. The uncapped equilibrium used 98 RHS evaluations, compared with 6074 at $t_g/32$ and 12086 at $t_g/64$, demonstrating why long censored trajectories will control later cost.
+
+The near-horizon initial state
+
+$$
+(\theta_1(0),\theta_2(0))
+=
+(-180^\circ,-13.846153846^\circ)
+$$
+
+produced `arm2-` at $4.795325801143\,\mathrm{s}$ under the stricter policy. A horizon $10^{-6}\,\mathrm{s}$ below that value was successfully censored; a horizon $10^{-6}\,\mathrm{s}$ above it recovered the same event. A horizon copied exactly from the separate reference run classified as censored, illustrating that numerical equality at the cap is not a stable inclusive event convention.
+
+For later capped scalar fields, Experiment 020 recommends the strict rule
+
+$$
+\tau_{\mathrm{flip}}<T_{\max}.
+$$
+
+Numerical equality belongs to the capped/censored class. If a later scientific product needs the separate statement “a root was observed inclusively at the exact endpoint,” it should add an explicit observed-event mask rather than infer that information from the capped scalar.
+
+## Grazing and near-simultaneous investigation
+
+A bounded deterministic screen used the 13×13 half-open angular lattice
+
+$$
+\theta_k=-\pi+\frac{2\pi k}{13},
+\qquad
+k=0,\ldots,12,
+$$
+
+with zero initial angular velocities and $T_{\max}=5\,\mathrm{s}$. This was a candidate search only, not a state-space map. It produced 70 events and 99 censored results, with no solver failures.
+
+The smallest detected absolute crossing velocity was $1.329755428\,\mathrm{rad\,s^{-1}}$ at approximately $(-152.3077^\circ,124.6154^\circ)$, an `arm1+` event at 1.759984469 s. Baseline, stricter, half-step, and uncapped runs retained the same identity; the largest time difference from the stricter run was $2.844\times10^{-9}\,\mathrm{s}$. A nonterminal diagnostic found the next distinct first surface 1.215266113 s later. This is a clearly transversal event, not a useful grazing example.
+
+The smallest competing event-surface margin at the earliest event was 1.504575481 rad at approximately $(152.3077^\circ,96.9231^\circ)$, an `arm2-` event at 1.871734090 s. The identity and margin remained stable under all four policies, and a stricter nonterminal run found no second completed-revolution surface within 5 s. This is not a near tie.
+
+The bounded search therefore found no trustworthy grazing or near-simultaneous physical example. The search was not expanded indefinitely. The accepted numerical claim is limited to **transversal, numerically separated events**:
+
+- true tangential first contact may be missed by sign-change event detection;
+- the scientific definition remains first contact and has not been redefined;
+- solver-reported `unique` attribution is accepted only when competing surfaces are separated beyond the observed numerical uncertainty;
+- exact or unresolved multi-surface attribution remains unvalidated, although the scalar earliest time remains well defined.
+
+## Test result and experiment decision
+
+The focused suite contains 12 scientific-contract tests covering:
+
+- all four signed event identities;
+- the complete four-policy refinement matrix;
+- dimensional scaling and rejection of unequal-link use;
+- individual and combined $2\pi$ lift invariance;
+- reflection symmetry;
+- stable censoring;
+- near-horizon behavior;
+- two independent dense-output roots;
+- the bounded grazing/near-tie screen;
+- targeted refinement and nonterminal continuation of the screen extrema.
+
+**Verdict: ACCEPT for transversal, numerically separated first completed link revolutions in the equal-link simple model.**
+
+The reference `first_flip_time(...)` scalar-time contract is ready for narrow promotion into `development/chaos_content/prototypes/state_space_maps/src/first_flip/`. Promotion must preserve the lifted-angle event surfaces, solver/censor/failure distinction, dimensionless equal-link scale, and strict capped-horizon recommendation. It must not claim validated grazing completeness or physical tie attribution.
+
+## Remaining limitations
+
+- True grazing first contact has not been demonstrated, and sign-change detection cannot guarantee its discovery.
+- No physical simultaneous or numerically unresolved near-tie example was found in the bounded search; multi-identity attribution remains a result capability without empirical physical validation.
+- The accepted policy has been validated only over the declared named cases, 5 s horizon, and bounded 13×13 screen. Longer pilot horizons require renewed convergence and energy checks.
+- The dimensionless contract applies only when $\ell_1=\ell_2$.
+- The capped-field recommendation has not been implemented in persistence code.
+- No map, HDF5 field, renderer, binary threshold product, compiled evaluator, production integration, or teaching UI was created.
