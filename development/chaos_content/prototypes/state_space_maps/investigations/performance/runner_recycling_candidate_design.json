@@ -1,0 +1,241 @@
+{
+  "created_at_utc": "2026-09-03T22:12:43.303333+00:00",
+  "design": {
+    "measurement": {
+      "oracle": "established 3 x 3 mechanically selected oracle spots",
+      "phases": [
+        "setup_and_warmup",
+        "tile_evaluation",
+        "coordinator_persistence",
+        "shutdown"
+      ],
+      "primary_wall": "outer run_scalar_field wall minus separately timed ps RSS observations",
+      "rss_checkpoints_pool_wide_cells": [
+        1024,
+        2048
+      ]
+    },
+    "only_policy_difference": "maximum_cells_per_pool: 1024 versus 2048",
+    "policies": {
+      "accepted_1024": {
+        "execution": {
+          "chunksize": 1,
+          "maximum_cells_per_pool": 1024,
+          "process_width": 4,
+          "start_method": "spawn"
+        },
+        "expected_pool_lifetimes_per_uninterrupted_field": 4,
+        "expected_worker_process_lifetimes_per_uninterrupted_field": 16
+      },
+      "candidate_2048": {
+        "execution": {
+          "chunksize": 1,
+          "maximum_cells_per_pool": 2048,
+          "process_width": 4,
+          "start_method": "spawn"
+        },
+        "expected_pool_lifetimes_per_uninterrupted_field": 2,
+        "expected_worker_process_lifetimes_per_uninterrupted_field": 8
+      }
+    },
+    "preregistered_order": [
+      {
+        "order": [
+          "accepted_1024",
+          "candidate_2048"
+        ],
+        "repetition": 1
+      },
+      {
+        "order": [
+          "candidate_2048",
+          "accepted_1024"
+        ],
+        "repetition": 2
+      },
+      {
+        "order": [
+          "accepted_1024",
+          "candidate_2048"
+        ],
+        "repetition": 3
+      }
+    ],
+    "promoted_source_modified": false,
+    "question": "runner-level accepted 1024-cell recycling versus candidate 2048-cell recycling",
+    "resume_validation": {
+      "interrupt_after_completed_tiles": 32,
+      "policies": [
+        "accepted_1024",
+        "candidate_2048"
+      ],
+      "preexisting_completed_cells_on_resume": 2048,
+      "rule": "Raise from the coordinator progress callback only after tile 31 has completed its authoritative write; then resume the same path with the same policy."
+    },
+    "scientific_contract": {
+      "evaluator": {
+        "bounded_error_route": "compiled_dop853_execution_error",
+        "fallback_route": "compiled_rhs_solve_ivp_fallback",
+        "normal_route": "compiled_dop853",
+        "policy": "targeted_hybrid",
+        "scientific_oracles": [
+          "numpy_sympy_solve_ivp",
+          "numba_rhs_jvp_solve_ivp"
+        ]
+      },
+      "numerical_parameters": {
+        "candidate_a_characteristic_length": 1.0,
+        "duration_seconds": 5.0,
+        "energy_drift_limit": 1e-07,
+        "initial_angular_velocities_radians_per_second": [
+          0.0,
+          0.0
+        ],
+        "initial_tangent": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "renormalization_interval_seconds": 0.25,
+        "renormalization_norm_tolerance": 1e-12,
+        "sampling_interval_seconds": 0.01,
+        "solver": {
+          "atol": 1e-11,
+          "max_step": null,
+          "method": "DOP853",
+          "rtol": 1e-09
+        }
+      },
+      "observable": {
+        "authoritative_meaning": "fixed-horizon finite-time tangent stretching observable; no asymptotic exponent is implied",
+        "definition": "sum(log(r_k)) / T",
+        "field_consumer": "full-periodic initial-angle field",
+        "name": "one_vector_finite_time_tangent_stretching_rate",
+        "symbol": "Lambda_T^(1)"
+      },
+      "orientation": "values[theta2_index, theta1_index]",
+      "periodic_interval": "[-pi, pi)",
+      "physical_parameters": {
+        "gravity": 9.81,
+        "length1": 1.0,
+        "length2": 1.0,
+        "mass1": 1.0,
+        "mass2": 1.0
+      }
+    },
+    "temporary_artifacts": "created below investigations/performance and deleted after evidence extraction; operational outputs are read-only",
+    "uninterrupted_repetitions_per_policy": 3,
+    "workload": {
+      "cell_count": 4096,
+      "cells_per_full_tile": 64,
+      "fraction_of_1024_squared_field": 0.00390625,
+      "fraction_of_512_squared_field": 0.015625,
+      "operational_1024_subsample": {
+        "axes_match_exactly": true,
+        "fallback_cells_per_1024_cell_quarter": [
+          59,
+          47,
+          47,
+          57
+        ],
+        "fallback_cells_per_row_major_tile": [
+          3,
+          1,
+          2,
+          2,
+          4,
+          4,
+          3,
+          4,
+          7,
+          0,
+          0,
+          8,
+          7,
+          3,
+          2,
+          9,
+          8,
+          0,
+          1,
+          2,
+          7,
+          3,
+          5,
+          4,
+          1,
+          2,
+          2,
+          0,
+          0,
+          2,
+          5,
+          5,
+          5,
+          4,
+          1,
+          0,
+          0,
+          2,
+          1,
+          2,
+          4,
+          6,
+          5,
+          7,
+          2,
+          0,
+          1,
+          7,
+          8,
+          2,
+          4,
+          6,
+          9,
+          0,
+          0,
+          5,
+          5,
+          3,
+          3,
+          4,
+          1,
+          2,
+          1,
+          4
+        ],
+        "fallback_containing_tiles": 54,
+        "fallback_fraction": 0.05126953125,
+        "fast_only_tiles": 10,
+        "index_stride": 16,
+        "operational_field_path": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_1024.h5",
+        "operational_field_sha256": "ba934d247363e2cefb9d5aa15d7bdf65f53de5a1876195219c5956e5ccc202dc",
+        "reference_payload_sha256": "6060c57c7f46ce20c2b5a0ad12877283133b5d1d871bd74a3b54173890bd63ba",
+        "route_counts": {
+          "compiled_dop853": 3886,
+          "compiled_rhs_solve_ivp_fallback": 210
+        },
+        "selection_rule": "Use the complete 64 x 64 full-periodic grid; coordinate (i, j) is persisted 1024-grid coordinate (16*i, 16*j). Selection uses no tile timing or rendered structure.",
+        "status_counts": {
+          "completed_valid": 4096
+        }
+      },
+      "samples_per_axis": 64,
+      "shape_theta2_theta1": [
+        64,
+        64
+      ],
+      "task_plan_sha256": "6d27f8e6ebf60e24d242a2de189df4a16695c74313fbd9fab28babe1fbac5a5d",
+      "tile_count": 64,
+      "tile_shape_theta2_theta1": [
+        8,
+        8
+      ]
+    }
+  },
+  "design_sha256": "b0186261d8200d00201da11792a55a12cc48c7128038d3b1840e747f18b2d86d",
+  "probe": "runner_recycling_candidate_design",
+  "python": "3.12.3",
+  "timing_results_known": false
+}

@@ -705,27 +705,229 @@ with exact scientific stability and a quantified approximately 42 MiB
 per-worker RSS cost. It does not justify unlimited reuse, 4,096 as another
 candidate, or a universal 2,048 limit.
 
-Before changing the promoted default, the candidate still needs a focused
-runner-level validation that:
+Before changing the promoted default, the candidate still needed the focused
+runner-level validation recorded below to:
 
-1. exercises actual `run_scalar_field` tile traversal with the explicit
+1. exercise actual `run_scalar_field` tile traversal with the explicit
    2,048-cell execution spec in a temporary artifact, including create/resume,
    pool-count, provenance, integrity, and worker-stop assertions;
-2. includes a mechanically fixed representative fast/fallback route mix and
+2. include a mechanically fixed representative fast/fallback route mix and
    oracle checks, because this A/B deliberately isolated lifecycle with
    fast-only cells;
-3. confirms the roughly 5% evaluation-throughput difference is either
+3. confirm the roughly 5% evaluation-throughput difference is either
    repeatable and accepted within the net benefit or attributable to bounded
    host/order noise; and
-4. makes the approximately 168 MiB aggregate worker-RSS increase an explicit
+4. make the approximately 168 MiB aggregate worker-RSS increase an explicit
    host resource acceptance criterion.
 
-Only after those checks pass should a separate implementation task change the
-accepted default and its documentation/tests. This measurement did not invoke
-the runner, persistence, create, or resume.
+The fast-only A/B did not invoke the runner, persistence, create, or resume.
+The following bounded measurement evaluates those remaining gates before any
+separate implementation task changes the accepted default.
 
 Expensive broad profiling, another uniform field, and a 2048 run are not needed
 to answer these next questions.
+
+## Runner-level 1,024-versus-2,048 candidate validation
+
+### Question and preregistered workload
+
+This measurement asked whether the 2,048-cell candidate retains a material
+wall-time benefit when the only policy change is exercised through the actual
+promoted scalar-field runner: rectangular tile traversal, the hybrid Lyapunov
+adapter, coordinator-owned HDF5 persistence, create/resume, checksums,
+provenance, final field validation, and oracle spots.
+
+The complete `64 x 64` periodic field was fixed before timing. It contains
+4,096 scientific cells and 64 row-major `8 x 8` tiles: 1.5625% of a 512-squared
+field and 0.390625% of the completed 1024-squared field. This resolution is not
+selected from an image or from timing. Its coordinates are exactly every 16th
+coordinate of the persisted 1024-squared axes, so the operational route map can
+predeclare the mixed workload without estimating or rerunning it.
+
+The exact persisted subsample contains:
+
+| Route evidence fixed before timing | Cells | Fraction |
+| --- | ---: | ---: |
+| Compiled-DOP853 fast | 3,886 | 94.873% |
+| Verified `solve_ivp` fallback | 210 | 5.127% |
+| Execution error | 0 | 0% |
+
+Fallback occurs in 54 of 64 tiles. The four consecutive 1,024-cell quarters
+contain 59, 47, 47, and 57 fallback cells, so neither policy receives a
+deliberately fallback-heavy pool lifetime. The task-plan digest is
+`6d27f8e6ebf60e24d242a2de189df4a16695c74313fbd9fab28babe1fbac5a5d`.
+The selection, route evidence, policies, and order were written before timing
+to
+[`runner_recycling_candidate_design.json`](runner_recycling_candidate_design.json),
+whose design digest is
+`b0186261d8200d00201da11792a55a12cc48c7128038d3b1840e747f18b2d86d`.
+
+Policy A used the unchanged accepted execution spec and therefore four pool
+lifetimes of 1,024 pool-wide returned cells. Policy B used the same spec with
+only `maximum_cells_per_pool=2048`, therefore two pool lifetimes. Both retained
+four spawn workers, `chunksize=1`, the same tasks and order, and the same HDF5
+definition and tile plan. The preregistered interleaving was again `A/B`,
+`B/A`, `A/B` over three paired repetitions.
+
+The harness calls the real `run_scalar_field` and the promoted
+`lyapunov_evaluator_binding`; it does not reproduce their execution or science.
+Investigation-local wrappers observe the existing pool open/close seam and
+current worker RSS. The primary adjusted outer wall is the complete
+`run_scalar_field` call, including dataset creation and final validation, less
+separately timed `ps` observation overhead. Component times come directly from
+the promoted runner. The temporary HDF5 files were created under this
+investigation directory, inspected, and removed after evidence extraction.
+
+The preregistered commands were:
+
+```bash
+MPLCONFIGDIR=/private/tmp/state_space_maps_runner_validation_mpl \
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m \
+  development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_runner_recycling_candidate \
+  --design-only
+
+MPLCONFIGDIR=/private/tmp/state_space_maps_runner_validation_mpl \
+PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m \
+  development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_runner_recycling_candidate
+```
+
+### Uninterrupted create timing
+
+| Pair | A adjusted wall | B adjusted wall | B saving | B saving fraction | A evaluation | B evaluation |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 20.216 s | 16.661 s | 3.556 s | 17.59% | 11.120 s | 11.953 s |
+| 2 | 21.264 s | 16.564 s | 4.700 s | 22.10% | 12.521 s | 11.861 s |
+| 3 | 21.893 s | 17.527 s | 4.365 s | 19.94% | 12.864 s | 12.847 s |
+
+The candidate saved adjusted total wall time in all three pairs. Mean wall time
+fell from 21.125 s to 16.917 s: a paired mean saving of 4.207 s, or 19.88% of
+the accepted-policy wall. Individual savings ranged from 3.556 to 4.700 s.
+Raw runner timing, before removing the explicitly measured RSS observations,
+also gives the same direction and similar magnitude.
+
+| Mean promoted-runner component | A: 1,024 | B: 2,048 | B minus A |
+| --- | ---: | ---: | ---: |
+| Pool setup and warm-up | 6.631 s | 3.212 s | -3.419 s |
+| Tile evaluation | 12.168 s | 12.221 s | +0.052 s |
+| Coordinator persistence | 0.172 s | 0.168 s | -0.003 s |
+| Pool shutdown | 1.834 s | 1.058 s | -0.776 s |
+| Lifecycle, setup plus shutdown | 8.465 s | 4.270 s | -4.195 s |
+
+The 4.195 s lifecycle reduction explains essentially all of the 4.207 s net
+wall saving. There is no persistence speedup claim. The small remaining
+coordinator/unattributed difference is about 0.061 s in B's favour and includes
+fixed planning, compaction, and validation work that is not separately timed.
+
+### Evaluation throughput and fallback traffic
+
+Aggregate evaluation throughput was 336.6 cells/s for A and 335.2 cells/s for
+B, only 0.43% lower for the candidate. Candidate evaluation time was 0.833 s
+slower in pair 1, 0.660 s faster in pair 2, and 0.016 s faster in pair 3. The
+earlier fast-only result—4.91% lower aggregate candidate throughput and a
+candidate penalty in every pair—therefore did **not** reproduce as a total
+mixed-route evaluation penalty.
+
+Because both policies execute each identical tile in the same order, fallback
+distribution cannot explain an A/B difference. The correlation between tile
+fallback count and the candidate-minus-accepted tile-time difference was
+`-0.018`, `0.054`, and `0.113` in the three pairs: no stable association is
+visible in this bounded sample.
+
+There is a narrower unresolved worker-age signal. Comparing each candidate
+pool's second 1,024 cells with its first 1,024, after subtracting the same
+quarter contrast under fresh accepted pools, makes the older half 0.017,
+0.235, and 0.145 s less favourable per quarter across the three repetitions.
+All signs agree, but the magnitude is small, individual quarter differences
+remain noisy, and evaluator occupancy shows no corresponding collapse. This is
+not enough to attribute degradation to worker age. It is retained as a limit,
+not hidden by the near-equal aggregate throughput.
+
+Representative fallback traffic does not change the policy conclusion. It
+raises total evaluation cost relative to the prior fast-only probe, as expected,
+but the identical 210-cell fallback workload appears under both policies and
+does not materially erode the lifecycle saving.
+
+### RSS tradeoff
+
+Across the six candidate pool lifetimes, median worker current RSS increased by
+40.73--43.86 MiB between the 1,024- and 2,048-cell checkpoints, with a mean of
+42.55 MiB per worker. Comparing each paired run's maximum endpoint worker RSS,
+B was higher by 40.78, 46.92, and 45.67 MiB, a 44.46 MiB mean maximum premium.
+Candidate maximum endpoints were approximately 314--320 MiB, versus
+approximately 272--274 MiB for A.
+
+The bounded policy price is therefore still about 42.5 MiB of additional
+current RSS per worker, or about 170 MiB across four workers, with the maximum
+endpoint comparison slightly higher. This agrees with the preceding probes.
+It is not a plateau, leak diagnosis, or evidence about 4,096 or unlimited
+worker lifetimes.
+
+### Create, resume, integrity, and scientific equality
+
+Each policy also received one separate resume sequence. The coordinator raised
+a planned interruption only after tile 31 had been written and marked complete.
+Reopening found exactly tiles 0--31 complete, tiles 32--63 not started, no
+writing or corrupt tile, 2,048 authoritative completed cells, and attempt one
+only for the completed half. Resume used the same policy, skipped all 2,048
+completed cells, evaluated exactly the remaining 2,048, and created two pools
+for A or one for B.
+
+Every completed artifact passed the HDF5 static definition, plan, tile-state,
+payload-checksum, and completion-marker validation. All final tiles had attempt
+one and one execution-policy limit in their tile provenance: 1,024 for A or
+2,048 for B. The resumed fields exactly matched their corresponding
+uninterrupted field in axes, values, statuses, routes, scientific tile
+diagnostics, exceptional records, definition metadata, tile bounds, and tile
+identities. Performance timings, worker PIDs/RSS, and therefore whole-file
+bytes/checksums are run evidence rather than fields required to be byte-equal.
+
+All three A/B field pairs were scientifically exact under the same comparison.
+All eight final artifacts also exactly matched the values, statuses, and routes
+of the persisted 1024-field subsample. Every field contained 4,096
+completed-valid cells, the expected 3,886/210 route split, no issue or error
+cell, and the accepted value range. The established nine oracle spots passed
+for every artifact; across all 72 spot records, the largest rate error was
+`1.502e-9 s^-1` and the largest energy-diagnostic error was `5.464e-11`, both
+inside existing gates.
+
+The retained machine-readable evidence is
+[`runner_recycling_candidate_64.json`](runner_recycling_candidate_64.json).
+It records all six create runs, individual pools and per-PID RSS, every tile
+timing, the two resume sequences, integrity/oracle results, comparisons, and
+protected artifact/tree hashes. The bounded work comprised 24,576 cells in the
+six timing runs plus 8,192 across the two create/resume sequences, 96 required
+initializer warm-ups, and 72 oracle spots. Every pool stopped. No operational
+field was created or resumed, and the operational artifact hashes were
+byte-identical before and after.
+
+### Decision and limitations
+
+The runner-level validation is positive for adopting 2,048 as the next bounded
+promoted recycling limit. It reproduces a 17.59--22.10% wall benefit through
+the actual runner, attributes the benefit to halving pool lifecycle count,
+retains a representative mixed route workload, and preserves create/resume,
+integrity, provenance, oracle, and scientific results. The previous aggregate
+4.91% evaluation penalty did not persist; the observed 0.43% aggregate
+difference is too small and inconsistent by pair to materially erode the
+benefit.
+
+This decision explicitly accepts approximately 170 MiB additional aggregate
+worker RSS for this four-worker process policy. It does not establish a
+population timing distribution, eliminate the small unresolved older-half
+signal, predict an exact saving for the 1024-squared field, or establish safety
+under broader host memory pressure. Three same-host pairs and a 64-squared
+field are bounded runner evidence, not universal performance claims.
+Resume was deliberately same-policy only; the evidence makes no claim about
+mixing per-tile execution provenance across policies.
+
+The exact separately reviewed promoted change now justified is to change only
+the accepted `ProcessExecutionSpec.maximum_cells_per_pool` default from 1,024
+to 2,048. The implementation task should preserve four spawn workers,
+`chunksize=1`, `8 x 8` tiles, scientific evaluation, HDF5 transactions, and
+resume compatibility; update the architecture/operational documentation and
+manifest expectation; add focused default-policy, pool-count, tile-provenance,
+and same-policy resume regressions; and run the complete prototype suite. It
+must not infer support for 4,096 or unlimited lifetimes.
 
 ## Acceptance and decision boundary
 
@@ -738,12 +940,11 @@ useful evidence.
 
 ## Next action
 
-There is already enough evidence to prioritize **worker lifecycle/setup** as a
-promising optimisation target category. There is not enough evidence to select
-a particular optimisation, and the numerical evaluation bucket remains larger.
-The completed A/B justifies 2,048 as a bounded promoted-runner optimisation
-candidate, not as the new policy. The next action is the focused runner-level
-validation above, with the observed evaluation-throughput difference and
-approximately 168 MiB aggregate worker-RSS increase treated as explicit gates.
-No production limit or implementation should change before that evidence is
-accepted. Uniform resolution escalation remains paused.
+Worker lifecycle/setup remains the primary contract-preserving optimisation
+target, and the runner-level validation has now cleared the declared gates for
+the bounded 2,048-cell policy. The next action is a separate, reviewable
+implementation change limited to the accepted default and its direct
+tests/documentation, with approximately 170 MiB aggregate worker RSS explicitly
+accepted as the resource tradeoff. Uniform resolution escalation remains
+paused; no 2,048-squared field, 4,096-cell policy candidate, or unlimited worker
+lifetime is authorized by this result.
