@@ -72,6 +72,17 @@ it automatically. Generation prints lightweight coordinator-level progress at
 approximately ten-percent milestones, including elapsed time, throughput, and
 an explicitly approximate ETA.
 
+The promoted execution policy uses four spawn workers and recycles each pool at
+a tile boundary before it would exceed 2,048 returned cell outcomes pool-wide.
+This operating point is evidence-driven: in the bounded `64 x 64` runner-level
+validation it reduced mean adjusted runner wall time from 21.125 s to 16.917 s
+(19.88%) while adding about 170 MiB of worker RSS across the four processes.
+That is a bounded tradeoff, not a universal performance claim. Recycling
+remains necessary because worker RSS continued to grow with lifetime; 4,096,
+larger limits, and unlimited worker reuse remain unevidenced. See the
+[performance investigation](investigations/performance/README.md) for the
+measurement boundaries.
+
 The established worked example uses `512` samples on each axis. Its
 authoritative array shape is `(512, 512)` in stored `[theta2, theta1]` order,
 containing 262,144 cells.
@@ -117,6 +128,15 @@ create and resume because those provenance values are part of compatibility.
 At startup it reports the already-completed and remaining work units, then
 continues with the same lightweight progress milestones. A successful resumed
 run writes or refreshes the JSON manifest only after final validation passes.
+
+The pool limit is recorded in each completed tile's execution provenance; it
+is not part of the static HDF5 field definition. If the field definition and
+software provenance still match, resuming an incomplete artifact across this
+policy change is deliberately compatible: old completed tiles retain `1024`
+and newly completed tiles record `2048`. An artifact made by an earlier
+repository revision will normally still fail closed because its Git provenance
+differs. Completed, internally valid old-policy HDF5 artifacts remain readable
+and renderable without resuming them.
 
 ### Render
 

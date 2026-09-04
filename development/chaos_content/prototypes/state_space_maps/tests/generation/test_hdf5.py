@@ -113,3 +113,9 @@ def test_corruption_and_resume_definition_mismatch_fail_closed(tmp_path: Path) -
             replace(definition, numerical_parameters={"policy": "changed"}),
             tuple(unit.bounds for unit in plan),
         )
+    with pytest.raises(IntegrityError):
+        assert_dataset_compatible(
+            path,
+            replace(definition, software_provenance={"revision": "changed"}),
+            tuple(unit.bounds for unit in plan),
+        )

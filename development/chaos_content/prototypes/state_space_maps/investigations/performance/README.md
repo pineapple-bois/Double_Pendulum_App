@@ -1,8 +1,9 @@
 # Finite-time-field performance investigation
 
 **Status:** uniform resolution escalation is paused. The completed `1024 x 1024`
-field is the current operational evidence; this investigation does not authorize
-a `2048 x 2048` run or an optimisation.
+field is the current operational evidence. This investigation supports the
+bounded 2,048-cell worker-pool lifetime now promoted in the runner; it does not
+authorize a `2048 x 2048` field or a broader optimisation.
 
 ## Motivation
 
@@ -154,7 +155,11 @@ useful upper-level utilisation proxy, not CPU utilisation: its approximately
 
 ## Performance accounting from implementation
 
-The following are implementation facts, not inferred timing results:
+The following were implementation facts for the accepted runner when the
+operational fields and initial accounting were recorded, not inferred timing
+results. The 1,024-cell value in this historical baseline has since been
+replaced only by the validated 2,048-cell default documented at the end of this
+record.
 
 1. The planner creates row-major `8 x 8` work units. The coordinator dispatches
    each tile's 64 cells individually through `executor.map(..., chunksize=1)`;
@@ -940,11 +945,11 @@ useful evidence.
 
 ## Next action
 
-Worker lifecycle/setup remains the primary contract-preserving optimisation
-target, and the runner-level validation has now cleared the declared gates for
-the bounded 2,048-cell policy. The next action is a separate, reviewable
-implementation change limited to the accepted default and its direct
-tests/documentation, with approximately 170 MiB aggregate worker RSS explicitly
-accepted as the resource tradeoff. Uniform resolution escalation remains
-paused; no 2,048-squared field, 4,096-cell policy candidate, or unlimited worker
-lifetime is authorized by this result.
+The bounded result has now been promoted as a separate, reviewable change to
+the default `maximum_cells_per_pool`: 2,048 pool-wide returned outcomes, with
+the existing tile-boundary accounting and all other execution values retained.
+Approximately 170 MiB aggregate worker RSS is the explicit measured tradeoff.
+Operational evidence should continue to be reviewed at this operating point.
+Uniform resolution escalation remains paused; no 2,048-squared field,
+4,096-cell policy candidate, or unlimited worker lifetime is authorized by this
+result.

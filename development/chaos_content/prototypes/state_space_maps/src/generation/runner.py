@@ -57,11 +57,11 @@ WorkerInitializer = Callable[..., None]
 
 @dataclass(frozen=True)
 class ProcessExecutionSpec:
-    """Execution policy; only the default values carry Experiments 016--019 evidence."""
+    """Evidence-backed execution policy for the promoted scalar-field runner."""
 
     process_width: int = 4
     chunksize: int = 1
-    maximum_cells_per_pool: int = 1024
+    maximum_cells_per_pool: int = 2048
     start_method: str = "spawn"
 
     def __post_init__(self) -> None:

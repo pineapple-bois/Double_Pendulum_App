@@ -305,7 +305,7 @@ def test_manifest_uses_run_objects_and_writes_resolution_sidecar(
     )
     assert stored["execution"]["process_policy"] == {
         "chunksize": 1,
-        "maximum_cells_per_pool": 1024,
+        "maximum_cells_per_pool": 2048,
         "process_width": 4,
         "start_method": "spawn",
     }
@@ -345,12 +345,22 @@ def _synthetic_completed_field(path: Path) -> None:
             attempt=1,
             evaluation_seconds=0.0,
             diagnostics={"fixture": True},
-            provenance={"fixture": "rendering"},
+            provenance={
+                "fixture": "rendering",
+                "execution_policy": {
+                    "process_start_method": "spawn",
+                    "process_width": 4,
+                    "per_cell_chunksize": 1,
+                    "maximum_cells_per_pool": 1024,
+                },
+            },
         ),
     )
 
 
-def test_renderer_writes_png_and_pdf_from_persisted_hdf5(tmp_path: Path) -> None:
+def test_renderer_writes_derivatives_from_completed_old_policy_hdf5(
+    tmp_path: Path,
+) -> None:
     dataset = tmp_path / "finite_time_field_2.h5"
     _synthetic_completed_field(dataset)
 

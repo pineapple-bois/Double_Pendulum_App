@@ -39,9 +39,17 @@ rectangles with clipped edges. `generation/hdf5.py` owns authoritative float64
 values, uint8 status/route arrays, provenance, tile completion markers,
 checksums, and the fail-closed reader. `generation/runner.py` evaluates pending
 tiles through four spawn-isolated workers, dispatches indexed cells with
-chunksize one, recycles a pool at tile boundaries before it would exceed 1,024
+chunksize one, recycles a pool at tile boundaries before it would exceed 2,048
 cells, and lets only the coordinator write HDF5.
 `generation/validation.py` reopens and validates an artifact without dynamics.
+
+The 2,048-cell pool-wide lifetime is the promoted, evidence-backed operating
+point. A bounded `64 x 64` runner validation measured about 20% lower adjusted
+runner wall time than the former 1,024-cell policy, at an explicit cost of
+about 170 MiB additional worker RSS across four processes. Recycling remains a
+resource boundary because RSS continued to grow with worker lifetime. The
+measurement does not establish 2,048 as a universal maximum-safe lifetime, and
+it supplies no evidence for 4,096, larger limits, or unlimited reuse.
 
 The neutral orchestration API is:
 
@@ -58,6 +66,14 @@ summary = run_scalar_field(
 requires the requested definition, axes, provenance, and tile plan to match
 exactly before workers start. Verified complete tiles are skipped; writing or
 not-started tiles are retried. Corrupt complete tiles fail closed.
+
+Execution policy is recorded per completed tile rather than in the static
+field definition. A same-definition resume may therefore preserve completed
+tiles carrying the former 1,024 limit and write pending tiles with the promoted
+2,048 limit; that mixed provenance is explicit. Software provenance remains a
+static compatibility input, so an artifact from a different recorded Git
+revision remains fail-closed. A completed schema-valid old-policy artifact is
+still readable and renderable because those operations do not resume work.
 
 ## Scientific consumer seam
 
