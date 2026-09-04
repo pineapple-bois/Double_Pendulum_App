@@ -245,6 +245,11 @@ def build_parser() -> argparse.ArgumentParser:
             "outputs/finite_time_field/finite_time_field_<samples>.h5 path."
         ),
     )
+    parser.add_argument(
+        "--duration",
+        type=float,
+        default=5.0,
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--create", action="store_true")
     mode.add_argument("--resume", action="store_true")
@@ -265,7 +270,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     output_path = arguments.output or default_output_path(
         arguments.samples_per_axis
     )
-    specification = RenormalizedTangentSpec()
+    specification = RenormalizedTangentSpec(
+        duration=arguments.duration,
+    )
     execution = accepted_process_execution_spec()
     definition = periodic_lyapunov_field_definition(
         arguments.samples_per_axis,
