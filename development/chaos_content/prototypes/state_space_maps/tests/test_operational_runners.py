@@ -16,6 +16,7 @@ from development.chaos_content.prototypes.state_space_maps.runners.generate_lyap
     build_manifest,
     build_parser as build_generation_parser,
     default_output_path,
+    main as generation_main,
     manifest_path,
     write_manifest,
 )
@@ -122,6 +123,61 @@ def test_custom_output_keeps_all_sidecars_on_the_supplied_stem(
         tmp_path / "chosen_field.png",
         tmp_path / "chosen_field.pdf",
     )
+
+
+def test_generation_main_passes_non_default_duration_to_validation(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from types import SimpleNamespace
+
+    from development.chaos_content.prototypes.state_space_maps.src import generation
+    from development.chaos_content.prototypes.state_space_maps.src.lyapunov import (
+        field_adapter,
+    )
+
+    captured: dict[str, object] = {}
+
+    monkeypatch.setattr(
+        generation,
+        "accepted_process_execution_spec",
+        lambda: SimpleNamespace(process_width=1),
+    )
+    monkeypatch.setattr(
+        field_adapter,
+        "periodic_lyapunov_field_definition",
+        lambda samples, spec: SimpleNamespace(field_shape=(samples, samples)),
+    )
+
+    def fake_run(*args: object, spec: object, **kwargs: object) -> object:
+        captured["generation_spec"] = spec
+        return SimpleNamespace(validation=SimpleNamespace(accepted=False))
+
+    def fake_validate(path: Path, spec: object) -> object:
+        captured["validation_path"] = path
+        captured["validation_spec"] = spec
+        return SimpleNamespace(accepted=False)
+
+    monkeypatch.setattr(field_adapter, "run_periodic_lyapunov_field", fake_run)
+    monkeypatch.setattr(field_adapter, "validate_lyapunov_oracle_spots", fake_validate)
+    output = tmp_path / "non_default_duration.h5"
+
+    assert generation_main(
+        [
+            "--samples-per-axis",
+            "8",
+            "--output",
+            str(output),
+            "--duration",
+            "20",
+            "--create",
+        ]
+    ) == 1
+
+    generation_spec = captured["generation_spec"]
+    assert generation_spec.duration == 20.0
+    assert captured["validation_spec"] is generation_spec
+    assert captured["validation_path"] == output
 
 
 def test_resume_progress_is_immediate_and_milestone_throttled(capsys) -> None:

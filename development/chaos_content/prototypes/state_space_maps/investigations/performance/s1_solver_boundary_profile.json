@@ -1,0 +1,1679 @@
+{
+  "all_measurements_completed_valid": true,
+  "configuration": {
+    "cell_cases": [
+      {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      }
+    ],
+    "energy_drift_limit": 1e-07,
+    "initial_tangent": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "observation_horizons_seconds": [
+      5.0,
+      20.0
+    ],
+    "physical_parameters": {
+      "gravity": 9.81,
+      "length1": 1.0,
+      "length2": 1.0,
+      "mass1": 1.0,
+      "mass2": 1.0
+    },
+    "production_configuration_changed": false,
+    "renormalization_interval_seconds": 0.25,
+    "renormalization_norm_tolerance": 1e-12,
+    "resolved_max_step_seconds": 0.009977357137720327,
+    "sampling_interval_seconds": 0.01,
+    "sequential_single_process": true,
+    "solver": {
+      "atol": 1e-11,
+      "max_step": null,
+      "method": "DOP853",
+      "rtol": 1e-09
+    },
+    "wall_repetitions_per_case_and_horizon": 5
+  },
+  "created_at_utc": "2026-09-04T23:14:23.600774+00:00",
+  "git_head": "c3cfb0eca3a7b070cf5d49aa0964b08cff8b8cd3",
+  "measurement_notes": {
+    "profile": "one separate cProfile run per case/horizon; profile timings are reported separately from unprofiled wall measurements",
+    "rhs_count": "returned_solver_function_evaluations covers only the returned route; compiled_rhs_binding profile calls cover discarded fast attempts and replays too",
+    "wall_timers": "perf_counter around the hybrid cell plus exact ode.integrate and solve_ivp calls; integration-call time includes RHS and observer callbacks"
+  },
+  "numba": "0.67.0",
+  "numpy": "2.5.2",
+  "platform": "macOS-15.7.9-arm64-arm-64bit",
+  "probe": "s1_solver_boundary",
+  "profile_records": [
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.000580537,
+          "primitive_calls": 541,
+          "self_seconds": 0.00028653200000000004,
+          "total_calls": 541
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.004465139,
+          "primitive_calls": 6292,
+          "self_seconds": 0.003822171,
+          "total_calls": 6292
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.005308554,
+          "primitive_calls": 6292,
+          "self_seconds": 0.000843415,
+          "total_calls": 6292
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.007643248,
+          "primitive_calls": 20,
+          "self_seconds": 0.0016649490000000002,
+          "total_calls": 20
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.010664167,
+          "primitive_calls": 1,
+          "self_seconds": 0.000288127,
+          "total_calls": 1
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.000669745,
+          "primitive_calls": 541,
+          "self_seconds": 8.9208e-05,
+          "total_calls": 541
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        }
+      },
+      "profile_wall_seconds": 0.010740125027950853,
+      "reported_elapsed_seconds": 0.010687792033422738,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.768436622055366
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 5.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.0005865870000000001,
+          "primitive_calls": 541,
+          "self_seconds": 0.00028968500000000003,
+          "total_calls": 541
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.004467543,
+          "primitive_calls": 6292,
+          "self_seconds": 0.0038362350000000003,
+          "total_calls": 6292
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.005312933000000001,
+          "primitive_calls": 6292,
+          "self_seconds": 0.00084539,
+          "total_calls": 6292
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.007627378000000001,
+          "primitive_calls": 20,
+          "self_seconds": 0.0016401570000000002,
+          "total_calls": 20
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.010475042,
+          "primitive_calls": 1,
+          "self_seconds": 0.00027844400000000003,
+          "total_calls": 1
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.000674288,
+          "primitive_calls": 541,
+          "self_seconds": 8.7701e-05,
+          "total_calls": 541
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        }
+      },
+      "profile_wall_seconds": 0.010538250033278018,
+      "reported_elapsed_seconds": 0.010491749970242381,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.11734274086956054
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.001201938,
+          "primitive_calls": 1127,
+          "self_seconds": 0.0005918000000000001,
+          "total_calls": 1127
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.016442749,
+          "primitive_calls": 21782,
+          "self_seconds": 0.014061612000000001,
+          "total_calls": 21782
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.011344763,
+          "primitive_calls": 13486,
+          "self_seconds": 0.001821247,
+          "total_calls": 13486
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.016293628,
+          "primitive_calls": 39,
+          "self_seconds": 0.003563379,
+          "total_calls": 39
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.074805208,
+          "primitive_calls": 3,
+          "self_seconds": 0.000870455,
+          "total_calls": 3
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.001385486,
+          "primitive_calls": 1127,
+          "self_seconds": 0.000183548,
+          "total_calls": 1127
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.050634916,
+          "primitive_calls": 20,
+          "self_seconds": 0.0012989260000000002,
+          "total_calls": 20
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.023190126000000002,
+          "primitive_calls": 558,
+          "self_seconds": 0.013853685000000001,
+          "total_calls": 558
+        }
+      },
+      "profile_wall_seconds": 0.07491791696520522,
+      "reported_elapsed_seconds": 0.07487050001509488,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8296,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5596078161757845
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 5.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.0009185860000000001,
+          "primitive_calls": 879,
+          "self_seconds": 0.00045912700000000004,
+          "total_calls": 879
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.014375289000000001,
+          "primitive_calls": 18943,
+          "self_seconds": 0.012301651,
+          "total_calls": 18943
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.008904989,
+          "primitive_calls": 10611,
+          "self_seconds": 0.001427985,
+          "total_calls": 10611
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.012724418000000001,
+          "primitive_calls": 30,
+          "self_seconds": 0.002759722,
+          "total_calls": 30
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.06909279,
+          "primitive_calls": 3,
+          "self_seconds": 0.0007181840000000001,
+          "total_calls": 3
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.001059707,
+          "primitive_calls": 879,
+          "self_seconds": 0.00014112100000000002,
+          "total_calls": 879
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.049912250000000005,
+          "primitive_calls": 20,
+          "self_seconds": 0.0012487590000000001,
+          "total_calls": 20
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.023222534000000003,
+          "primitive_calls": 561,
+          "self_seconds": 0.013888220000000001,
+          "total_calls": 561
+        }
+      },
+      "profile_wall_seconds": 0.06919445900712162,
+      "reported_elapsed_seconds": 0.06915079202735797,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8332,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5339577774432087
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.0022604070000000003,
+          "primitive_calls": 2161,
+          "self_seconds": 0.001115322,
+          "total_calls": 2161
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.017254826,
+          "primitive_calls": 25132,
+          "self_seconds": 0.014735778000000001,
+          "total_calls": 25132
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.020589898000000002,
+          "primitive_calls": 25132,
+          "self_seconds": 0.003335072,
+          "total_calls": 25132
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.029715624000000003,
+          "primitive_calls": 80,
+          "self_seconds": 0.006521594,
+          "total_calls": 80
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.040167667000000004,
+          "primitive_calls": 1,
+          "self_seconds": 0.000991093,
+          "total_calls": 1
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.0026041320000000003,
+          "primitive_calls": 2161,
+          "self_seconds": 0.000343725,
+          "total_calls": 2161
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        }
+      },
+      "profile_wall_seconds": 0.04022249998524785,
+      "reported_elapsed_seconds": 0.04018241702578962,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.782622629437405
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 20.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.0022456290000000003,
+          "primitive_calls": 2161,
+          "self_seconds": 0.0011079520000000002,
+          "total_calls": 2161
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.017388690000000002,
+          "primitive_calls": 25132,
+          "self_seconds": 0.014861005000000002,
+          "total_calls": 25132
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.020756771,
+          "primitive_calls": 25132,
+          "self_seconds": 0.003368081,
+          "total_calls": 25132
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.029754673000000002,
+          "primitive_calls": 80,
+          "self_seconds": 0.006410376000000001,
+          "total_calls": 80
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.040523833,
+          "primitive_calls": 1,
+          "self_seconds": 0.00099909,
+          "total_calls": 1
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.002587526,
+          "primitive_calls": 2161,
+          "self_seconds": 0.000341897,
+          "total_calls": 2161
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.0,
+          "primitive_calls": 0,
+          "self_seconds": 0.0,
+          "total_calls": 0
+        }
+      },
+      "profile_wall_seconds": 0.04058237501885742,
+      "reported_elapsed_seconds": 0.04054024996003136,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.07511491859832332
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.003074429,
+          "primitive_calls": 2879,
+          "self_seconds": 0.001511388,
+          "total_calls": 2879
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.051958023000000006,
+          "primitive_calls": 67799,
+          "self_seconds": 0.044487939000000004,
+          "total_calls": 67799
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.029333783000000002,
+          "primitive_calls": 34603,
+          "self_seconds": 0.0046739780000000005,
+          "total_calls": 34603
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.041942209,
+          "primitive_calls": 99,
+          "self_seconds": 0.009062163,
+          "total_calls": 99
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.260680874,
+          "primitive_calls": 3,
+          "self_seconds": 0.002409613,
+          "total_calls": 3
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.003546263,
+          "primitive_calls": 2879,
+          "self_seconds": 0.000471834,
+          "total_calls": 2879
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.196951328,
+          "primitive_calls": 80,
+          "self_seconds": 0.004828072,
+          "total_calls": 80
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.091514464,
+          "primitive_calls": 2233,
+          "self_seconds": 0.054516759000000005,
+          "total_calls": 2233
+        }
+      },
+      "profile_wall_seconds": 0.2608043329673819,
+      "reported_elapsed_seconds": 0.26076008297968656,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 33196,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.3376485753869765
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 20.0,
+      "metrics": {
+        "accepted_step_observer": {
+          "cumulative_seconds": 0.0027373700000000003,
+          "primitive_calls": 2584,
+          "self_seconds": 0.00134942,
+          "total_calls": 2584
+        },
+        "compiled_rhs_binding": {
+          "cumulative_seconds": 0.048799436,
+          "primitive_calls": 63719,
+          "self_seconds": 0.041812086000000005,
+          "total_calls": 63719
+        },
+        "fast_rhs_counter_callback": {
+          "cumulative_seconds": 0.025994294,
+          "primitive_calls": 30955,
+          "self_seconds": 0.004215354,
+          "total_calls": 30955
+        },
+        "native_dopri853_driver": {
+          "cumulative_seconds": 0.037251708,
+          "primitive_calls": 90,
+          "self_seconds": 0.008110828,
+          "total_calls": 90
+        },
+        "renormalization_driver": {
+          "cumulative_seconds": 0.25273125,
+          "primitive_calls": 3,
+          "self_seconds": 0.0022504860000000003,
+          "total_calls": 3
+        },
+        "scipy_solout_bridge": {
+          "cumulative_seconds": 0.0031465860000000003,
+          "primitive_calls": 2584,
+          "self_seconds": 0.000409216,
+          "total_calls": 2584
+        },
+        "solve_ivp": {
+          "cumulative_seconds": 0.19534725,
+          "primitive_calls": 80,
+          "self_seconds": 0.004737423,
+          "total_calls": 80
+        },
+        "solve_ivp_rk_step": {
+          "cumulative_seconds": 0.090330879,
+          "primitive_calls": 2197,
+          "self_seconds": 0.053718233000000004,
+          "total_calls": 2197
+        }
+      },
+      "profile_wall_seconds": 0.25283408304676414,
+      "reported_elapsed_seconds": 0.2527889590128325,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 32764,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.1443966106939534
+    }
+  ],
+  "python": "3.12.3",
+  "scipy": "1.18.0",
+  "wall_records": [
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004870875971391797,
+        "compiled_dop853_seconds": 0.004870875971391797,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.0015385410515591502,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006405459018424153,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.768436622055366,
+      "wall_seconds": 0.006409417022950947
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.0049377078539691865,
+        "compiled_dop853_seconds": 0.0049377078539691865,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.0013811251264996827,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006315250007901341,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.11734274086956054,
+      "wall_seconds": 0.006318832980468869
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.046482418722007424,
+        "compiled_dop853_seconds": 0.01046949892770499,
+        "compiled_dop853_segment_calls": 39,
+        "outside_calls_seconds": 0.003878831281326711,
+        "solve_ivp_seconds": 0.036012919794302434,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.05035687499912456,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8296,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5596078161757845,
+      "wall_seconds": 0.050361250003334135
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04406487330561504,
+        "compiled_dop853_seconds": 0.008318291220348328,
+        "compiled_dop853_segment_calls": 30,
+        "outside_calls_seconds": 0.003298209689091891,
+        "solve_ivp_seconds": 0.03574658208526671,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.04735904099652544,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8332,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5339577774432087,
+      "wall_seconds": 0.04736308299470693
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004841584130190313,
+        "compiled_dop853_seconds": 0.004841584130190313,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.0014423738466575742,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.0062803750042803586,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.768436622055366,
+      "wall_seconds": 0.006283957976847887
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004883707093540579,
+        "compiled_dop853_seconds": 0.004883707093540579,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.001355083892121911,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.0062354159890674055,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.11734274086956054,
+      "wall_seconds": 0.00623879098566249
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04619017202639952,
+        "compiled_dop853_seconds": 0.010491922963410616,
+        "compiled_dop853_segment_calls": 39,
+        "outside_calls_seconds": 0.004123577964492142,
+        "solve_ivp_seconds": 0.03569824906298891,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.050309833022765815,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8296,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5596078161757845,
+      "wall_seconds": 0.050313749990891665
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04406362597364932,
+        "compiled_dop853_seconds": 0.008286042953841388,
+        "compiled_dop853_segment_calls": 30,
+        "outside_calls_seconds": 0.0033070410136133432,
+        "solve_ivp_seconds": 0.035777583019807935,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.047366791986860335,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8332,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5339577774432087,
+      "wall_seconds": 0.047370666987262666
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004853082878980786,
+        "compiled_dop853_seconds": 0.004853082878980786,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.0013945830869488418,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006244208023417741,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.768436622055366,
+      "wall_seconds": 0.006247665965929627
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004884624911937863,
+        "compiled_dop853_seconds": 0.004884624911937863,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.0014093330828472972,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006290708028245717,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.11734274086956054,
+      "wall_seconds": 0.00629395799478516
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.046065668982919306,
+        "compiled_dop853_seconds": 0.010472085035871714,
+        "compiled_dop853_segment_calls": 39,
+        "outside_calls_seconds": 0.0038522889954037964,
+        "solve_ivp_seconds": 0.03559358394704759,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.04991424997569993,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8296,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5596078161757845,
+      "wall_seconds": 0.0499179579783231
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04409108281834051,
+        "compiled_dop853_seconds": 0.008254914951976389,
+        "compiled_dop853_segment_calls": 30,
+        "outside_calls_seconds": 0.0032685421756468713,
+        "solve_ivp_seconds": 0.03583616786636412,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.047355791029985994,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8332,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5339577774432087,
+      "wall_seconds": 0.04735962499398738
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004859539971221238,
+        "compiled_dop853_seconds": 0.004859539971221238,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.001379877037834376,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006236207962501794,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.768436622055366,
+      "wall_seconds": 0.0062394170090556145
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004923623113427311,
+        "compiled_dop853_seconds": 0.004923623113427311,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.0013505858951248229,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.00627079198602587,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.11734274086956054,
+      "wall_seconds": 0.006274209008552134
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04616228793747723,
+        "compiled_dop853_seconds": 0.010474665148649365,
+        "compiled_dop853_segment_calls": 39,
+        "outside_calls_seconds": 0.003847837040666491,
+        "solve_ivp_seconds": 0.035687622788827866,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.05000641697552055,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8296,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5596078161757845,
+      "wall_seconds": 0.05001012497814372
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04396620811894536,
+        "compiled_dop853_seconds": 0.00824608508264646,
+        "compiled_dop853_segment_calls": 30,
+        "outside_calls_seconds": 0.0033063748851418495,
+        "solve_ivp_seconds": 0.0357201230362989,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.047268667025491595,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8332,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5339577774432087,
+      "wall_seconds": 0.04727258300408721
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004918626102153212,
+        "compiled_dop853_seconds": 0.004918626102153212,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.001418373896740377,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006333541008643806,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.768436622055366,
+      "wall_seconds": 0.006336999998893589
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.004886297101620585,
+        "compiled_dop853_seconds": 0.004886297101620585,
+        "compiled_dop853_segment_calls": 20,
+        "outside_calls_seconds": 0.001477452926337719,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.006359666993375868,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 6292,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.11734274086956054,
+      "wall_seconds": 0.006363750027958304
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.04522799514234066,
+        "compiled_dop853_seconds": 0.01025337417377159,
+        "compiled_dop853_segment_calls": 39,
+        "outside_calls_seconds": 0.00379562983289361,
+        "solve_ivp_seconds": 0.03497462096856907,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.04901929199695587,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8296,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5596078161757845,
+      "wall_seconds": 0.04902362497523427
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 5.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.043178211781196296,
+        "compiled_dop853_seconds": 0.008117502904497087,
+        "compiled_dop853_segment_calls": 30,
+        "outside_calls_seconds": 0.0032254962134175003,
+        "solve_ivp_seconds": 0.03506070887669921,
+        "solve_ivp_segment_calls": 20
+      },
+      "reported_elapsed_seconds": 0.0463995419559069,
+      "returned_segment_count": 20,
+      "returned_solver_function_evaluations": 8332,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.5339577774432087,
+      "wall_seconds": 0.046403707994613796
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.0190044540213421,
+        "compiled_dop853_seconds": 0.0190044540213421,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005120462970808148,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.02412112499587238,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.782622629437405,
+      "wall_seconds": 0.024124916992150247
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.01934441609773785,
+        "compiled_dop853_seconds": 0.01934441609773785,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005627833888866007,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.02496645803330466,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.07511491859832332,
+      "wall_seconds": 0.024972249986603856
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16972883377457038,
+        "compiled_dop853_seconds": 0.02684150665299967,
+        "compiled_dop853_segment_calls": 99,
+        "outside_calls_seconds": 0.011170624173246324,
+        "solve_ivp_seconds": 0.1428873271215707,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.18089345801854506,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 33196,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.3376485753869765,
+      "wall_seconds": 0.1808994579478167
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16531929519260302,
+        "compiled_dop853_seconds": 0.024027335224673152,
+        "compiled_dop853_segment_calls": 90,
+        "outside_calls_seconds": 0.010560454800724983,
+        "solve_ivp_seconds": 0.14129195996792987,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.17587433301378042,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 32764,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.1443966106939534,
+      "wall_seconds": 0.175879749993328
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.01942612463608384,
+        "compiled_dop853_seconds": 0.01942612463608384,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005275000410620123,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.024697375018149614,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.782622629437405,
+      "wall_seconds": 0.024701125046703964
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.019524164032191038,
+        "compiled_dop853_seconds": 0.019524164032191038,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005204794986639172,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.02472558297449723,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.07511491859832332,
+      "wall_seconds": 0.02472895901883021
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16951495764078572,
+        "compiled_dop853_seconds": 0.026917040871921927,
+        "compiled_dop853_segment_calls": 99,
+        "outside_calls_seconds": 0.011004958359990269,
+        "solve_ivp_seconds": 0.1425979167688638,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.18051554198609665,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 33196,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.3376485753869765,
+      "wall_seconds": 0.180519916000776
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.1650247030192986,
+        "compiled_dop853_seconds": 0.02406741288723424,
+        "compiled_dop853_segment_calls": 90,
+        "outside_calls_seconds": 0.010435172007419169,
+        "solve_ivp_seconds": 0.14095729013206437,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.17545541701838374,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 32764,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.1443966106939534,
+      "wall_seconds": 0.17545987502671778
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.01915279420791194,
+        "compiled_dop853_seconds": 0.01915279420791194,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.00527374679222703,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.024421999987680465,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.782622629437405,
+      "wall_seconds": 0.024426541000138968
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.019173207983840257,
+        "compiled_dop853_seconds": 0.019173207983840257,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005083542026113719,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.02425324998330325,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.07511491859832332,
+      "wall_seconds": 0.024256750009953976
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.18328795267734677,
+        "compiled_dop853_seconds": 0.026240003120619804,
+        "compiled_dop853_segment_calls": 99,
+        "outside_calls_seconds": 0.012418256315868348,
+        "solve_ivp_seconds": 0.15704794955672696,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.19569566601421684,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 33196,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.3376485753869765,
+      "wall_seconds": 0.19570620899321511
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16532704152632505,
+        "compiled_dop853_seconds": 0.024255582538899034,
+        "compiled_dop853_segment_calls": 90,
+        "outside_calls_seconds": 0.011014375486411154,
+        "solve_ivp_seconds": 0.141071458987426,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.1763344170176424,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 32764,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.1443966106939534,
+      "wall_seconds": 0.1763414170127362
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.019241167581640184,
+        "compiled_dop853_seconds": 0.019241167581640184,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005732707446441054,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.02496962499571964,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.782622629437405,
+      "wall_seconds": 0.02497387502808124
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.0193928720545955,
+        "compiled_dop853_seconds": 0.0193928720545955,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005210502946283668,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.024597833049483597,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.07511491859832332,
+      "wall_seconds": 0.02460337500087917
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.1739588722703047,
+        "compiled_dop853_seconds": 0.02669428917579353,
+        "compiled_dop853_segment_calls": 99,
+        "outside_calls_seconds": 0.012242627737578005,
+        "solve_ivp_seconds": 0.14726458309451118,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.18619445897638798,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 33196,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.3376485753869765,
+      "wall_seconds": 0.18620150000788271
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16468253720086068,
+        "compiled_dop853_seconds": 0.024759706866461784,
+        "compiled_dop853_segment_calls": 90,
+        "outside_calls_seconds": 0.011699421796947718,
+        "solve_ivp_seconds": 0.1399228303343989,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.17637562495656312,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 32764,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.1443966106939534,
+      "wall_seconds": 0.1763819589978084
+    },
+    {
+      "case": {
+        "name": "fast_equilibrium",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.019018375023733824,
+        "compiled_dop853_seconds": 0.019018375023733824,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005187625007238239,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.024202250002417713,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 5.782622629437405,
+      "wall_seconds": 0.024206000030972064
+    },
+    {
+      "case": {
+        "name": "fast_interior",
+        "t5_route_stratum": "compiled_dop853",
+        "theta1_radians": -0.5645049299419158,
+        "theta2_radians": -0.4417864669110645
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.019211964798159897,
+        "compiled_dop853_seconds": 0.019211964798159897,
+        "compiled_dop853_segment_calls": 80,
+        "outside_calls_seconds": 0.005069285223726183,
+        "solve_ivp_seconds": 0,
+        "solve_ivp_segment_calls": 0
+      },
+      "reported_elapsed_seconds": 0.024277832999359816,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 25132,
+      "route": "compiled_dop853",
+      "status": "completed_valid",
+      "value_per_second": 0.07511491859832332,
+      "wall_seconds": 0.02428125002188608
+    },
+    {
+      "case": {
+        "name": "fallback_near_boundary",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -3.067961575771282,
+        "theta2_radians": -3.141592653589793
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16900953144067898,
+        "compiled_dop853_seconds": 0.026438202243298292,
+        "compiled_dop853_segment_calls": 99,
+        "outside_calls_seconds": 0.011575552576687187,
+        "solve_ivp_seconds": 0.1425713291973807,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.18057812500046566,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 33196,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.3376485753869765,
+      "wall_seconds": 0.18058508401736617
+    },
+    {
+      "case": {
+        "name": "fallback_interior",
+        "t5_route_stratum": "compiled_rhs_solve_ivp_fallback",
+        "theta1_radians": -2.8532042654672924,
+        "theta2_radians": -0.7547185476397353
+      },
+      "duration_seconds": 20.0,
+      "integration_calls": {
+        "all_calls_seconds": 0.16552592103835195,
+        "compiled_dop853_seconds": 0.024078665301203728,
+        "compiled_dop853_segment_calls": 90,
+        "outside_calls_seconds": 0.010712536924984306,
+        "solve_ivp_seconds": 0.14144725573714823,
+        "solve_ivp_segment_calls": 80
+      },
+      "reported_elapsed_seconds": 0.17623212502803653,
+      "returned_segment_count": 80,
+      "returned_solver_function_evaluations": 32764,
+      "route": "compiled_rhs_solve_ivp_fallback",
+      "status": "completed_valid",
+      "value_per_second": 1.1443966106939534,
+      "wall_seconds": 0.17623845796333626
+    }
+  ],
+  "wall_summary_by_horizon_and_route": {
+    "T=20|compiled_dop853": {
+      "compiled_dop853_segment_calls_mean": 80.0,
+      "distinct_cases": 2,
+      "integration_call_seconds_mean": 0.01924895404372364,
+      "integration_call_wall_fraction": 0.7847905712736485,
+      "measurements": 10,
+      "outside_integration_call_seconds_mean": 0.005278550169896335,
+      "returned_rhs_evaluations_mean": 25132.0,
+      "solve_ivp_segment_calls_mean": 0.0,
+      "wall_seconds_maximum": 0.02497387502808124,
+      "wall_seconds_mean": 0.024527504213619978,
+      "wall_seconds_median": 0.02451495800050907,
+      "wall_seconds_minimum": 0.024124916992150247
+    },
+    "T=20|compiled_rhs_solve_ivp_fallback": {
+      "compiled_dop853_segment_calls_mean": 94.5,
+      "distinct_cases": 2,
+      "integration_call_seconds_mean": 0.1691379645781126,
+      "integration_call_wall_fraction": 0.9374608535506662,
+      "measurements": 10,
+      "outside_integration_call_seconds_mean": 0.011283398017985747,
+      "returned_rhs_evaluations_mean": 32980.0,
+      "solve_ivp_segment_calls_mean": 80.0,
+      "wall_seconds_maximum": 0.19570620899321511,
+      "wall_seconds_mean": 0.18042136259609834,
+      "wall_seconds_median": 0.1784509374992922,
+      "wall_seconds_minimum": 0.17545987502671778
+    },
+    "T=5|compiled_dop853": {
+      "compiled_dop853_segment_calls_mean": 20.0,
+      "distinct_cases": 2,
+      "integration_call_seconds_mean": 0.004885966912843287,
+      "integration_call_wall_fraction": 0.7754641536068112,
+      "measurements": 10,
+      "outside_integration_call_seconds_mean": 0.0014147329842671753,
+      "returned_rhs_evaluations_mean": 6292.0,
+      "solve_ivp_segment_calls_mean": 0.0,
+      "wall_seconds_maximum": 0.006409417022950947,
+      "wall_seconds_mean": 0.006300699897110462,
+      "wall_seconds_median": 0.006288957985816523,
+      "wall_seconds_minimum": 0.00623879098566249
+    },
+    "T=5|compiled_rhs_solve_ivp_fallback": {
+      "compiled_dop853_segment_calls_mean": 34.5,
+      "distinct_cases": 2,
+      "integration_call_seconds_mean": 0.044949254480889066,
+      "integration_call_wall_fraction": 0.9260319379743703,
+      "measurements": 10,
+      "outside_integration_call_seconds_mean": 0.0035903829091694208,
+      "returned_rhs_evaluations_mean": 8314.0,
+      "solve_ivp_segment_calls_mean": 20.0,
+      "wall_seconds_maximum": 0.050361250003334135,
+      "wall_seconds_mean": 0.04853963739005849,
+      "wall_seconds_median": 0.04819714598124847,
+      "wall_seconds_minimum": 0.046403707994613796
+    }
+  },
+  "warmup": {
+    "cell_horizon_evaluations": [
+      {
+        "case": "fast_equilibrium",
+        "duration_seconds": 5.0,
+        "route": "compiled_dop853",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fast_interior",
+        "duration_seconds": 5.0,
+        "route": "compiled_dop853",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fallback_near_boundary",
+        "duration_seconds": 5.0,
+        "route": "compiled_rhs_solve_ivp_fallback",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fallback_interior",
+        "duration_seconds": 5.0,
+        "route": "compiled_rhs_solve_ivp_fallback",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fast_equilibrium",
+        "duration_seconds": 20.0,
+        "route": "compiled_dop853",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fast_interior",
+        "duration_seconds": 20.0,
+        "route": "compiled_dop853",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fallback_near_boundary",
+        "duration_seconds": 20.0,
+        "route": "compiled_rhs_solve_ivp_fallback",
+        "status": "completed_valid"
+      },
+      {
+        "case": "fallback_interior",
+        "duration_seconds": 20.0,
+        "route": "compiled_rhs_solve_ivp_fallback",
+        "status": "completed_valid"
+      }
+    ],
+    "excluded_from_measurements": true,
+    "seconds": 0.8329625419573858
+  }
+}

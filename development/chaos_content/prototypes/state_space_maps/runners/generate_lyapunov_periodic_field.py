@@ -292,7 +292,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         progress_callback=progress,
     )
     print("Validating persisted field against established oracle spots...", flush=True)
-    oracle = validate_lyapunov_oracle_spots(output_path)
+    oracle = validate_lyapunov_oracle_spots(output_path, specification)
     if not summary.validation.accepted or not oracle.accepted:
         return 1
     payload = build_manifest(

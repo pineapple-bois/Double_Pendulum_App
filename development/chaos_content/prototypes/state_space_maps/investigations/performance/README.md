@@ -21,6 +21,10 @@ work.
 > identify worthwhile optimisation opportunities without changing the accepted
 > scientific or numerical contract?
 
+The later bounded decision experiment for the audited solver-boundary S1
+hypothesis is recorded in [`S1_SOLVER_BOUNDARY_PROFILE.md`](S1_SOLVER_BOUNDARY_PROFILE.md),
+with raw evidence in `s1_solver_boundary_profile.json`.
+
 ## Sandbox boundary
 
 Everything under `investigations/` is sandbox-only. Investigation code may read
