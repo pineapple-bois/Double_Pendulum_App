@@ -2,8 +2,9 @@
 
 This document owns the software boundaries of the prototype. See the
 [prototype README](../README.md) for operation and the
-[finite-time-stretching reference](science/finite_time_stretching.md) for the
-current observable's mathematics and claim boundary.
+[finite-time-stretching reference](science/finite_time_stretching.md) and
+[first-flip pilot](science/first_flip_time.md) for the current observables'
+mathematics and claim boundaries.
 
 ## Dependency direction
 
@@ -21,8 +22,9 @@ validated HDF5 artifact
 
 `../src/state_space_fields.py` owns coordinate-neutral scalar outcomes,
 explicit-axis reference sampling, and the half-open periodic angular domain.
-`../src/generation/` owns field work; it never imports the Lyapunov consumer or
-knows how an observable is calculated. The scientific adapter depends on both
+`../src/generation/` owns field work; it never imports the Lyapunov or
+first-flip consumers or knows how an observable is calculated. Each scientific
+adapter depends on both
 the neutral contracts and its own evaluator, then the concrete runner composes
 them. Rendering is downstream of persistence and does not depend on dynamics.
 
@@ -83,11 +85,19 @@ declared route labels, and an optional tile-diagnostic summarizer. This is a
 small process seam, not an observable registry or plugin framework.
 
 The neutral scalar-field machinery is reusable across observables. End-to-end
-observable extensibility, however, has only been demonstrated for the current
-finite-time one-vector stretching consumer. A future consumer would still need
+observable extensibility has now been demonstrated for the finite-time
+one-vector stretching and capped first-flip-time consumers. A future consumer
+would still need
 its own scientific definition, evaluator evidence, route and validity
 semantics, adapter, and focused tests; the neutral seam does not supply those
 contracts automatically.
+
+First-flip censoring does not require a generic schema feature. Its adapter
+stores the capped dimensionless time as a completed-valid scalar, with exact
+equality to the provenance-declared horizon meaning right-censored. Numerical
+invalidity and execution failure continue to use the neutral status vocabulary.
+This is an observable-specific scalar contract rather than a reinterpretation
+of `completed_valid` for every consumer.
 
 The accepted execution values are host- and workload-bounded evidence, not a
 claim that other policies have been validated. The renderer consumes only a

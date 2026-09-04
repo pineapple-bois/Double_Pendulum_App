@@ -1,0 +1,53 @@
+"""Physical first-completed-link-revolution observable and field binding."""
+
+from .field_adapter import (
+    FIRST_FLIP_REFERENCE_EVALUATOR,
+    FIRST_FLIP_ROUTE_VOCABULARY,
+    CappedFirstFlipFieldSummary,
+    FirstFlipFieldDiagnostics,
+    FirstFlipFieldSpec,
+    FirstFlipSpotValidation,
+    evaluate_first_flip_field_cell,
+    first_flip_evaluator_binding,
+    initialize_first_flip_field_worker,
+    periodic_first_flip_field_definition,
+    run_periodic_first_flip_field,
+    summarize_persisted_first_flip_field,
+    validate_first_flip_reference_spots,
+)
+from .reference import (
+    EVENT_IDENTITIES,
+    EventAttribution,
+    EventIdentity,
+    EventSurfaceResidual,
+    FirstFlipResult,
+    FirstFlipStatus,
+    default_solver_spec,
+    first_flip_time,
+    gravity_timescale,
+)
+
+__all__ = [
+    "FIRST_FLIP_REFERENCE_EVALUATOR",
+    "FIRST_FLIP_ROUTE_VOCABULARY",
+    "CappedFirstFlipFieldSummary",
+    "FirstFlipFieldDiagnostics",
+    "FirstFlipFieldSpec",
+    "FirstFlipSpotValidation",
+    "evaluate_first_flip_field_cell",
+    "first_flip_evaluator_binding",
+    "initialize_first_flip_field_worker",
+    "periodic_first_flip_field_definition",
+    "run_periodic_first_flip_field",
+    "summarize_persisted_first_flip_field",
+    "validate_first_flip_reference_spots",
+    "EVENT_IDENTITIES",
+    "EventAttribution",
+    "EventIdentity",
+    "EventSurfaceResidual",
+    "FirstFlipResult",
+    "FirstFlipStatus",
+    "default_solver_spec",
+    "first_flip_time",
+    "gravity_timescale",
+]

@@ -3,3 +3,7 @@
 !finite_time_field/
 finite_time_field/*
 !finite_time_field/.gitignore
+!first_flip_pilot/
+first_flip_pilot/*
+!first_flip_pilot/first_flip_field_32_T5s.h5
+!first_flip_pilot/first_flip_field_32_T5s.json

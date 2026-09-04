@@ -1,0 +1,338 @@
+{
+  "artifact": {
+    "authoritative_hdf5": true,
+    "hdf5_path": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/outputs/first_flip_pilot/first_flip_field_32_T5s.h5",
+    "json_path": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/outputs/first_flip_pilot/first_flip_field_32_T5s.json"
+  },
+  "completion": {
+    "completed_at_utc": "2026-09-04T19:04:53.827585+00:00",
+    "generation_cells_per_second": 58.42832457091672,
+    "operation_wall_seconds": 20.14338108303491
+  },
+  "execution": {
+    "process_policy": {
+      "chunksize": 1,
+      "maximum_cells_per_pool": 2048,
+      "process_width": 4,
+      "start_method": "spawn"
+    },
+    "work_unit_shape_theta2_theta1": [
+      8,
+      8
+    ]
+  },
+  "field": {
+    "cell_count": 1024,
+    "periodic_interval": "[-pi, pi)",
+    "resolution_theta1_theta2": [
+      32,
+      32
+    ],
+    "shape_theta2_theta1": [
+      32,
+      32
+    ],
+    "stored_orientation": "values[theta2_index, theta1_index]"
+  },
+  "manifest_version": 1,
+  "persistence": {
+    "censoring_representation": "completed-valid value == dimensionless horizon",
+    "coordinator_owned_writes": true,
+    "resumable_and_checksummed": true,
+    "schema_name": "double_pendulum_scalar_field",
+    "schema_version": 1
+  },
+  "pilot_statistics": {
+    "cell_count": 1024,
+    "cell_wall_seconds_maximum": 0.14837725000688806,
+    "cell_wall_seconds_minimum": 0.012844667013268918,
+    "cell_wall_seconds_tile_median_median": 0.05481647925626021,
+    "censored_count": 574,
+    "completed_invalid_count": 0,
+    "dimensionless_horizon": 15.660459763365825,
+    "execution_error_count": 0,
+    "maximum_accepted_angular_increment": 0.1353531449524434,
+    "maximum_normalized_energy_drift": 3.580143694623316e-10,
+    "maximum_triggering_surface_residual": 1.0658141036401503e-14,
+    "minimum_competing_surface_margin": 0.2793360675542669,
+    "minimum_event_crossing_speed": 0.12326290284215198,
+    "observed_count": 450,
+    "observed_time_dimensionless_maximum": 15.659607743835526,
+    "observed_time_dimensionless_median": 7.438522881426769,
+    "observed_time_dimensionless_minimum": 3.5427254985531924,
+    "observed_time_seconds_maximum": 4.999727971099452,
+    "observed_time_seconds_median": 2.374937579683179,
+    "observed_time_seconds_minimum": 1.131105201279152,
+    "rhs_evaluations_maximum": 6158,
+    "rhs_evaluations_minimum": 1385,
+    "rhs_evaluations_tile_median_median": 5409.5,
+    "summed_rhs_evaluations": 4945310,
+    "tile_evaluation_seconds_maximum": 1.0988097909721546,
+    "tile_evaluation_seconds_median": 0.863315208000131,
+    "tile_evaluation_seconds_minimum": 0.47987650003051385,
+    "tile_maximum_to_median_ratio": 1.2727793751224963
+  },
+  "run_summary": {
+    "all_workers_stopped": true,
+    "artifact_bytes": 97717,
+    "cells_per_second": 58.42832457091672,
+    "completed_tiles_after": 16,
+    "completed_tiles_before": 0,
+    "coordinator_peak_rss_bytes": 195346432,
+    "evaluated_cells": 1024,
+    "evaluation_seconds": 13.192489665932953,
+    "maximum_worker_peak_rss_bytes": 202080256,
+    "mode": "create",
+    "output_path": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/outputs/first_flip_pilot/first_flip_field_32_T5s.h5",
+    "pending_tiles_after": 0,
+    "pending_tiles_before": 16,
+    "persistence_seconds": 0.0415998759563081,
+    "pool_count": 1,
+    "preexisting_completed_cells": 0,
+    "recycling_events": 0,
+    "setup_seconds": 3.8549862499930896,
+    "shutdown_seconds": 0.34943520900560543,
+    "total_seconds": 17.525746416999027,
+    "validation": {
+      "accepted": true,
+      "complete": true,
+      "issues": [],
+      "route_counts": {
+        "not_yet_computed": 0,
+        "solve_ivp_first_flip_reference": 1024
+      },
+      "status_counts": {
+        "completed_invalid": 0,
+        "completed_valid": 1024,
+        "execution_error": 0,
+        "not_yet_computed": 0
+      },
+      "valid_value_range": [
+        3.5427254985531924,
+        15.660459763365825
+      ]
+    }
+  },
+  "scientific_contract": {
+    "evaluator": {
+      "angles": "continuous_lifted_absolute_link_orientations",
+      "crossing_direction": 1,
+      "event_surfaces": [
+        "arm1-",
+        "arm1+",
+        "arm2-",
+        "arm2+"
+      ],
+      "physical_flow": "EulerLagrangeDynamics.flow",
+      "policy": "experiment_020_reference_promotion",
+      "reference_experiment": "development/chaos_content/experiments/physical_observables/020_first_flip_event_contract",
+      "route": "solve_ivp_first_flip_reference",
+      "terminal": true
+    },
+    "numerical_parameters": {
+      "dimensionless_observation_horizon": 15.660459763365825,
+      "energy_drift_limit": 5e-09,
+      "event_surface_residual_limit": 1e-10,
+      "gravity_timescale_seconds": 0.3192754284070505,
+      "initial_angular_velocities_radians_per_second": [
+        0.0,
+        0.0
+      ],
+      "maximum_accepted_angular_increment": 0.5,
+      "observation_horizon_seconds": 5.0,
+      "solver": {
+        "atol": 1e-11,
+        "max_step": 0.009977357137720327,
+        "method": "DOP853",
+        "rtol": 1e-09
+      }
+    },
+    "observable": {
+      "accepted_scope": "transversal, numerically separated events; equal-link simple model",
+      "censoring_contract": "a completed-valid value exactly equal to the dimensionless horizon is right-censored; a smaller value is an observed event",
+      "definition": "first |theta_i(t)-theta_i(0)| = 2*pi for either absolute link angle",
+      "name": "capped_dimensionless_first_flip_time",
+      "physical_observable": "first completed link revolution",
+      "symbol": "min(tau_hat_flip, T_hat_max)",
+      "threshold_contract": "for 0 < H <= T_hat_max, event-before-H is values < H on completed-valid cells"
+    },
+    "physical_parameters": {
+      "gravity": 9.81,
+      "length1": 1.0,
+      "length2": 1.0,
+      "mass1": 1.0,
+      "mass2": 1.0
+    }
+  },
+  "software_provenance": {
+    "git_head": "4d5f3d05aee57f7a3e18c0d8ef45527e8d0be2a2",
+    "h5py": "3.16.0",
+    "hdf5": "2.0.0",
+    "numpy": "2.5.2",
+    "platform": "macOS-15.7.9-arm64-arm-64bit",
+    "prototype": "state_space_maps",
+    "python": "3.12.3",
+    "scipy": "1.18.0"
+  },
+  "stricter_solver_spot_validation": {
+    "accepted": true,
+    "comparisons": [
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 0.0,
+        "stored_dimensionless_time": 15.660459763365825,
+        "stored_outcome": "right_censored",
+        "strict_event_identity": null,
+        "strict_event_time_seconds": null,
+        "strict_status": "right_censored",
+        "theta1_index": 0,
+        "theta1_radians": -3.141592653589793,
+        "theta2_index": 0,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 0.0,
+        "stored_dimensionless_time": 15.660459763365825,
+        "stored_outcome": "right_censored",
+        "strict_event_identity": null,
+        "strict_event_time_seconds": null,
+        "strict_status": "right_censored",
+        "theta1_index": 16,
+        "theta1_radians": 0.0,
+        "theta2_index": 0,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 7.304601368218755e-12,
+        "stored_dimensionless_time": 5.488138845400882,
+        "stored_outcome": "event_observed",
+        "strict_event_identity": "arm2+",
+        "strict_event_time_seconds": 1.7522278810154372,
+        "strict_status": "event_observed",
+        "theta1_index": 31,
+        "theta1_radians": 2.945243112740431,
+        "theta2_index": 0,
+        "theta2_radians": -3.141592653589793
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 0.0,
+        "stored_dimensionless_time": 15.660459763365825,
+        "stored_outcome": "right_censored",
+        "strict_event_identity": null,
+        "strict_event_time_seconds": null,
+        "strict_status": "right_censored",
+        "theta1_index": 0,
+        "theta1_radians": -3.141592653589793,
+        "theta2_index": 16,
+        "theta2_radians": 0.0
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 0.0,
+        "stored_dimensionless_time": 15.660459763365825,
+        "stored_outcome": "right_censored",
+        "strict_event_identity": null,
+        "strict_event_time_seconds": null,
+        "strict_status": "right_censored",
+        "theta1_index": 16,
+        "theta1_radians": 0.0,
+        "theta2_index": 16,
+        "theta2_radians": 0.0
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 9.71844826835877e-12,
+        "stored_dimensionless_time": 12.586086652476403,
+        "stored_outcome": "event_observed",
+        "strict_event_identity": "arm2+",
+        "strict_event_time_seconds": 4.018428207947382,
+        "strict_status": "event_observed",
+        "theta1_index": 31,
+        "theta1_radians": 2.945243112740431,
+        "theta2_index": 16,
+        "theta2_radians": 0.0
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 2.7193358675958734e-11,
+        "stored_dimensionless_time": 8.680630844691406,
+        "stored_outcome": "event_observed",
+        "strict_event_identity": "arm2+",
+        "strict_event_time_seconds": 2.7715121317551117,
+        "strict_status": "event_observed",
+        "theta1_index": 0,
+        "theta1_radians": -3.141592653589793,
+        "theta2_index": 31,
+        "theta2_radians": 2.945243112740431
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 0.0,
+        "stored_dimensionless_time": 15.660459763365825,
+        "stored_outcome": "right_censored",
+        "strict_event_identity": null,
+        "strict_event_time_seconds": null,
+        "strict_status": "right_censored",
+        "theta1_index": 16,
+        "theta1_radians": 0.0,
+        "theta2_index": 31,
+        "theta2_radians": 2.945243112740431
+      },
+      {
+        "accepted": true,
+        "event_time_difference_seconds": 1.4131806835848693e-11,
+        "stored_dimensionless_time": 7.48568647731127,
+        "stored_outcome": "event_observed",
+        "strict_event_identity": "arm1-",
+        "strict_event_time_seconds": 2.389995756978552,
+        "strict_status": "event_observed",
+        "theta1_index": 31,
+        "theta1_radians": 2.945243112740431,
+        "theta2_index": 31,
+        "theta2_radians": 2.945243112740431
+      }
+    ],
+    "maximum_event_time_difference_seconds": 2.7193358675958734e-11,
+    "selected_indices": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        16
+      ],
+      [
+        0,
+        31
+      ],
+      [
+        16,
+        0
+      ],
+      [
+        16,
+        16
+      ],
+      [
+        16,
+        31
+      ],
+      [
+        31,
+        0
+      ],
+      [
+        31,
+        16
+      ],
+      [
+        31,
+        31
+      ]
+    ]
+  }
+}

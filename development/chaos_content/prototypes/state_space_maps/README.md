@@ -7,12 +7,12 @@ boundary while keeping their dependencies explicit:
 ```text
 neutral field/domain concepts
           |
-          +----------------+
-          |                |
-          v                v
-     generation         Lyapunov science
-          |                |
-          +--------+-------+
+          +---------------------+
+          |                     |
+          v                     v
+     generation       scientific consumers
+          |          (Lyapunov, first flip)
+          +----------+----------+
                    v
              concrete runners
 ```
@@ -21,10 +21,11 @@ neutral field/domain concepts
 reference line/rectangle sampling, and the half-open periodic angular domain.
 `src/generation/` owns deterministic rectangular work units, bounded process
 execution, coordinator-owned HDF5 persistence/resume, and dynamics-free
-validation. It never imports Lyapunov code. `src/lyapunov/` owns Candidate-A
+validation. It never imports observable science. `src/lyapunov/` owns Candidate-A
 geometry, the finite-time renormalised tangent observable, its oracle and
-compiled evaluators, and the adapter that binds this science to neutral field
-generation.
+compiled evaluators. `src/first_flip/` owns the Experiment 020 physical
+first-completed-link-revolution reference and its capped scalar adapter. Each
+consumer binds independently to neutral field generation.
 
 Executable composition lives in `runners/`; scientific explanation and the
 architectural detail live in `docs/`. Focused tests mirror those boundaries.
@@ -36,8 +37,9 @@ the separate ignored `outputs/finite_time_field/` boundary.
 ## Current validated boundary
 
 The validated system combines reusable neutral scalar-field generation with
-one demonstrated scientific consumer: the finite-time one-vector stretching
-rate. It preserves the declared `[theta2, theta1]` storage orientation, exact
+two demonstrated scientific consumers: the finite-time one-vector stretching
+rate and dimensionless capped first-flip time. It preserves the declared
+`[theta2, theta1]` storage orientation, exact
 `[-pi, pi)` periodic axes, bounded local execution, and fail-closed persisted
 resume state without making the neutral machinery depend on Lyapunov science.
 
@@ -51,9 +53,32 @@ artifact without rerunning dynamics.
   generation, execution, persistence, and scientific-consumer boundaries.
 - [Finite-time one-vector stretching](docs/science/finite_time_stretching.md)
   defines the current observable, its provenance, and its claim boundary.
+- [First-flip-time field and pilot](docs/science/first_flip_time.md) defines the
+  promoted physical observable, capped-censor persistence contract, and 32×32
+  pilot evidence.
 - [Sensitivity to Lyapunov storyboard](docs/pedagogy/sensitivity_to_lyapunov.md)
   presents the teaching progression from nearby trajectories to renormalised
   finite-time stretching.
+
+## First-flip pilot field
+
+The promoted first-flip runner composes the Experiment 020 reference with the
+same neutral generation and HDF5 pipeline. The accepted pilot uses 32 samples
+per axis and a 5 s observation horizon:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_first_flip_periodic_field \
+  --samples-per-axis 32 \
+  --observation-horizon-seconds 5 \
+  --create
+```
+
+Use `--resume` with the same arguments to verify and resume the checksummed
+artifact. `--create` refuses to replace an existing field. The authoritative
+pilot and readable manifest live in `outputs/first_flip_pilot/`; the complete
+scientific, censoring, persistence, and measured-evidence record is in the
+[first-flip pilot document](docs/science/first_flip_time.md). No first-flip
+renderer is part of this integration.
 
 ## Manual operational finite-time field
 
