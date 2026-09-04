@@ -27,7 +27,9 @@ matplotlib.rcParams.update(
 )
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.colors import ListedColormap
 from matplotlib.figure import Figure
+from matplotlib.patches import Patch
 
 from ..src.generation.hdf5 import (
     CellState,
@@ -52,6 +54,8 @@ ANGLE_TICK_LABELS = (
     r"$\pi$",
 )
 FIELD_COLORMAP = "magma"
+CENSORED_COLOR = "#43A6C6"
+FIRST_FLIP_OBSERVABLE = "capped_dimensionless_first_flip_time"
 
 
 def derivative_output_paths(dataset_path: Path) -> tuple[Path, Path]:
@@ -64,13 +68,23 @@ def derivative_output_paths(dataset_path: Path) -> tuple[Path, Path]:
 def build_figure(snapshot: FieldSnapshot) -> Figure:
     """Build the established periodic finite-time-field presentation."""
 
-    visible = np.ma.masked_where(
-        snapshot.status != CellState.COMPLETED_VALID,
-        snapshot.values,
-    )
-    duration = float(
-        snapshot.metadata["numerical_parameters"]["duration_seconds"]
-    )
+    observable = snapshot.metadata["observable_provenance"]["name"]
+    valid = snapshot.status == CellState.COMPLETED_VALID
+    first_flip = observable == FIRST_FLIP_OBSERVABLE
+    censored = np.zeros(snapshot.values.shape, dtype=bool)
+    if first_flip:
+        horizon = float(
+            snapshot.metadata["numerical_parameters"][
+                "dimensionless_observation_horizon"
+            ]
+        )
+        censored = valid & (snapshot.values == horizon)
+        visible = np.ma.masked_where(~valid | censored, snapshot.values)
+    else:
+        duration = float(
+            snapshot.metadata["numerical_parameters"]["duration_seconds"]
+        )
+        visible = np.ma.masked_where(~valid, snapshot.values)
     figure, axis = plt.subplots(figsize=(7.2, 6.0), constrained_layout=True)
     image = axis.imshow(
         visible,
@@ -80,15 +94,44 @@ def build_figure(snapshot: FieldSnapshot) -> Figure:
         aspect="equal",
         cmap=FIELD_COLORMAP,
     )
+    if first_flip:
+        axis.imshow(
+            np.ma.masked_where(~censored, np.ones(snapshot.values.shape)),
+            origin="lower",
+            interpolation="nearest",
+            extent=(-np.pi, np.pi, -np.pi, np.pi),
+            aspect="equal",
+            cmap=ListedColormap((CENSORED_COLOR,)),
+            vmin=0.0,
+            vmax=1.0,
+        )
     axis.set_xticks(ANGLE_TICK_POSITIONS, ANGLE_TICK_LABELS)
     axis.set_yticks(ANGLE_TICK_POSITIONS, ANGLE_TICK_LABELS)
     axis.set_xlabel(r"$\theta_1(0)\;[\mathrm{rad}]$")
     axis.set_ylabel(r"$\theta_2(0)\;[\mathrm{rad}]$")
-    axis.set_title(
-        rf"Finite-time one-vector stretching rate, $T={duration:g}\,\mathrm{{s}}$"
-    )
+    if first_flip:
+        axis.set_title(
+            rf"Dimensionless first-flip time, $\widehat{{T}}_{{\max}}={horizon:g}$"
+        )
+        axis.legend(
+            handles=(
+                Patch(
+                    facecolor=CENSORED_COLOR,
+                    label=rf"No flip by $\widehat{{T}}_{{\max}}={horizon:g}$",
+                ),
+            ),
+            loc="upper right",
+        )
+    else:
+        axis.set_title(
+            rf"Finite-time one-vector stretching rate, $T={duration:g}\,\mathrm{{s}}$"
+        )
     colorbar = figure.colorbar(image, ax=axis)
-    colorbar.set_label(r"$\Lambda_T^{(1)}$ [$\mathrm{s}^{-1}$]")
+    colorbar.set_label(
+        r"$\widehat{\tau}_{\mathrm{flip}}$"
+        if first_flip
+        else r"$\Lambda_T^{(1)}$ [$\mathrm{s}^{-1}$]"
+    )
     return figure
 
 

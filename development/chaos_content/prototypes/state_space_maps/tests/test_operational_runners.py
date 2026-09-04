@@ -22,6 +22,7 @@ from development.chaos_content.prototypes.state_space_maps.runners.generate_lyap
 from development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field import (
     ANGLE_TICK_LABELS,
     ANGLE_TICK_POSITIONS,
+    CENSORED_COLOR,
     FIELD_COLORMAP,
     build_figure,
     derivative_output_paths,
@@ -31,9 +32,11 @@ from development.chaos_content.prototypes.state_space_maps.src.generation import
     CellState,
     CompletedTile,
     FieldDefinition,
+    FieldSnapshot,
     FieldProgress,
     FieldRunSummary,
     ProcessExecutionSpec,
+    ResumeState,
     ScalarFieldValidation,
     TileShape,
     create_dataset,
@@ -406,6 +409,51 @@ def test_renderer_uses_tex_pi_ticks_and_linear_magma_scale(tmp_path: Path) -> No
     assert figure.axes[1].get_ylabel() == (
         r"$\Lambda_T^{(1)}$ [$\mathrm{s}^{-1}$]"
     )
+    matplotlib.pyplot.close(figure)
+
+
+def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation() -> None:
+    import matplotlib
+
+    values = np.asarray(((1.0, 10.0), (3.0, 10.0)))
+    snapshot = FieldSnapshot(
+        theta1_axis=np.asarray((-math.pi, 0.0)),
+        theta2_axis=np.asarray((-math.pi, 0.0)),
+        values=values,
+        status=np.full((2, 2), CellState.COMPLETED_VALID, dtype=np.uint8),
+        execution_route=np.ones((2, 2), dtype=np.uint8),
+        resume_state=ResumeState((), (), (), ()),
+        metadata={
+            "observable_provenance": {
+                "name": "capped_dimensionless_first_flip_time"
+            },
+            "numerical_parameters": {
+                "dimensionless_observation_horizon": 10.0
+            },
+        },
+    )
+
+    figure = build_figure(snapshot)
+    axis = figure.axes[0]
+    observed_image, censored_image = axis.images
+
+    np.testing.assert_array_equal(observed_image.get_array().data, values)
+    np.testing.assert_array_equal(
+        observed_image.get_array().mask,
+        ((False, True), (False, True)),
+    )
+    np.testing.assert_array_equal(
+        censored_image.get_array().mask,
+        ((True, False), (True, False)),
+    )
+    assert observed_image.origin == censored_image.origin == "lower"
+    assert observed_image.get_extent() == censored_image.get_extent()
+    assert censored_image.get_cmap()(0.5) == colors.to_rgba(CENSORED_COLOR)
+    assert axis.get_title() == (
+        r"Dimensionless first-flip time, $\widehat{T}_{\max}=10$"
+    )
+    assert figure.axes[1].get_ylabel() == r"$\widehat{\tau}_{\mathrm{flip}}$"
+    assert "No flip by" in axis.get_legend().get_texts()[0].get_text()
     matplotlib.pyplot.close(figure)
 
 
