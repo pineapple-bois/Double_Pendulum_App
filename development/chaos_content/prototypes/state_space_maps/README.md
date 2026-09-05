@@ -69,7 +69,7 @@ observation horizon are explicit command inputs. For example:
 ```bash
 uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_first_flip_periodic_field \
   --samples-per-axis 512 \
-  --observation-horizon-seconds 10 \
+  --observation-horizon-seconds 5 \
   --create
 ```
 
@@ -85,7 +85,7 @@ Render a completed field with the existing persistence-only runner:
 
 ```bash
 uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field \
-  development/chaos_content/prototypes/state_space_maps/outputs/first_flip_field/first_flip_field_512_T10s.h5
+  development/chaos_content/prototypes/state_space_maps/outputs/first_flip_field/first_flip_field_512_T5s.h5
 ```
 
 The first-flip rendering uses $\widehat{\tau}_{\mathrm{flip}}$ for observed
