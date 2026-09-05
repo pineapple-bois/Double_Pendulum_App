@@ -1,0 +1,1648 @@
+{
+  "acceptance_gates": {
+    "accepted": false,
+    "all_workers_stopped": true,
+    "field_wall_at_least_20_percent_lower": false,
+    "field_wall_improvement_fraction": 0.1502878165744167,
+    "maximum_promoted_worker_peak_rss_bytes": 242352128,
+    "rss_increase_no_more_than_10_percent": true,
+    "rss_ratio_to_established_promoted_baseline": 0.9814876252405281,
+    "scientific_comparisons_accepted": true,
+    "setup_at_least_40_percent_lower": true,
+    "setup_improvement_fraction": 0.47323763626610216
+  },
+  "baseline": {
+    "promoted_maximum_worker_peak_rss_bytes": 246923264,
+    "promoted_outer_wall_seconds": 43.62759087502491,
+    "promoted_setup_seconds": 21.427309831022285,
+    "source": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/s1_field_level_benchmark_128.json",
+    "trusted_outer_wall_seconds": 68.84498691698536
+  },
+  "environment": {
+    "git_head": "7d628b51e0faf9a2fff921b532f2ac5ac900bfb0",
+    "git_status_short_before_artifact": "M development/chaos_content/prototypes/state_space_maps/src/lyapunov/field_adapter.py\n M development/chaos_content/prototypes/state_space_maps/src/lyapunov/s1.py\n M development/chaos_content/prototypes/state_space_maps/tests/lyapunov/test_field_adapter.py\n?? development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/s1_build_once_load_many_attempt1.json\n?? development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/benchmark_s1_artifact_reuse.py\n?? development/chaos_content/prototypes/state_space_maps/src/lyapunov/s1_artifacts.py\n?? development/chaos_content/prototypes/state_space_maps/tests/lyapunov/test_s1_artifacts.py",
+    "numba": "0.67.0",
+    "numpy": "2.5.2",
+    "platform": "macOS-15.7.9-arm64-arm-64bit",
+    "python": "3.12.3",
+    "s1_build": {
+      "artifact": {
+        "identity": {
+          "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+          "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+          "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+          "compiler_flags": [
+            "-O2",
+            "-ffp-contract=on",
+            "-fPIC",
+            "-shared"
+          ],
+          "compiler_path": "/usr/bin/clang",
+          "compiler_target": "Target: arm64-apple-darwin24.6.0",
+          "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+          "implementation": "s1_native_dop853_v1",
+          "llvm": "22.1.0",
+          "llvmlite": "0.49.0",
+          "machine": "arm64",
+          "macos": "15.7.9",
+          "native_source_sha256": {
+            "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+            "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+            "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+            "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+          },
+          "numba": "0.67.0",
+          "numpy": "2.5.2",
+          "platform": "macOS-15.7.9-arm64-arm-64bit",
+          "python": "3.12.3",
+          "python_cache_tag": "cpython-312",
+          "python_implementation": "CPython",
+          "python_soabi": "cpython-312-darwin",
+          "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+          "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+          "schema_version": 1,
+          "scipy": "1.18.0",
+          "system": "Darwin"
+        },
+        "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+        "schema_version": 1
+      },
+      "build_flags": [
+        "-O2",
+        "-ffp-contract=on",
+        "-fPIC",
+        "-shared"
+      ],
+      "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "compiler_target": "Target: arm64-apple-darwin24.6.0",
+      "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+      "implementation": "s1_native_dop853_v1",
+      "machine": "arm64",
+      "macos": "15.7.9",
+      "numba": "0.67.0",
+      "numpy": "2.5.2",
+      "python": "3.12.3",
+      "reason": "validated",
+      "scipy": "1.18.0",
+      "source_sha256": {
+        "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+        "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+        "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+        "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+      },
+      "supported": true,
+      "system": "Darwin"
+    },
+    "scipy": "1.18.0"
+  },
+  "field": {
+    "all_comparisons_accepted": true,
+    "all_workers_stopped": true,
+    "median_promoted_outer_wall_seconds": 37.07089550001547,
+    "pairs": [
+      {
+        "order": [
+          "promoted_s1",
+          "trusted_pre_s1"
+        ],
+        "paired_outer_speedup": 1.825892391386406,
+        "persisted_comparison": {
+          "accepted": true,
+          "axes_identical": true,
+          "cells_exceeding_tolerance": 0,
+          "existing_rate_absolute_tolerance_per_second": 1e-08,
+          "fallback_masks_identical": true,
+          "maximum_absolute_value_difference_per_second": 0.0,
+          "promoted_s1_mask_matches_trusted_fast_mask": true,
+          "statuses_identical": true,
+          "values_bitwise_identical_including_nan": true
+        },
+        "promoted_s1": {
+          "all_workers_stopped": true,
+          "artifact": {
+            "available": true,
+            "callback_artifact_sha256": {
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.1.nbc": "1f0bde833ecd42101568b805d64826378c1cdc758490b63e3a66ca6cca562f11",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.nbi": "a989968aede088735c094e9e6bf346dfa4c5832d80ee65bc8062d928ca0dbe9c",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.1.nbc": "daeb9afb673af0c26a64fc91ad8c69cea5e884b646e549f82adf00bf42b5a0bb",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.nbi": "b440a239404ddcbd4d6e192d580adae2b42bf8141463bd1c8b1c1a8f9f7832a7"
+            },
+            "failure_reason": null,
+            "failure_type": null,
+            "identity": {
+              "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+              "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+              "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+              "compiler_flags": [
+                "-O2",
+                "-ffp-contract=on",
+                "-fPIC",
+                "-shared"
+              ],
+              "compiler_path": "/usr/bin/clang",
+              "compiler_target": "Target: arm64-apple-darwin24.6.0",
+              "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+              "implementation": "s1_native_dop853_v1",
+              "llvm": "22.1.0",
+              "llvmlite": "0.49.0",
+              "machine": "arm64",
+              "macos": "15.7.9",
+              "native_source_sha256": {
+                "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+              },
+              "numba": "0.67.0",
+              "numpy": "2.5.2",
+              "platform": "macOS-15.7.9-arm64-arm-64bit",
+              "python": "3.12.3",
+              "python_cache_tag": "cpython-312",
+              "python_implementation": "CPython",
+              "python_soabi": "cpython-312-darwin",
+              "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+              "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+              "schema_version": 1,
+              "scipy": "1.18.0",
+              "system": "Darwin"
+            },
+            "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+            "manifest_sha256": "8e62b710c54ec76e104be78f9b44633f13dbe4cd3b426e3cec17883c8e5f1350",
+            "native_library_sha256": "01ab345e864b02adfa2ab3a7398ec039103a9bdde1e233edafd4a51bc1a977a7"
+          },
+          "artifact_bytes": 2039183,
+          "artifact_preparation_seconds": 0.4641479999991134,
+          "attempted_evaluator_counts": {
+            "s1_native_dop853_v1": 730
+          },
+          "coordinator_peak_rss_bytes": 243433472,
+          "effective_setup_seconds": 11.2822895438876,
+          "evaluation_seconds": 20.85616557893809,
+          "evaluator_provenance": {
+            "bounded_error_route": "compiled_dop853_execution_error",
+            "eligible_normal_route": "s1_native_dop853_v1",
+            "fallback_route": "compiled_rhs_solve_ivp_fallback",
+            "policy": "guarded_s1_then_targeted_hybrid",
+            "s1": {
+              "artifact": {
+                "identity": {
+                  "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+                  "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+                  "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+                  "compiler_flags": [
+                    "-O2",
+                    "-ffp-contract=on",
+                    "-fPIC",
+                    "-shared"
+                  ],
+                  "compiler_path": "/usr/bin/clang",
+                  "compiler_target": "Target: arm64-apple-darwin24.6.0",
+                  "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+                  "implementation": "s1_native_dop853_v1",
+                  "llvm": "22.1.0",
+                  "llvmlite": "0.49.0",
+                  "machine": "arm64",
+                  "macos": "15.7.9",
+                  "native_source_sha256": {
+                    "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                    "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                    "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                    "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+                  },
+                  "numba": "0.67.0",
+                  "numpy": "2.5.2",
+                  "platform": "macOS-15.7.9-arm64-arm-64bit",
+                  "python": "3.12.3",
+                  "python_cache_tag": "cpython-312",
+                  "python_implementation": "CPython",
+                  "python_soabi": "cpython-312-darwin",
+                  "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+                  "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+                  "schema_version": 1,
+                  "scipy": "1.18.0",
+                  "system": "Darwin"
+                },
+                "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+                "schema_version": 1
+              },
+              "build_flags": [
+                "-O2",
+                "-ffp-contract=on",
+                "-fPIC",
+                "-shared"
+              ],
+              "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+              "compiler_target": "Target: arm64-apple-darwin24.6.0",
+              "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+              "implementation": "s1_native_dop853_v1",
+              "machine": "arm64",
+              "macos": "15.7.9",
+              "numba": "0.67.0",
+              "numpy": "2.5.2",
+              "python": "3.12.3",
+              "reason": "validated",
+              "scipy": "1.18.0",
+              "source_sha256": {
+                "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+              },
+              "supported": true,
+              "system": "Darwin"
+            },
+            "scientific_oracles": [
+              "numpy_sympy_solve_ivp",
+              "numba_rhs_jvp_solve_ivp"
+            ],
+            "trusted_fast_route": "compiled_dop853"
+          },
+          "hdf5_sha256": "ff7a8eb317d4cc0109a725d53fa9649e757e6f48c1eecc570e2091a8c5d50c33",
+          "maximum_worker_peak_rss_bytes": 241582080,
+          "outer_create_cells_per_second": 443.10657846314575,
+          "outer_create_wall_seconds": 36.97530300007202,
+          "persistence_seconds": 0.6511976326582953,
+          "pool_count": 8,
+          "recovery_reason_counts": {
+            "s1_execution_error": 730
+          },
+          "recycling_events": 7,
+          "retained_result_rhs_evaluations": 109507382,
+          "route_counts": {
+            "compiled_dop853": 0,
+            "compiled_dop853_execution_error": 0,
+            "compiled_rhs_solve_ivp_fallback": 730,
+            "not_yet_computed": 0,
+            "s1_native_dop853_v1": 15654
+          },
+          "runner_cells_per_second": 448.81274627067535,
+          "runner_total_seconds": 36.505202082917094,
+          "setup_seconds": 10.818141543888487,
+          "shutdown_seconds": 3.249538835021667,
+          "status_counts": {
+            "completed_invalid": 0,
+            "completed_valid": 16384,
+            "execution_error": 0,
+            "not_yet_computed": 0
+          },
+          "validation_accepted": true
+        },
+        "trusted_pre_s1": {
+          "all_workers_stopped": true,
+          "artifact_bytes": 1323759,
+          "artifact_preparation_seconds": 0.0,
+          "attempted_evaluator_counts": {},
+          "coordinator_peak_rss_bytes": 247496704,
+          "effective_setup_seconds": 13.271890957141295,
+          "evaluation_seconds": 48.495637622778304,
+          "evaluator_provenance": {
+            "bounded_error_route": "compiled_dop853_execution_error",
+            "fallback_route": "compiled_rhs_solve_ivp_fallback",
+            "normal_route": "compiled_dop853",
+            "policy": "forced_pre_s1_targeted_hybrid",
+            "scientific_oracles": [
+              "numpy_sympy_solve_ivp",
+              "numba_rhs_jvp_solve_ivp"
+            ]
+          },
+          "hdf5_sha256": "c93bb42d31d14076dc49c9e6d3f0389474548813f2fb253cb3b97a48857716d5",
+          "maximum_worker_peak_rss_bytes": 328105984,
+          "outer_create_cells_per_second": 242.67945939940824,
+          "outer_create_wall_seconds": 67.51292441703845,
+          "persistence_seconds": 0.7188263647258282,
+          "pool_count": 8,
+          "recovery_reason_counts": {},
+          "recycling_events": 7,
+          "retained_result_rhs_evaluations": 109507382,
+          "route_counts": {
+            "compiled_dop853": 15654,
+            "compiled_dop853_execution_error": 0,
+            "compiled_rhs_solve_ivp_fallback": 730,
+            "not_yet_computed": 0
+          },
+          "runner_cells_per_second": 242.69703973583032,
+          "runner_total_seconds": 67.50803395803086,
+          "setup_seconds": 13.271890957141295,
+          "shutdown_seconds": 4.089423208963126,
+          "status_counts": {
+            "completed_invalid": 0,
+            "completed_valid": 16384,
+            "execution_error": 0,
+            "not_yet_computed": 0
+          },
+          "validation_accepted": true
+        }
+      },
+      {
+        "order": [
+          "trusted_pre_s1",
+          "promoted_s1"
+        ],
+        "paired_outer_speedup": 1.7640785755914368,
+        "persisted_comparison": {
+          "accepted": true,
+          "axes_identical": true,
+          "cells_exceeding_tolerance": 0,
+          "existing_rate_absolute_tolerance_per_second": 1e-08,
+          "fallback_masks_identical": true,
+          "maximum_absolute_value_difference_per_second": 0.0,
+          "promoted_s1_mask_matches_trusted_fast_mask": true,
+          "statuses_identical": true,
+          "values_bitwise_identical_including_nan": true
+        },
+        "promoted_s1": {
+          "all_workers_stopped": true,
+          "artifact": {
+            "available": true,
+            "callback_artifact_sha256": {
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.1.nbc": "9186f7b4ecab2b9156624275cf8103f8127d8a29cc951d409f601282bb2c7485",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.nbi": "a989968aede088735c094e9e6bf346dfa4c5832d80ee65bc8062d928ca0dbe9c",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.1.nbc": "abb5bf92c748955c747a631cbc92ceb9f79826f77c18c283e8287d260a659a50",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.nbi": "b440a239404ddcbd4d6e192d580adae2b42bf8141463bd1c8b1c1a8f9f7832a7"
+            },
+            "failure_reason": null,
+            "failure_type": null,
+            "identity": {
+              "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+              "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+              "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+              "compiler_flags": [
+                "-O2",
+                "-ffp-contract=on",
+                "-fPIC",
+                "-shared"
+              ],
+              "compiler_path": "/usr/bin/clang",
+              "compiler_target": "Target: arm64-apple-darwin24.6.0",
+              "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+              "implementation": "s1_native_dop853_v1",
+              "llvm": "22.1.0",
+              "llvmlite": "0.49.0",
+              "machine": "arm64",
+              "macos": "15.7.9",
+              "native_source_sha256": {
+                "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+              },
+              "numba": "0.67.0",
+              "numpy": "2.5.2",
+              "platform": "macOS-15.7.9-arm64-arm-64bit",
+              "python": "3.12.3",
+              "python_cache_tag": "cpython-312",
+              "python_implementation": "CPython",
+              "python_soabi": "cpython-312-darwin",
+              "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+              "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+              "schema_version": 1,
+              "scipy": "1.18.0",
+              "system": "Darwin"
+            },
+            "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+            "manifest_sha256": "b31810cdc64386ab1ffa72dc2a7896189ed76e561a8006bf446753fe70693030",
+            "native_library_sha256": "d100b2bf2253a2211791e8c4d13a5867ac4a5c1e0d16f2f733f13e8c7fff3531"
+          },
+          "artifact_bytes": 2039175,
+          "artifact_preparation_seconds": 0.47508458292577416,
+          "attempted_evaluator_counts": {
+            "s1_native_dop853_v1": 730
+          },
+          "coordinator_peak_rss_bytes": 250167296,
+          "effective_setup_seconds": 11.422681874013506,
+          "evaluation_seconds": 20.97060650284402,
+          "evaluator_provenance": {
+            "bounded_error_route": "compiled_dop853_execution_error",
+            "eligible_normal_route": "s1_native_dop853_v1",
+            "fallback_route": "compiled_rhs_solve_ivp_fallback",
+            "policy": "guarded_s1_then_targeted_hybrid",
+            "s1": {
+              "artifact": {
+                "identity": {
+                  "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+                  "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+                  "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+                  "compiler_flags": [
+                    "-O2",
+                    "-ffp-contract=on",
+                    "-fPIC",
+                    "-shared"
+                  ],
+                  "compiler_path": "/usr/bin/clang",
+                  "compiler_target": "Target: arm64-apple-darwin24.6.0",
+                  "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+                  "implementation": "s1_native_dop853_v1",
+                  "llvm": "22.1.0",
+                  "llvmlite": "0.49.0",
+                  "machine": "arm64",
+                  "macos": "15.7.9",
+                  "native_source_sha256": {
+                    "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                    "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                    "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                    "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+                  },
+                  "numba": "0.67.0",
+                  "numpy": "2.5.2",
+                  "platform": "macOS-15.7.9-arm64-arm-64bit",
+                  "python": "3.12.3",
+                  "python_cache_tag": "cpython-312",
+                  "python_implementation": "CPython",
+                  "python_soabi": "cpython-312-darwin",
+                  "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+                  "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+                  "schema_version": 1,
+                  "scipy": "1.18.0",
+                  "system": "Darwin"
+                },
+                "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+                "schema_version": 1
+              },
+              "build_flags": [
+                "-O2",
+                "-ffp-contract=on",
+                "-fPIC",
+                "-shared"
+              ],
+              "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+              "compiler_target": "Target: arm64-apple-darwin24.6.0",
+              "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+              "implementation": "s1_native_dop853_v1",
+              "machine": "arm64",
+              "macos": "15.7.9",
+              "numba": "0.67.0",
+              "numpy": "2.5.2",
+              "python": "3.12.3",
+              "reason": "validated",
+              "scipy": "1.18.0",
+              "source_sha256": {
+                "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+              },
+              "supported": true,
+              "system": "Darwin"
+            },
+            "scientific_oracles": [
+              "numpy_sympy_solve_ivp",
+              "numba_rhs_jvp_solve_ivp"
+            ],
+            "trusted_fast_route": "compiled_dop853"
+          },
+          "hdf5_sha256": "f3903596978489aaf0c57f41d6d58a035ccedf70a473baedd34e8a7cbea5148a",
+          "maximum_worker_peak_rss_bytes": 242352128,
+          "outer_create_cells_per_second": 440.9144645110572,
+          "outer_create_wall_seconds": 37.15913475002162,
+          "persistence_seconds": 0.6584497108124197,
+          "pool_count": 8,
+          "recovery_reason_counts": {
+            "s1_execution_error": 730
+          },
+          "recycling_events": 7,
+          "retained_result_rhs_evaluations": 109507382,
+          "route_counts": {
+            "compiled_dop853": 0,
+            "compiled_dop853_execution_error": 0,
+            "compiled_rhs_solve_ivp_fallback": 730,
+            "not_yet_computed": 0,
+            "s1_native_dop853_v1": 15654
+          },
+          "runner_cells_per_second": 446.67935331031384,
+          "runner_total_seconds": 36.67955520795658,
+          "setup_seconds": 10.947597291087732,
+          "shutdown_seconds": 3.1738474579760805,
+          "status_counts": {
+            "completed_invalid": 0,
+            "completed_valid": 16384,
+            "execution_error": 0,
+            "not_yet_computed": 0
+          },
+          "validation_accepted": true
+        },
+        "trusted_pre_s1": {
+          "all_workers_stopped": true,
+          "artifact_bytes": 1323759,
+          "artifact_preparation_seconds": 0.0,
+          "attempted_evaluator_counts": {},
+          "coordinator_peak_rss_bytes": 247595008,
+          "effective_setup_seconds": 12.563673499971628,
+          "evaluation_seconds": 47.422289669979364,
+          "evaluator_provenance": {
+            "bounded_error_route": "compiled_dop853_execution_error",
+            "fallback_route": "compiled_rhs_solve_ivp_fallback",
+            "normal_route": "compiled_dop853",
+            "policy": "forced_pre_s1_targeted_hybrid",
+            "scientific_oracles": [
+              "numpy_sympy_solve_ivp",
+              "numba_rhs_jvp_solve_ivp"
+            ]
+          },
+          "hdf5_sha256": "3f8b7e9ddad5cb0c7ae949c4c977a88ba7e19c1158239e890f357fc10382f33f",
+          "maximum_worker_peak_rss_bytes": 328040448,
+          "outer_create_cells_per_second": 249.94037715311703,
+          "outer_create_wall_seconds": 65.5516335000284,
+          "persistence_seconds": 0.7075300792930648,
+          "pool_count": 8,
+          "recovery_reason_counts": {},
+          "recycling_events": 7,
+          "retained_result_rhs_evaluations": 109507382,
+          "route_counts": {
+            "compiled_dop853": 15654,
+            "compiled_dop853_execution_error": 0,
+            "compiled_rhs_solve_ivp_fallback": 730,
+            "not_yet_computed": 0
+          },
+          "runner_cells_per_second": 249.95822714249172,
+          "runner_total_seconds": 65.5469523339998,
+          "setup_seconds": 12.563673499971628,
+          "shutdown_seconds": 3.903113540960476,
+          "status_counts": {
+            "completed_invalid": 0,
+            "completed_valid": 16384,
+            "execution_error": 0,
+            "not_yet_computed": 0
+          },
+          "validation_accepted": true
+        }
+      },
+      {
+        "order": [
+          "promoted_s1",
+          "trusted_pre_s1"
+        ],
+        "paired_outer_speedup": 1.8300622159766027,
+        "persisted_comparison": {
+          "accepted": true,
+          "axes_identical": true,
+          "cells_exceeding_tolerance": 0,
+          "existing_rate_absolute_tolerance_per_second": 1e-08,
+          "fallback_masks_identical": true,
+          "maximum_absolute_value_difference_per_second": 0.0,
+          "promoted_s1_mask_matches_trusted_fast_mask": true,
+          "statuses_identical": true,
+          "values_bitwise_identical_including_nan": true
+        },
+        "promoted_s1": {
+          "all_workers_stopped": true,
+          "artifact": {
+            "available": true,
+            "callback_artifact_sha256": {
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.1.nbc": "0d5cab0f15d333fb17987dbee2e3aab453c5503ab16222c35f72e7db15c4b480",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.nbi": "a989968aede088735c094e9e6bf346dfa4c5832d80ee65bc8062d928ca0dbe9c",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.1.nbc": "9907f9a6dbf48234f5b519c0cf39a5afa9467913d24ac3ff3d6f19f8c1880c36",
+              "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.nbi": "b440a239404ddcbd4d6e192d580adae2b42bf8141463bd1c8b1c1a8f9f7832a7"
+            },
+            "failure_reason": null,
+            "failure_type": null,
+            "identity": {
+              "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+              "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+              "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+              "compiler_flags": [
+                "-O2",
+                "-ffp-contract=on",
+                "-fPIC",
+                "-shared"
+              ],
+              "compiler_path": "/usr/bin/clang",
+              "compiler_target": "Target: arm64-apple-darwin24.6.0",
+              "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+              "implementation": "s1_native_dop853_v1",
+              "llvm": "22.1.0",
+              "llvmlite": "0.49.0",
+              "machine": "arm64",
+              "macos": "15.7.9",
+              "native_source_sha256": {
+                "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+              },
+              "numba": "0.67.0",
+              "numpy": "2.5.2",
+              "platform": "macOS-15.7.9-arm64-arm-64bit",
+              "python": "3.12.3",
+              "python_cache_tag": "cpython-312",
+              "python_implementation": "CPython",
+              "python_soabi": "cpython-312-darwin",
+              "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+              "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+              "schema_version": 1,
+              "scipy": "1.18.0",
+              "system": "Darwin"
+            },
+            "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+            "manifest_sha256": "3d40763fb8a7c431b29c70db136c9ee8918ec81ca4fbf9287f6de25113ed47ca",
+            "native_library_sha256": "3581a3c7373e98910101301aa31092f6ae7fda5c5bd0d3b5f8e735399e49d029"
+          },
+          "artifact_bytes": 2039183,
+          "artifact_preparation_seconds": 0.4676914580632001,
+          "attempted_evaluator_counts": {
+            "s1_native_dop853_v1": 730
+          },
+          "coordinator_peak_rss_bytes": 252657664,
+          "effective_setup_seconds": 11.314020414836705,
+          "evaluation_seconds": 20.97034500108566,
+          "evaluator_provenance": {
+            "bounded_error_route": "compiled_dop853_execution_error",
+            "eligible_normal_route": "s1_native_dop853_v1",
+            "fallback_route": "compiled_rhs_solve_ivp_fallback",
+            "policy": "guarded_s1_then_targeted_hybrid",
+            "s1": {
+              "artifact": {
+                "identity": {
+                  "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+                  "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+                  "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+                  "compiler_flags": [
+                    "-O2",
+                    "-ffp-contract=on",
+                    "-fPIC",
+                    "-shared"
+                  ],
+                  "compiler_path": "/usr/bin/clang",
+                  "compiler_target": "Target: arm64-apple-darwin24.6.0",
+                  "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+                  "implementation": "s1_native_dop853_v1",
+                  "llvm": "22.1.0",
+                  "llvmlite": "0.49.0",
+                  "machine": "arm64",
+                  "macos": "15.7.9",
+                  "native_source_sha256": {
+                    "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                    "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                    "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                    "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+                  },
+                  "numba": "0.67.0",
+                  "numpy": "2.5.2",
+                  "platform": "macOS-15.7.9-arm64-arm-64bit",
+                  "python": "3.12.3",
+                  "python_cache_tag": "cpython-312",
+                  "python_implementation": "CPython",
+                  "python_soabi": "cpython-312-darwin",
+                  "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+                  "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+                  "schema_version": 1,
+                  "scipy": "1.18.0",
+                  "system": "Darwin"
+                },
+                "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+                "schema_version": 1
+              },
+              "build_flags": [
+                "-O2",
+                "-ffp-contract=on",
+                "-fPIC",
+                "-shared"
+              ],
+              "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+              "compiler_target": "Target: arm64-apple-darwin24.6.0",
+              "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+              "implementation": "s1_native_dop853_v1",
+              "machine": "arm64",
+              "macos": "15.7.9",
+              "numba": "0.67.0",
+              "numpy": "2.5.2",
+              "python": "3.12.3",
+              "reason": "validated",
+              "scipy": "1.18.0",
+              "source_sha256": {
+                "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+                "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+                "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+                "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+              },
+              "supported": true,
+              "system": "Darwin"
+            },
+            "scientific_oracles": [
+              "numpy_sympy_solve_ivp",
+              "numba_rhs_jvp_solve_ivp"
+            ],
+            "trusted_fast_route": "compiled_dop853"
+          },
+          "hdf5_sha256": "8a8c0e03004d821420de7ce86cbfb16a9c36c99a2926985c2f0a9c499af5ce5f",
+          "maximum_worker_peak_rss_bytes": 242319360,
+          "outer_create_cells_per_second": 441.96396604428304,
+          "outer_create_wall_seconds": 37.07089550001547,
+          "persistence_seconds": 0.6554428770905361,
+          "pool_count": 8,
+          "recovery_reason_counts": {
+            "s1_execution_error": 730
+          },
+          "recycling_events": 7,
+          "retained_result_rhs_evaluations": 109507382,
+          "route_counts": {
+            "compiled_dop853": 0,
+            "compiled_dop853_execution_error": 0,
+            "compiled_rhs_solve_ivp_fallback": 730,
+            "not_yet_computed": 0,
+            "s1_native_dop853_v1": 15654
+          },
+          "runner_cells_per_second": 447.6699026084491,
+          "runner_total_seconds": 36.598395166918635,
+          "setup_seconds": 10.846328956773505,
+          "shutdown_seconds": 3.1889521669363603,
+          "status_counts": {
+            "completed_invalid": 0,
+            "completed_valid": 16384,
+            "execution_error": 0,
+            "not_yet_computed": 0
+          },
+          "validation_accepted": true
+        },
+        "trusted_pre_s1": {
+          "all_workers_stopped": true,
+          "artifact_bytes": 1323759,
+          "artifact_preparation_seconds": 0.0,
+          "attempted_evaluator_counts": {},
+          "coordinator_peak_rss_bytes": 253165568,
+          "effective_setup_seconds": 12.873936541029252,
+          "evaluation_seconds": 49.09463401022367,
+          "evaluator_provenance": {
+            "bounded_error_route": "compiled_dop853_execution_error",
+            "fallback_route": "compiled_rhs_solve_ivp_fallback",
+            "normal_route": "compiled_dop853",
+            "policy": "forced_pre_s1_targeted_hybrid",
+            "scientific_oracles": [
+              "numpy_sympy_solve_ivp",
+              "numba_rhs_jvp_solve_ivp"
+            ]
+          },
+          "hdf5_sha256": "80e57cef7f5c42489d14ab4b05940b7bf2789fa8c3c2391cef418a4a8a805163",
+          "maximum_worker_peak_rss_bytes": 334610432,
+          "outer_create_cells_per_second": 241.5021534163697,
+          "outer_create_wall_seconds": 67.84204516699538,
+          "persistence_seconds": 0.7117437912384048,
+          "pool_count": 8,
+          "recovery_reason_counts": {},
+          "recycling_events": 7,
+          "retained_result_rhs_evaluations": 109507382,
+          "route_counts": {
+            "compiled_dop853": 15654,
+            "compiled_dop853_execution_error": 0,
+            "compiled_rhs_solve_ivp_fallback": 730,
+            "not_yet_computed": 0
+          },
+          "runner_cells_per_second": 241.5191008994898,
+          "runner_total_seconds": 67.83728466602042,
+          "setup_seconds": 12.873936541029252,
+          "shutdown_seconds": 4.218449500971474,
+          "status_counts": {
+            "completed_invalid": 0,
+            "completed_valid": 16384,
+            "execution_error": 0,
+            "not_yet_computed": 0
+          },
+          "validation_accepted": true
+        }
+      }
+    ]
+  },
+  "lifecycle": {
+    "median_effective_eight_pool_setup_seconds": 11.287100375047885,
+    "repetitions": [
+      {
+        "all_workers_stopped": true,
+        "artifact": {
+          "available": true,
+          "callback_artifact_sha256": {
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.1.nbc": "10d976f3d86c9be7b22d94a0a560e0407e20154db3a25af598b12a2ded5f025d",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.nbi": "a989968aede088735c094e9e6bf346dfa4c5832d80ee65bc8062d928ca0dbe9c",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.1.nbc": "14ac0cd5f1d0431ca99c54ed74584bf852c2d3f9929cdd000021753d3b814671",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.nbi": "b440a239404ddcbd4d6e192d580adae2b42bf8141463bd1c8b1c1a8f9f7832a7"
+          },
+          "failure_reason": null,
+          "failure_type": null,
+          "identity": {
+            "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+            "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+            "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+            "compiler_flags": [
+              "-O2",
+              "-ffp-contract=on",
+              "-fPIC",
+              "-shared"
+            ],
+            "compiler_path": "/usr/bin/clang",
+            "compiler_target": "Target: arm64-apple-darwin24.6.0",
+            "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+            "implementation": "s1_native_dop853_v1",
+            "llvm": "22.1.0",
+            "llvmlite": "0.49.0",
+            "machine": "arm64",
+            "macos": "15.7.9",
+            "native_source_sha256": {
+              "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+              "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+              "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+              "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+            },
+            "numba": "0.67.0",
+            "numpy": "2.5.2",
+            "platform": "macOS-15.7.9-arm64-arm-64bit",
+            "python": "3.12.3",
+            "python_cache_tag": "cpython-312",
+            "python_implementation": "CPython",
+            "python_soabi": "cpython-312-darwin",
+            "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+            "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+            "schema_version": 1,
+            "scipy": "1.18.0",
+            "system": "Darwin"
+          },
+          "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+          "manifest_sha256": "eb7ba96fde2a14c789b4f565b9f3cec1998cb6aaf77f77e8ff04ab0c6060d1ac",
+          "native_library_sha256": "f3a728fc2bbfb97a03ea4f98c506882cbb9891687f375e7891c5b69ea1a54d7f"
+        },
+        "artifact_preparation_seconds": 0.7951882090419531,
+        "effective_eight_pool_setup_seconds": 11.636110043153167,
+        "maximum_worker_peak_rss_bytes": 226754560,
+        "pool_setup_seconds": [
+          1.6024465000955388,
+          1.370949124917388,
+          1.2983994169626385,
+          1.3371103750541806,
+          1.328286417061463,
+          1.2989359170896932,
+          1.3016549160238355,
+          1.303139166906476
+        ],
+        "pools": [
+          {
+            "all_workers_stopped": true,
+            "index": 1,
+            "setup_seconds": 1.6024465000955388,
+            "shutdown_seconds": 0.3815689579350874,
+            "worker_initialization_seconds": [
+              0.30799391691107303,
+              0.2799501249101013,
+              0.29130741697736084,
+              0.3002320840023458
+            ],
+            "worker_peak_rss_bytes": [
+              225509376,
+              226295808,
+              225411072,
+              226181120
+            ],
+            "worker_process_ids": [
+              95486,
+              95487,
+              95488,
+              95489
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 2,
+            "setup_seconds": 1.370949124917388,
+            "shutdown_seconds": 0.3822670829249546,
+            "worker_initialization_seconds": [
+              0.1341434579808265,
+              0.13432349998038262,
+              0.13701129204127938,
+              0.13095145800616592
+            ],
+            "worker_peak_rss_bytes": [
+              226017280,
+              224706560,
+              224477184,
+              226164736
+            ],
+            "worker_process_ids": [
+              95523,
+              95524,
+              95525,
+              95526
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 3,
+            "setup_seconds": 1.2983994169626385,
+            "shutdown_seconds": 0.37261891702655703,
+            "worker_initialization_seconds": [
+              0.12076783296652138,
+              0.12059075001161546,
+              0.1210697079077363,
+              0.12087658292148262
+            ],
+            "worker_peak_rss_bytes": [
+              224247808,
+              225591296,
+              226263040,
+              225624064
+            ],
+            "worker_process_ids": [
+              95546,
+              95547,
+              95548,
+              95549
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 4,
+            "setup_seconds": 1.3371103750541806,
+            "shutdown_seconds": 0.43403037497773767,
+            "worker_initialization_seconds": [
+              0.1268432920332998,
+              0.12866562500130385,
+              0.1191207499941811,
+              0.12701287504751235
+            ],
+            "worker_peak_rss_bytes": [
+              226557952,
+              225591296,
+              226050048,
+              226754560
+            ],
+            "worker_process_ids": [
+              95562,
+              95563,
+              95564,
+              95565
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 5,
+            "setup_seconds": 1.328286417061463,
+            "shutdown_seconds": 0.37565220799297094,
+            "worker_initialization_seconds": [
+              0.12712249998003244,
+              0.1285096249775961,
+              0.12755258299876004,
+              0.12802645796909928
+            ],
+            "worker_peak_rss_bytes": [
+              225132544,
+              224935936,
+              223936512,
+              225181696
+            ],
+            "worker_process_ids": [
+              95678,
+              95679,
+              95680,
+              95681
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 6,
+            "setup_seconds": 1.2989359170896932,
+            "shutdown_seconds": 0.3787816669791937,
+            "worker_initialization_seconds": [
+              0.12166595901362598,
+              0.12010533292777836,
+              0.12077616702299565,
+              0.12096158298663795
+            ],
+            "worker_peak_rss_bytes": [
+              224608256,
+              226230272,
+              225181696,
+              224428032
+            ],
+            "worker_process_ids": [
+              95699,
+              95700,
+              95701,
+              95702
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 7,
+            "setup_seconds": 1.3016549160238355,
+            "shutdown_seconds": 0.37482316698879004,
+            "worker_initialization_seconds": [
+              0.12104516697581857,
+              0.12097608298063278,
+              0.12048279098235071,
+              0.1206898340024054
+            ],
+            "worker_peak_rss_bytes": [
+              224919552,
+              226164736,
+              225968128,
+              225394688
+            ],
+            "worker_process_ids": [
+              95715,
+              95716,
+              95717,
+              95718
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 8,
+            "setup_seconds": 1.303139166906476,
+            "shutdown_seconds": 0.3766685000155121,
+            "worker_initialization_seconds": [
+              0.12383483408484608,
+              0.12379604205489159,
+              0.12377883307635784,
+              0.12373770889826119
+            ],
+            "worker_peak_rss_bytes": [
+              225705984,
+              225689600,
+              225722368,
+              225935360
+            ],
+            "worker_process_ids": [
+              95731,
+              95732,
+              95733,
+              95734
+            ]
+          }
+        ],
+        "total_wall_including_shutdown_seconds": 14.891141499974765,
+        "warm_pool_setup_median_seconds": 1.303139166906476,
+        "worker_initialization_median_seconds": 0.12381543806986883,
+        "worker_initialization_range_seconds": [
+          0.1191207499941811,
+          0.30799391691107303
+        ]
+      },
+      {
+        "all_workers_stopped": true,
+        "artifact": {
+          "available": true,
+          "callback_artifact_sha256": {
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.1.nbc": "1ca1f24f56bb52edf59a177a30c22221bb24c30f4def398057eb63aa17b9a749",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.nbi": "a989968aede088735c094e9e6bf346dfa4c5832d80ee65bc8062d928ca0dbe9c",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.1.nbc": "03ff4c41e9fbf4f5540fd947b6f1f76ee4ccdabb66a7618d9ada50c9d5bd3287",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.nbi": "b440a239404ddcbd4d6e192d580adae2b42bf8141463bd1c8b1c1a8f9f7832a7"
+          },
+          "failure_reason": null,
+          "failure_type": null,
+          "identity": {
+            "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+            "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+            "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+            "compiler_flags": [
+              "-O2",
+              "-ffp-contract=on",
+              "-fPIC",
+              "-shared"
+            ],
+            "compiler_path": "/usr/bin/clang",
+            "compiler_target": "Target: arm64-apple-darwin24.6.0",
+            "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+            "implementation": "s1_native_dop853_v1",
+            "llvm": "22.1.0",
+            "llvmlite": "0.49.0",
+            "machine": "arm64",
+            "macos": "15.7.9",
+            "native_source_sha256": {
+              "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+              "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+              "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+              "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+            },
+            "numba": "0.67.0",
+            "numpy": "2.5.2",
+            "platform": "macOS-15.7.9-arm64-arm-64bit",
+            "python": "3.12.3",
+            "python_cache_tag": "cpython-312",
+            "python_implementation": "CPython",
+            "python_soabi": "cpython-312-darwin",
+            "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+            "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+            "schema_version": 1,
+            "scipy": "1.18.0",
+            "system": "Darwin"
+          },
+          "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+          "manifest_sha256": "0c6dc32d0b9e4e18401d938456456ff775c6baf89c9d04a259ddd3ca611bb2d9",
+          "native_library_sha256": "73bbe9710395a583018e8a0d6fdd8b3a3d48940881de42b4c13453d08c76d6cc"
+        },
+        "artifact_preparation_seconds": 0.4670876250602305,
+        "effective_eight_pool_setup_seconds": 11.287100375047885,
+        "maximum_worker_peak_rss_bytes": 227065856,
+        "pool_setup_seconds": [
+          1.5142062079394236,
+          1.4032348330365494,
+          1.3313028749544173,
+          1.2989821250084788,
+          1.3016257090494037,
+          1.3132912500295788,
+          1.289691707934253,
+          1.3676780420355499
+        ],
+        "pools": [
+          {
+            "all_workers_stopped": true,
+            "index": 1,
+            "setup_seconds": 1.5142062079394236,
+            "shutdown_seconds": 0.380787790985778,
+            "worker_initialization_seconds": [
+              0.3085423340089619,
+              0.28214629110880196,
+              0.3006222079275176,
+              0.2948459580074996
+            ],
+            "worker_peak_rss_bytes": [
+              225591296,
+              226820096,
+              225312768,
+              225968128
+            ],
+            "worker_process_ids": [
+              95751,
+              95752,
+              95753,
+              95754
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 2,
+            "setup_seconds": 1.4032348330365494,
+            "shutdown_seconds": 0.3800534170586616,
+            "worker_initialization_seconds": [
+              0.1526200829539448,
+              0.14514895796310157,
+              0.13841820799279958,
+              0.1337216249667108
+            ],
+            "worker_peak_rss_bytes": [
+              226164736,
+              227065856,
+              225443840,
+              226410496
+            ],
+            "worker_process_ids": [
+              95782,
+              95785,
+              95788,
+              95789
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 3,
+            "setup_seconds": 1.3313028749544173,
+            "shutdown_seconds": 0.37893545895349234,
+            "worker_initialization_seconds": [
+              0.12358995794784278,
+              0.12367741705384105,
+              0.12388787500094622,
+              0.1238285000436008
+            ],
+            "worker_peak_rss_bytes": [
+              224362496,
+              224395264,
+              224378880,
+              225476608
+            ],
+            "worker_process_ids": [
+              95890,
+              95891,
+              95892,
+              95893
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 4,
+            "setup_seconds": 1.2989821250084788,
+            "shutdown_seconds": 0.39635416597593576,
+            "worker_initialization_seconds": [
+              0.12200808303896338,
+              0.12221866601612419,
+              0.1223674169741571,
+              0.12253504106774926
+            ],
+            "worker_peak_rss_bytes": [
+              225509376,
+              225034240,
+              225116160,
+              225869824
+            ],
+            "worker_process_ids": [
+              95906,
+              95907,
+              95908,
+              95909
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 5,
+            "setup_seconds": 1.3016257090494037,
+            "shutdown_seconds": 0.3863162499619648,
+            "worker_initialization_seconds": [
+              0.12210279097780585,
+              0.12195058295037597,
+              0.12256166699808091,
+              0.12205183401238173
+            ],
+            "worker_peak_rss_bytes": [
+              226131968,
+              225984512,
+              226230272,
+              224903168
+            ],
+            "worker_process_ids": [
+              95922,
+              95923,
+              95924,
+              95925
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 6,
+            "setup_seconds": 1.3132912500295788,
+            "shutdown_seconds": 0.3794678329722956,
+            "worker_initialization_seconds": [
+              0.1257666249293834,
+              0.12599091709125787,
+              0.12612462497781962,
+              0.12575320911128074
+            ],
+            "worker_peak_rss_bytes": [
+              226050048,
+              225607680,
+              224608256,
+              226459648
+            ],
+            "worker_process_ids": [
+              95938,
+              95939,
+              95940,
+              95941
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 7,
+            "setup_seconds": 1.289691707934253,
+            "shutdown_seconds": 0.37738762504886836,
+            "worker_initialization_seconds": [
+              0.12244266702327877,
+              0.12167741707526147,
+              0.1207433749223128,
+              0.121791125042364
+            ],
+            "worker_peak_rss_bytes": [
+              226426880,
+              225984512,
+              225443840,
+              224985088
+            ],
+            "worker_process_ids": [
+              95954,
+              95955,
+              95956,
+              95957
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 8,
+            "setup_seconds": 1.3676780420355499,
+            "shutdown_seconds": 0.3874070420861244,
+            "worker_initialization_seconds": [
+              0.127994165988639,
+              0.1277880419511348,
+              0.12721929198596627,
+              0.1242105410201475
+            ],
+            "worker_peak_rss_bytes": [
+              225361920,
+              225837056,
+              225509376,
+              224657408
+            ],
+            "worker_process_ids": [
+              95994,
+              95998,
+              96002,
+              96006
+            ]
+          }
+        ],
+        "total_wall_including_shutdown_seconds": 14.540753875044174,
+        "warm_pool_setup_median_seconds": 1.3132912500295788,
+        "worker_initialization_median_seconds": 0.12404920801054686,
+        "worker_initialization_range_seconds": [
+          0.1207433749223128,
+          0.3085423340089619
+        ]
+      },
+      {
+        "all_workers_stopped": true,
+        "artifact": {
+          "available": true,
+          "callback_artifact_sha256": {
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.1.nbc": "b69c3a53972c0cb755ee2b6fe26a4606fe8fcdb89407b66e7fc0f9e9b31b73ae",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._reset_callback_impl-200.py312.nbi": "a989968aede088735c094e9e6bf346dfa4c5832d80ee65bc8062d928ca0dbe9c",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.1.nbc": "4b7f3e4addcb1d79a0cb993ae77a43c5d9c731f979ad61c1fb46ed37d731a76d",
+            "callbacks/lyapunov_acedfa850983a99e469827b49844d03b1d5924fc/s1_artifacts._rhs_callback_impl-190.py312.nbi": "b440a239404ddcbd4d6e192d580adae2b42bf8141463bd1c8b1c1a8f9f7832a7"
+          },
+          "failure_reason": null,
+          "failure_type": null,
+          "identity": {
+            "callback_source_sha256": "8e3bc9aa51f455e7c807e402d8deaecdf1cf066d0b8ed95f854279c08a675bca",
+            "compiled_rhs_implementation_sha256": "f38d96f96660e368ea9fba4106d6ca8dd82b704ff333b86532016dbd96dbfd7c",
+            "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+            "compiler_flags": [
+              "-O2",
+              "-ffp-contract=on",
+              "-fPIC",
+              "-shared"
+            ],
+            "compiler_path": "/usr/bin/clang",
+            "compiler_target": "Target: arm64-apple-darwin24.6.0",
+            "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+            "implementation": "s1_native_dop853_v1",
+            "llvm": "22.1.0",
+            "llvmlite": "0.49.0",
+            "machine": "arm64",
+            "macos": "15.7.9",
+            "native_source_sha256": {
+              "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+              "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+              "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944",
+              "loop.c": "10137883d13d23ba5dc99aa6d7b50317632191202a8107b2b9e7d3cecb39fbbb"
+            },
+            "numba": "0.67.0",
+            "numpy": "2.5.2",
+            "platform": "macOS-15.7.9-arm64-arm-64bit",
+            "python": "3.12.3",
+            "python_cache_tag": "cpython-312",
+            "python_implementation": "CPython",
+            "python_soabi": "cpython-312-darwin",
+            "s1_artifact_implementation_sha256": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec",
+            "s1_runtime_implementation_sha256": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+            "schema_version": 1,
+            "scipy": "1.18.0",
+            "system": "Darwin"
+          },
+          "key": "50de20808ae51d94438aeafd8bda534680f65a12e3fd5db5dc670c71118e5ea1",
+          "manifest_sha256": "ff65887fba1b43dbc4c05b221c925d9b0feb4439e9ad60b8035828efb9f1f2ec",
+          "native_library_sha256": "779fe1d8fd8e9a98bffc94b4acedc1421cbfe5f8eabd21e2df5b100f41fee776"
+        },
+        "artifact_preparation_seconds": 0.4642477500019595,
+        "effective_eight_pool_setup_seconds": 11.085637041833252,
+        "maximum_worker_peak_rss_bytes": 226689024,
+        "pool_setup_seconds": [
+          1.4585625840118155,
+          1.3256558750290424,
+          1.2971410409081727,
+          1.3065916249761358,
+          1.3118357089115307,
+          1.326177000068128,
+          1.2976550419116393,
+          1.2977704160148278
+        ],
+        "pools": [
+          {
+            "all_workers_stopped": true,
+            "index": 1,
+            "setup_seconds": 1.4585625840118155,
+            "shutdown_seconds": 0.3831561249680817,
+            "worker_initialization_seconds": [
+              0.28249583300203085,
+              0.2837776249507442,
+              0.28353916702326387,
+              0.2830816670320928
+            ],
+            "worker_peak_rss_bytes": [
+              224919552,
+              225214464,
+              225280000,
+              224296960
+            ],
+            "worker_process_ids": [
+              96095,
+              96096,
+              96097,
+              96098
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 2,
+            "setup_seconds": 1.3256558750290424,
+            "shutdown_seconds": 0.38030499999877065,
+            "worker_initialization_seconds": [
+              0.14273929095361382,
+              0.14262837509159,
+              0.14630416699219495,
+              0.14360625005792826
+            ],
+            "worker_peak_rss_bytes": [
+              226394112,
+              226689024,
+              225411072,
+              225411072
+            ],
+            "worker_process_ids": [
+              96111,
+              96112,
+              96113,
+              96114
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 3,
+            "setup_seconds": 1.2971410409081727,
+            "shutdown_seconds": 0.3737621670588851,
+            "worker_initialization_seconds": [
+              0.11737670795992017,
+              0.12241745903156698,
+              0.12252879200968891,
+              0.12147058302070946
+            ],
+            "worker_peak_rss_bytes": [
+              225853440,
+              225230848,
+              226230272,
+              225492992
+            ],
+            "worker_process_ids": [
+              96127,
+              96128,
+              96129,
+              96130
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 4,
+            "setup_seconds": 1.3065916249761358,
+            "shutdown_seconds": 0.37545887497253716,
+            "worker_initialization_seconds": [
+              0.1228419579565525,
+              0.12324379198253155,
+              0.12225658306851983,
+              0.123068334069103
+            ],
+            "worker_peak_rss_bytes": [
+              224952320,
+              225378304,
+              226115584,
+              224788480
+            ],
+            "worker_process_ids": [
+              96143,
+              96144,
+              96145,
+              96146
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 5,
+            "setup_seconds": 1.3118357089115307,
+            "shutdown_seconds": 0.38665216602385044,
+            "worker_initialization_seconds": [
+              0.12391420791391283,
+              0.12619695893954486,
+              0.12822395795956254,
+              0.12291112507227808
+            ],
+            "worker_peak_rss_bytes": [
+              226344960,
+              223887360,
+              225886208,
+              225050624
+            ],
+            "worker_process_ids": [
+              96159,
+              96160,
+              96161,
+              96162
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 6,
+            "setup_seconds": 1.326177000068128,
+            "shutdown_seconds": 0.383227749960497,
+            "worker_initialization_seconds": [
+              0.12081820808816701,
+              0.12423133302945644,
+              0.12441749998833984,
+              0.12439754093065858
+            ],
+            "worker_peak_rss_bytes": [
+              225624064,
+              226377728,
+              226361344,
+              226115584
+            ],
+            "worker_process_ids": [
+              96275,
+              96276,
+              96277,
+              96278
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 7,
+            "setup_seconds": 1.2976550419116393,
+            "shutdown_seconds": 0.3746236249571666,
+            "worker_initialization_seconds": [
+              0.12274504103697836,
+              0.12408887501806021,
+              0.12296437507029623,
+              0.12296166701707989
+            ],
+            "worker_peak_rss_bytes": [
+              225263616,
+              224804864,
+              226590720,
+              224755712
+            ],
+            "worker_process_ids": [
+              96296,
+              96297,
+              96298,
+              96299
+            ]
+          },
+          {
+            "all_workers_stopped": true,
+            "index": 8,
+            "setup_seconds": 1.2977704160148278,
+            "shutdown_seconds": 0.37302204105071723,
+            "worker_initialization_seconds": [
+              0.12672800000291318,
+              0.12621208303608,
+              0.12626908300444484,
+              0.125282833003439
+            ],
+            "worker_peak_rss_bytes": [
+              226492416,
+              224903168,
+              224821248,
+              225411072
+            ],
+            "worker_process_ids": [
+              96312,
+              96313,
+              96314,
+              96315
+            ]
+          }
+        ],
+        "total_wall_including_shutdown_seconds": 14.303759875008836,
+        "warm_pool_setup_median_seconds": 1.3065916249761358,
+        "worker_initialization_median_seconds": 0.12431443698005751,
+        "worker_initialization_range_seconds": [
+          0.11737670795992017,
+          0.2837776249507442
+        ]
+      }
+    ]
+  },
+  "purpose": "build-once/load-many S1 bounded acceptance",
+  "source_sha256": {
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/benchmark_s1_artifact_reuse.py": "9fc645a7b9f0ad506f6a2111fd4b527a8683420a9672e39110cf818320441170",
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/src/generation/runner.py": "803aaa7a9c1dfd1ea355d3fd13df445492d53cd52d90dec43aca28a162b9c6a0",
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/src/lyapunov/field_adapter.py": "154af24f26d26c3091cf334016209263229285a79aa09e83534927db75d13137",
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/src/lyapunov/s1.py": "21cde17d63b41f229876e457c318c78c3764363427e6531ff7e37c2d1d1c111d",
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/src/lyapunov/s1_artifacts.py": "a4c2a9f72257fb590fcfdc618ccc57e84aa5e6d73c670333a2721bf62560edec"
+  },
+  "timestamp_utc": "2026-09-05T20:48:26.214188+00:00",
+  "workload": {
+    "duration_seconds": 5.0,
+    "field_repetitions": 3,
+    "lifecycle_repetitions": 3,
+    "multiprocessing_policy": {
+      "chunksize": 1,
+      "maximum_cells_per_pool": 2048,
+      "process_width": 4,
+      "start_method": "spawn"
+    },
+    "pair_orders": [
+      [
+        "promoted_s1",
+        "trusted_pre_s1"
+      ],
+      [
+        "trusted_pre_s1",
+        "promoted_s1"
+      ],
+      [
+        "promoted_s1",
+        "trusted_pre_s1"
+      ]
+    ],
+    "samples_per_axis": 128
+  }
+}

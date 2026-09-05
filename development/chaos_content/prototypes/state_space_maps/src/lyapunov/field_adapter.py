@@ -44,7 +44,13 @@ from .hybrid import (
 )
 from .operational import evaluate_renormalized_tangent_operational
 from .reference import RenormalizedTangentDiagnostics, RenormalizedTangentSpec
-from .s1 import S1_EVALUATOR, s1_build_provenance
+from .s1 import (
+    S1_EVALUATOR,
+    S1Artifact,
+    configure_s1_artifact,
+    prepare_s1_artifact_for_workers,
+    s1_build_provenance,
+)
 
 
 LYAPUNOV_ROUTE_VOCABULARY = (
@@ -86,9 +92,13 @@ def specification_for_cell(
     )
 
 
-def initialize_lyapunov_field_worker(base_spec: RenormalizedTangentSpec) -> None:
+def initialize_lyapunov_field_worker(
+    base_spec: RenormalizedTangentSpec,
+    artifact: S1Artifact | None = None,
+) -> None:
     global _WORKER_SPEC
     _WORKER_SPEC = base_spec
+    configure_s1_artifact(artifact)
     warm = evaluate_renormalized_tangent_operational(base_spec)
     if warm.status is not EvaluationStatus.COMPLETED_VALID:
         raise RuntimeError("Lyapunov worker warm-up was not numerically valid.")
@@ -134,10 +144,11 @@ def lyapunov_evaluator_binding(
     spec: RenormalizedTangentSpec | None = None,
 ) -> EvaluatorBinding:
     fixed_spec = spec or RenormalizedTangentSpec()
+    artifact = prepare_s1_artifact_for_workers()
     return EvaluatorBinding(
         name="guarded_s1_targeted_hybrid_lyapunov",
         initialize_worker=initialize_lyapunov_field_worker,
-        initializer_arguments=(fixed_spec,),
+        initializer_arguments=(fixed_spec, artifact),
         evaluate_cell=evaluate_lyapunov_field_cell,
         execution_routes=tuple(label for code, label in LYAPUNOV_ROUTE_VOCABULARY if code),
         summarize_tile=summarize_lyapunov_tile,

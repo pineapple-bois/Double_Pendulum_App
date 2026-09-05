@@ -3,16 +3,17 @@
 ## Current state
 
 The authoritative current assessment is
-[`reports/S1_POST_PROMOTION_PERFORMANCE.md`](reports/S1_POST_PROMOTION_PERFORMANCE.md).
+[`reports/S1_BUILD_ONCE_LOAD_MANY.md`](reports/S1_BUILD_ONCE_LOAD_MANY.md).
 S1 delivers approximately **11–12× warm successful-cell acceleration**, but the
-measured field-level acceleration is materially smaller: **1.273× at 64²** and
-**1.578× at 128²** for the bounded T=5 runs. Post-promotion analysis identified
-repeated S1 initialization and lifecycle cost as the immediate optimization
-target. Expensive `solve_ivp` fallback remains the major warm and asymptotic
-compute bottleneck, especially at longer horizons.
+measured field-level acceleration is materially smaller. Build-once/load-many
+artifacts reduced eight-pool setup by **46.7%**, while the paired 128² T=5
+experiment improved median end-to-end wall by only **13.3%**, short of its 20%
+acceptance gate. Expensive `solve_ivp` fallback remains the major warm and
+asymptotic compute bottleneck, especially at longer horizons.
 
-The next engineering step is therefore **build-once/load-many validated S1
-native and callback artifacts**, without changing the numerical or field policy.
+The next engineering step is to reassess S1 initialization amortisation before
+starting fallback optimization; the artifact mechanism is retained because it
+is correct, fail-closed, and materially reduces repeated initialization.
 
 ## Investigation sequence
 
@@ -22,18 +23,21 @@ native and callback artifacts**, without changing the numerical or field policy.
 4. [S1 promotion validation](s1_history/S1_PROMOTION_VALIDATION.md)
 5. [Promoted field-level benchmark](reports/S1_FIELD_LEVEL_BENCHMARK.md)
 6. [Post-promotion diagnosis](reports/S1_POST_PROMOTION_PERFORMANCE.md)
+7. [Build-once/load-many implementation and acceptance](reports/S1_BUILD_ONCE_LOAD_MANY.md)
 
 ## Directory guide
 
 - `reports/`: current field benchmark and latest performance conclusions.
 - `tools/`: reusable current benchmark and diagnostic commands:
-  `benchmark_s1_field_level.py`, `probe_s1_remaining_costs.py`, and
-  `analyze_persisted_timings.py`.
+  `benchmark_s1_artifact_reuse.py`, `benchmark_s1_field_level.py`,
+  `probe_s1_remaining_costs.py`, and `analyze_persisted_timings.py`.
 - `s1_history/`: the S1 profile, prototype, validation harness, focused tests,
   and licensed prototype-native sources.
 - `archive/`: superseded but reproducible one-off probes and the
   [earlier detailed investigation narrative](archive/PERFORMANCE_INVESTIGATION_HISTORY.md).
-- `evidence/current/`: current field and post-promotion JSON evidence.
+- `evidence/current/`: current field, post-promotion, and artifact-acceptance
+  JSON evidence. The numbered artifact attempts are retained to show the bounded
+  diagnosis that removed per-cell provenance construction overhead.
 - `evidence/s1/`: route fixtures and S1 profile/prototype/validation evidence.
 - `evidence/lifecycle/`: worker-lifetime and recycling evidence.
 

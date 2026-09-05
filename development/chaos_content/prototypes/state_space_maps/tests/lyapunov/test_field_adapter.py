@@ -108,6 +108,13 @@ def test_tiny_periodic_field_is_authoritative_and_passes_oracle_gates(
     assert snapshot.metadata["evaluator_provenance"]["s1"]["implementation"] == (
         S1_EVALUATOR
     )
+    assert snapshot.metadata["evaluator_provenance"]["s1"]["artifact"]["key"]
+    assert (
+        snapshot.metadata["evaluator_provenance"]["s1"]["artifact"][
+            "schema_version"
+        ]
+        == 1
+    )
 
 
 def test_promotion_definition_fails_closed_against_prepromotion_resume(
@@ -178,5 +185,9 @@ def test_tiny_recovery_persists_accepted_route_attempt_and_resumes(
     assert exceptional[0]["attempt_provenance"][S1_EVALUATOR][
         "implementation"
     ] == S1_EVALUATOR
+    assert exceptional[0]["attempt_provenance"][S1_EVALUATOR]["artifact"][
+        "available"
+    ] is True
+    assert exceptional[0]["attempt_provenance"][S1_EVALUATOR]["artifact"]["key"]
     assert diagnostics["attempted_evaluator_counts"] == {S1_EVALUATOR: 1}
     assert diagnostics["recovery_reason_counts"] == {"s1_execution_error": 1}
