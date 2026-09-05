@@ -156,6 +156,8 @@ def first_flip_time(
     parameters: PendulumParameters | None = None,
     solver_spec: SolverSpec | None = None,
     observation_horizon: float = 5.0,
+    *,
+    _rhs_override: Callable[[float, np.ndarray], np.ndarray] | None = None,
 ) -> FirstFlipResult:
     """Measure first completed link revolution before a finite horizon."""
 
@@ -169,7 +171,11 @@ def first_flip_time(
 
     event_functions = _event_functions(state0)
     solver_arguments: dict[str, Any] = {
-        "fun": _cached_dynamics(parameters).flow,
+        "fun": (
+            _rhs_override
+            if _rhs_override is not None
+            else _cached_dynamics(parameters).flow
+        ),
         "t_span": (0.0, horizon),
         "y0": state0,
         "method": solver_spec.method,

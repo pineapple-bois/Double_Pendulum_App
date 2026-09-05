@@ -15,6 +15,12 @@ The next engineering step is to reassess S1 initialization amortisation before
 starting fallback optimization; the artifact mechanism is retained because it
 is correct, fail-closed, and materially reduces repeated initialization.
 
+For first flip, the bounded
+[compiled-RHS feasibility study](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md)
+found clean Experiment 020 agreement and estimates a 1.80× 512² end-to-end
+speedup. It recommends a separate promotion task; no compiled first-flip route
+has been promoted here.
+
 ## Investigation sequence
 
 1. [Baseline performance audit](../../PERFORMANCE_AUDIT.md)
@@ -30,7 +36,9 @@ is correct, fail-closed, and materially reduces repeated initialization.
 - `reports/`: current field benchmark and latest performance conclusions.
 - `tools/`: reusable current benchmark and diagnostic commands:
   `benchmark_s1_artifact_reuse.py`, `benchmark_s1_field_level.py`,
-  `probe_s1_remaining_costs.py`, and `analyze_persisted_timings.py`.
+  `probe_s1_remaining_costs.py`, `analyze_persisted_timings.py`, and bounded
+  first-flip compiled-RHS feasibility tooling.
+- `tests/`: focused checks for current investigation-only prototypes.
 - `s1_history/`: the S1 profile, prototype, validation harness, focused tests,
   and licensed prototype-native sources.
 - `archive/`: superseded but reproducible one-off probes and the
