@@ -60,25 +60,42 @@ artifact without rerunning dynamics.
   presents the teaching progression from nearby trajectories to renormalised
   finite-time stretching.
 
-## First-flip pilot field
+## Operational first-flip fields
 
 The promoted first-flip runner composes the Experiment 020 reference with the
-same neutral generation and HDF5 pipeline. The accepted pilot uses 32 samples
-per axis and a 5 s observation horizon:
+same neutral generation and HDF5 pipeline. Resolution and the physical
+observation horizon are explicit command inputs. For example:
 
 ```bash
 uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_first_flip_periodic_field \
-  --samples-per-axis 32 \
-  --observation-horizon-seconds 5 \
+  --samples-per-axis 512 \
+  --observation-horizon-seconds 10 \
   --create
 ```
 
 Use `--resume` with the same arguments to verify and resume the checksummed
-artifact. `--create` refuses to replace an existing field. The authoritative
-pilot and readable manifest live in `outputs/first_flip_pilot/`; the complete
-scientific, censoring, persistence, and measured-evidence record is in the
-[first-flip pilot document](docs/science/first_flip_time.md). No first-flip
-renderer is part of this integration.
+artifact. `--create` refuses to replace an existing field. The default output
+is `outputs/first_flip_field/first_flip_field_<resolution>_T<horizon>s.h5`, so
+resolution and physical horizon cannot silently share a filename. `--output`
+selects an explicit alternative HDF5 path. The runner prints both $T_{\max}$
+and $\widehat{T}_{\max}$ plus observed, right-censored, invalid, and failure
+counts, and writes the same values and full provenance to the JSON manifest.
+
+Render a completed field with the existing persistence-only runner:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field \
+  development/chaos_content/prototypes/state_space_maps/outputs/first_flip_field/first_flip_field_512_T10s.h5
+```
+
+The first-flip rendering uses $\widehat{\tau}_{\mathrm{flip}}$ for observed
+values and a separate labelled colour for “no flip observed by $T_{\max}$.” It
+shows both the physical and dimensionless horizons and does not imply that a
+censored trajectory never flips. The accepted 32×32, 5 s pilot remains under
+`outputs/first_flip_pilot/`; its complete scientific and measured-evidence
+record is in the [first-flip pilot document](docs/science/first_flip_time.md).
+The 512×512 command above demonstrates the operational interface; it is not a
+recommendation to run that resolution before choosing a horizon from evidence.
 
 ## Manual operational finite-time field
 

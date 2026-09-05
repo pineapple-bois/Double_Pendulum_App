@@ -78,6 +78,11 @@ def build_figure(snapshot: FieldSnapshot) -> Figure:
                 "dimensionless_observation_horizon"
             ]
         )
+        physical_horizon = float(
+            snapshot.metadata["numerical_parameters"][
+                "observation_horizon_seconds"
+            ]
+        )
         censored = valid & (snapshot.values == horizon)
         visible = np.ma.masked_where(~valid | censored, snapshot.values)
     else:
@@ -111,13 +116,18 @@ def build_figure(snapshot: FieldSnapshot) -> Figure:
     axis.set_ylabel(r"$\theta_2(0)\;[\mathrm{rad}]$")
     if first_flip:
         axis.set_title(
-            rf"Dimensionless first-flip time, $\widehat{{T}}_{{\max}}={horizon:g}$"
+            "Dimensionless first-flip time, "
+            rf"$T_{{\max}}={physical_horizon:g}\,\mathrm{{s}}$, "
+            rf"$\widehat{{T}}_{{\max}}={horizon:g}$"
         )
         axis.legend(
             handles=(
                 Patch(
                     facecolor=CENSORED_COLOR,
-                    label=rf"No flip by $\widehat{{T}}_{{\max}}={horizon:g}$",
+                    label=(
+                        "No flip observed by "
+                        rf"$T_{{\max}}={physical_horizon:g}\,\mathrm{{s}}$"
+                    ),
                 ),
             ),
             loc="upper right",

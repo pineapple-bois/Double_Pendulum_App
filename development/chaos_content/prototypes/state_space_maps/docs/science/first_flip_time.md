@@ -3,8 +3,9 @@
 This document records the narrow promotion of the accepted
 [Experiment 020](../../../../experiments/physical_observables/020_first_flip_event_contract/README.md)
 physical observable into the state-space-map prototype and the first persisted
-pilot evidence. It does not define a renderer, categorical view, or production
-map resolution.
+pilot evidence. The same runner now supports arbitrary practical resolutions
+and physical horizons; this document does not choose categorical views or a
+production map resolution.
 
 ## Promoted observable and scope
 
@@ -188,6 +189,20 @@ not as new evidence that true grazing detection is solved.
 
 ## Artifacts and recommendation
 
+The reusable operational runner is:
+
+```bash
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_first_flip_periodic_field \
+  --samples-per-axis N \
+  --observation-horizon-seconds T \
+  --create
+```
+
+Its default HDF5/JSON stem contains both `N` and physical `T`, and `--output`
+may select an explicit alternative. A matching `--resume` invocation is
+fail-closed if resolution, horizon, axes, numerical policy, or provenance do
+not match the existing field.
+
 Authoritative field:
 
 ```text
@@ -204,4 +219,6 @@ The next concrete field-generation task should retain 32×32 resolution and run
 a small horizon sweep beyond 5 s, with stricter spot checks and targeted
 refinement of the lowest-crossing-speed cells. That evidence should choose a
 useful cap before increasing resolution. Final logarithmic bins, binary
-products, rendering, and 512×512 generation remain premature.
+products and 512×512 generation remain premature. The existing renderer can
+display any completed first-flip field with observed dimensionless times and a
+separate “no flip observed by $T_{\max}$” censored class.

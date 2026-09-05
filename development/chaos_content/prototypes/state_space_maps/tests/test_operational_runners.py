@@ -484,7 +484,8 @@ def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation(
                 "name": "capped_dimensionless_first_flip_time"
             },
             "numerical_parameters": {
-                "dimensionless_observation_horizon": 10.0
+                "dimensionless_observation_horizon": 10.0,
+                "observation_horizon_seconds": 3.0,
             },
         },
     )
@@ -506,10 +507,11 @@ def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation(
     assert observed_image.get_extent() == censored_image.get_extent()
     assert censored_image.get_cmap()(0.5) == colors.to_rgba(CENSORED_COLOR)
     assert axis.get_title() == (
-        r"Dimensionless first-flip time, $\widehat{T}_{\max}=10$"
+        "Dimensionless first-flip time, "
+        r"$T_{\max}=3\,\mathrm{s}$, $\widehat{T}_{\max}=10$"
     )
     assert figure.axes[1].get_ylabel() == r"$\widehat{\tau}_{\mathrm{flip}}$"
-    assert "No flip by" in axis.get_legend().get_texts()[0].get_text()
+    assert "No flip observed by" in axis.get_legend().get_texts()[0].get_text()
     matplotlib.pyplot.close(figure)
 
 

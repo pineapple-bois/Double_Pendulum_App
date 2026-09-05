@@ -23,7 +23,7 @@ from ..src.generation import accepted_process_execution_spec
 
 
 PROTOTYPE_ROOT = Path(__file__).resolve().parents[1]
-PILOT_OUTPUT_DIRECTORY = PROTOTYPE_ROOT / "outputs" / "first_flip_pilot"
+FIRST_FLIP_OUTPUT_DIRECTORY = PROTOTYPE_ROOT / "outputs" / "first_flip_field"
 
 
 def _horizon_token(observation_horizon_seconds: float) -> str:
@@ -40,7 +40,7 @@ def default_output_path(
     if samples_per_axis <= 0:
         raise ValueError("samples_per_axis must be positive")
     token = _horizon_token(observation_horizon_seconds)
-    return PILOT_OUTPUT_DIRECTORY / f"first_flip_field_{samples_per_axis}_T{token}s.h5"
+    return FIRST_FLIP_OUTPUT_DIRECTORY / f"first_flip_field_{samples_per_axis}_T{token}s.h5"
 
 
 def manifest_path(output_path: Path) -> Path:
@@ -70,6 +70,16 @@ def build_manifest(
 ) -> dict[str, object]:
     from ..src.generation.hdf5 import ORIENTATION, SCHEMA_NAME, SCHEMA_VERSION
 
+    field_statistics = asdict(field_summary)
+    field_statistics.update(
+        {
+            "observation_horizon_seconds": float(
+                definition.numerical_parameters["observation_horizon_seconds"]
+            ),
+            "observed_fraction": field_summary.observed_fraction,
+            "censored_fraction": field_summary.censored_fraction,
+        }
+    )
     return {
         "manifest_version": 1,
         "artifact": {
@@ -110,7 +120,7 @@ def build_manifest(
             "generation_cells_per_second": run_summary.cells_per_second,
         },
         "run_summary": asdict(run_summary),
-        "pilot_statistics": asdict(field_summary),
+        "field_statistics": field_statistics,
         "stricter_solver_spot_validation": asdict(spot_validation),
     }
 
@@ -126,14 +136,28 @@ def write_manifest(output_path: Path, payload: dict[str, object]) -> Path:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--samples-per-axis", type=int, required=True, metavar="N")
+    parser.add_argument(
+        "--samples-per-axis",
+        type=int,
+        required=True,
+        metavar="N",
+        help="Samples on each periodic angular axis.",
+    )
     parser.add_argument(
         "--observation-horizon-seconds",
         type=float,
         required=True,
         metavar="SECONDS",
+        help="Physical first-flip observation horizon in seconds.",
     )
-    parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help=(
+            "Authoritative HDF5 destination. The default name includes both "
+            "axis resolution and physical observation horizon."
+        ),
+    )
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--create", action="store_true")
     mode.add_argument("--resume", action="store_true")
@@ -154,6 +178,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     definition = periodic_first_flip_field_definition(
         arguments.samples_per_axis, spec
     )
+    print(
+        "Observation horizons: "
+        f"T_max={spec.observation_horizon_seconds:g} s | "
+        f"T_hat_max={spec.dimensionless_observation_horizon:.12g}",
+        flush=True,
+    )
     progress = ConsoleProgressReporter(definition.field_shape, execution.process_width)
     started = perf_counter()
     summary = run_periodic_first_flip_field(
@@ -167,6 +197,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     if not summary.validation.accepted:
         return 1
     field_summary = summarize_persisted_first_flip_field(output_path)
+    print(
+        "Field outcomes: "
+        f"observed={field_summary.observed_count} "
+        f"({field_summary.observed_fraction:.2%}) | "
+        f"right-censored={field_summary.censored_count} "
+        f"({field_summary.censored_fraction:.2%}) | "
+        f"invalid={field_summary.completed_invalid_count} | "
+        f"failures={field_summary.execution_error_count}",
+        flush=True,
+    )
     print("Checking nine persisted cells with stricter solver tolerances...", flush=True)
     spot_validation = validate_first_flip_reference_spots(output_path, spec)
     if not spot_validation.accepted:

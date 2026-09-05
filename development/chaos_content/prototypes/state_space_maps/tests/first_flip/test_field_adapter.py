@@ -9,6 +9,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+from development.chaos_content.prototypes.state_space_maps.runners.generate_first_flip_periodic_field import (
+    build_manifest,
+)
 from development.chaos_content.prototypes.state_space_maps.src.first_flip.field_adapter import (
     FIRST_FLIP_REFERENCE_EVALUATOR,
     FirstFlipFieldSpec,
@@ -26,7 +29,9 @@ from development.chaos_content.prototypes.state_space_maps.src.first_flip.refere
 )
 from development.chaos_content.prototypes.state_space_maps.src.generation import (
     CellState,
+    IntegrityError,
     ScalarCellTask,
+    accepted_process_execution_spec,
     read_authoritative_field,
 )
 from development.chaos_content.prototypes.state_space_maps.src.state_space_fields import (
@@ -132,6 +137,25 @@ def test_tiny_field_is_deterministic_persisted_and_resumable(tmp_path: Path) -> 
     assert spots.accepted
     assert len(spots.selected_indices) == 4
     assert spots.maximum_event_time_difference_seconds <= 5.0e-8
+    manifest = build_manifest(
+        output_path=path,
+        definition=periodic_first_flip_field_definition(2, spec),
+        execution=accepted_process_execution_spec(),
+        run_summary=created,
+        field_summary=field_summary,
+        spot_validation=spots,
+        completed_at_utc="2026-09-05T00:00:00+00:00",
+        operation_wall_seconds=created.total_seconds,
+    )
+    assert manifest["scientific_contract"]["numerical_parameters"][
+        "observation_horizon_seconds"
+    ] == 2.0
+    assert manifest["scientific_contract"]["numerical_parameters"][
+        "dimensionless_observation_horizon"
+    ] == pytest.approx(spec.dimensionless_observation_horizon)
+    assert manifest["field_statistics"]["observation_horizon_seconds"] == 2.0
+    assert manifest["field_statistics"]["observed_count"] == field_summary.observed_count
+    assert manifest["field_statistics"]["censored_count"] == field_summary.censored_count
     assert resumed.validation.accepted
     assert resumed.evaluated_cells == 0
     assert resumed.preexisting_completed_cells == 4
@@ -143,3 +167,10 @@ def test_tiny_field_is_deterministic_persisted_and_resumable(tmp_path: Path) -> 
         first.metadata["execution_route_vocabulary"]["1"]
         == FIRST_FLIP_REFERENCE_EVALUATOR
     )
+    with pytest.raises(IntegrityError):
+        run_periodic_first_flip_field(
+            path,
+            2,
+            mode="resume",
+            spec=FirstFlipFieldSpec(observation_horizon_seconds=3.0),
+        )
