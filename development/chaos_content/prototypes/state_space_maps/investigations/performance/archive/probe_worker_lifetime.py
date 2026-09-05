@@ -30,8 +30,9 @@ from development.chaos_content.prototypes.state_space_maps.src.generation.runner
 
 
 PROBE_DIRECTORY = Path(__file__).resolve().parent
-DEFAULT_SELECTION_EVIDENCE = PROBE_DIRECTORY / "route_stratified_16_cells.json"
-DEFAULT_OUTPUT = PROBE_DIRECTORY / "worker_lifetime_4096_cells.json"
+EVIDENCE_DIRECTORY = PROBE_DIRECTORY.parent / "evidence"
+DEFAULT_SELECTION_EVIDENCE = EVIDENCE_DIRECTORY / "s1" / "route_stratified_16_cells.json"
+DEFAULT_OUTPUT = EVIDENCE_DIRECTORY / "lifecycle" / "worker_lifetime_4096_cells.json"
 CHECKPOINTS = (256, 512, 1024, 2048, 4096)
 EXPECTED_FAST_CELLS = 8
 

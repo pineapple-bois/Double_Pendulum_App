@@ -16,21 +16,22 @@ import numba
 import numpy as np
 import scipy
 
-from ...src.lyapunov.s1 import (
+from ....src.lyapunov.s1 import (
     S1_BUILD_FLAGS as BUILD_FLAGS,
     S1_NATIVE_DIRECTORY as NATIVE_DIRECTORY,
     evaluate_renormalized_tangent_s1 as evaluate_compiled_loop,
     run_renormalized_tangent_s1 as run_compiled_loop,
 )
-from ...src.lyapunov import s1 as promoted_s1_module
-from ...src.lyapunov.compiled_dop853 import (
+from ....src.lyapunov import s1 as promoted_s1_module
+from ....src.lyapunov.compiled_dop853 import (
     evaluate_renormalized_tangent_compiled_dop853 as trusted_evaluate,
     run_renormalized_tangent_compiled_dop853 as trusted_run,
 )
-from ...src.lyapunov.compiled_equivalence import compare_results
-from ...src.lyapunov.reference import EulerLagrangeState, RenormalizedTangentSpec
+from ....src.lyapunov.compiled_equivalence import compare_results
+from ....src.lyapunov.reference import EulerLagrangeState, RenormalizedTangentSpec
 
 DIRECTORY = Path(__file__).resolve().parent
+EVIDENCE_DIRECTORY = DIRECTORY.parent / "evidence" / "s1"
 # First two are the exact S1 profile cells. The five additions span the
 # successful persisted-fast representatives in route_stratified_16_cells.json.
 # Selection is fixed here, independent of prototype accuracy or speed.
@@ -143,7 +144,11 @@ def run_benchmark(repetitions=11):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output",type=Path,default=DIRECTORY/"s1_compiled_loop_benchmark.json")
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=EVIDENCE_DIRECTORY / "s1_compiled_loop_benchmark.json",
+    )
     parser.add_argument("--repetitions",type=int,default=11)
     args=parser.parse_args()
     if args.output.exists():

@@ -8,10 +8,10 @@ integrated, and no field was run.
 
 ## Scope and implementation
 
-This implements S1 from `../../PERFORMANCE_AUDIT.md`, following
+This implements S1 from `../../../PERFORMANCE_AUDIT.md`, following
 `S1_SOLVER_BOUNDARY_PROFILE.md`. It does not investigate other optimisation paths.
 The trusted comparison is the operational
-`../../src/lyapunov/compiled_dop853.py::evaluate_renormalized_tangent_compiled_dop853`.
+`../../../src/lyapunov/compiled_dop853.py::evaluate_renormalized_tangent_compiled_dop853`.
 Full scientific records are compared through its underlying
 `run_renormalized_tangent_compiled_dop853` runner.
 
@@ -20,7 +20,7 @@ to one `ctypes` call per cell:
 
 1. `s1_compiled_loop.py::run_compiled_loop` constructs the specification-dependent
    arrays, initial Candidate-A unit tangent and cycle boundaries in Python.
-2. `s1_native/loop.c::s1_loop` runs every renormalisation segment in C, calling an
+2. `native/loop.c::s1_loop` runs every renormalisation segment in C, calling an
    **unchanged copy of SciPy 1.18.0's native DOP853 implementation**.
 3. `_rhs`, a Numba `cfunc`, calls the existing production
    `compiled.py::compiled_reference_and_tangent_rhs` directly from native code.
@@ -66,7 +66,7 @@ The original solve_ivp fallback, routing and scientific policy are untouched.
 
 ### Exact solver source and build
 
-`s1_native/dop.c` and `dop.h` are byte-for-byte copies of these upstream files:
+`native/dop.c` and `dop.h` are byte-for-byte copies of these upstream files:
 
 - [SciPy v1.18.0 dop.c](https://github.com/scipy/scipy/blob/v1.18.0/scipy/integrate/src/dop.c)
 - [SciPy v1.18.0 dop.h](https://github.com/scipy/scipy/blob/v1.18.0/scipy/integrate/src/dop.h)
@@ -114,7 +114,7 @@ changing only the documented contraction flag; it is not an alternative solver.
 
 The first two cells are exactly those in the S1 solver-boundary report. Five
 additional cells are the other persisted-fast representatives from
-`route_stratified_16_cells.json` that also succeed on the trusted fast path at
+`../evidence/s1/route_stratified_16_cells.json` that also succeed on the trusted fast path at
 T=20. This spans near-equilibrium, low-stretch interior and strongly stretching
 trajectories. Selection is based on trusted route success, not prototype speed or
 agreement. All seven are used at **both** horizons.
@@ -147,11 +147,11 @@ Run from the repository root:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
-.venv/bin/python -m development.chaos_content.prototypes.state_space_maps.investigations.performance.benchmark_s1_compiled_loop \
+.venv/bin/python -m development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.benchmark_s1_compiled_loop \
   --repetitions 11
 ```
 
-The command above produced `s1_compiled_loop_benchmark.json`. It refuses to
+The command above produced `../evidence/s1/s1_compiled_loop_benchmark.json`. It refuses to
 overwrite evidence. For a rerun, append `--output /tmp/s1-compiled-loop-rerun.json`
 using a path that does not already exist.
 
@@ -235,7 +235,7 @@ intermediate step is identical.
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
 .venv/bin/python -m pytest -q -p no:cacheprovider \
-  development/chaos_content/prototypes/state_space_maps/investigations/performance/test_s1_compiled_loop.py
+  development/chaos_content/prototypes/state_space_maps/investigations/performance/s1_history/tests/test_s1_compiled_loop.py
 ```
 
 Result: **21 passed in 2.97s**. Coverage:
@@ -259,11 +259,11 @@ The vendored source hashes were checked against the retrieved originals.
 All new files are within this investigation:
 
 - `s1_compiled_loop.py`: native build, compiled callbacks and single-cell adapter.
-- `s1_native/loop.c`: compiled segment loop, observation reduction and gates.
-- `s1_native/dop.c`, `dop.h`, `LICENSE_DOP`: unchanged upstream solver and license.
-- `test_s1_compiled_loop.py`: focused tests.
+- `native/loop.c`: compiled segment loop, observation reduction and gates.
+- `native/dop.c`, `dop.h`, `LICENSE_DOP`: unchanged upstream solver and license.
+- `tests/test_s1_compiled_loop.py`: focused tests.
 - `benchmark_s1_compiled_loop.py`: reproducible bounded comparison command.
-- `s1_compiled_loop_benchmark.json`: final warm timings and numerical evidence.
+- `../evidence/s1/s1_compiled_loop_benchmark.json`: final warm timings and numerical evidence.
 - `S1_COMPILED_LOOP_PROTOTYPE.md`: this report.
 
 Inspection was limited to S1 audit/profile material, its existing cell evidence,

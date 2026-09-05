@@ -19,7 +19,7 @@ import numpy as np
 
 
 PROBE_DIRECTORY = Path(__file__).resolve().parent
-DEFAULT_OUTPUT = PROBE_DIRECTORY / "route_stratified_16_cells.json"
+DEFAULT_OUTPUT = PROBE_DIRECTORY.parent / "evidence" / "s1" / "route_stratified_16_cells.json"
 SAMPLES_PER_STRATUM = 8
 
 

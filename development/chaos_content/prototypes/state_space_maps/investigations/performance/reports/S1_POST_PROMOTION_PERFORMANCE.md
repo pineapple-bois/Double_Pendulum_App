@@ -15,13 +15,13 @@ It is the next major numerical engineering target, not a small residual.
 
 Used only these existing reports and their directly implicated production paths:
 
-- `../../PERFORMANCE_AUDIT.md`: runner timing scopes, retained-work limitations,
+- `../../../PERFORMANCE_AUDIT.md`: runner timing scopes, retained-work limitations,
   historical resolution/horizon scaling, memory evidence and fallback anatomy.
-- `S1_SOLVER_BOUNDARY_PROFILE.md`: original successful/fallback call costs and
+- `../s1_history/S1_SOLVER_BOUNDARY_PROFILE.md`: original successful/fallback call costs and
   trusted verification/recovery execution path.
-- `S1_COMPILED_LOOP_PROTOTYPE.md`: compiled-loop mechanism and compiler-sensitive
+- `../s1_history/S1_COMPILED_LOOP_PROTOTYPE.md`: compiled-loop mechanism and compiler-sensitive
   numerical agreement; approximately 12× warm single-cell improvement.
-- `S1_PROMOTION_VALIDATION.md`: broader numerical/route checks and warm timing.
+- `../s1_history/S1_PROMOTION_VALIDATION.md`: broader numerical/route checks and warm timing.
 - `S1_FIELD_LEVEL_BENCHMARK.md`: promoted 64² and 128² complete-run measurements,
   pool counts, route distributions and bitwise persisted equality.
 
@@ -33,7 +33,8 @@ or large field artifacts were re-audited. No production file was changed.
 The existing field report separates setup/evaluation/persistence, but cannot
 separate current warm recovery components, cold S1 compilation components or
 tile load imbalance from transport. One new diagnostic answers that question:
-`probe_s1_remaining_costs.py`, with results in `s1_remaining_costs.json`.
+`../tools/probe_s1_remaining_costs.py`, with results in
+`../evidence/current/s1_remaining_costs.json`.
 
 ## What the measured field times actually say
 
@@ -120,7 +121,7 @@ Command, from the repository root:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
-.venv/bin/python -m development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_s1_remaining_costs
+.venv/bin/python -m development.chaos_content.prototypes.state_space_maps.investigations.performance.tools.probe_s1_remaining_costs
 ```
 
 It refuses to overwrite its JSON. Rerun with a new path such as
@@ -384,7 +385,8 @@ compute path.
 
 ## Files changed and validation
 
-Added only this report, `probe_s1_remaining_costs.py`, and `s1_remaining_costs.json`.
+Added only this report, `../tools/probe_s1_remaining_costs.py`, and
+`../evidence/current/s1_remaining_costs.json`.
 The diagnostic finished at both horizons, all attributed outcomes were valid,
 all controls agreed exactly, and both pools reported every worker stopped.
 No production optimisation was implemented. Final source-hash and Git checks

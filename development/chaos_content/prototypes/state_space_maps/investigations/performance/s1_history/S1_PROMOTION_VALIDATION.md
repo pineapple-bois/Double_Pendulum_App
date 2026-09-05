@@ -14,7 +14,7 @@ No promotion, optimisation, production edit or field-generation run was performe
 
 ## Scope, inputs and reproducibility
 
-This investigation starts from `../../PERFORMANCE_AUDIT.md` (S1),
+This investigation starts from `../../../PERFORMANCE_AUDIT.md` (S1),
 `S1_SOLVER_BOUNDARY_PROFILE.md`, `S1_COMPILED_LOOP_PROTOTYPE.md`,
 `s1_compiled_loop.py`, and the trusted Lyapunov implementation/tests. It validates
 the existing compiled loop rather than redesigning it.
@@ -23,17 +23,17 @@ The new command and complete evidence are:
 
 - `validate_s1_promotion.py`: deterministic case construction, explicit operational
   routing, numerical comparisons, prefix checks, failure checks and warm timing.
-- `s1_promotion_validation.json`: every specification, outcome, comparison error,
+- `../evidence/s1/s1_promotion_validation.json`: every specification, outcome, comparison error,
   fallback route, final state/tangent, diagnostics, relation comparison, raw
   timing repetition, source hash and environment. Approximately 2.8 MB.
-- `test_s1_promotion_validation.py`: checks that the validation harness rejects
+- `tests/test_s1_promotion_validation.py`: checks that the validation harness rejects
   deliberately corrupted scientific quantities, diagnostics and counts.
 
 Run from the repository root:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
-.venv/bin/python -m development.chaos_content.prototypes.state_space_maps.investigations.performance.validate_s1_promotion
+.venv/bin/python -m development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.validate_s1_promotion
 ```
 
 That command produced the evidence JSON. It refuses to
@@ -56,7 +56,7 @@ removed for disagreement, route failure or speed.
 
 | Group | Cases | Construction |
 | --- | ---: | --- |
-| Recorded fast/fallback | 16 | All eight of each stratum in `route_stratified_16_cells.json`, including the original S1 cells |
+| Recorded fast/fallback | 16 | All eight of each stratum in `../evidence/s1/route_stratified_16_cells.json`, including the original S1 cells |
 | Periodic-domain landmarks | 25 | Cartesian combinations of `-pi`, `-pi/2`, `0`, `pi/2`, and `nextafter(pi,0)` |
 | Domain coverage | 12 | First 12 base-2/base-3 radical-inverse pairs mapped into `[-pi,pi)` |
 | Reflections | 12 | Simultaneous angle reflection of those 12 pairs, with the initial tangent also negated |
@@ -317,7 +317,7 @@ PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
   development/chaos_content/prototypes/state_space_maps/tests/lyapunov/test_compiled.py \
   development/chaos_content/prototypes/state_space_maps/tests/lyapunov/test_compiled_dop853.py \
   development/chaos_content/prototypes/state_space_maps/tests/lyapunov/test_hybrid.py \
-  development/chaos_content/prototypes/state_space_maps/investigations/performance/test_s1_compiled_loop.py
+  development/chaos_content/prototypes/state_space_maps/investigations/performance/s1_history/tests/test_s1_compiled_loop.py
 ```
 
 **63 passed in 10.05s.** These retain independent symbolic/RHS/JVP checks,
@@ -328,7 +328,7 @@ unit tests use tiny grid fixtures; no operational field-generation runner ran.
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
 .venv/bin/python -m pytest -q -p no:cacheprovider \
-  development/chaos_content/prototypes/state_space_maps/investigations/performance/test_s1_promotion_validation.py
+  development/chaos_content/prototypes/state_space_maps/investigations/performance/s1_history/tests/test_s1_promotion_validation.py
 ```
 
 **12 passed in 1.55s.** These establish that comparison gates reject deliberately
@@ -418,8 +418,8 @@ verification, sampling, rendering or scheduling.
 ## Files changed and git status
 
 Only four new validation artifacts were added, all under this investigation:
-`validate_s1_promotion.py`, `test_s1_promotion_validation.py`,
-`s1_promotion_validation.json`, and this report.
+`validate_s1_promotion.py`, `tests/test_s1_promotion_validation.py`,
+`../evidence/s1/s1_promotion_validation.json`, and this report.
 
 ```text
 ?? development/chaos_content/prototypes/state_space_maps/investigations/performance/S1_PROMOTION_VALIDATION.md

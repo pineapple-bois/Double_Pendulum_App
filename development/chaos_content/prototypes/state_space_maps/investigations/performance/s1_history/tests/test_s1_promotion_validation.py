@@ -3,7 +3,7 @@ from dataclasses import replace
 
 import pytest
 
-from development.chaos_content.prototypes.state_space_maps.investigations.performance.validate_s1_promotion import (
+from development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.validate_s1_promotion import (
     HORIZONS, compare, trusted_run, validation_cases,
 )
 

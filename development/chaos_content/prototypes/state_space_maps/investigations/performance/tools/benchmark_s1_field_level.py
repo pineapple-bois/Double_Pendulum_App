@@ -20,39 +20,42 @@ import numba
 import numpy as np
 import scipy
 
-from ...src.generation import (
+from ....src.generation import (
     EvaluatorBinding,
     ProcessExecutionSpec,
     accepted_process_execution_spec,
     read_authoritative_field,
     run_scalar_field,
 )
-from ...src.lyapunov.compiled_equivalence import RATE_ABSOLUTE_TOLERANCE
-from ...src.lyapunov.field_adapter import (
+from ....src.lyapunov.compiled_equivalence import RATE_ABSOLUTE_TOLERANCE
+from ....src.lyapunov.field_adapter import (
     LYAPUNOV_ROUTE_VOCABULARY,
     lyapunov_evaluator_binding,
     periodic_lyapunov_field_definition,
     specification_for_cell,
     summarize_lyapunov_tile,
 )
-from ...src.lyapunov.hybrid import (
+from ....src.lyapunov.hybrid import (
     HYBRID_FALLBACK_EVALUATOR,
     HYBRID_FAST_ERROR_EVALUATOR,
     HYBRID_FAST_EVALUATOR,
     evaluate_renormalized_tangent_hybrid,
 )
-from ...src.lyapunov.reference import RenormalizedTangentSpec
-from ...src.lyapunov.s1 import (
+from ....src.lyapunov.reference import RenormalizedTangentSpec
+from ....src.lyapunov.s1 import (
     S1_EVALUATOR,
     s1_build_provenance,
     s1_build_support,
     s1_specification_eligibility,
 )
-from ...src.state_space_fields import EvaluationStatus
+from ....src.state_space_fields import EvaluationStatus
 
 
-DIRECTORY = Path(__file__).resolve().parent
-DEFAULT_OUTPUT = DIRECTORY / "s1_field_level_benchmark_64.json"
+PERFORMANCE_DIRECTORY = Path(__file__).resolve().parents[1]
+PROTOTYPE_DIRECTORY = PERFORMANCE_DIRECTORY.parents[1]
+DEFAULT_OUTPUT = (
+    PERFORMANCE_DIRECTORY / "evidence" / "current" / "s1_field_level_benchmark_64.json"
+)
 TRUSTED_ROUTE_VOCABULARY = LYAPUNOV_ROUTE_VOCABULARY[:-1]
 _TRUSTED_SPEC: RenormalizedTangentSpec | None = None
 
@@ -286,10 +289,10 @@ def run_benchmark(
 
     sources = (
         Path(__file__),
-        Path(__file__).parents[2] / "src" / "lyapunov" / "operational.py",
-        Path(__file__).parents[2] / "src" / "lyapunov" / "s1.py",
-        Path(__file__).parents[2] / "src" / "lyapunov" / "hybrid.py",
-        Path(__file__).parents[2] / "src" / "generation" / "runner.py",
+        PROTOTYPE_DIRECTORY / "src" / "lyapunov" / "operational.py",
+        PROTOTYPE_DIRECTORY / "src" / "lyapunov" / "s1.py",
+        PROTOTYPE_DIRECTORY / "src" / "lyapunov" / "hybrid.py",
+        PROTOTYPE_DIRECTORY / "src" / "generation" / "runner.py",
     )
     return {
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),

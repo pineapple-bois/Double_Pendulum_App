@@ -1,6 +1,6 @@
 # S1 solver-boundary profiling decision
 
-Profile date: 2026-09-05 local time. Source hypothesis: `PERFORMANCE_AUDIT.md`, S1. Raw evidence: `s1_solver_boundary_profile.json`.
+Profile date: 2026-09-05 local time. Source hypothesis: `../../../PERFORMANCE_AUDIT.md`, S1. Raw evidence: `../evidence/s1/s1_solver_boundary_profile.json`.
 
 ## Decision
 
@@ -31,12 +31,12 @@ compiled.py::evaluate_renormalized_tangent_compiled
   -> scipy.integrate.solve_ivp(method="DOP853")
 ```
 
-`investigations/performance/probe_s1_solver_boundary.py` adds timers and `cProfile` only in the experiment process. No promoted source is instrumented.
+`investigations/performance/s1_history/probe_s1_solver_boundary.py` adds timers and `cProfile` only in the experiment process. No promoted source is instrumented.
 
 ## Configuration
 
 - Python 3.12.3, NumPy 2.5.2, SciPy 1.18.0, Numba 0.67.0, macOS 15.7.9 ARM64, Git HEAD `c3cfb0eca3a7b070cf5d49aa0964b08cff8b8cd3` with the current task changes uncommitted.
-- Four fixed cells: two T=5 fast-route and two T=5 fallback-route representatives previously recorded by `route_stratified_16_cells.json`.
+- Four fixed cells: two T=5 fast-route and two T=5 fallback-route representatives previously recorded by `../evidence/s1/route_stratified_16_cells.json`.
 - Horizons: T=5 and T=20; renormalisation interval 0.25 s.
 - Five unprofiled wall repetitions per cell/horizon and one separate `cProfile` pass per cell/horizon: 40 wall measurements plus 8 profiled measurements, not a field.
 - Sequential, single process. One excluded pass across every case/horizon combination warmed imports, the Numba signature, and both routes before measurement; its total 0.833 s elapsed time is excluded.
@@ -48,7 +48,7 @@ Command run:
 ```bash
 MPLCONFIGDIR=/tmp/double-pendulum-mpl PYTHONDONTWRITEBYTECODE=1 \
   .venv/bin/python -m \
-  development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_s1_solver_boundary
+  development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.probe_s1_solver_boundary
 ```
 
 The evidence file is intentionally not overwritten. To reproduce without replacing it, add `--output /tmp/s1_solver_boundary_profile.json`.

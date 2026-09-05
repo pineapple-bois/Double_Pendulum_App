@@ -20,19 +20,19 @@ and compared, hashed into the JSON evidence, and then removed.
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
 .venv/bin/python -m \
-development.chaos_content.prototypes.state_space_maps.investigations.performance.benchmark_s1_field_level \
+development.chaos_content.prototypes.state_space_maps.investigations.performance.tools.benchmark_s1_field_level \
   --samples-per-axis 64 \
   --duration 5 \
-  --output development/chaos_content/prototypes/state_space_maps/investigations/performance/s1_field_level_benchmark_64.json
+  --output development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/s1_field_level_benchmark_64.json
 ```
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 MPLCONFIGDIR=/tmp/double-pendulum-mpl \
 .venv/bin/python -m \
-development.chaos_content.prototypes.state_space_maps.investigations.performance.benchmark_s1_field_level \
+development.chaos_content.prototypes.state_space_maps.investigations.performance.tools.benchmark_s1_field_level \
   --samples-per-axis 128 \
   --duration 5 \
-  --output development/chaos_content/prototypes/state_space_maps/investigations/performance/s1_field_level_benchmark_128.json
+  --output development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/s1_field_level_benchmark_128.json
 ```
 
 The execution order was promoted S1 followed by forced pre-S1 trusted hybrid.

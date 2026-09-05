@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from development.chaos_content.prototypes.state_space_maps.investigations.performance.probe_s1_solver_boundary import (
+from development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.probe_s1_solver_boundary import (
     CELL_CASES,
     OBSERVATION_HORIZONS,
     summarize_wall_records,

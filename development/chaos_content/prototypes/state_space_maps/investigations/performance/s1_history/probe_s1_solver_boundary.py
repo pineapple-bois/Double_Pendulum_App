@@ -23,7 +23,9 @@ import scipy
 
 
 PROBE_DIRECTORY = Path(__file__).resolve().parent
-DEFAULT_OUTPUT = PROBE_DIRECTORY / "s1_solver_boundary_profile.json"
+DEFAULT_OUTPUT = (
+    PROBE_DIRECTORY.parent / "evidence" / "s1" / "s1_solver_boundary_profile.json"
+)
 OBSERVATION_HORIZONS = (5.0, 20.0)
 DEFAULT_REPETITIONS = 5
 
@@ -315,7 +317,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _git_head() -> str:
-    repository_root = Path(__file__).resolve().parents[5]
+    repository_root = Path(__file__).resolve().parents[7]
     result = subprocess.run(
         ["git", "rev-parse", "HEAD"],
         cwd=repository_root,

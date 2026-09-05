@@ -19,28 +19,29 @@ import numba
 import numpy as np
 import scipy
 
-from ...src.lyapunov.s1 import (
+from ....src.lyapunov.s1 import (
     S1_BUILD_FLAGS as BUILD_FLAGS,
     S1_NATIVE_DIRECTORY,
     evaluate_renormalized_tangent_s1 as evaluate_compiled_loop,
     run_renormalized_tangent_s1 as run_compiled_loop,
 )
-from ...src.lyapunov import s1 as promoted_s1_module
-from ...src.lyapunov.compiled_dop853 import (
+from ....src.lyapunov import s1 as promoted_s1_module
+from ....src.lyapunov.compiled_dop853 import (
     run_renormalized_tangent_compiled_dop853 as trusted_run,
     evaluate_renormalized_tangent_compiled_dop853 as trusted_evaluate,
 )
-from ...src.lyapunov.hybrid import evaluate_renormalized_tangent_hybrid
-from ...src.lyapunov.compiled_equivalence import (
+from ....src.lyapunov.hybrid import evaluate_renormalized_tangent_hybrid
+from ....src.lyapunov.compiled_equivalence import (
     compare_results, VALIDATION_ANGLE_PAIRS_DEGREES, RATE_ABSOLUTE_TOLERANCE,
     CYCLE_LOG_ABSOLUTE_TOLERANCE, FINAL_REFERENCE_DISTANCE_TOLERANCE,
     FINAL_TANGENT_DISTANCE_TOLERANCE, ENERGY_DIAGNOSTIC_ABSOLUTE_TOLERANCE,
 )
-from ...src.lyapunov.reference import (
+from ....src.lyapunov.reference import (
     EulerLagrangeState, RenormalizedTangentSpec, SolverSpec, PendulumParameters,
 )
 
 DIRECTORY = Path(__file__).resolve().parent
+EVIDENCE_DIRECTORY = DIRECTORY.parent / "evidence" / "s1"
 HORIZONS = (1.0, 2.0, 5.0, 10.0, 20.0)
 
 
@@ -61,7 +62,7 @@ def validation_cases():
         cases.append(dict(name=name, group=group, relation=relation,
             spec=RenormalizedTangentSpec(initial_state=EulerLagrangeState(a,b,w1,w2),**options)))
 
-    recorded=json.loads((DIRECTORY/"route_stratified_16_cells.json").read_text())["cells"]
+    recorded=json.loads((EVIDENCE_DIRECTORY/"route_stratified_16_cells.json").read_text())["cells"]
     for c in recorded:
         add(f"recorded_{c['theta2_index']}_{c['theta1_index']}",c["stratum"],
             c["theta1_radians"],c["theta2_radians"])
@@ -269,7 +270,7 @@ def run(repetitions):
         r=max((r for r in rows+traces if 'comparison' in r),key=lambda r:r['comparison'][key])
         worst[key]=dict(value=r['comparison'][key],name=r['name'],horizon=r['horizon'])
     files=[Path(__file__),Path(promoted_s1_module.__file__),
-           DIRECTORY/'route_stratified_16_cells.json',
+           EVIDENCE_DIRECTORY/'route_stratified_16_cells.json',
            *sorted(S1_NATIVE_DIRECTORY.iterdir())]
     return dict(timestamp=datetime.now(timezone.utc).isoformat(),
         environment=dict(python=platform.python_version(),numpy=np.__version__,scipy=scipy.__version__,
@@ -289,7 +290,11 @@ def run(repetitions):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=DIRECTORY/'s1_promotion_validation.json')
+    parser.add_argument(
+        '--output',
+        type=Path,
+        default=EVIDENCE_DIRECTORY/'s1_promotion_validation.json',
+    )
     parser.add_argument('--repetitions',type=int,default=7)
     args=parser.parse_args()
     if args.output.exists(): parser.error('Choose a new output path; evidence is not overwritten.')

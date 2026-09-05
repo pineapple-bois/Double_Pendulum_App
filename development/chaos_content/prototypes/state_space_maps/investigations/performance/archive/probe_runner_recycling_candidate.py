@@ -53,13 +53,14 @@ from .probe_worker_lifetime import (
 
 
 PROBE_DIRECTORY = Path(__file__).resolve().parent
-PROTOTYPE_DIRECTORY = PROBE_DIRECTORY.parents[1]
+PROTOTYPE_DIRECTORY = PROBE_DIRECTORY.parents[2]
+EVIDENCE_DIRECTORY = PROBE_DIRECTORY.parent / "evidence" / "lifecycle"
 OPERATIONAL_OUTPUT_DIRECTORY = PROTOTYPE_DIRECTORY / "outputs" / "finite_time_field"
 DEFAULT_OPERATIONAL_FIELD = (
     OPERATIONAL_OUTPUT_DIRECTORY / "finite_time_field_1024.h5"
 )
-DEFAULT_DESIGN_OUTPUT = PROBE_DIRECTORY / "runner_recycling_candidate_design.json"
-DEFAULT_OUTPUT = PROBE_DIRECTORY / "runner_recycling_candidate_64.json"
+DEFAULT_DESIGN_OUTPUT = EVIDENCE_DIRECTORY / "runner_recycling_candidate_design.json"
+DEFAULT_OUTPUT = EVIDENCE_DIRECTORY / "runner_recycling_candidate_64.json"
 
 SAMPLES_PER_AXIS = 64
 OPERATIONAL_SAMPLES_PER_AXIS = 1024

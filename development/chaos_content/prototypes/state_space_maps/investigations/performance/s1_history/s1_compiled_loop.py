@@ -14,14 +14,14 @@ import tempfile
 import numpy as np
 from numba import carray, cfunc, types
 
-from ...src.lyapunov.compiled import compiled_reference_and_tangent_rhs
-from ...src.lyapunov.evaluation import evaluate_renormalized_tangent_runner
-from ...src.lyapunov.reference import (
+from ....src.lyapunov.compiled import compiled_reference_and_tangent_rhs
+from ....src.lyapunov.evaluation import evaluate_renormalized_tangent_runner
+from ....src.lyapunov.reference import (
     CandidateAMetric, RenormalizedTangentDiagnostics, RenormalizedTangentResult,
     RenormalizedTangentSpec, _resolved_interval_max_step,
 )
 
-NATIVE_DIRECTORY = Path(__file__).with_name("s1_native")
+NATIVE_DIRECTORY = Path(__file__).with_name("native")
 BUILD_FLAGS = ("-O2", "-ffp-contract=on", "-fPIC", "-shared")
 _double_ptr = types.CPointer(types.float64)
 _int_ptr = types.CPointer(types.int32)

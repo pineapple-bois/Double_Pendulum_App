@@ -4,10 +4,10 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
-from development.chaos_content.prototypes.state_space_maps.investigations.performance.benchmark_s1_compiled_loop import (
+from development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.benchmark_s1_compiled_loop import (
     CELLS, REJECTED_AT_T20, cell_spec, numerical_comparison,
 )
-from development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_compiled_loop import (
+from development.chaos_content.prototypes.state_space_maps.investigations.performance.s1_history.s1_compiled_loop import (
     evaluate_compiled_loop, run_compiled_loop,
 )
 from development.chaos_content.prototypes.state_space_maps.src.lyapunov.compiled_dop853 import (

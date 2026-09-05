@@ -18,10 +18,14 @@ from time import perf_counter
 
 import numpy as np
 
-from ...src.generation import runner
-from ...src.generation.work_units import ScalarCellTask
-from ...src.lyapunov import field_adapter, operational, hybrid, s1
-from ...src.lyapunov.reference import RenormalizedTangentSpec
+from ....src.generation import runner
+from ....src.generation.work_units import ScalarCellTask
+from ....src.lyapunov import field_adapter, operational, hybrid, s1
+from ....src.lyapunov.reference import RenormalizedTangentSpec
+
+
+PERFORMANCE_DIRECTORY = Path(__file__).resolve().parents[1]
+DEFAULT_OUTPUT = PERFORMANCE_DIRECTORY / "evidence" / "current" / "s1_remaining_costs.json"
 
 ACTIVE = None
 COLD = {}
@@ -146,7 +150,7 @@ def run_horizon(horizon):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',type=Path,default=Path(__file__).with_name('s1_remaining_costs.json'))
+    parser.add_argument('--output', type=Path, default=DEFAULT_OUTPUT)
     args=parser.parse_args()
     if args.output.exists():parser.error('Evidence exists; choose a new output path.')
     data=dict(question='Separate per-pool cold initialization, successful S1 work, recovery/fallback and tile waiting.',
