@@ -16,9 +16,13 @@ import numba
 import numpy as np
 import scipy
 
-from .s1_compiled_loop import (
-    BUILD_FLAGS, NATIVE_DIRECTORY, evaluate_compiled_loop, run_compiled_loop,
+from ...src.lyapunov.s1 import (
+    S1_BUILD_FLAGS as BUILD_FLAGS,
+    S1_NATIVE_DIRECTORY as NATIVE_DIRECTORY,
+    evaluate_renormalized_tangent_s1 as evaluate_compiled_loop,
+    run_renormalized_tangent_s1 as run_compiled_loop,
 )
+from ...src.lyapunov import s1 as promoted_s1_module
 from ...src.lyapunov.compiled_dop853 import (
     evaluate_renormalized_tangent_compiled_dop853 as trusted_evaluate,
     run_renormalized_tangent_compiled_dop853 as trusted_run,
@@ -116,7 +120,7 @@ def run_benchmark(repetitions=11):
         rejected.append(dict(name=REJECTED_AT_T20[0], horizon=horizon, outcomes=outputs))
     numerical_pass = all(row["comparison"]["accepted"] for row in rows)
     performance_pass = all(v["median_per_cell_speedup"] >= 1.5 for v in aggregates.values())
-    source_files = [Path(__file__), DIRECTORY/"s1_compiled_loop.py",
+    source_files = [Path(__file__), Path(promoted_s1_module.__file__),
                     *sorted(NATIVE_DIRECTORY.iterdir())]
     return dict(
         timestamp_utc=datetime.now(timezone.utc).isoformat(),
@@ -125,7 +129,7 @@ def run_benchmark(repetitions=11):
             compiler=subprocess.check_output(["clang","--version"],text=True).strip(),
             build_flags=BUILD_FLAGS,
             git_head=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()),
-        source_sha256={str(p.relative_to(DIRECTORY)):hashlib.sha256(p.read_bytes()).hexdigest()
+        source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest()
                        for p in source_files if p.is_file()},
         protocol=dict(repetitions=repetitions, timing="perf_counter around full evaluator adapter",
             order="paired alternating evaluator order; alternating cell order",

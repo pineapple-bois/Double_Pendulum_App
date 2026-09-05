@@ -54,6 +54,22 @@ from .hybrid import (
     HYBRID_FAST_EVALUATOR,
     evaluate_renormalized_tangent_hybrid,
 )
+from .s1 import (
+    S1_EVALUATOR,
+    S1BuildSupport,
+    S1Eligibility,
+    evaluate_renormalized_tangent_s1,
+    run_renormalized_tangent_s1,
+    s1_build_provenance,
+    s1_build_support,
+    s1_specification_eligibility,
+)
+from .operational import (
+    S1_RECOVERY_BORDERLINE_DIAGNOSTIC,
+    S1_RECOVERY_EXECUTION_ERROR,
+    S1_RECOVERY_NUMERICAL_REJECTION,
+    evaluate_renormalized_tangent_operational,
+)
 from .field_adapter import (
     LYAPUNOV_ROUTE_VOCABULARY,
     LyapunovOracleValidation,
@@ -126,6 +142,18 @@ __all__ = [
     "HYBRID_FALLBACK_EVALUATOR",
     "HYBRID_FAST_ERROR_EVALUATOR",
     "evaluate_renormalized_tangent_hybrid",
+    "S1_EVALUATOR",
+    "S1BuildSupport",
+    "S1Eligibility",
+    "evaluate_renormalized_tangent_s1",
+    "run_renormalized_tangent_s1",
+    "s1_build_provenance",
+    "s1_build_support",
+    "s1_specification_eligibility",
+    "S1_RECOVERY_BORDERLINE_DIAGNOSTIC",
+    "S1_RECOVERY_EXECUTION_ERROR",
+    "S1_RECOVERY_NUMERICAL_REJECTION",
+    "evaluate_renormalized_tangent_operational",
     "LYAPUNOV_ROUTE_VOCABULARY",
     "LyapunovOracleValidation",
     "evaluate_lyapunov_field_cell",

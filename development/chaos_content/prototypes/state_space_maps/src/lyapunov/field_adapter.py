@@ -41,9 +41,10 @@ from .hybrid import (
     HYBRID_FALLBACK_EVALUATOR,
     HYBRID_FAST_ERROR_EVALUATOR,
     HYBRID_FAST_EVALUATOR,
-    evaluate_renormalized_tangent_hybrid,
 )
+from .operational import evaluate_renormalized_tangent_operational
 from .reference import RenormalizedTangentDiagnostics, RenormalizedTangentSpec
+from .s1 import S1_EVALUATOR, s1_build_provenance
 
 
 LYAPUNOV_ROUTE_VOCABULARY = (
@@ -51,6 +52,7 @@ LYAPUNOV_ROUTE_VOCABULARY = (
     (1, HYBRID_FAST_EVALUATOR),
     (2, HYBRID_FALLBACK_EVALUATOR),
     (3, HYBRID_FAST_ERROR_EVALUATOR),
+    (4, S1_EVALUATOR),
 )
 
 
@@ -87,7 +89,7 @@ def specification_for_cell(
 def initialize_lyapunov_field_worker(base_spec: RenormalizedTangentSpec) -> None:
     global _WORKER_SPEC
     _WORKER_SPEC = base_spec
-    warm = evaluate_renormalized_tangent_hybrid(base_spec)
+    warm = evaluate_renormalized_tangent_operational(base_spec)
     if warm.status is not EvaluationStatus.COMPLETED_VALID:
         raise RuntimeError("Lyapunov worker warm-up was not numerically valid.")
 
@@ -97,7 +99,7 @@ def evaluate_lyapunov_field_cell(
 ) -> ScalarEvaluation[RenormalizedTangentDiagnostics]:
     if _WORKER_SPEC is None:
         raise RuntimeError("Lyapunov field worker was not initialized.")
-    return evaluate_renormalized_tangent_hybrid(
+    return evaluate_renormalized_tangent_operational(
         specification_for_cell(task, _WORKER_SPEC)
     )
 
@@ -133,7 +135,7 @@ def lyapunov_evaluator_binding(
 ) -> EvaluatorBinding:
     fixed_spec = spec or RenormalizedTangentSpec()
     return EvaluatorBinding(
-        name="targeted_hybrid_lyapunov",
+        name="guarded_s1_targeted_hybrid_lyapunov",
         initialize_worker=initialize_lyapunov_field_worker,
         initializer_arguments=(fixed_spec,),
         evaluate_cell=evaluate_lyapunov_field_cell,
@@ -192,10 +194,12 @@ def periodic_lyapunov_field_definition(
             "solver": asdict(fixed_spec.solver),
         },
         evaluator_provenance={
-            "policy": "targeted_hybrid",
-            "normal_route": HYBRID_FAST_EVALUATOR,
+            "policy": "guarded_s1_then_targeted_hybrid",
+            "eligible_normal_route": S1_EVALUATOR,
+            "trusted_fast_route": HYBRID_FAST_EVALUATOR,
             "fallback_route": HYBRID_FALLBACK_EVALUATOR,
             "bounded_error_route": HYBRID_FAST_ERROR_EVALUATOR,
+            "s1": s1_build_provenance(),
             "scientific_oracles": [
                 "numpy_sympy_solve_ivp",
                 "numba_rhs_jvp_solve_ivp",
@@ -276,7 +280,7 @@ def validate_lyapunov_oracle_spots(
         )
         cell_spec = specification_for_cell(task, fixed_spec)
         oracle = run_renormalized_tangent_compiled(cell_spec)
-        hybrid = evaluate_renormalized_tangent_hybrid(cell_spec)
+        operational = evaluate_renormalized_tangent_operational(cell_spec)
         stored_value = float(snapshot.values[theta2_index, theta1_index])
         stored_status = status_labels[int(snapshot.status[theta2_index, theta1_index])]
         stored_route = route_labels[
@@ -285,10 +289,10 @@ def validate_lyapunov_oracle_spots(
         rate_error = abs(stored_value - oracle.finite_time_stretching_rate)
         energy_error = (
             abs(
-                hybrid.diagnostics.maximum_normalized_reference_energy_drift
+                operational.diagnostics.maximum_normalized_reference_energy_drift
                 - oracle.diagnostics.maximum_normalized_reference_energy_drift
             )
-            if hybrid.diagnostics is not None
+            if operational.diagnostics is not None
             else float("inf")
         )
         expected_status = (
@@ -297,7 +301,7 @@ def validate_lyapunov_oracle_spots(
             else EvaluationStatus.COMPLETED_INVALID
         )
         fast_comparison = None
-        if stored_route == HYBRID_FAST_EVALUATOR:
+        if stored_route in {HYBRID_FAST_EVALUATOR, S1_EVALUATOR}:
             fast_comparison = compare_results(
                 oracle,
                 run_renormalized_tangent_compiled_dop853(cell_spec),
@@ -306,10 +310,10 @@ def validate_lyapunov_oracle_spots(
             rate_error <= RATE_ABSOLUTE_TOLERANCE
             and energy_error <= ENERGY_DIAGNOSTIC_ABSOLUTE_TOLERANCE
             and stored_status is expected_status
-            and hybrid.status is stored_status
-            and hybrid.value == stored_value
-            and hybrid.evaluator == stored_route
-            and hybrid.validity_issues == oracle.diagnostics.validity_issues
+            and operational.status is stored_status
+            and operational.value == stored_value
+            and operational.evaluator == stored_route
+            and operational.validity_issues == oracle.diagnostics.validity_issues
             and (fast_comparison is None or fast_comparison["accepted"])
         )
         comparisons.append(

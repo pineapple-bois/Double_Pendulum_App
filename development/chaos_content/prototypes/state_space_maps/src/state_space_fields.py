@@ -8,11 +8,11 @@ observable is calculated, stored, or rendered.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from numbers import Integral
 from time import perf_counter
-from typing import Callable, Generic, TypeVar
+from typing import Callable, Generic, Mapping, TypeVar
 
 import numpy as np
 
@@ -40,12 +40,24 @@ class ScalarEvaluation(Generic[DiagnosticsT]):
     validity_issues: tuple[str, ...] = ()
     error_type: str | None = None
     error_message: str | None = None
+    attempted_evaluators: tuple[str, ...] = ()
+    recovery_reason: str | None = None
+    implementation_provenance: Mapping[str, object] = field(default_factory=dict)
+    attempt_provenance: Mapping[str, object] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.elapsed_seconds) or self.elapsed_seconds < 0.0:
             raise ValueError("elapsed_seconds must be finite and nonnegative.")
         if not self.evaluator:
             raise ValueError("evaluator must identify the calculation path.")
+        if any(not evaluator for evaluator in self.attempted_evaluators):
+            raise ValueError("attempted_evaluators cannot contain empty identities.")
+        if self.recovery_reason is not None and not self.attempted_evaluators:
+            raise ValueError("A recovery reason requires an attempted evaluator.")
+        if not set(self.attempt_provenance).issubset(self.attempted_evaluators):
+            raise ValueError(
+                "Attempt provenance must identify only attempted evaluators."
+            )
         if self.value is not None and not math.isfinite(self.value):
             raise ValueError("A retained scalar value must be finite.")
         if self.status is EvaluationStatus.COMPLETED_VALID:

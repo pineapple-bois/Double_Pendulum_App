@@ -1,4 +1,4 @@
-"""Deterministic bounded S1 promotion validation; no field or production edits."""
+"""Deterministic bounded validation of the promoted S1 implementation."""
 from __future__ import annotations
 
 import argparse
@@ -19,7 +19,13 @@ import numba
 import numpy as np
 import scipy
 
-from .s1_compiled_loop import BUILD_FLAGS, run_compiled_loop, evaluate_compiled_loop
+from ...src.lyapunov.s1 import (
+    S1_BUILD_FLAGS as BUILD_FLAGS,
+    S1_NATIVE_DIRECTORY,
+    evaluate_renormalized_tangent_s1 as evaluate_compiled_loop,
+    run_renormalized_tangent_s1 as run_compiled_loop,
+)
+from ...src.lyapunov import s1 as promoted_s1_module
 from ...src.lyapunov.compiled_dop853 import (
     run_renormalized_tangent_compiled_dop853 as trusted_run,
     evaluate_renormalized_tangent_compiled_dop853 as trusted_evaluate,
@@ -262,14 +268,15 @@ def run(repetitions):
         'cumulative_log_stretch_maximum_absolute_error','maximum_prefix_rate_error'):
         r=max((r for r in rows+traces if 'comparison' in r),key=lambda r:r['comparison'][key])
         worst[key]=dict(value=r['comparison'][key],name=r['name'],horizon=r['horizon'])
-    files=[Path(__file__),DIRECTORY/'s1_compiled_loop.py',DIRECTORY/'route_stratified_16_cells.json',
-           *sorted((DIRECTORY/'s1_native').iterdir())]
+    files=[Path(__file__),Path(promoted_s1_module.__file__),
+           DIRECTORY/'route_stratified_16_cells.json',
+           *sorted(S1_NATIVE_DIRECTORY.iterdir())]
     return dict(timestamp=datetime.now(timezone.utc).isoformat(),
         environment=dict(python=platform.python_version(),numpy=np.__version__,scipy=scipy.__version__,
             numba=numba.__version__,platform=platform.platform(),flags=BUILD_FLAGS,
             compiler=subprocess.check_output(['clang','--version'],text=True).strip(),
             git_head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()),
-        source_sha256={str(p.relative_to(DIRECTORY)):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
+        source_sha256={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
         gates=dict(rate=RATE_ABSOLUTE_TOLERANCE,cycle_log=CYCLE_LOG_ABSOLUTE_TOLERANCE,
             final_reference=FINAL_REFERENCE_DISTANCE_TOLERANCE,final_tangent=FINAL_TANGENT_DISTANCE_TOLERANCE,
             energy_diagnostic=ENERGY_DIAGNOSTIC_ABSOLUTE_TOLERANCE,

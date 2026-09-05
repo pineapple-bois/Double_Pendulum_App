@@ -2,8 +2,9 @@
 
 **Status:** uniform resolution escalation is paused. The completed `1024 x 1024`
 field is the current operational evidence. This investigation supports the
-bounded 2,048-cell worker-pool lifetime now promoted in the runner; it does not
-authorize a `2048 x 2048` field or a broader optimisation.
+bounded 2,048-cell worker-pool lifetime and the guarded S1 compiled loop now
+promoted in the runner; it does not authorize a `2048 x 2048` field, broader S1
+eligibility, or another optimisation.
 
 ## Motivation
 
@@ -49,7 +50,8 @@ Performance work must preserve the same calculation:
 - the periodic half-open `[-pi, pi)` angular domain and stored
   `values[theta2_index, theta1_index]` orientation;
 - the accepted DOP853 tolerances and resolved maximum-step contract;
-- the compiled-DOP853 fast route and narrowly verified `solve_ivp` fallback;
+- the guarded S1 attempt, retained compiled-DOP853 trusted route, and narrowly
+  verified `solve_ivp` fallback;
 - status/validity meanings, tile integrity, checksums, transactions, and resume
   compatibility.
 

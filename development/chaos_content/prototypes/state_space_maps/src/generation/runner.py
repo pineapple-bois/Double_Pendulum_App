@@ -317,7 +317,10 @@ def _compact_tile(
         route[local_theta2, local_theta1] = route_codes[evaluation.evaluator]
         if evaluation.value is not None:
             values[local_theta2, local_theta1] = evaluation.value
-        if evaluation.status is not EvaluationStatus.COMPLETED_VALID:
+        if (
+            evaluation.status is not EvaluationStatus.COMPLETED_VALID
+            or evaluation.attempted_evaluators
+        ):
             exceptional.append(
                 {
                     "theta2_index": task.theta2_index,
@@ -329,6 +332,14 @@ def _compact_tile(
                     "validity_issues": list(evaluation.validity_issues),
                     "error_type": evaluation.error_type,
                     "error_message": evaluation.error_message,
+                    "attempted_evaluators": list(
+                        evaluation.attempted_evaluators
+                    ),
+                    "recovery_reason": evaluation.recovery_reason,
+                    "implementation_provenance": dict(
+                        evaluation.implementation_provenance
+                    ),
+                    "attempt_provenance": dict(evaluation.attempt_provenance),
                 }
             )
         evaluations.append(evaluation)
@@ -357,6 +368,32 @@ def _compact_tile(
         ),
         "worker_peak_rss_bytes": {
             str(process_id): peak for process_id, peak in sorted(worker_peaks.items())
+        },
+        "attempted_evaluator_counts": {
+            evaluator: sum(
+                evaluator in evaluation.attempted_evaluators
+                for evaluation in evaluations
+            )
+            for evaluator in sorted(
+                {
+                    evaluator
+                    for evaluation in evaluations
+                    for evaluator in evaluation.attempted_evaluators
+                }
+            )
+        },
+        "recovery_reason_counts": {
+            reason: sum(
+                evaluation.recovery_reason == reason
+                for evaluation in evaluations
+            )
+            for reason in sorted(
+                {
+                    evaluation.recovery_reason
+                    for evaluation in evaluations
+                    if evaluation.recovery_reason is not None
+                }
+            )
         },
     }
     if binding.summarize_tile is not None:

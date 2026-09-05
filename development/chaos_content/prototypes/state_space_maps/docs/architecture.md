@@ -102,3 +102,45 @@ of `completed_valid` for every consumer.
 The accepted execution values are host- and workload-bounded evidence, not a
 claim that other policies have been validated. The renderer consumes only a
 closed, validated HDF5 artifact and never causes dynamics to run.
+
+## Guarded S1 Lyapunov route
+
+The Lyapunov consumer has an operational selector in
+`src/lyapunov/operational.py`. It does not replace or modify the established
+hybrid. For an eligible specification and validated build it attempts
+`s1_native_dop853_v1`; a clear completed-valid result is accepted with that
+distinct route identity. Ineligible specifications and unsupported builds call
+the existing hybrid directly.
+
+The initial eligibility allowlist is deliberately narrower than the complete
+S1 validation set: standard unit parameters, gravity `9.81`, zero velocities,
+the unmodified `(1, 0, 0, 0)` tangent, Candidate-A characteristic length `1`,
+DOP853 at `rtol=1e-9` and `atol=1e-11` with the resolved default max step,
+`0.25 s` renormalisation, `0.01 s` sampling, the standard energy/reset limits,
+finite angles already inside `[-pi, pi)`, and duration in
+`{1, 2, 5, 10, 20}` seconds. Eligibility does not alter, wrap, reflect, or
+otherwise reuse an input.
+
+The native source lives beside the operational package under
+`src/lyapunov/s1_native/`. `dop.c` and `dop.h` are unchanged SciPy 1.18.0 DOP
+sources and retain `LICENSE_DOP`; `loop.c` is the validated single-cell driver.
+Source digests, software versions, compiler identity, target, and contraction
+flags are checked against the validated macOS 15.7.9 ARM64 / Apple Clang 17.0.0
+build before S1 is enabled. Compilation and Numba callbacks are lazy and their
+products live in a process-local temporary directory.
+
+S1 never decides fallback eligibility. Every S1 execution failure is passed to
+the existing hybrid without interpreting the S1 message. The hybrid reruns its
+trusted compiled-DOP853 path, performs its own endpoint-cap verification, and
+alone selects the existing compiled-RHS `solve_ivp` fallback. Completed-invalid
+S1 outcomes and diagnostics within the conservative energy/reset threshold
+margin are likewise replayed through the hybrid. Programming and specification
+errors still propagate.
+
+Route code `4` denotes an accepted S1 result; the former codes `1` through `3`
+retain their meanings. On recovery, the persisted route remains the route that
+actually supplied the retained result. The checksummed tile record separately
+stores the attempted S1 implementation and recovery reason, and tile summaries
+count both. Because route vocabulary and evaluator provenance are static field
+identity, pre-promotion artifacts remain readable but fail closed for resume
+under the promoted definition; promoted artifacts resume normally.

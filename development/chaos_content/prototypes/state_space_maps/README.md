@@ -105,6 +105,16 @@ domain. This packages the established system; it is not a new numbered
 experiment and does not change its scientific, numerical, work-unit, process,
 or persistence contracts.
 
+Eligible standard-policy cells now make a guarded first attempt through the
+promoted S1 native loop. S1 is enabled only for the exact validated macOS ARM64
+software/compiler build and the standard zero-velocity policy at horizons
+`1`, `2`, `5`, `10`, or `20` seconds. Unsupported builds and nonstandard
+specifications go directly to the established hybrid. Any S1 execution error,
+numerical rejection, or borderline diagnostic is replayed through that hybrid,
+which remains solely responsible for endpoint-cap verification and the existing
+`solve_ivp` fallback decision. The accepted route and any preceding S1 attempt
+are recorded separately; inputs are never rebased or canonicalised for S1.
+
 The single `--samples-per-axis N` option selects the square resolution. That
 value determines both axes, the field shape and cell/work-unit totals, progress
 reporting, manifest metadata, and the default `finite_time_field_N.h5` and
@@ -167,6 +177,15 @@ and tile state. It skips checksum-valid completed tiles, retries interrupted
 tiles, and fails closed instead of replacing an incompatible or corrupt field.
 Keep the same repository revision and locked software environment between
 create and resume because those provenance values are part of compatibility.
+
+S1 promotion extends the static route vocabulary and evaluator provenance while
+preserving the existing route codes. A pre-promotion field therefore remains
+readable, but cannot be resumed as a promoted-policy run: exact-definition
+compatibility fails closed before workers start. Fields created under the
+promoted definition retain ordinary checksum and resume behaviour. Recovered
+cells store the accepted trusted/fallback route plus separate S1 attempt and
+recovery-reason provenance in their checksummed tile record.
+
 At startup it reports the already-completed and remaining work units, then
 continues with the same lightweight progress milestones. A successful resumed
 run writes or refreshes the JSON manifest only after final validation passes.
