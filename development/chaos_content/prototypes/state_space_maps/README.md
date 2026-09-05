@@ -209,7 +209,7 @@ usage example, not a recommendation or performance claim.
 ### Batch running
 
 ```bash
-for T in 1 2 5 10 20; do
+for T in 1 2 5 10; do
   uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_lyapunov_periodic_field \
     --samples-per-axis 512 \
     --duration "$T" \
@@ -219,7 +219,7 @@ done
 ```
 
 ```bash
-for T in 1 2 5 10 20; do
+for T in 1 2 5 10; do
   uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field \
     "development/chaos_content/prototypes/state_space_maps/outputs/finite_time_field/finite_time_field_512_T${T}.h5"
 done
