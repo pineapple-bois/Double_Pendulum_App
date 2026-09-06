@@ -19,7 +19,10 @@ For first flip, the validated compiled four-state RHS is now the guarded default
 for the standard T=5 unit-parameter field. The
 [promotion report](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) records clean
 scientific/operational validation and a **2.170× median 64² end-to-end speedup**;
-unsupported and ineligible definitions retain the trusted Python RHS.
+unsupported and ineligible definitions retain the trusted Python RHS. The
+[post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) finds the
+remaining cost concentrated in Python DOP853 stepping/event detection and
+recommends one narrow compiled solver/event-loop prototype.
 
 ## Investigation sequence
 
@@ -33,7 +36,8 @@ unsupported and ineligible definitions retain the trusted Python RHS.
 
 First-flip lineage: [feasibility](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md)
 → [pre-promotion review](reports/FIRST_FLIP_PRE_PROMOTION_REVIEW.md) →
-[promotion](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md).
+[promotion](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) →
+[post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md).
 
 ## Directory guide
 

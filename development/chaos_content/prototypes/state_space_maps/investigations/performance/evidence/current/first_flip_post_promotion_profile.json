@@ -1,0 +1,1933 @@
+{
+  "cases": [
+    {
+      "accepted_point_count": 124,
+      "baseline_evaluator_median_seconds": 0.006077583064325154,
+      "baseline_evaluator_seconds": [
+        0.00599166692700237,
+        0.006142999976873398,
+        0.006044625071808696,
+        0.006117749959230423,
+        0.006077583064325154
+      ],
+      "event_time_seconds": 1.2090499997902948,
+      "name": "field_observed_q0.0312",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.124967587563286,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0008708261884748936,
+        "counts": {
+          "accepted_steps": 123.0,
+          "active_event_detection_calls": 123.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 502.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 1481.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.679093111306429e-05,
+        "dense_output_evaluation_seconds": 5.287316162139177e-05,
+        "dop853_step_outside_rhs_seconds": 0.004332155571319163,
+        "evaluator_seconds": 0.006837083958089352,
+        "event_callback_seconds": 0.00011291750706732273,
+        "post_solve_helper_seconds": {
+          "energy": 2.8542010113596916e-05,
+          "event_records": 5.582929588854313e-06,
+          "maximum_angular_increment": 7.4160052463412285e-06,
+          "structural_validation": 4.915986210107803e-06,
+          "surface_value": 2.0830193534493446e-06
+        },
+        "post_solve_residual_seconds": 2.695887815207243e-05,
+        "post_solve_seconds": 7.54169886931777e-05,
+        "pre_solve_seconds": 1.0167015716433525e-05,
+        "rhs_seconds": 0.0009980627801269293,
+        "root_algorithm_outside_event_and_dense_seconds": 1.491699367761612e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0003465785412117839,
+        "solve_ivp_seconds": 0.006744083017110825
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 1481,
+      "theta1_radians": 1.2885438618239382,
+      "theta2_radians": -2.8716120349219203
+    },
+    {
+      "accepted_point_count": 135,
+      "baseline_evaluator_median_seconds": 0.00657358393073082,
+      "baseline_evaluator_seconds": [
+        0.006603916990570724,
+        0.00656670902390033,
+        0.006603625020943582,
+        0.00657358393073082,
+        0.00650391704402864
+      ],
+      "event_time_seconds": 1.324009390815573,
+      "name": "field_observed_q0.0938",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.138654660194505,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0009543040068820119,
+        "counts": {
+          "accepted_steps": 134.0,
+          "active_event_detection_calls": 134.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 546.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 1613.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.662608701735735e-05,
+        "dense_output_evaluation_seconds": 5.308294203132391e-05,
+        "dop853_step_outside_rhs_seconds": 0.004751599044539034,
+        "evaluator_seconds": 0.007485041976906359,
+        "event_callback_seconds": 0.0001219060504809022,
+        "post_solve_helper_seconds": {
+          "energy": 3.0125025659799576e-05,
+          "event_records": 5.458015948534012e-06,
+          "maximum_angular_increment": 7.3339324444532394e-06,
+          "structural_validation": 5.124951712787151e-06,
+          "surface_value": 2.041109837591648e-06
+        },
+        "post_solve_residual_seconds": 3.0417926609516144e-05,
+        "post_solve_seconds": 8.216698188334703e-05,
+        "pre_solve_seconds": 9.624985978007317e-06,
+        "rhs_seconds": 0.001106071867980063,
+        "root_algorithm_outside_event_and_dense_seconds": 1.5833298675715923e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.00037733931094408035,
+        "solve_ivp_seconds": 0.007387958001345396
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 1613,
+      "theta1_radians": -0.8958447801252145,
+      "theta2_radians": 3.055689729468197
+    },
+    {
+      "accepted_point_count": 158,
+      "baseline_evaluator_median_seconds": 0.007791292038746178,
+      "baseline_evaluator_seconds": [
+        0.00765695795416832,
+        0.007791292038746178,
+        0.00775887502823025,
+        0.007809791015461087,
+        0.007908207946456969
+      ],
+      "event_time_seconds": 1.5475636648966005,
+      "name": "field_observed_q0.1562",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1360706190022338,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0011155010433867574,
+        "counts": {
+          "accepted_steps": 157.0,
+          "active_event_detection_calls": 157.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 7.0,
+          "event_callbacks": 637.0,
+          "event_callbacks_during_root": 5.0,
+          "rhs": 1925.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.6417005099356174e-05,
+        "dense_output_evaluation_seconds": 4.6332948841154575e-05,
+        "dop853_step_outside_rhs_seconds": 0.005675955675542355,
+        "evaluator_seconds": 0.008851457969285548,
+        "event_callback_seconds": 0.0001444714143872261,
+        "post_solve_helper_seconds": {
+          "energy": 3.0542025342583656e-05,
+          "event_records": 5.58304600417614e-06,
+          "maximum_angular_increment": 7.500057108700275e-06,
+          "structural_validation": 5.041947588324547e-06,
+          "surface_value": 1.959037035703659e-06
+        },
+        "post_solve_residual_seconds": 2.729077823460102e-05,
+        "post_solve_seconds": 7.829093374311924e-05,
+        "pre_solve_seconds": 9.458046406507492e-06,
+        "rhs_seconds": 0.001313242712058127,
+        "root_algorithm_outside_event_and_dense_seconds": 1.4708028174936771e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.00042832293547689915,
+        "solve_ivp_seconds": 0.008763666031882167
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 1925,
+      "theta1_radians": -1.8775924843720249,
+      "theta2_radians": 1.9512235621905356
+    },
+    {
+      "accepted_point_count": 168,
+      "baseline_evaluator_median_seconds": 0.008062541950494051,
+      "baseline_evaluator_seconds": [
+        0.008072542026638985,
+        0.008029457996599376,
+        0.008062541950494051,
+        0.008332416997291148,
+        0.008029000018723309
+      ],
+      "event_time_seconds": 1.649655771264074,
+      "name": "field_observed_q0.2188",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1356529969631246,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0011733229039236903,
+        "counts": {
+          "accepted_steps": 167.0,
+          "active_event_detection_calls": 167.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 678.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 2009.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.6123871318995953e-05,
+        "dense_output_evaluation_seconds": 5.2709016017615795e-05,
+        "dop853_step_outside_rhs_seconds": 0.005846156156621873,
+        "evaluator_seconds": 0.009156249929219484,
+        "event_callback_seconds": 0.00015134038403630257,
+        "post_solve_helper_seconds": {
+          "energy": 3.0457857064902782e-05,
+          "event_records": 5.66698145121336e-06,
+          "maximum_angular_increment": 8.124974556267262e-06,
+          "structural_validation": 5.124951712787151e-06,
+          "surface_value": 1.9579892978072166e-06
+        },
+        "post_solve_residual_seconds": 2.8456212021410465e-05,
+        "post_solve_seconds": 7.9666031524539e-05,
+        "pre_solve_seconds": 1.0416959412395954e-05,
+        "rhs_seconds": 0.0013587161665782332,
+        "root_algorithm_outside_event_and_dense_seconds": 1.3874960131943226e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0004454690497368574,
+        "solve_ivp_seconds": 0.009069374995306134
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 2009,
+      "theta1_radians": 1.5953400194010667,
+      "theta2_radians": -1.6689710972195777
+    },
+    {
+      "accepted_point_count": 179,
+      "baseline_evaluator_median_seconds": 0.008534041000530124,
+      "baseline_evaluator_seconds": [
+        0.008475083042867482,
+        0.008534041000530124,
+        0.008486708044074476,
+        0.00863416597712785,
+        0.008554250001907349
+      ],
+      "event_time_seconds": 1.7665685106752682,
+      "name": "field_observed_q0.2812",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1436062854368296,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0012488344218581915,
+        "counts": {
+          "accepted_steps": 178.0,
+          "active_event_detection_calls": 178.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 7.0,
+          "event_callbacks": 721.0,
+          "event_callbacks_during_root": 5.0,
+          "rhs": 2141.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.624890137463808e-05,
+        "dense_output_evaluation_seconds": 4.733214154839516e-05,
+        "dop853_step_outside_rhs_seconds": 0.006214582244865596,
+        "evaluator_seconds": 0.00975958292838186,
+        "event_callback_seconds": 0.00016068120021373034,
+        "post_solve_helper_seconds": {
+          "energy": 3.058300353586674e-05,
+          "event_records": 5.582929588854313e-06,
+          "maximum_angular_increment": 7.915892638266087e-06,
+          "structural_validation": 5.417037755250931e-06,
+          "surface_value": 2.040993422269821e-06
+        },
+        "post_solve_residual_seconds": 2.8210226446390152e-05,
+        "post_solve_seconds": 7.975008338689804e-05,
+        "pre_solve_seconds": 9.333016350865364e-06,
+        "rhs_seconds": 0.0014472524635493755,
+        "root_algorithm_outside_event_and_dense_seconds": 1.4416989870369434e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.00047628837637603283,
+        "solve_ivp_seconds": 0.009667749982327223
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 2141,
+      "theta1_radians": -1.337631247036279,
+      "theta2_radians": 1.7426021750380887
+    },
+    {
+      "accepted_point_count": 192,
+      "baseline_evaluator_median_seconds": 0.009199250023812056,
+      "baseline_evaluator_seconds": [
+        0.009229249903000891,
+        0.009178374893963337,
+        0.00922095903661102,
+        0.009142874972894788,
+        0.009199250023812056
+      ],
+      "event_time_seconds": 1.8932328551967255,
+      "name": "field_observed_q0.3438",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1306582648784962,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0013396947178989649,
+        "counts": {
+          "accepted_steps": 191.0,
+          "active_event_detection_calls": 191.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 774.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 2297.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.5583238564431667e-05,
+        "dense_output_evaluation_seconds": 5.178980063647032e-05,
+        "dop853_step_outside_rhs_seconds": 0.0066577785182744265,
+        "evaluator_seconds": 0.010401208070106804,
+        "event_callback_seconds": 0.00017267419025301933,
+        "post_solve_helper_seconds": {
+          "energy": 3.033189568668604e-05,
+          "event_records": 5.500041879713535e-06,
+          "maximum_angular_increment": 7.917056791484356e-06,
+          "structural_validation": 4.875008016824722e-06,
+          "surface_value": 1.9579892978072166e-06
+        },
+        "post_solve_residual_seconds": 2.683198545128107e-05,
+        "post_solve_seconds": 7.774995174258947e-05,
+        "pre_solve_seconds": 9.124982170760632e-06,
+        "rhs_seconds": 0.001567120780237019,
+        "root_algorithm_outside_event_and_dense_seconds": 1.3085082173347473e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0004980716621503234,
+        "solve_ivp_seconds": 0.010308542056009173
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 2297,
+      "theta1_radians": 2.6016314162540475,
+      "theta2_radians": 0.8467573949128737
+    },
+    {
+      "accepted_point_count": 206,
+      "baseline_evaluator_median_seconds": 0.009842499974183738,
+      "baseline_evaluator_seconds": [
+        0.009839375037699938,
+        0.00988187501206994,
+        0.009842499974183738,
+        0.009854207979515195,
+        0.009825333952903748
+      ],
+      "event_time_seconds": 2.03145499368954,
+      "name": "field_observed_q0.4062",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1369402098120498,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0014349885750561953,
+        "counts": {
+          "accepted_steps": 205.0,
+          "active_event_detection_calls": 205.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 830.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 2477.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.5539932064712048e-05,
+        "dense_output_evaluation_seconds": 5.162600427865982e-05,
+        "dop853_step_outside_rhs_seconds": 0.007179420907050371,
+        "evaluator_seconds": 0.011190333985723555,
+        "event_callback_seconds": 0.00018587266094982624,
+        "post_solve_helper_seconds": {
+          "energy": 3.0123977921903133e-05,
+          "event_records": 5.292007699608803e-06,
+          "maximum_angular_increment": 7.750000804662704e-06,
+          "structural_validation": 4.792003892362118e-06,
+          "surface_value": 1.9167782738804817e-06
+        },
+        "post_solve_residual_seconds": 2.6499968953430653e-05,
+        "post_solve_seconds": 7.637497037649155e-05,
+        "pre_solve_seconds": 9.124982170760632e-06,
+        "rhs_seconds": 0.0016810399247333407,
+        "root_algorithm_outside_event_and_dense_seconds": 1.554097980260849e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0005309614352881908,
+        "solve_ivp_seconds": 0.011087125050835311
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 2477,
+      "theta1_radians": 2.613903262557132,
+      "theta2_radians": 2.613903262557132
+    },
+    {
+      "accepted_point_count": 224,
+      "baseline_evaluator_median_seconds": 0.010670625022612512,
+      "baseline_evaluator_seconds": [
+        0.010670625022612512,
+        0.010602124966681004,
+        0.010760540957562625,
+        0.01064937503542751,
+        0.010690708993934095
+      ],
+      "event_time_seconds": 2.2089594366906846,
+      "name": "field_observed_q0.4688",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.133661334018969,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0015633576549589634,
+        "counts": {
+          "accepted_steps": 223.0,
+          "active_event_detection_calls": 223.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 902.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 2681.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.5501980669796467e-05,
+        "dense_output_evaluation_seconds": 5.1456852816045284e-05,
+        "dop853_step_outside_rhs_seconds": 0.007762628491036594,
+        "evaluator_seconds": 0.01209687499795109,
+        "event_callback_seconds": 0.00020198477432131767,
+        "post_solve_helper_seconds": {
+          "energy": 3.2917014323174953e-05,
+          "event_records": 5.458015948534012e-06,
+          "maximum_angular_increment": 7.875030860304832e-06,
+          "structural_validation": 4.917033948004246e-06,
+          "surface_value": 1.875101588666439e-06
+        },
+        "post_solve_residual_seconds": 2.6626046746969223e-05,
+        "post_solve_seconds": 8.037500083446503e-05,
+        "pre_solve_seconds": 9.124982170760632e-06,
+        "rhs_seconds": 0.0018138703890144825,
+        "root_algorithm_outside_event_and_dense_seconds": 1.366704236716032e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0005680768517777324,
+        "solve_ivp_seconds": 0.011991041013970971
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 2681,
+      "theta1_radians": 2.7857091108003242,
+      "theta2_radians": 2.442097414313941
+    },
+    {
+      "accepted_point_count": 248,
+      "baseline_evaluator_median_seconds": 0.011911834008060396,
+      "baseline_evaluator_seconds": [
+        0.011911834008060396,
+        0.011908582993783057,
+        0.01192791701760143,
+        0.011991625069640577,
+        0.011881584068760276
+      ],
+      "event_time_seconds": 2.4277718838535347,
+      "name": "field_observed_q0.5312",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.132931418623828,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0017378078773617744,
+        "counts": {
+          "accepted_steps": 247.0,
+          "active_event_detection_calls": 247.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 998.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 3005.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.5499768778681755e-05,
+        "dense_output_evaluation_seconds": 5.1834736950695515e-05,
+        "dop853_step_outside_rhs_seconds": 0.008707424625754356,
+        "evaluator_seconds": 0.013495291001163423,
+        "event_callback_seconds": 0.0002239550231024623,
+        "post_solve_helper_seconds": {
+          "energy": 3.0750175938010216e-05,
+          "event_records": 5.334033630788326e-06,
+          "maximum_angular_increment": 7.999944500625134e-06,
+          "structural_validation": 4.915986210107803e-06,
+          "surface_value": 1.8329592421650887e-06
+        },
+        "post_solve_residual_seconds": 2.6167952455580235e-05,
+        "post_solve_seconds": 7.700000423938036e-05,
+        "pre_solve_seconds": 9.082956239581108e-06,
+        "rhs_seconds": 0.002041072933934629,
+        "root_algorithm_outside_event_and_dense_seconds": 1.541606616228819e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0006193564040586352,
+        "solve_ivp_seconds": 0.01340924995020032
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 3005,
+      "theta1_radians": -2.6261751088602177,
+      "theta2_radians": 1.4235341711578746
+    },
+    {
+      "accepted_point_count": 275,
+      "baseline_evaluator_median_seconds": 0.01305675006005913,
+      "baseline_evaluator_seconds": [
+        0.013095166999846697,
+        0.013039125013165176,
+        0.01310379197821021,
+        0.013014832977205515,
+        0.01305675006005913
+      ],
+      "event_time_seconds": 2.7241298285956677,
+      "name": "field_observed_q0.5938",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1369853136367,
+      "profile_median": {
+        "active_event_detection_seconds": 0.001925487071275711,
+        "counts": {
+          "accepted_steps": 274.0,
+          "active_event_detection_calls": 274.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 1106.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 3293.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.562491524964571e-05,
+        "dense_output_evaluation_seconds": 5.1249051466584206e-05,
+        "dop853_step_outside_rhs_seconds": 0.009561806917190552,
+        "evaluator_seconds": 0.014845333062112331,
+        "event_callback_seconds": 0.0002473610220476985,
+        "post_solve_helper_seconds": {
+          "energy": 3.145798109471798e-05,
+          "event_records": 5.416921339929104e-06,
+          "maximum_angular_increment": 8.499948307871819e-06,
+          "structural_validation": 5.292007699608803e-06,
+          "surface_value": 1.9170111045241356e-06
+        },
+        "post_solve_residual_seconds": 2.7208239771425724e-05,
+        "post_solve_seconds": 7.90830235928297e-05,
+        "pre_solve_seconds": 9.08400397747755e-06,
+        "rhs_seconds": 0.0022391052916646004,
+        "root_algorithm_outside_event_and_dense_seconds": 1.324887853115797e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0006857133703306317,
+        "solve_ivp_seconds": 0.014753125025890768
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 3293,
+      "theta1_radians": -2.736621725587984,
+      "theta2_radians": 0.7363107781851079
+    },
+    {
+      "accepted_point_count": 316,
+      "baseline_evaluator_median_seconds": 0.015189874917268753,
+      "baseline_evaluator_seconds": [
+        0.01516966603230685,
+        0.015206791926175356,
+        0.015146750025451183,
+        0.015189874917268753,
+        0.015207499964162707
+      ],
+      "event_time_seconds": 3.090936082793994,
+      "name": "field_observed_q0.6562",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1354136240555184,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0022114544408395886,
+        "counts": {
+          "accepted_steps": 315.0,
+          "active_event_detection_calls": 315.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 7.0,
+          "event_callbacks": 1269.0,
+          "event_callbacks_during_root": 5.0,
+          "rhs": 3857.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.6166013665497303e-05,
+        "dense_output_evaluation_seconds": 4.516495391726494e-05,
+        "dop853_step_outside_rhs_seconds": 0.011185935931280255,
+        "evaluator_seconds": 0.01724679092876613,
+        "event_callback_seconds": 0.0002831218298524618,
+        "post_solve_helper_seconds": {
+          "energy": 3.133295103907585e-05,
+          "event_records": 5.332985892891884e-06,
+          "maximum_angular_increment": 8.875038474798203e-06,
+          "structural_validation": 5.249981768429279e-06,
+          "surface_value": 1.834006980061531e-06
+        },
+        "post_solve_residual_seconds": 2.649892121553421e-05,
+        "post_solve_seconds": 7.883307989686728e-05,
+        "pre_solve_seconds": 9.083072654902935e-06,
+        "rhs_seconds": 0.0026202559238299727,
+        "root_algorithm_outside_event_and_dense_seconds": 1.1957017704844475e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0007868893444538116,
+        "solve_ivp_seconds": 0.01715941692236811
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 3857,
+      "theta1_radians": 2.172116795646068,
+      "theta2_radians": -2.748893571891069
+    },
+    {
+      "accepted_point_count": 336,
+      "baseline_evaluator_median_seconds": 0.016228624968789518,
+      "baseline_evaluator_seconds": [
+        0.016177834011614323,
+        0.016075125080533326,
+        0.016279625007882714,
+        0.016228624968789518,
+        0.016232374939136207
+      ],
+      "event_time_seconds": 3.3212528820762235,
+      "name": "field_observed_q0.7188",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.130307285662148,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0023813274456188083,
+        "counts": {
+          "accepted_steps": 335.0,
+          "active_event_detection_calls": 335.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 1350.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 4025.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.6625039279460907e-05,
+        "dense_output_evaluation_seconds": 5.370890721678734e-05,
+        "dop853_step_outside_rhs_seconds": 0.011878761695697904,
+        "evaluator_seconds": 0.01834333303850144,
+        "event_callback_seconds": 0.00030531093943864107,
+        "post_solve_helper_seconds": {
+          "energy": 3.316707443445921e-05,
+          "event_records": 5.417037755250931e-06,
+          "maximum_angular_increment": 9.416020475327969e-06,
+          "structural_validation": 5.5409036576747894e-06,
+          "surface_value": 2.08395067602396e-06
+        },
+        "post_solve_residual_seconds": 2.8417911380529404e-05,
+        "post_solve_seconds": 8.404196705669165e-05,
+        "pre_solve_seconds": 9.999959729611874e-06,
+        "rhs_seconds": 0.0027517627459019423,
+        "root_algorithm_outside_event_and_dense_seconds": 1.4456920325756073e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0008384076645597816,
+        "solve_ivp_seconds": 0.018239666940644383
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 4025,
+      "theta1_radians": -2.000310947402876,
+      "theta2_radians": 2.4298255680108554
+    },
+    {
+      "accepted_point_count": 365,
+      "baseline_evaluator_median_seconds": 0.0178210420999676,
+      "baseline_evaluator_seconds": [
+        0.01778037496842444,
+        0.0178210420999676,
+        0.017872959026135504,
+        0.01782791700679809,
+        0.017759707989171147
+      ],
+      "event_time_seconds": 3.59305234943068,
+      "name": "field_observed_q0.7812",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1344220460323686,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0026005699764937162,
+        "counts": {
+          "accepted_steps": 364.0,
+          "active_event_detection_calls": 364.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 7.0,
+          "event_callbacks": 1465.0,
+          "event_callbacks_during_root": 5.0,
+          "rhs": 4445.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.6375095583498478e-05,
+        "dense_output_evaluation_seconds": 4.641606938093901e-05,
+        "dop853_step_outside_rhs_seconds": 0.013142417767085135,
+        "evaluator_seconds": 0.020216583041474223,
+        "event_callback_seconds": 0.00033351790625602007,
+        "post_solve_helper_seconds": {
+          "energy": 3.308302257210016e-05,
+          "event_records": 5.375011824071407e-06,
+          "maximum_angular_increment": 9.458046406507492e-06,
+          "structural_validation": 5.458015948534012e-06,
+          "surface_value": 1.915963366627693e-06
+        },
+        "post_solve_residual_seconds": 2.7625123038887978e-05,
+        "post_solve_seconds": 8.266698569059372e-05,
+        "pre_solve_seconds": 9.375042282044888e-06,
+        "rhs_seconds": 0.003056366113014519,
+        "root_algorithm_outside_event_and_dense_seconds": 1.2126052752137184e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0009098390582948923,
+        "solve_ivp_seconds": 0.02011679206043482
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 4445,
+      "theta1_radians": 2.380738182798515,
+      "theta2_radians": 2.024854640009046
+    },
+    {
+      "accepted_point_count": 404,
+      "baseline_evaluator_median_seconds": 0.019448834005743265,
+      "baseline_evaluator_seconds": [
+        0.0194830420659855,
+        0.01939775003120303,
+        0.019448834005743265,
+        0.019064499996602535,
+        0.019450874999165535
+      ],
+      "event_time_seconds": 4.0001452053528075,
+      "name": "field_observed_q0.8438",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1346074526122927,
+      "profile_median": {
+        "active_event_detection_seconds": 0.002876508980989456,
+        "counts": {
+          "accepted_steps": 403.0,
+          "active_event_detection_calls": 403.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 9.0,
+          "event_callbacks": 1623.0,
+          "event_callbacks_during_root": 7.0,
+          "rhs": 4841.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.5915953554213047e-05,
+        "dense_output_evaluation_seconds": 5.8583798818290234e-05,
+        "dop853_step_outside_rhs_seconds": 0.014292781823314726,
+        "evaluator_seconds": 0.022066792007535696,
+        "event_callback_seconds": 0.00037066079676151276,
+        "post_solve_helper_seconds": {
+          "energy": 3.3082906156778336e-05,
+          "event_records": 5.5409036576747894e-06,
+          "maximum_angular_increment": 9.790994226932526e-06,
+          "structural_validation": 5.417037755250931e-06,
+          "surface_value": 1.8738210201263428e-06
+        },
+        "post_solve_residual_seconds": 2.7584261260926723e-05,
+        "post_solve_seconds": 8.312496356666088e-05,
+        "pre_solve_seconds": 9.457929991185665e-06,
+        "rhs_seconds": 0.003343686694279313,
+        "root_algorithm_outside_event_and_dense_seconds": 1.5041208826005459e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0010035097366198897,
+        "solve_ivp_seconds": 0.021973749971948564
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 4841,
+      "theta1_radians": -2.405281875404685,
+      "theta2_radians": 1.055378782065321
+    },
+    {
+      "accepted_point_count": 444,
+      "baseline_evaluator_median_seconds": 0.021457333001308143,
+      "baseline_evaluator_seconds": [
+        0.021477125003002584,
+        0.021457333001308143,
+        0.021386458072811365,
+        0.02148512494750321,
+        0.02145141689106822
+      ],
+      "event_time_seconds": 4.386700846107553,
+      "name": "field_observed_q0.9062",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1347519288865497,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0031515698647126555,
+        "counts": {
+          "accepted_steps": 443.0,
+          "active_event_detection_calls": 443.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 9.0,
+          "event_callbacks": 1783.0,
+          "event_callbacks_during_root": 7.0,
+          "rhs": 5357.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.633400097489357e-05,
+        "dense_output_evaluation_seconds": 5.9165991842746735e-05,
+        "dop853_step_outside_rhs_seconds": 0.015800016815774143,
+        "evaluator_seconds": 0.024348750011995435,
+        "event_callback_seconds": 0.0004046238027513027,
+        "post_solve_helper_seconds": {
+          "energy": 3.370782360434532e-05,
+          "event_records": 5.499925464391708e-06,
+          "maximum_angular_increment": 1.0040937922894955e-05,
+          "structural_validation": 5.458015948534012e-06,
+          "surface_value": 1.915963366627693e-06
+        },
+        "post_solve_residual_seconds": 2.70443269982934e-05,
+        "post_solve_seconds": 8.358305785804987e-05,
+        "pre_solve_seconds": 9.333016350865364e-06,
+        "rhs_seconds": 0.0036934467498213053,
+        "root_algorithm_outside_event_and_dense_seconds": 1.7124111764132977e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.001096993568353355,
+        "solve_ivp_seconds": 0.024255792028270662
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 5357,
+      "theta1_radians": -3.0802334220743677,
+      "theta2_radians": -0.25770877236478773
+    },
+    {
+      "accepted_point_count": 483,
+      "baseline_evaluator_median_seconds": 0.023260208079591393,
+      "baseline_evaluator_seconds": [
+        0.023674125084653497,
+        0.023171207983978093,
+        0.023260208079591393,
+        0.023021875065751374,
+        0.02327737503219396
+      ],
+      "event_time_seconds": 4.797448976502688,
+      "name": "field_observed_q0.9688",
+      "outcome": "observed",
+      "profile_instrumentation_factor": 1.1313885451931598,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0034453958505764604,
+        "counts": {
+          "accepted_steps": 482.0,
+          "active_event_detection_calls": 482.0,
+          "dense_output_builds": 1.0,
+          "dense_output_evaluations": 8.0,
+          "event_callbacks": 1938.0,
+          "event_callbacks_during_root": 6.0,
+          "rhs": 5789.0,
+          "root_locations": 1.0
+        },
+        "dense_output_build_outside_rhs_seconds": 1.6499077901244164e-05,
+        "dense_output_evaluation_seconds": 5.3833238780498505e-05,
+        "dop853_step_outside_rhs_seconds": 0.01711559866089374,
+        "evaluator_seconds": 0.026316332980059087,
+        "event_callback_seconds": 0.00043711927719414234,
+        "post_solve_helper_seconds": {
+          "energy": 3.516697324812412e-05,
+          "event_records": 5.708076059818268e-06,
+          "maximum_angular_increment": 1.1041993275284767e-05,
+          "structural_validation": 5.791080184280872e-06,
+          "surface_value": 1.959037035703659e-06
+        },
+        "post_solve_residual_seconds": 2.887682057917118e-05,
+        "post_solve_seconds": 9.124993812292814e-05,
+        "pre_solve_seconds": 9.541981853544712e-06,
+        "rhs_seconds": 0.003974159015342593,
+        "root_algorithm_outside_event_and_dense_seconds": 1.4001037925481796e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0011854713084176183,
+        "solve_ivp_seconds": 0.02622358303051442
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 5789,
+      "theta1_radians": 1.0799224746714913,
+      "theta2_radians": -2.36846633649543
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.024010000051930547,
+      "baseline_evaluator_seconds": [
+        0.02399733301717788,
+        0.024002207908779383,
+        0.024010000051930547,
+        0.024113249965012074,
+        0.024057208094745874
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.0312",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1347407320240028,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003582398407161236,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.01778896967880428,
+        "evaluator_seconds": 0.027245125034824014,
+        "event_callback_seconds": 0.00045656703878194094,
+        "post_solve_helper_seconds": {
+          "energy": 2.8665992431342602e-05,
+          "event_records": 4.624947905540466e-06,
+          "maximum_angular_increment": 1.066701952368021e-05,
+          "structural_validation": 7.166992872953415e-06
+        },
+        "post_solve_residual_seconds": 2.0624021999537945e-05,
+        "post_solve_seconds": 7.149996235966682e-05,
+        "pre_solve_seconds": 9.541981853544712e-06,
+        "rhs_seconds": 0.0041142872069031,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012128287926316261,
+        "solve_ivp_seconds": 0.02716304105706513
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": -1.1903690913992575,
+      "theta2_radians": -2.7979809571034093
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.023597083054482937,
+      "baseline_evaluator_seconds": [
+        0.02364199992734939,
+        0.023560959030874074,
+        0.023597083054482937,
+        0.023576500010676682,
+        0.02375062496867031
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.0938",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.137010232987695,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003520651371218264,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017493849503807724,
+        "evaluator_seconds": 0.026830124901607633,
+        "event_callback_seconds": 0.00044676149263978004,
+        "post_solve_helper_seconds": {
+          "energy": 2.837507054209709e-05,
+          "event_records": 4.500034265220165e-06,
+          "maximum_angular_increment": 1.0207993909716606e-05,
+          "structural_validation": 6.916932761669159e-06
+        },
+        "post_solve_residual_seconds": 1.9705970771610737e-05,
+        "post_solve_seconds": 7.02079851180315e-05,
+        "pre_solve_seconds": 9.37492586672306e-06,
+        "rhs_seconds": 0.004074304248206317,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012033635284751654,
+        "solve_ivp_seconds": 0.026750250020995736
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": 0.8713010875190443,
+      "theta2_radians": -2.294835258676919
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.023595958948135376,
+      "baseline_evaluator_seconds": [
+        0.023576500010676682,
+        0.023575791041366756,
+        0.023595958948135376,
+        0.0236711660400033,
+        0.023606750066392124
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.1562",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1363722120267914,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035224471939727664,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.0174905318999663,
+        "evaluator_seconds": 0.026813792064785957,
+        "event_callback_seconds": 0.0004493700107559562,
+        "post_solve_helper_seconds": {
+          "energy": 2.791709266602993e-05,
+          "event_records": 4.459056071937084e-06,
+          "maximum_angular_increment": 1.0124989785254002e-05,
+          "structural_validation": 6.749993190169334e-06
+        },
+        "post_solve_residual_seconds": 1.9331928342580795e-05,
+        "post_solve_seconds": 6.837502587586641e-05,
+        "pre_solve_seconds": 8.958042599260807e-06,
+        "rhs_seconds": 0.004084674408659339,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012001945869997144,
+        "solve_ivp_seconds": 0.026736333966255188
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": 0.4172427743048943,
+      "theta2_radians": -1.9144080232812801
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.023590291035361588,
+      "baseline_evaluator_seconds": [
+        0.023590291035361588,
+        0.023953957948833704,
+        0.02358162496238947,
+        0.023527665995061398,
+        0.02360645798034966
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.2188",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1350238123147207,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035147429443895817,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017485055257566273,
+        "evaluator_seconds": 0.02677554206456989,
+        "event_callback_seconds": 0.0004484723322093487,
+        "post_solve_helper_seconds": {
+          "energy": 2.8082984499633312e-05,
+          "event_records": 4.541943781077862e-06,
+          "maximum_angular_increment": 1.0333023965358734e-05,
+          "structural_validation": 7.208087481558323e-06
+        },
+        "post_solve_residual_seconds": 1.979211810976267e-05,
+        "post_solve_seconds": 6.975000724196434e-05,
+        "pre_solve_seconds": 9.584007784724236e-06,
+        "rhs_seconds": 0.004039106424897909,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0011966275051236153,
+        "solve_ivp_seconds": 0.026691666920669377
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": -2.0125827937059615,
+      "theta2_radians": -1.533980787885641
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.02351070800796151,
+      "baseline_evaluator_seconds": [
+        0.023724499973468482,
+        0.02351070800796151,
+        0.023490124964155257,
+        0.023573207901790738,
+        0.023455541930161417
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.2812",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1389845425508807,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035133754136040807,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017508971854113042,
+        "evaluator_seconds": 0.02677833300549537,
+        "event_callback_seconds": 0.00044571736361831427,
+        "post_solve_helper_seconds": {
+          "energy": 2.7292058803141117e-05,
+          "event_records": 4.500034265220165e-06,
+          "maximum_angular_increment": 1.0207993909716606e-05,
+          "structural_validation": 6.832997314631939e-06
+        },
+        "post_solve_residual_seconds": 1.9083963707089424e-05,
+        "post_solve_seconds": 6.76250783726573e-05,
+        "pre_solve_seconds": 8.999952115118504e-06,
+        "rhs_seconds": 0.004032251657918096,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012014448875561357,
+        "solve_ivp_seconds": 0.026701707975007594
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": -0.5154175447295755,
+      "theta2_radians": -1.214912784005428
+    },
+    {
+      "accepted_point_count": 504,
+      "baseline_evaluator_median_seconds": 0.023602833040058613,
+      "baseline_evaluator_seconds": [
+        0.02360074990428984,
+        0.02352366701234132,
+        0.023602833040058613,
+        0.024602666031569242,
+        0.02500420797150582
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.3438",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.13876867654705,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035240408033132553,
+        "counts": {
+          "accepted_steps": 503.0,
+          "active_event_detection_calls": 503.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2016.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6038.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017577339429408312,
+        "evaluator_seconds": 0.02687816694378853,
+        "event_callback_seconds": 0.00044979515951126814,
+        "post_solve_helper_seconds": {
+          "energy": 2.7499976567924023e-05,
+          "event_records": 4.58303838968277e-06,
+          "maximum_angular_increment": 1.037493348121643e-05,
+          "structural_validation": 6.792019121348858e-06
+        },
+        "post_solve_residual_seconds": 1.9418192096054554e-05,
+        "post_solve_seconds": 6.858399137854576e-05,
+        "pre_solve_seconds": 9.291921742260456e-06,
+        "rhs_seconds": 0.004063335247337818,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012092037359252572,
+        "solve_ivp_seconds": 0.026800291030667722
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6038,
+      "theta1_radians": 0.36815538909255396,
+      "theta2_radians": -0.8835729338221294
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.0245078339939937,
+      "baseline_evaluator_seconds": [
+        0.024378583999350667,
+        0.0245078339939937,
+        0.024457999970763922,
+        0.024623709032312036,
+        0.024558291072025895
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.4062",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1399875226516334,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003659161040559411,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.018215727526694536,
+        "evaluator_seconds": 0.027938624960370362,
+        "event_callback_seconds": 0.00046358222607523203,
+        "post_solve_helper_seconds": {
+          "energy": 3.6209006793797016e-05,
+          "event_records": 5.542067810893059e-06,
+          "maximum_angular_increment": 1.466704998165369e-05,
+          "structural_validation": 1.3791956007480621e-05
+        },
+        "post_solve_residual_seconds": 3.041501622647047e-05,
+        "post_solve_seconds": 0.00010141602251678705,
+        "pre_solve_seconds": 1.3375072740018368e-05,
+        "rhs_seconds": 0.0042070308700203896,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012693192111328244,
+        "solve_ivp_seconds": 0.02782387495972216
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": 0.15953400194010658,
+      "theta2_radians": -0.5154175447295755
+    },
+    {
+      "accepted_point_count": 504,
+      "baseline_evaluator_median_seconds": 0.02467512502335012,
+      "baseline_evaluator_seconds": [
+        0.02467512502335012,
+        0.02459370798896998,
+        0.02509270899463445,
+        0.025499708019196987,
+        0.02431812498252839
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.4688",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.140686540725506,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003681437694467604,
+        "counts": {
+          "accepted_steps": 503.0,
+          "active_event_detection_calls": 503.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2016.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6038.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.018326544668525457,
+        "evaluator_seconds": 0.02814658300485462,
+        "event_callback_seconds": 0.0004663231084123254,
+        "post_solve_helper_seconds": {
+          "energy": 4.329090006649494e-05,
+          "event_records": 5.707959644496441e-06,
+          "maximum_angular_increment": 1.6874982975423336e-05,
+          "structural_validation": 1.9249971956014633e-05
+        },
+        "post_solve_residual_seconds": 3.654195461422205e-05,
+        "post_solve_seconds": 0.00012425007298588753,
+        "pre_solve_seconds": 1.7249956727027893e-05,
+        "rhs_seconds": 0.004242488765157759,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0013018688187003136,
+        "solve_ivp_seconds": 0.02801008301321417
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6038,
+      "theta1_radians": -0.8222137023067035,
+      "theta2_radians": -0.1472621556370215
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.024140459019690752,
+      "baseline_evaluator_seconds": [
+        0.023475874913856387,
+        0.02535979205276817,
+        0.024436917039565742,
+        0.024140459019690752,
+        0.023973874980583787
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.5312",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.147276899679157,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0036037921672686934,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.01798558421432972,
+        "evaluator_seconds": 0.027695790980942547,
+        "event_callback_seconds": 0.00045683584176003933,
+        "post_solve_helper_seconds": {
+          "energy": 3.595894668251276e-05,
+          "event_records": 5.58304600417614e-06,
+          "maximum_angular_increment": 1.4999997802078724e-05,
+          "structural_validation": 1.4708028174936771e-05
+        },
+        "post_solve_residual_seconds": 3.1291041523218155e-05,
+        "post_solve_seconds": 0.0001027500256896019,
+        "pre_solve_seconds": 1.0791001841425896e-05,
+        "rhs_seconds": 0.004174526431597769,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012648125411942601,
+        "solve_ivp_seconds": 0.02753162500448525
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": -1.3499030933393643,
+      "theta2_radians": 0.1472621556370215
+    },
+    {
+      "accepted_point_count": 504,
+      "baseline_evaluator_median_seconds": 0.023641625070013106,
+      "baseline_evaluator_seconds": [
+        0.024016874958761036,
+        0.02401175000704825,
+        0.023641625070013106,
+        0.02356933301780373,
+        0.023573582991957664
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.5938",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1563397181779775,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003591095795854926,
+        "counts": {
+          "accepted_steps": 503.0,
+          "active_event_detection_calls": 503.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2016.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6038.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017843819921836257,
+        "evaluator_seconds": 0.02733775007072836,
+        "event_callback_seconds": 0.0004588783485814929,
+        "post_solve_helper_seconds": {
+          "energy": 2.9207905754446983e-05,
+          "event_records": 4.708999767899513e-06,
+          "maximum_angular_increment": 1.1082971468567848e-05,
+          "structural_validation": 7.500057108700275e-06
+        },
+        "post_solve_residual_seconds": 2.1415879018604755e-05,
+        "post_solve_seconds": 7.337494753301144e-05,
+        "pre_solve_seconds": 1.037493348121643e-05,
+        "rhs_seconds": 0.0041413691360503435,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012232641456648707,
+        "solve_ivp_seconds": 0.027256499975919724
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6038,
+      "theta1_radians": 1.2394564766115979,
+      "theta2_radians": 0.5031456984264904
+    },
+    {
+      "accepted_point_count": 504,
+      "baseline_evaluator_median_seconds": 0.02375879103783518,
+      "baseline_evaluator_seconds": [
+        0.023614208097569644,
+        0.023986958083696663,
+        0.02375879103783518,
+        0.023768374929204583,
+        0.023754665977321565
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.6562",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1336435394408648,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035364233190193772,
+        "counts": {
+          "accepted_steps": 503.0,
+          "active_event_detection_calls": 503.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2016.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6038.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017566243652254343,
+        "evaluator_seconds": 0.02693399996496737,
+        "event_callback_seconds": 0.0004484525416046381,
+        "post_solve_helper_seconds": {
+          "energy": 2.9333052225410938e-05,
+          "event_records": 4.625064320862293e-06,
+          "maximum_angular_increment": 1.0666088201105595e-05,
+          "structural_validation": 7.417052984237671e-06
+        },
+        "post_solve_residual_seconds": 2.0499923266470432e-05,
+        "post_solve_seconds": 7.19169620424509e-05,
+        "pre_solve_seconds": 9.833020158112049e-06,
+        "rhs_seconds": 0.004098935984075069,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012011383660137653,
+        "solve_ivp_seconds": 0.026847915956750512
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6038,
+      "theta1_radians": 1.877592484372025,
+      "theta2_radians": 0.8713010875190443
+    },
+    {
+      "accepted_point_count": 505,
+      "baseline_evaluator_median_seconds": 0.023912457982078195,
+      "baseline_evaluator_seconds": [
+        0.023912457982078195,
+        0.0239460829179734,
+        0.02395200007595122,
+        0.023839334025979042,
+        0.023900208063423634
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.7188",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.134809481396519,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003542510443367064,
+        "counts": {
+          "accepted_steps": 504.0,
+          "active_event_detection_calls": 504.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2020.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6098.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017712285509333014,
+        "evaluator_seconds": 0.027136084041558206,
+        "event_callback_seconds": 0.0004507848061621189,
+        "post_solve_helper_seconds": {
+          "energy": 2.8916052542626858e-05,
+          "event_records": 4.625064320862293e-06,
+          "maximum_angular_increment": 1.0499963536858559e-05,
+          "structural_validation": 7.084105163812637e-06
+        },
+        "post_solve_residual_seconds": 2.062495332211256e-05,
+        "post_solve_seconds": 7.166701834648848e-05,
+        "pre_solve_seconds": 9.792041964828968e-06,
+        "rhs_seconds": 0.0041357435984537005,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012110520619899035,
+        "solve_ivp_seconds": 0.02705462498124689
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6098,
+      "theta1_radians": -2.086213871524472,
+      "theta2_radians": 1.2149127840054277
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.023610832984559238,
+      "baseline_evaluator_seconds": [
+        0.02357775007840246,
+        0.023648416972719133,
+        0.023610832984559238,
+        0.023618041072040796,
+        0.02358104207087308
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.7812",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1352398683155944,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003520395956002176,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.01746643497608602,
+        "evaluator_seconds": 0.026803958928212523,
+        "event_callback_seconds": 0.0004477001493796706,
+        "post_solve_helper_seconds": {
+          "energy": 2.775003667920828e-05,
+          "event_records": 4.582921974360943e-06,
+          "maximum_angular_increment": 1.0207993909716606e-05,
+          "structural_validation": 6.708083674311638e-06
+        },
+        "post_solve_residual_seconds": 1.958513166755438e-05,
+        "post_solve_seconds": 6.87920255586505e-05,
+        "pre_solve_seconds": 9.08400397747755e-06,
+        "rhs_seconds": 0.004079411155544221,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012022724840790033,
+        "solve_ivp_seconds": 0.026726082898676395
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": -0.15953400194010658,
+      "theta2_radians": 1.5339807878856409
+    },
+    {
+      "accepted_point_count": 503,
+      "baseline_evaluator_median_seconds": 0.023672583978623152,
+      "baseline_evaluator_seconds": [
+        0.02452187507878989,
+        0.02403812506236136,
+        0.023672583978623152,
+        0.02365274995099753,
+        0.023660833947360516
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.8438",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1371487766257333,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035209329798817635,
+        "counts": {
+          "accepted_steps": 502.0,
+          "active_event_detection_calls": 502.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2012.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6026.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017523995600640774,
+        "evaluator_seconds": 0.026919249910861254,
+        "event_callback_seconds": 0.0004491773433983326,
+        "post_solve_helper_seconds": {
+          "energy": 2.833409234881401e-05,
+          "event_records": 4.624947905540466e-06,
+          "maximum_angular_increment": 1.0499963536858559e-05,
+          "structural_validation": 6.958027370274067e-06
+        },
+        "post_solve_residual_seconds": 1.9790022633969784e-05,
+        "post_solve_seconds": 6.991601549088955e-05,
+        "pre_solve_seconds": 9.08400397747755e-06,
+        "rhs_seconds": 0.004070259630680084,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.001201221370138228,
+        "solve_ivp_seconds": 0.026839583995752037
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6026,
+      "theta1_radians": 1.2394564766115979,
+      "theta2_radians": 1.9021361769781953
+    },
+    {
+      "accepted_point_count": 504,
+      "baseline_evaluator_median_seconds": 0.024042333010584116,
+      "baseline_evaluator_seconds": [
+        0.024016582989133894,
+        0.024097666959278286,
+        0.024042333010584116,
+        0.024165207985788584,
+        0.0240022090729326
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.9062",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.135920002505495,
+      "profile_median": {
+        "active_event_detection_seconds": 0.003589943633414805,
+        "counts": {
+          "accepted_steps": 503.0,
+          "active_event_detection_calls": 503.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2016.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6038.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017837903113104403,
+        "evaluator_seconds": 0.027310166973620653,
+        "event_callback_seconds": 0.0004577761283144355,
+        "post_solve_helper_seconds": {
+          "energy": 2.8833048418164253e-05,
+          "event_records": 4.582921974360943e-06,
+          "maximum_angular_increment": 1.0666903108358383e-05,
+          "structural_validation": 7.2089023888111115e-06
+        },
+        "post_solve_residual_seconds": 2.0707957446575165e-05,
+        "post_solve_seconds": 7.204199209809303e-05,
+        "pre_solve_seconds": 9.624985978007317e-06,
+        "rhs_seconds": 0.004125884734094143,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012242374941706657,
+        "solve_ivp_seconds": 0.027227750048041344
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6038,
+      "theta1_radians": 0.36815538909255396,
+      "theta2_radians": 2.2825634123738343
+    },
+    {
+      "accepted_point_count": 504,
+      "baseline_evaluator_median_seconds": 0.023746707942336798,
+      "baseline_evaluator_seconds": [
+        0.023805457982234657,
+        0.023741249926388264,
+        0.023746707942336798,
+        0.02371858397964388,
+        0.02377099997829646
+      ],
+      "event_time_seconds": null,
+      "name": "field_censored_spatial_q0.9688",
+      "outcome": "censored",
+      "profile_instrumentation_factor": 1.1362925795244525,
+      "profile_median": {
+        "active_event_detection_seconds": 0.0035381591878831387,
+        "counts": {
+          "accepted_steps": 503.0,
+          "active_event_detection_calls": 503.0,
+          "dense_output_builds": 0.0,
+          "dense_output_evaluations": 0.0,
+          "event_callbacks": 2016.0,
+          "event_callbacks_during_root": 0.0,
+          "rhs": 6050.0,
+          "root_locations": 0.0
+        },
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017594287055544555,
+        "evaluator_seconds": 0.026983208023011684,
+        "event_callback_seconds": 0.00045068806502968073,
+        "post_solve_helper_seconds": {
+          "energy": 2.933293581008911e-05,
+          "event_records": 4.749977961182594e-06,
+          "maximum_angular_increment": 1.0624993592500687e-05,
+          "structural_validation": 7.042079232633114e-06
+        },
+        "post_solve_residual_seconds": 2.133403904736042e-05,
+        "post_solve_seconds": 7.366691716015339e-05,
+        "pre_solve_seconds": 9.750016033649445e-06,
+        "rhs_seconds": 0.004109399160370231,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012147128582000732,
+        "solve_ivp_seconds": 0.026903458987362683
+      },
+      "profile_preserved_result": true,
+      "rhs_evaluations": 6050,
+      "theta1_radians": 1.4358060174609601,
+      "theta2_radians": 2.7857091108003242
+    }
+  ],
+  "contract": {
+    "direction": 1.0,
+    "event_time_agreement_gate_seconds": 5e-08,
+    "events": [
+      "arm1-",
+      "arm1+",
+      "arm2-",
+      "arm2+"
+    ],
+    "initial_angular_velocities": [
+      0.0,
+      0.0
+    ],
+    "observation_horizon_seconds": 5.0,
+    "parameters": "standard equal-link/unit-parameter",
+    "solver": "solve_ivp DOP853",
+    "terminal": true
+  },
+  "decision": {
+    "decision": "PROTOTYPE COMPILED SOLVER/EVENT LOOP",
+    "prototype_justified": true,
+    "threshold_additional_whole_field_speedup": 1.5
+  },
+  "environment": {
+    "git_head": "c2fa681f7b2bc242f0a226789756e0c094d0711f",
+    "git_status_short_before_artifact": "?? development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/profile_first_flip_post_promotion.py",
+    "numba": "0.67.0",
+    "numpy": "2.5.2",
+    "platform": "macOS-15.7.9-arm64-arm-64bit",
+    "python": "3.12.3",
+    "scipy": "1.18.0"
+  },
+  "groups": {
+    "censored": {
+      "accepted_point_count": 503.5,
+      "baseline_evaluator_mean_of_case_medians_seconds": 0.023850976511312183,
+      "case_count": 16,
+      "event_callback_count": 2014.0,
+      "instrumentation_adjusted_solver_components_fraction_of_baseline_evaluator": {
+        "active_event_detection_seconds": 0.14926408863270782,
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.6129698906869281,
+        "event_callback_seconds": 0.018990003283506758,
+        "rhs_seconds": 0.17240648571758055,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.04225545574232063
+      },
+      "instrumentation_adjusted_solver_components_seconds": {
+        "active_event_detection_seconds": 0.003560094271961134,
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.014619930464915519,
+        "event_callback_seconds": 0.0004529301222646609,
+        "rhs_seconds": 0.004112063041247893,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.001007833882384881
+      },
+      "instrumentation_excess_seconds": 0.003306929793325253,
+      "post_solve_helper_seconds": {
+        "energy": 3.0312447051983327e-05,
+        "event_records": 4.783876647707075e-06,
+        "maximum_angular_increment": 1.1419178918004036e-05,
+        "structural_validation": 8.708455425221473e-06
+      },
+      "post_solve_seconds": 7.786462811054662e-05,
+      "pre_solve_seconds": 1.0294366802554578e-05,
+      "profile_instrumentation_factor": 1.1386496603925975,
+      "profiled_evaluator_mean_of_case_medians_seconds": 0.027157906304637436,
+      "rhs_evaluations": 6035.75,
+      "root_location_count": 0.0,
+      "solve_ivp_seconds": 0.027066549424489494,
+      "solver_components_fraction": {
+        "active_event_detection_seconds": 0.13153114629159204,
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.654446054928187,
+        "event_callback_seconds": 0.016733943997119007,
+        "rhs_seconds": 0.15192416945203022,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.045114640588241335
+      },
+      "solver_components_seconds": {
+        "active_event_detection_seconds": 0.003560094271961134,
+        "dense_output_build_outside_rhs_seconds": 0.0,
+        "dense_output_evaluation_seconds": 0.0,
+        "dop853_step_outside_rhs_seconds": 0.017713596491375938,
+        "event_callback_seconds": 0.0004529301222646609,
+        "rhs_seconds": 0.004112063041247893,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0,
+        "solve_ivp_orchestration_residual_seconds": 0.0012210976492497139
+      }
+    },
+    "observed": {
+      "accepted_point_count": 266.0625,
+      "baseline_evaluator_mean_of_case_medians_seconds": 0.012820369884138927,
+      "case_count": 16,
+      "event_callback_count": 1070.125,
+      "instrumentation_adjusted_solver_components_fraction_of_baseline_evaluator": {
+        "active_event_detection_seconds": 0.14640251847112,
+        "dense_output_build_outside_rhs_seconds": 0.0012571391004117993,
+        "dense_output_evaluation_seconds": 0.004032448086717287,
+        "dop853_step_outside_rhs_seconds": 0.6065609150753667,
+        "event_callback_seconds": 0.018805613712666376,
+        "rhs_seconds": 0.1706524113013996,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0011184089799026028,
+        "solve_ivp_orchestration_residual_seconds": 0.0436308740878577
+      },
+      "instrumentation_adjusted_solver_components_seconds": {
+        "active_event_detection_seconds": 0.00187693443876924,
+        "dense_output_build_outside_rhs_seconds": 1.6116988263092935e-05,
+        "dense_output_evaluation_seconds": 5.1697476010303944e-05,
+        "dop853_step_outside_rhs_seconds": 0.007776335288527981,
+        "event_callback_seconds": 0.00024109492369461805,
+        "rhs_seconds": 0.002187827034504153,
+        "root_algorithm_outside_event_and_dense_seconds": 1.4338416804093868e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0005593639441746284
+      },
+      "instrumentation_excess_seconds": 0.001720695108815562,
+      "post_solve_helper_seconds": {
+        "energy": 3.158573235850781e-05,
+        "event_records": 5.4843039833940566e-06,
+        "maximum_angular_increment": 8.559742127545178e-06,
+        "structural_validation": 5.208246875554323e-06,
+        "surface_value": 1.9477956811897457e-06
+      },
+      "post_solve_seconds": 8.058587263803929e-05,
+      "pre_solve_seconds": 9.458308340981603e-06,
+      "profile_instrumentation_factor": 1.1342157148636067,
+      "profiled_evaluator_mean_of_case_medians_seconds": 0.014541064992954489,
+      "rhs_evaluations": 3202.25,
+      "root_location_count": 1.0,
+      "solve_ivp_seconds": 0.014446932254941203,
+      "solver_components_fraction": {
+        "active_event_detection_seconds": 0.12991923860702556,
+        "dense_output_build_outside_rhs_seconds": 0.0011155993520756307,
+        "dense_output_evaluation_seconds": 0.0035784397059536394,
+        "dop853_step_outside_rhs_seconds": 0.6493810337956898,
+        "event_callback_seconds": 0.016688312746268863,
+        "rhs_seconds": 0.15143886576721938,
+        "root_algorithm_outside_event_and_dense_seconds": 0.0009924886855608933,
+        "solve_ivp_orchestration_residual_seconds": 0.0467109921137305
+      },
+      "solver_components_seconds": {
+        "active_event_detection_seconds": 0.00187693443876924,
+        "dense_output_build_outside_rhs_seconds": 1.6116988263092935e-05,
+        "dense_output_evaluation_seconds": 5.1697476010303944e-05,
+        "dop853_step_outside_rhs_seconds": 0.009381563802890014,
+        "event_callback_seconds": 0.00024109492369461805,
+        "rhs_seconds": 0.002187827034504153,
+        "root_algorithm_outside_event_and_dense_seconds": 1.4338416804093868e-05,
+        "solve_ivp_orchestration_residual_seconds": 0.0006748305386281572
+      }
+    }
+  },
+  "inputs": {
+    "case_count": 32,
+    "case_evidence": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/first_flip_compiled_rhs_feasibility.json",
+    "case_evidence_sha256": "2b626a2df2966c0715b1664e3cb517420d41c54638c503eeb00df671c93bd678",
+    "censored_fraction": 0.57470703125,
+    "field_evidence": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/first_flip_compiled_promotion_64.json",
+    "field_evidence_sha256": "9e5267f9b1727542a9a9037a792c54efca3c19751f3deb7137cab4baf3676298",
+    "observed_fraction": 0.42529296875,
+    "repetitions": 5
+  },
+  "method": {
+    "baseline_is_uninstrumented": true,
+    "component_times_are_inclusive": true,
+    "components_are_non_overlapping_after_nested_time_subtraction": true,
+    "profile_instrumentation_is_reported_separately": true,
+    "result_agreement_all_cases": true
+  },
+  "operational_ceiling": {
+    "assumption": "profiled boundary fraction applies only to representative cell compute; compiled RHS, non-evaluation wall, and the difference between ideal four-worker cell compute and measured field evaluation wall are retained",
+    "baseline_median_64_evaluation_seconds": 25.694216410513036,
+    "baseline_median_64_total_seconds": 29.552804582985118,
+    "baseline_non_evaluation_seconds": 3.858588172472082,
+    "component_ceilings": {
+      "active_event_detection_seconds": {
+        "fraction_of_evaluator": 0.14844975267531899,
+        "seconds_per_representative_cell": 0.0028442582296221985,
+        "whole_field_speedup_if_eliminated": 1.1093276787174715,
+        "whole_field_speedup_if_halved": 1.0518305808151844
+      },
+      "dense_output_build_outside_rhs_seconds": {
+        "fraction_of_evaluator": 0.00035775239295084,
+        "seconds_per_representative_cell": 6.8544417857197e-06,
+        "whole_field_speedup_if_eliminated": 1.0002375617448587,
+        "whole_field_speedup_if_halved": 1.0001187667652094
+      },
+      "dense_output_evaluation_seconds": {
+        "fraction_of_evaluator": 0.0011475404368542746,
+        "seconds_per_representative_cell": 2.198657304930407e-05,
+        "whole_field_speedup_if_eliminated": 1.0007624121046297,
+        "whole_field_speedup_if_halved": 1.0003810607896355
+      },
+      "dop853_step_outside_rhs_seconds": {
+        "fraction_of_evaluator": 0.6111460460856039,
+        "seconds_per_representative_cell": 0.011709397555426482,
+        "whole_field_speedup_if_eliminated": 1.6827333244161133,
+        "whole_field_speedup_if_halved": 1.2544916851042986
+      },
+      "event_callback_seconds": {
+        "fraction_of_evaluator": 0.018937530323130523,
+        "seconds_per_representative_cell": 0.0003628381017790616,
+        "whole_field_speedup_if_eliminated": 1.0127323575821165,
+        "whole_field_speedup_if_halved": 1.006325906936485
+      },
+      "post_solve_seconds": {
+        "fraction_of_evaluator": 0.004124375714473765,
+        "seconds_per_representative_cell": 7.902195427433867e-05,
+        "whole_field_speedup_if_eliminated": 1.0027456159710104,
+        "whole_field_speedup_if_halved": 1.0013709259673895
+      },
+      "pre_solve_seconds": {
+        "fraction_of_evaluator": 0.0005187334763611739,
+        "seconds_per_representative_cell": 9.93879701738365e-06,
+        "whole_field_speedup_if_eliminated": 1.0003444963800276,
+        "whole_field_speedup_if_halved": 1.0001722185256845
+      },
+      "rhs_seconds": {
+        "fraction_of_evaluator": 0.1719073171533405,
+        "seconds_per_representative_cell": 0.003293698997364203,
+        "whole_field_speedup_if_eliminated": 1.1288288943686837,
+        "whole_field_speedup_if_halved": 1.0605163217717828
+      },
+      "root_algorithm_outside_event_and_dense_seconds": {
+        "fraction_of_evaluator": 0.0003182730445078031,
+        "seconds_per_representative_cell": 6.098027849787968e-06,
+        "whole_field_speedup_if_eliminated": 1.0002113403548634,
+        "whole_field_speedup_if_halved": 1.000105659012425
+      },
+      "solve_ivp_orchestration_residual_seconds": {
+        "fraction_of_evaluator": 0.042646867642772375,
+        "seconds_per_representative_cell": 0.0008171027709683136,
+        "whole_field_speedup_if_eliminated": 1.029137434736649,
+        "whole_field_speedup_if_halved": 1.0143595176146512
+      }
+    },
+    "fixed_operational_evaluation_residual_seconds": 6.074645649063314,
+    "representative_cell_compute_at_four_worker_ideal_seconds": 19.619570761449722,
+    "required_boundary_acceleration_for_1_5x_whole_field": 2.564622516445244,
+    "scenarios": [
+      {
+        "estimated_evaluation_seconds": 17.62072613186683,
+        "estimated_total_seconds": 21.479314304338914,
+        "estimated_whole_field_speedup": 1.3758728125234112,
+        "removable_component_acceleration": "2x"
+      },
+      {
+        "estimated_evaluation_seconds": 14.92956270565143,
+        "estimated_total_seconds": 18.78815087812351,
+        "estimated_whole_field_speedup": 1.5729490770374706,
+        "removable_component_acceleration": "3x"
+      },
+      {
+        "estimated_evaluation_seconds": 12.776631964679108,
+        "estimated_total_seconds": 16.63522013715119,
+        "estimated_whole_field_speedup": 1.7765201986708477,
+        "removable_component_acceleration": "5x"
+      },
+      {
+        "estimated_evaluation_seconds": 11.161933908949868,
+        "estimated_total_seconds": 15.02052208142195,
+        "estimated_whole_field_speedup": 1.9674951657996855,
+        "removable_component_acceleration": "10x"
+      },
+      {
+        "estimated_evaluation_seconds": 9.547235853220627,
+        "estimated_total_seconds": 13.40582402569271,
+        "estimated_whole_field_speedup": 2.204475049526697,
+        "removable_component_acceleration": "infinite"
+      }
+    ],
+    "theoretical_maximum_whole_field_speedup": 2.204475049526697
+  },
+  "purpose": "attribute remaining promoted compiled first-flip evaluator cost",
+  "source_sha256": {
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/profile_first_flip_post_promotion.py": "4789b758e21ff468c982cce4de9488b563a34e72681b683686bbbc3bac3e9998"
+  },
+  "timestamp_utc": "2026-09-06T10:23:30.012887+00:00",
+  "weighted_profile": {
+    "boundary_fraction_of_evaluator": 0.8230037626011387,
+    "boundary_fraction_of_solve_ivp": 0.8272133855462106,
+    "boundary_outside_rhs_seconds": 0.015768535700480868,
+    "instrumentation_adjusted_solve_ivp_seconds": 0.01906223469784507,
+    "instrumentation_adjusted_solver_components_seconds": {
+      "active_event_detection_seconds": 0.0028442582296221985,
+      "dense_output_build_outside_rhs_seconds": 6.8544417857197e-06,
+      "dense_output_evaluation_seconds": 2.198657304930407e-05,
+      "dop853_step_outside_rhs_seconds": 0.011709397555426482,
+      "event_callback_seconds": 0.0003628381017790616,
+      "rhs_seconds": 0.003293698997364203,
+      "root_algorithm_outside_event_and_dense_seconds": 6.098027849787968e-06,
+      "solve_ivp_orchestration_residual_seconds": 0.0008171027709683136
+    },
+    "instrumentation_excess_seconds": 0.0026323153352159068,
+    "post_solve_seconds": 7.902195427433867e-05,
+    "pre_solve_seconds": 9.93879701738365e-06,
+    "raw_profiled_evaluator_seconds": 0.02179205240694415,
+    "raw_profiled_solve_ivp_seconds": 0.02169951497396383,
+    "raw_profiled_solver_components_seconds": {
+      "active_event_detection_seconds": 0.0028442582296221985,
+      "dense_output_build_outside_rhs_seconds": 6.8544417857197e-06,
+      "dense_output_evaluation_seconds": 2.198657304930407e-05,
+      "dop853_step_outside_rhs_seconds": 0.014170041573567715,
+      "event_callback_seconds": 0.0003628381017790616,
+      "rhs_seconds": 0.003293698997364203,
+      "root_algorithm_outside_event_and_dense_seconds": 6.098027849787968e-06,
+      "solve_ivp_orchestration_residual_seconds": 0.0009887740880429874
+    },
+    "uninstrumented_evaluator_seconds": 0.019159737071728244
+  }
+}
