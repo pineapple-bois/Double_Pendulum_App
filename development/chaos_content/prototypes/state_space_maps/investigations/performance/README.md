@@ -24,14 +24,20 @@ unsupported and ineligible definitions retain the trusted Python RHS. The
 remaining cost concentrated in Python DOP853 stepping/event detection and
 recommends one narrow compiled solver/event-loop prototype. The subsequent
 [native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) passed
-all scientific gates. The subsequent
+all scientific gates. The
 [production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md)
-preserved those gates. The subsequent
+preserved those gates. The
 [bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md)
 measured a strong `5.123×` median whole-field speedup, but rejected default
 promotion because 62 cells per field required max-step recovery and the maximum
 native/compiled event-time difference exceeded the existing gate. The compiled
-RHS + `solve_ivp` route remains the operational default.
+RHS + `solve_ivp` route remains the operational default. The focused
+[equivalence investigation](reports/FIRST_FLIP_NATIVE_DOP853_EQUIVALENCE_INVESTIGATION.md)
+then isolated two bounded first-flip build corrections: strict terminal-step
+clamping plus the DOP853 rejection-factor typo, with SciPy-equivalent controller
+bounds. A temporary corrected build removed all 62 violations and reduced the
+full-grid maximum event-time difference to `7.722e-12 s`; implementation and
+full validation remain a separate next task.
 
 ## Investigation sequence
 
@@ -49,7 +55,8 @@ First-flip lineage: [feasibility](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md
 [post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) →
 [native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) →
 [production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md) →
-[bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md).
+[bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md) →
+[equivalence investigation](reports/FIRST_FLIP_NATIVE_DOP853_EQUIVALENCE_INVESTIGATION.md).
 
 ## Directory guide
 
