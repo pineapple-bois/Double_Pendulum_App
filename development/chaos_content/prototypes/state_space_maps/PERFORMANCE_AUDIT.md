@@ -105,7 +105,7 @@ Occupancy here is `sum(evaluator elapsed)/(4 * sum(tile wall))`. It is not CPU u
 
 ### Whole-run accounting: old and current pool limits
 
-Sources: [1024 manifest](outputs/finite_time_field/002_1024_squared/finite_time_field_1024.json) and [512 T=5 manifest](outputs/finite_time_field/004_Tsweep/data/finite_time_field_512_T5.json).
+Sources: [1024 manifest](outputs/finite_time_field/002_1024_squared/finite_time_field_1024.json) and [512 T=5 manifest](outputs/finite_time_field/005_Tsweep/data/finite_time_field_512_T5.json).
 
 | Recorded component | 1024², former 1,024-cell limit | 512² T=5, current 2,048-cell limit |
 | --- | ---: | ---: |
@@ -127,7 +127,7 @@ Derived upper bounds, holding all other work fixed: eliminating the current run'
 
 ### Horizon sweep: a stronger warning than N alone
 
-Source: `outputs/finite_time_field/004_Tsweep/data/finite_time_field_512_T{1,2,5,10,20}.h5`. These all record Git `9dca046`, 4,096 complete tiles, four workers, a 2,048-cell pool limit, and 262,144 completed-valid cells.
+Source: `outputs/finite_time_field/005_Tsweep/data/finite_time_field_512_T{1,2,5,10,20}.h5`. These all record Git `9dca046`, 4,096 complete tiles, four workers, a 2,048-cell pool limit, and 262,144 completed-valid cells.
 
 | T | Segments/cell | Tile evaluation wall | Mean evaluator ms/cell | Fallback fraction | Recorded nfev/cell/T | Largest recorded worker peak RSS |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
