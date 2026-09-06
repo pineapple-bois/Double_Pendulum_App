@@ -87,7 +87,7 @@ counts, and writes the same values and full provenance to the JSON manifest.
 Render a completed field with the existing persistence-only runner:
 
 ```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field \
+uv run python -m development.chaos_content.prototypes.state_space_maps.runners.render_first_flip_field \
   development/chaos_content/prototypes/state_space_maps/outputs/first_flip_field/first_flip_field_512_T5s.h5
 ```
 

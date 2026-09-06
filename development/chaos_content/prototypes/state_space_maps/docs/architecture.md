@@ -20,7 +20,7 @@ neutral field/domain concepts
         -> concrete generation runner
 
 validated HDF5 artifact
-        -> renderer
+        -> observable-owned renderer
 ```
 
 `../src/state_space_fields.py` owns coordinate-neutral scalar outcomes,
@@ -103,8 +103,9 @@ This is an observable-specific scalar contract rather than a reinterpretation
 of `completed_valid` for every consumer.
 
 The accepted execution values are host- and workload-bounded evidence, not a
-claim that other policies have been validated. The renderer consumes only a
-closed, validated HDF5 artifact and never causes dynamics to run.
+claim that other policies have been validated. The dedicated finite-time
+stretching and first-flip renderers each consume only their own closed,
+validated HDF5 observable and never cause dynamics to run.
 
 ## Observable-development contract
 

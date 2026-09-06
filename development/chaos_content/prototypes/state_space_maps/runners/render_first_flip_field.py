@@ -1,4 +1,9 @@
-"""Render a completed authoritative Lyapunov finite-time field from HDF5."""
+"""Render a completed authoritative first-flip-time field from persisted HDF5.
+
+Future timescale bins and threshold views belong behind explicit functions in
+this module and must derive from the authoritative field within its supported
+horizon. They must not persist redundant scientific fields or run dynamics.
+"""
 
 from __future__ import annotations
 
@@ -27,7 +32,9 @@ matplotlib.rcParams.update(
 )
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.colors import ListedColormap
 from matplotlib.figure import Figure
+from matplotlib.patches import Patch
 
 from ..src.generation.hdf5 import (
     CellState,
@@ -52,7 +59,8 @@ ANGLE_TICK_LABELS = (
     r"$\pi$",
 )
 FIELD_COLORMAP = "magma"
-FINITE_TIME_OBSERVABLE = "one_vector_finite_time_tangent_stretching_rate"
+CENSORED_COLOR = "#43A6C6"
+FIRST_FLIP_OBSERVABLE = "capped_dimensionless_first_flip_time"
 
 
 def derivative_output_paths(dataset_path: Path) -> tuple[Path, Path]:
@@ -63,17 +71,27 @@ def derivative_output_paths(dataset_path: Path) -> tuple[Path, Path]:
 
 
 def build_figure(snapshot: FieldSnapshot) -> Figure:
-    """Build the established periodic finite-time-field presentation."""
+    """Build the established continuous first-flip-time presentation."""
 
     observable = snapshot.metadata["observable_provenance"]["name"]
-    if observable != FINITE_TIME_OBSERVABLE:
+    if observable != FIRST_FLIP_OBSERVABLE:
         raise ValueError(
-            "Finite-time Lyapunov renderer requires observable "
-            f"{FINITE_TIME_OBSERVABLE!r}; got {observable!r}."
+            "First-flip renderer requires observable "
+            f"{FIRST_FLIP_OBSERVABLE!r}; got {observable!r}."
         )
+
     valid = snapshot.status == CellState.COMPLETED_VALID
-    duration = float(snapshot.metadata["numerical_parameters"]["duration_seconds"])
-    visible = np.ma.masked_where(~valid, snapshot.values)
+    horizon = float(
+        snapshot.metadata["numerical_parameters"][
+            "dimensionless_observation_horizon"
+        ]
+    )
+    physical_horizon = float(
+        snapshot.metadata["numerical_parameters"]["observation_horizon_seconds"]
+    )
+    censored = valid & (snapshot.values == horizon)
+    visible = np.ma.masked_where(~valid | censored, snapshot.values)
+
     figure, axis = plt.subplots(figsize=(7.2, 6.0), constrained_layout=True)
     image = axis.imshow(
         visible,
@@ -83,20 +101,44 @@ def build_figure(snapshot: FieldSnapshot) -> Figure:
         aspect="equal",
         cmap=FIELD_COLORMAP,
     )
+    axis.imshow(
+        np.ma.masked_where(~censored, np.ones(snapshot.values.shape)),
+        origin="lower",
+        interpolation="nearest",
+        extent=(-np.pi, np.pi, -np.pi, np.pi),
+        aspect="equal",
+        cmap=ListedColormap((CENSORED_COLOR,)),
+        vmin=0.0,
+        vmax=1.0,
+    )
     axis.set_xticks(ANGLE_TICK_POSITIONS, ANGLE_TICK_LABELS)
     axis.set_yticks(ANGLE_TICK_POSITIONS, ANGLE_TICK_LABELS)
     axis.set_xlabel(r"$\theta_1(0)\;[\mathrm{rad}]$")
     axis.set_ylabel(r"$\theta_2(0)\;[\mathrm{rad}]$")
     axis.set_title(
-        rf"Finite-time one-vector stretching rate, $T={duration:g}\,\mathrm{{s}}$"
+        "Dimensionless first-flip time, "
+        rf"$T_{{\max}}={physical_horizon:g}\,\mathrm{{s}}$, "
+        rf"$\widehat{{T}}_{{\max}}={horizon:g}$"
+    )
+    axis.legend(
+        handles=(
+            Patch(
+                facecolor=CENSORED_COLOR,
+                label=(
+                    "No flip observed by "
+                    rf"$T_{{\max}}={physical_horizon:g}\,\mathrm{{s}}$"
+                ),
+            ),
+        ),
+        loc="upper right",
     )
     colorbar = figure.colorbar(image, ax=axis)
-    colorbar.set_label(r"$\Lambda_T^{(1)}$ [$\mathrm{s}^{-1}$]")
+    colorbar.set_label(r"$\widehat{\tau}_{\mathrm{flip}}$")
     return figure
 
 
 def render_persisted_field(dataset_path: Path) -> dict[str, object]:
-    """Validate and render one complete HDF5 field without running dynamics."""
+    """Validate and render one complete first-flip field without dynamics."""
 
     dataset_path = Path(dataset_path)
     validation = validate_dataset(dataset_path)
@@ -127,8 +169,27 @@ def render_persisted_field(dataset_path: Path) -> dict[str, object]:
         "shape_theta2_theta1": list(snapshot.values.shape),
         "rendered_valid_cells": valid_cells,
         "masked_nonvalid_cells": int(snapshot.values.size - valid_cells),
+        "rendered_censored_cells": int(np.count_nonzero(censored_cells(snapshot))),
         "dynamics_evaluator_imported": False,
     }
+
+
+def censored_cells(snapshot: FieldSnapshot) -> np.ndarray:
+    """Return the explicit right-censored mask from authoritative field data."""
+
+    observable = snapshot.metadata["observable_provenance"]["name"]
+    if observable != FIRST_FLIP_OBSERVABLE:
+        raise ValueError(
+            "First-flip renderer requires observable "
+            f"{FIRST_FLIP_OBSERVABLE!r}; got {observable!r}."
+        )
+    valid = snapshot.status == CellState.COMPLETED_VALID
+    horizon = float(
+        snapshot.metadata["numerical_parameters"][
+            "dimensionless_observation_horizon"
+        ]
+    )
+    return valid & (snapshot.values == horizon)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -137,8 +198,8 @@ def build_parser() -> argparse.ArgumentParser:
         "dataset",
         type=Path,
         help=(
-            "Completed authoritative HDF5 field. PNG and PDF derivatives are "
-            "written beside it with the same filename stem."
+            "Completed authoritative first-flip HDF5 field. PNG and PDF "
+            "derivatives are written beside it with the same filename stem."
         ),
     )
     return parser

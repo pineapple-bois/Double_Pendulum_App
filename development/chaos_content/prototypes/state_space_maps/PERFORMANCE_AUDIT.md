@@ -73,7 +73,7 @@ The compiled segment uses requested-time **endpoints**, not the interior uniform
 
 `reference.py::run_sensitivity_to_lyapunov` computes finite-pair trajectories, tangent traces, positions and pedagogical comparisons. None of that position/finite-shadow rendering work occurs in the operational scalar evaluator. There is no full-spectrum QR hot path to optimise.
 
-`runners/render_finite_time_field.py::render_persisted_field` validates and reads HDF5, builds a Matplotlib `imshow` figure, and saves PNG at 600 dpi plus PDF. It does not invoke science or workers. It also handles the first-flip cap overlay, despite older documentation saying no first-flip renderer exists. The source and tests are the current evidence for this path.
+`runners/render_finite_time_field.py::render_persisted_field` and `runners/render_first_flip_field.py::render_persisted_field` each validate and read their own authoritative HDF5 observable, build a Matplotlib `imshow` figure, and save PNG at 600 dpi plus PDF. Neither invokes science or workers. The first-flip renderer alone owns the censored-cap overlay.
 
 ## Existing performance and provenance evidence
 
@@ -230,7 +230,7 @@ Impact labels describe plausible scope-specific gains, not measured promises. Co
 
 ### L5 — Eliminate duplicate read/validation work, preserving integrity
 
-**Locations:** `src/generation/validation.py::validate_authoritative_field`; `src/generation/hdf5.py::discover_resume_state/assert_dataset_compatible/validate_dataset/read_authoritative_field/_static_issues`; `src/generation/work_units.py::validate_tile_plan`; both field adapters' spot validators; `runners/render_finite_time_field.py::render_persisted_field`.
+**Locations:** `src/generation/validation.py::validate_authoritative_field`; `src/generation/hdf5.py::discover_resume_state/assert_dataset_compatible/validate_dataset/read_authoritative_field/_static_issues`; `src/generation/work_units.py::validate_tile_plan`; both field adapters' spot validators; both observable-owned `runners/render_*_field.py::render_persisted_field` entry points.
 
 **Current work and expense:** final `validate_authoritative_field` invokes compatibility checking, dataset validation and authoritative reading, each of which discovers resume state and checks complete-tile checksums. `run_scalar_field` then discovers resume state again: four post-generation full discovery passes. Lyapunov's oracle reader adds another pass. Rendering does validation followed by reading, hence two. Resume compatibility plus the subsequent discovery also duplicates completed-tile scans. Each static check reads identities one tile at a time and allocates a full uint16 coverage array; the runner's planner validation allocates uint32 coverage. `read_authoritative_field` loads NumPy arrays then explicitly copies them again.
 

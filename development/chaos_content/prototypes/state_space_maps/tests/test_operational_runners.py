@@ -6,6 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import h5py
 import numpy as np
 import pytest
 from matplotlib import colors
@@ -23,11 +24,16 @@ from development.chaos_content.prototypes.state_space_maps.runners.generate_lyap
 from development.chaos_content.prototypes.state_space_maps.runners.render_finite_time_field import (
     ANGLE_TICK_LABELS,
     ANGLE_TICK_POSITIONS,
-    CENSORED_COLOR,
     FIELD_COLORMAP,
     build_figure,
     derivative_output_paths,
     render_persisted_field,
+)
+from development.chaos_content.prototypes.state_space_maps.runners.render_first_flip_field import (
+    CENSORED_COLOR,
+    build_figure as build_first_flip_figure,
+    derivative_output_paths as first_flip_derivative_output_paths,
+    render_persisted_field as render_first_flip_field,
 )
 from development.chaos_content.prototypes.state_space_maps.src.generation import (
     CellState,
@@ -417,6 +423,50 @@ def _synthetic_completed_field(path: Path) -> None:
     )
 
 
+def _synthetic_completed_first_flip_field(path: Path) -> None:
+    definition = FieldDefinition(
+        theta1_axis=(-math.pi, 0.0),
+        theta2_axis=(-math.pi, 0.0),
+        coordinate_unit="radians",
+        periodic=True,
+        periodic_interval="[-pi, pi)",
+        nominal_tile_shape=(2, 2),
+        observable_provenance={"name": "capped_dimensionless_first_flip_time"},
+        physical_parameters={},
+        numerical_parameters={
+            "dimensionless_observation_horizon": 10.0,
+            "observation_horizon_seconds": 3.0,
+        },
+        evaluator_provenance={"name": "synthetic_first_flip_fixture"},
+        software_provenance={"revision": "test"},
+        route_vocabulary=((0, "not_yet_computed"), (1, "synthetic")),
+    )
+    plan = plan_tiles(definition.field_shape, TileShape(2, 2))
+    create_dataset(path, definition, tuple(unit.bounds for unit in plan))
+    write_completed_tile(
+        path,
+        0,
+        CompletedTile(
+            bounds=plan[0].bounds.as_tuple,
+            values=np.asarray(((1.0, 10.0), (3.0, 10.0)), dtype="<f8"),
+            status=np.full((2, 2), CellState.COMPLETED_VALID, dtype=np.uint8),
+            execution_route=np.ones((2, 2), dtype=np.uint8),
+            attempt=1,
+            evaluation_seconds=0.0,
+            diagnostics={"fixture": True},
+            provenance={
+                "fixture": "first_flip_rendering",
+                "execution_policy": {
+                    "process_start_method": "spawn",
+                    "process_width": 4,
+                    "per_cell_chunksize": 1,
+                    "maximum_cells_per_pool": 2048,
+                },
+            },
+        ),
+    )
+
+
 def test_renderer_writes_derivatives_from_completed_old_policy_hdf5(
     tmp_path: Path,
 ) -> None:
@@ -468,7 +518,7 @@ def test_renderer_uses_tex_pi_ticks_and_linear_magma_scale(tmp_path: Path) -> No
     matplotlib.pyplot.close(figure)
 
 
-def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation() -> None:
+def test_first_flip_renderer_distinguishes_censored_cells_without_reorientation() -> None:
     import matplotlib
 
     values = np.asarray(((1.0, 10.0), (3.0, 10.0)))
@@ -490,7 +540,7 @@ def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation(
         },
     )
 
-    figure = build_figure(snapshot)
+    figure = build_first_flip_figure(snapshot)
     axis = figure.axes[0]
     observed_image, censored_image = axis.images
 
@@ -505,7 +555,19 @@ def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation(
     )
     assert observed_image.origin == censored_image.origin == "lower"
     assert observed_image.get_extent() == censored_image.get_extent()
+    assert observed_image.get_interpolation() == "none"
+    assert censored_image.get_interpolation() == "nearest"
     assert censored_image.get_cmap()(0.5) == colors.to_rgba(CENSORED_COLOR)
+    np.testing.assert_allclose(axis.get_xticks(), ANGLE_TICK_POSITIONS)
+    np.testing.assert_allclose(axis.get_yticks(), ANGLE_TICK_POSITIONS)
+    assert [label.get_text() for label in axis.get_xticklabels()] == list(
+        ANGLE_TICK_LABELS
+    )
+    assert [label.get_text() for label in axis.get_yticklabels()] == list(
+        ANGLE_TICK_LABELS
+    )
+    assert axis.get_xlabel() == r"$\theta_1(0)\;[\mathrm{rad}]$"
+    assert axis.get_ylabel() == r"$\theta_2(0)\;[\mathrm{rad}]$"
     assert axis.get_title() == (
         "Dimensionless first-flip time, "
         r"$T_{\max}=3\,\mathrm{s}$, $\widehat{T}_{\max}=10$"
@@ -515,7 +577,58 @@ def test_renderer_distinguishes_censored_first_flip_cells_without_reorientation(
     matplotlib.pyplot.close(figure)
 
 
-def test_renderer_refuses_an_incomplete_field(tmp_path: Path) -> None:
+def test_first_flip_renderer_writes_derivatives_without_dynamics(tmp_path: Path) -> None:
+    dataset = tmp_path / "first_flip_field_2.h5"
+    _synthetic_completed_first_flip_field(dataset)
+
+    result = render_first_flip_field(dataset)
+    png_path, pdf_path = first_flip_derivative_output_paths(dataset)
+
+    assert result["shape_theta2_theta1"] == [2, 2]
+    assert result["rendered_valid_cells"] == 4
+    assert result["rendered_censored_cells"] == 2
+    assert result["masked_nonvalid_cells"] == 0
+    assert result["dynamics_evaluator_imported"] is False
+    assert png_path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
+    assert pdf_path.read_bytes().startswith(b"%PDF")
+
+
+def test_renderers_reject_the_other_observable(tmp_path: Path) -> None:
+    lyapunov = tmp_path / "lyapunov.h5"
+    first_flip = tmp_path / "first_flip.h5"
+    _synthetic_completed_field(lyapunov)
+    _synthetic_completed_first_flip_field(first_flip)
+
+    with pytest.raises(ValueError, match="First-flip renderer requires observable"):
+        render_first_flip_field(lyapunov)
+    with pytest.raises(ValueError, match="Finite-time Lyapunov renderer requires observable"):
+        render_persisted_field(first_flip)
+
+
+@pytest.mark.parametrize(
+    ("observable", "numerical_parameters", "renderer"),
+    (
+        (
+            "one_vector_finite_time_tangent_stretching_rate",
+            {"duration_seconds": 5.0},
+            render_persisted_field,
+        ),
+        (
+            "capped_dimensionless_first_flip_time",
+            {
+                "dimensionless_observation_horizon": 10.0,
+                "observation_horizon_seconds": 3.0,
+            },
+            render_first_flip_field,
+        ),
+    ),
+)
+def test_renderer_refuses_an_incomplete_field(
+    tmp_path: Path,
+    observable: str,
+    numerical_parameters: dict[str, float],
+    renderer,
+) -> None:
     definition = FieldDefinition(
         theta1_axis=(-math.pi, 0.0),
         theta2_axis=(-math.pi, 0.0),
@@ -523,9 +636,9 @@ def test_renderer_refuses_an_incomplete_field(tmp_path: Path) -> None:
         periodic=True,
         periodic_interval="[-pi, pi)",
         nominal_tile_shape=(2, 2),
-        observable_provenance={"name": "synthetic"},
+        observable_provenance={"name": observable},
         physical_parameters={},
-        numerical_parameters={"duration_seconds": 5.0},
+        numerical_parameters=numerical_parameters,
         evaluator_provenance={"name": "synthetic"},
         software_provenance={"revision": "test"},
         route_vocabulary=((0, "not_yet_computed"), (1, "synthetic")),
@@ -535,7 +648,33 @@ def test_renderer_refuses_an_incomplete_field(tmp_path: Path) -> None:
     create_dataset(path, definition, tuple(unit.bounds for unit in plan))
 
     with pytest.raises(RuntimeError, match="incomplete authoritative field"):
-        render_persisted_field(path)
+        renderer(path)
+
+
+@pytest.mark.parametrize(
+    ("name", "fixture", "renderer"),
+    (
+        ("lyapunov", _synthetic_completed_field, render_persisted_field),
+        (
+            "first_flip",
+            _synthetic_completed_first_flip_field,
+            render_first_flip_field,
+        ),
+    ),
+)
+def test_renderer_refuses_a_checksum_invalid_field(
+    tmp_path: Path,
+    name: str,
+    fixture,
+    renderer,
+) -> None:
+    path = tmp_path / f"{name}.h5"
+    fixture(path)
+    with h5py.File(path, "r+") as handle:
+        handle["field/values"][0, 0] = 99.0
+
+    with pytest.raises(RuntimeError, match="failed integrity validation"):
+        renderer(path)
 
 
 def test_renderer_import_does_not_load_lyapunov_modules() -> None:
@@ -548,6 +687,25 @@ def test_renderer_import_does_not_load_lyapunov_modules() -> None:
         "assert not any(name.startswith("
         "'development.chaos_content.prototypes.state_space_maps.src.lyapunov'"
         ") for name in sys.modules)"
+    )
+    subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=REPOSITORY_ROOT,
+        check=True,
+    )
+
+
+def test_first_flip_renderer_import_does_not_load_dynamics_modules() -> None:
+    module = (
+        "development.chaos_content.prototypes.state_space_maps.runners."
+        "render_first_flip_field"
+    )
+    script = (
+        f"import {module}; import sys; "
+        "assert not any(name.startswith(("
+        "'development.chaos_content.prototypes.state_space_maps.src.lyapunov',"
+        "'development.chaos_content.prototypes.state_space_maps.src.first_flip'"
+        ")) for name in sys.modules)"
     )
     subprocess.run(
         [sys.executable, "-c", script],
