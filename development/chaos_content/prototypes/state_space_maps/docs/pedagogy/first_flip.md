@@ -89,6 +89,14 @@ observed by $T_{\max}$” as its own class. This is a pedagogical representation
 of the existing field, not a new numerical experiment. Bin boundaries are
 declared presentation choices rather than new physical laws.
 
+For the supported continuous $\widehat H=100$ field, this remains an ordinary
+derived view. The investigated $\widehat H=1000$ and $10000$ extension is
+different: it requires agreement among already-computed trusted-policy
+outcomes. Its learner-facing vocabulary must separately show energy
+inaccessibility, unanimous finite-time censoring, and numerical disagreement.
+`NUMERICALLY_UNRESOLVED` is part of the honest long-horizon representation; it
+must not be replaced by one preferred trajectory or merged into no-event.
+
 Bins expose broad timescale organization, but they do not directly answer
 whether a flip has happened by one particular time. That warrants a threshold
 view.

@@ -65,6 +65,9 @@ artifact without rerunning dynamics.
 - [First-flip logarithmic-class convergence investigation](investigations/first_flip_log_class_convergence/)
   tests exact-time, decade, horizon-outcome, arm, and signed-surface agreement
   across three trusted policies through dimensionless horizon 10000.
+- [First-flip logarithmic-consensus demonstration](demonstrations/first_flip_logarithmic_consensus/)
+  executes a non-scientific all-classes fixture through the pure consensus
+  layer and dedicated categorical renderer without invoking dynamics.
 - [Sensitivity to Lyapunov storyboard](docs/pedagogy/sensitivity_to_lyapunov.md)
   presents the teaching progression from nearby trajectories to renormalised
   finite-time stretching.

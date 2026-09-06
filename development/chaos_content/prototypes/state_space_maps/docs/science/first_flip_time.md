@@ -165,6 +165,70 @@ are satisfied. Finite-time stretching is not derived from first-flip data: it
 is a separate tangent-space sensitivity observable with its own authoritative
 field and claim boundary.
 
+## Long-horizon consensus classification
+
+The convergence investigations establish a second, consciously distinct data
+path:
+
+```text
+authoritative continuous first-flip primitive
+    !=
+long-horizon first-flip consensus classification
+```
+
+Continuous first-flip time is authoritative through the validated
+$\widehat H=100$ envelope. At $\widehat H=1000$ and $10000$, neither exact
+event time nor a single-policy logarithmic class is universally reproducible.
+The supported long-horizon scaffold therefore accepts already-computed results
+from multiple trusted policies and returns one of these classes:
+
+- `tau_hat_lt_1`;
+- `tau_hat_1_to_10`;
+- `tau_hat_10_to_100`;
+- `tau_hat_100_to_1000`;
+- `tau_hat_1000_to_10000`;
+- `no_flip_observed_by_h10000`;
+- `energy_inaccessible`;
+- `numerically_unresolved`.
+
+The time intervals are half-open. Exact values 1, 10, 100, and 1000 enter the
+decade beginning at that value. Equality at 10000 is not an observed-before-
+horizon event and enters `no_flip_observed_by_h10000`, consistent with the
+strict capped-field convention. Consequently, a policy record locating a root
+at exactly 10000 and a policy reporting right-censoring agree on the supported
+strict learner-facing outcome; an event strictly before 10000 versus censoring
+remains unresolved.
+
+For the current equal-link, equal-mass, zero-velocity system only,
+
+$$
+E_0<-g
+\quad\Longleftrightarrow\quad
+2\cos\theta_1(0)+\cos\theta_2(0)>1
+$$
+
+gives `energy_inaccessible`. The inequality is strict and is a necessary
+accessibility condition, not a sufficient flipping condition. Unanimous
+trusted-policy censoring outside that mask gives
+`no_flip_observed_by_h10000`; it makes no permanent non-flipping claim.
+Policy disagreement about decade or event/censor outcome, or any unusable
+policy result, gives `numerically_unresolved`. No preferred policy breaks a
+tie. An observed event inside the rigorous inaccessible mask is a numerical or
+contract contradiction and is likewise unresolved rather than concealed.
+
+A future long-horizon generator must preserve enough information to audit:
+
+- the exact zero-velocity energy classification and its declared assumptions;
+- every policy identifier, numerical provenance, primitive event/censor
+  outcome, dimensionless event time and event attribution when observed, and
+  validity result;
+- the derived consensus class and the fact of any disagreement;
+- the supported horizon and boundary convention.
+
+This requirement does not yet freeze an HDF5 layout. The consensus class is a
+derived pedagogical product with separate provenance, not a replacement for a
+continuous primitive field.
+
 ## Supported claims
 
 First-flip time answers when a specified macroscopic event occurs, or what is

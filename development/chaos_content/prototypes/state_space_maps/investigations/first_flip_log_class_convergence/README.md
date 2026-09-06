@@ -27,3 +27,6 @@ The case list is checksummed to the previous 128×128 exploratory evidence. The
 new evidence in turn records the case-definition and diagnostic checksums, the
 full physical/numerical contract, every policy result, every gate outcome, and
 the derived convergence analysis.
+
+The resulting bounded semantic implementation is exercised by the
+[non-scientific logarithmic-consensus demonstration](../../demonstrations/first_flip_logarithmic_consensus/).

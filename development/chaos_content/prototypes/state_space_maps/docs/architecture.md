@@ -107,6 +107,24 @@ claim that other policies have been validated. The dedicated finite-time
 stretching and first-flip renderers each consume only their own closed,
 validated HDF5 observable and never cause dynamics to run.
 
+The long-horizon first-flip scaffold adds a separate post-processing seam:
+
+```text
+already-computed trusted-policy outcomes
+        -> pure consensus classification
+        -> dedicated categorical rendering function
+```
+
+`../src/logarithmic_first_flip.py` owns the fixed $\widehat H=10000$ class
+vocabulary, strict decade boundaries, current zero-velocity energy criterion,
+and unanimous-or-unresolved rule. It imports no dynamics or persistence.
+`../runners/render_first_flip_field.py` continues to own the established
+continuous renderer and now also exposes an explicit categorical figure
+function. The categorical function accepts consensus classes only: it neither
+accepts a continuous `FieldSnapshot` nor infers multi-policy agreement from a
+single field. No production generator or persisted schema is implied by this
+scaffold.
+
 ## Observable-development contract
 
 Future observable work follows this hierarchy:
