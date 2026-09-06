@@ -53,9 +53,12 @@ artifact without rerunning dynamics.
   generation, execution, persistence, and scientific-consumer boundaries.
 - [Finite-time one-vector stretching](docs/science/finite_time_stretching.md)
   defines the current observable, its provenance, and its claim boundary.
-- [First-flip-time field and pilot](docs/science/first_flip_time.md) defines the
-  promoted physical observable, capped-censor persistence contract, and 32×32
-  pilot evidence.
+- [First-flip time](docs/science/first_flip_time.md) defines the physical
+  observable, dimensionless scaling, censoring, authoritative field contract,
+  and supported derived quantities.
+- [First-flip teaching progression](docs/pedagogy/first_flip.md) separates the
+  physical event, timescale, threshold sequence, and later sensitivity
+  comparison into learner-facing questions.
 - [Sensitivity to Lyapunov storyboard](docs/pedagogy/sensitivity_to_lyapunov.md)
   presents the teaching progression from nearby trajectories to renormalised
   finite-time stretching.
@@ -92,8 +95,8 @@ The first-flip rendering uses $\widehat{\tau}_{\mathrm{flip}}$ for observed
 values and a separate labelled colour for “no flip observed by $T_{\max}$.” It
 shows both the physical and dimensionless horizons and does not imply that a
 censored trajectory never flips. The accepted 32×32, 5 s pilot remains under
-`outputs/first_flip_pilot/`; its complete scientific and measured-evidence
-record is in the [first-flip pilot document](docs/science/first_flip_time.md).
+`outputs/first_flip_pilot/` as historical evidence; the current scientific
+contract is in the [first-flip reference](docs/science/first_flip_time.md).
 The 512×512 command above demonstrates the operational interface; it is not a
 recommendation to run that resolution before choosing a horizon from evidence.
 

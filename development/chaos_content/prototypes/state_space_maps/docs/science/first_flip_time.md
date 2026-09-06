@@ -1,224 +1,173 @@
-# First-flip-time field and 32×32 pilot
+# First-flip time
 
-This document records the narrow promotion of the accepted
-[Experiment 020](../../../../experiments/physical_observables/020_first_flip_event_contract/README.md)
-physical observable into the state-space-map prototype and the first persisted
-pilot evidence. The same runner now supports arbitrary practical resolutions
-and physical horizons; this document does not choose categorical views or a
-production map resolution.
+This document defines the first-flip scientific quantity, its accepted claim
+boundary, and its authoritative field representation. The
+[first-flip pedagogy](../pedagogy/first_flip.md) owns why these data are shown
+to a learner and in what order. The trusted contract originates in
+[Experiment 020](../../../../experiments/physical_observables/020_first_flip_event_contract/README.md).
 
-## Promoted observable and scope
+## Physical event
 
-The physical state is ordered as
+The simple-model physical state is
 
 $$
 x=(\theta_1,\theta_2,\omega_1,\omega_2),
 $$
 
-where both angles are absolute link orientations measured from the downward
-vertical. The field fixes $\omega_1(0)=\omega_2(0)=0$ and samples the existing
-half-open periodic domain $[-\pi,\pi)\times[-\pi,\pi)$.
+where $\theta_1$ and $\theta_2$ are absolute link orientations measured from
+the downward vertical. The solver evolves both angles as continuous lifted
+coordinates. They are not wrapped modulo $2\pi$ during integration.
 
-For continuous lifted solver angles,
-
-$$
-\Delta_i(t)=\theta_i(t)-\theta_i(0),
-$$
-
-and first flip is the first completed link revolution
+For each link, define its signed displacement from its initial lift:
 
 $$
-\tau_{\mathrm{flip}}
+\Delta_i(t)=\theta_i(t)-\theta_i(0), \qquad i\in\{1,2\}.
+$$
+
+A first flip is the first completed net revolution by either link:
+
+$$
+\tau_{\mathrm{flip}}(x_0)
 =
 \inf\left\{
 t>0:\max_{i\in\{1,2\}}|\Delta_i(t)|=2\pi
 \right\}.
 $$
 
-The implementation in `../../src/first_flip/reference.py` is a direct promotion
-of Experiment 020's four signed, positive-crossing terminal event surfaces. It uses
-the continuous four-state `EulerLagrangeDynamics.flow`; it does not use angular
-rebasing, the segmented Lyapunov driver, tangent/JVP evolution, or QR machinery.
-The accepted claim remains limited to transversal, numerically separated events
-in the equal-link simple model. True grazing completeness and unresolved
-simultaneous attribution are not claimed.
+This is displacement relative to the initial orientation, not accumulated path
+length. It is not first passage through the upright position, wrapped angular
+difference, relative elbow rotation, or a measure of chaos.
 
-For $\ell_1=\ell_2=\ell$, the gravitational time is
+The four signed event surfaces are
+
+$$
+\phi_{i,s}(t)=s\Delta_i(t)-2\pi,
+\qquad i\in\{1,2\},\quad s\in\{-1,+1\}.
+$$
+
+Each is a terminal event with positive crossing direction. The earliest
+qualifying root determines the event time. Its identity records the link and
+sign: `arm1-`, `arm1+`, `arm2-`, or `arm2+`. The accepted scientific scope is
+transversal, numerically separated events in the equal-link simple model.
+Grazing completeness and unresolved simultaneous-event attribution are not
+claimed.
+
+## Dimensionless event time
+
+For equal link lengths $\ell_1=\ell_2=\ell$, the gravitational timescale is
 
 $$
 t_g=\sqrt{\frac{\ell}{g}},
 $$
 
-and the observed event scalar is
+and the dimensionless representation of an observed event is
 
 $$
-\widehat{\tau}_{\mathrm{flip}}
-=
-\frac{\tau_{\mathrm{flip}}}{t_g}.
+\widehat{\tau}_{\mathrm{flip}}(x_0)
+=\frac{\tau_{\mathrm{flip}}(x_0)}{t_g}.
 $$
 
-Unequal-link nondimensionalisation remains out of scope.
+$\tau_{\mathrm{flip}}$ and $\widehat{\tau}_{\mathrm{flip}}$ represent the
+same physical event time in different units; they are not different numerical
+experiments. The current contract rejects unequal-link nondimensionalisation
+rather than silently choosing a reference length.
 
-## Censoring and persistence contract
+## Bounded observation and outcomes
 
-The existing schema is sufficient without adding a mask because the
-authoritative scalar is deliberately capped:
+Every evaluation has a finite observation horizon $T_{\max}$. There are four
+distinct outcomes:
+
+- `event_observed`: a qualifying root was located and attributed;
+- `right_censored`: integration completed successfully with no qualifying root
+  observed by $T_{\max}$;
+- `solver_failure`: integration did not complete under the solver contract;
+- `invalid_integration`: integration completed but failed a scientific or
+  structural validity gate.
+
+“No flip observed by $T_{\max}$” is right-censoring. It is not evidence that
+the trajectory never flips. Solver failure and invalidity are not censoring and
+must not be represented as no-event outcomes.
+
+The trusted result preserves dimensional and dimensionless event time when
+observed, event state and identity, all four surface residuals, attribution,
+integration endpoint, solver diagnostics, energy drift, and maximum accepted
+angular increment. The trusted Python `solve_ivp` implementation remains an
+independent scientific oracle. Faster production routes must reproduce this
+contract and fail closed through the established recovery hierarchy.
+
+## Authoritative field data
+
+On the periodic initial-angle slice with zero initial angular velocities, the
+authoritative persisted scalar is
 
 $$
-v=\min\left(\widehat{\tau}_{\mathrm{flip}},\widehat{T}_{\max}\right).
+v(x_0)=\min\left(
+\widehat{\tau}_{\mathrm{flip}}(x_0),
+\widehat{T}_{\max}
+\right).
 $$
 
-On a `completed_valid` cell:
+For a `completed_valid` cell:
 
-- $v<\widehat{T}_{\max}$ means a first flip was observed strictly before the
-  horizon;
-- $v=\widehat{T}_{\max}$ means right-censored: no flip was observed by the
-  horizon.
+- $v<\widehat{T}_{\max}$ stores an observed dimensionless first-flip time;
+- $v=\widehat{T}_{\max}$ stores a right-censored observation.
 
-`completed_invalid` and `execution_error` remain separate HDF5 cell states with
-non-authoritative NaN values. Censoring is therefore never represented as an
-error or NaN. This exact cap contract supports lossless later derivation of
+Invalid and failed cells use their distinct persisted statuses and do not
+contribute authoritative scalar values. The field also preserves axes,
+orientation, physical and numerical definition, implementation/route
+provenance, checksums, and resume state. Consequently, the authoritative data
+product is not merely an image and is not interchangeable with one of its
+renderings.
+
+The equality-at-cap convention follows Experiment 020: a numerical value
+coincident with the cap belongs to the censored class. An inclusive event
+exactly at $T_{\max}$ cannot be recovered from the capped scalar alone; a
+future need for that distinction would require an explicit scientifically
+validated data contract, not reinterpretation of existing fields.
+
+## Primitive and derived quantities
+
+The primitive scientific measurement is the bounded trajectory outcome,
+including $\tau_{\mathrm{flip}}$ and event data when a flip is observed. Its
+dimensionless form is a unit transformation. The capped, status-bearing HDF5
+field is the authoritative data product over the declared grid and horizon.
+
+The following are derived representations when their required information is
+already present:
+
+- continuous or logarithmic display of observed $\widehat{\tau}_{\mathrm{flip}}$;
+- discrete timescale bins, with censoring kept as a separate class;
+- a threshold outcome at a supported horizon;
+- comparisons among supported thresholds.
+
+A mathematical inclusive threshold may be written
 
 $$
-\mathbb{1}\!\left[\tau_{\mathrm{flip}} < H\right]
+F_T(x_0)=\mathbf{1}[\tau_{\mathrm{flip}}(x_0)\leq T].
 $$
 
-for $0 < H\leq T_{\max}$ on valid cells, and arbitrary logarithmic or categorical
-views within the same horizon, without reintegration. It does not distinguish an
-inclusive root numerically coincident with the cap; Experiment 020 explicitly
-recommended assigning numerical equality to the censored class. An explicit
-event-observed mask would be justified only if that inclusive endpoint question
-becomes scientifically necessary.
+The current capped field's lossless operational predicate is the documented
+strict “event before $H$” form
 
-The HDF5 file retains explicit axes, `[theta2_index, theta1_index]` orientation,
-physical/numerical/evaluator/software provenance, route and status vocabularies,
-8×8 tile bounds, checksums, attempts, timings, diagnostics, and resume state.
-The JSON sidecar is a readable derivative.
+$$
+F^-_H(x_0)=\mathbf{1}[v(x_0)<\widehat H],
+\qquad 0<H\leq T_{\max},
+$$
 
-## Reused architecture
+where $\widehat H=H/t_g$, with numerical equality assigned to the
+not-observed-by-$H$ class. A derived view must state which boundary convention
+it uses. It must never claim a
+threshold beyond its source field's $T_{\max}$, because censored cells contain
+no later event time.
 
-`src/first_flip/field_adapter.py` supplies only the observable-specific binding.
-The existing neutral machinery supplies the periodic grid, cell tasks,
-four-worker spawn execution, chunksize-one dispatch, 8×8 tiling,
-coordinator-owned writes, checksummed completion, fail-closed resume, and final
-field validation. No parallel generation or persistence architecture and no
-HDF5 schema revision were introduced.
+Timescale bins and threshold maps do not require new dynamics when these rules
+are satisfied. Finite-time stretching is not derived from first-flip data: it
+is a separate tangent-space sensitivity observable with its own authoritative
+field and claim boundary.
 
-The adapter applies Experiment 020's evidence-derived residual, energy-drift,
-and accepted-angular-increment gates. Nonunique event attribution and exactly
-zero crossing speed fail closed because they are outside the accepted scope.
-The pilot records the minimum observed crossing speed and competing-surface
-margin as diagnostics; those extrema are evidence for follow-up, not new grazing
-or tie tolerances.
+## Supported claims
 
-## Pilot configuration
-
-The pilot was created on 2026-09-04 with:
-
-- 32 samples per axis, 1,024 cells total;
-- exact half-open axes $\theta_k=-\pi+2\pi k/32$;
-- equal-unit parameters $m_1=m_2=1\,\mathrm{kg}$,
-  $\ell_1=\ell_2=1\,\mathrm{m}$, and $g=9.81\,\mathrm{m\,s^{-2}}$;
-- $T_{\max}=5\,\mathrm{s}$ and
-  $\widehat{T}_{\max}=15.6604597634$;
-- DOP853 with `rtol=1e-9`, `atol=1e-11`, and
-  `max_step=t_g/32=0.00997735714 s`;
-- sixteen 8×8 work units and four spawn workers.
-
-The 5 s cap is deliberately the validated Experiment 020 horizon, not a final
-pedagogical choice. The 32×32 resolution is enough to exercise multiple real
-tiles and reveal coarse spatial/cost structure while remaining far below a
-512×512 calculation.
-
-## Pilot evidence
-
-| Quantity | Result |
-| --- | ---: |
-| Observed first flips | 450 (43.9453%) |
-| Right-censored | 574 (56.0547%) |
-| Completed-invalid | 0 |
-| Execution errors | 0 |
-| Observed $\tau$ minimum / median / maximum | 1.131105 / 2.374938 / 4.999728 s |
-| Observed $\widehat{\tau}$ minimum / median / maximum | 3.542725 / 7.438523 / 15.659608 |
-| Summed RHS evaluations | 4,945,310 |
-| Per-cell RHS evaluations minimum / median-of-tile-medians / maximum | 1,385 / 5,409.5 / 6,158 |
-| Per-cell integration wall minimum / median-of-tile-medians / maximum | 0.0128 / 0.0548 / 0.1484 s |
-| Maximum event-surface residual | $1.07\times10^{-14}$ |
-| Maximum normalized energy drift | $3.58\times10^{-10}$ |
-| Maximum accepted angular increment | 0.1354 rad |
-| Create-run wall time | 17.526 s |
-| Full operation including stricter spot checks | 20.143 s |
-| Generation throughput | 58.43 cells/s |
-| Tile evaluation time minimum / median / maximum | 0.480 / 0.863 / 1.099 s |
-| Maximum/median tile-time ratio | 1.273 |
-| Minimum detected event crossing speed | 0.123263 rad s$^{-1}$ |
-| Minimum competing-surface margin | 0.279336 rad |
-
-Ten events occurred within the final 0.1 s before the cap, so horizon-boundary
-classification is already relevant at this coarse resolution. The field is not
-spatially uniform: a central three-column band around $\theta_1(0)=0$ was fully
-censored, while the observed/censored boundary crossed many neighboring cells.
-The sign-reflected capped field agreed to a maximum absolute dimensionless
-difference of $7.80\times10^{-10}$, consistent with the accepted reflection
-symmetry and numerical integration error.
-
-The reported per-cell medians are medians of the sixteen persisted tile
-medians; the schema deliberately does not retain every valid cell diagnostic.
-All sixteen tiles completed on their first attempt. The slowest tile took 1.27
-times the median, which is visible but does not yet indicate severe straggler
-behavior. Censored trajectories generally integrate to the full horizon, while
-observed trajectories terminate early; the nonuniform tile timings are therefore
-expected. The create-run wall time includes about 3.85 s of worker/RHS setup
-and 0.35 s of shutdown, so this pilot is not a basis for extrapolating a 512×512
-runtime from throughput alone.
-
-The runner then compared the mechanically selected index set
-$\{0,16,31\}\times\{0,16,31\}$ against stricter `rtol=1e-11`, `atol=1e-13`
-integrations. All nine classifications agreed: four observed events and five
-censored trajectories. The largest event-time difference was
-$2.72\times10^{-11}\,\mathrm{s}$, well inside Experiment 020's
-$5\times10^{-8}\,\mathrm{s}$ convergence gate. A checksum-valid resume skipped
-all 1,024 cells and left the persisted values unchanged.
-
-The minimum crossing speed of $0.123263\,\mathrm{rad\,s^{-1}}$ is substantially
-below the minimum found by Experiment 020's 13×13 screen. It is nonzero and the
-cell passed the established residual, energy, and step gates, but the pilot has
-not performed local dense-output refinement of that extremal cell. Accordingly,
-the persisted field is accepted as a pilot of the validated transversal method,
-not as new evidence that true grazing detection is solved.
-
-## Artifacts and recommendation
-
-The reusable operational runner is:
-
-```bash
-uv run python -m development.chaos_content.prototypes.state_space_maps.runners.generate_first_flip_periodic_field \
-  --samples-per-axis N \
-  --observation-horizon-seconds T \
-  --create
-```
-
-Its default HDF5/JSON stem contains both `N` and physical `T`, and `--output`
-may select an explicit alternative. A matching `--resume` invocation is
-fail-closed if resolution, horizon, axes, numerical policy, or provenance do
-not match the existing field.
-
-Authoritative field:
-
-```text
-development/chaos_content/prototypes/state_space_maps/outputs/first_flip_pilot/first_flip_field_32_T5s.h5
-```
-
-Readable manifest:
-
-```text
-development/chaos_content/prototypes/state_space_maps/outputs/first_flip_pilot/first_flip_field_32_T5s.json
-```
-
-The next concrete field-generation task should retain 32×32 resolution and run
-a small horizon sweep beyond 5 s, with stricter spot checks and targeted
-refinement of the lowest-crossing-speed cells. That evidence should choose a
-useful cap before increasing resolution. Final logarithmic bins, binary
-products and 512×512 generation remain premature. The existing renderer can
-display any completed first-flip field with observed dimensionless times and a
-separate “no flip observed by $T_{\max}$” censored class.
+First-flip time answers when a specified macroscopic event occurs, or what is
+known not to have occurred by a finite horizon. It supports analysis of event
+timescales and event/no-event partitions over initial conditions. It does not,
+by itself, establish chaos, local instability, or a Lyapunov exponent.

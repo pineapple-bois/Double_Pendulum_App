@@ -3,8 +3,11 @@
 This document owns the software boundaries of the prototype. See the
 [prototype README](../README.md) for operation and the
 [finite-time-stretching reference](science/finite_time_stretching.md) and
-[first-flip pilot](science/first_flip_time.md) for the current observables'
-mathematics and claim boundaries.
+[first-flip reference](science/first_flip_time.md) for the current observables'
+mathematics and claim boundaries. The pedagogy documents for
+[first flip](pedagogy/first_flip.md) and
+[finite-time sensitivity](pedagogy/sensitivity_to_lyapunov.md) own the teaching
+sequence rather than software policy.
 
 ## Dependency direction
 
@@ -102,6 +105,116 @@ of `completed_valid` for every consumer.
 The accepted execution values are host- and workload-bounded evidence, not a
 claim that other policies have been validated. The renderer consumes only a
 closed, validated HDF5 artifact and never causes dynamics to run.
+
+## Observable-development contract
+
+Future observable work follows this hierarchy:
+
+```text
+scientific primitive
+    ↓
+authoritative data product
+    ↓
+derived observable
+    ↓
+pedagogical representation
+```
+
+The scientific primitive states exactly what is measured and which claims it
+supports. A trusted implementation establishes an independent oracle for that
+meaning. The authoritative data product persists the primitive, its finite
+observation limits, statuses, axes, numerical definition, provenance, and
+integrity information. A derived observable uses information already present
+in one or more authoritative products. A pedagogical representation chooses
+how to expose a quantity to answer a learner-facing question; it does not
+silently become a new scientific calculation.
+
+Classify proposed work before choosing implementation machinery:
+
+### A. Derived view
+
+The required information already exists in an authoritative persisted field.
+Transform the validated artifact and preserve its masks, censoring limits, and
+provenance. Do not rerun dynamics. First-flip timescale bins and supported
+event-before-horizon maps are examples.
+
+### B. Existing-trajectory observable
+
+The quantity needs new information during a trajectory, but existing validated
+dynamics and integration semantics can provide it. Define the observer and its
+validity/status contract, establish reference evidence, and reuse validated
+integration infrastructure where the semantics match. Do not introduce a new
+solver merely because the observer is new.
+
+### C. New dynamical experiment
+
+The quantity requires different dynamics, state, perturbation, tangent
+evolution, or integration semantics. Establish a scientifically independent
+trusted reference/oracle first. Reuse validated numerical infrastructure only
+after bounded evidence demonstrates equivalence for the new contract.
+
+The implementation sequence is therefore:
+
+```text
+scientific contract
+    ↓
+trusted oracle
+    ↓
+classify computational requirement
+    ↓
+reuse validated fast infrastructure where semantics match
+    ↓
+bounded equivalence validation
+    ↓
+production promotion only when scientific and operational gates pass
+```
+
+Do not repeat a naive performance-optimization ladder merely because an
+observable is new. The trusted implementation exists to establish scientific
+correctness and independence, not to prescribe the eventual production cost.
+Where an already validated numerical primitive has matching semantics, reuse it
+rather than rediscovering Python → compiled RHS → native solver optimization
+from scratch. Infrastructure must never redefine the mathematics to enable
+that reuse.
+
+## Roadmap mapping
+
+The [prototype roadmap](../../ROADMAP.md) maps onto this contract as follows:
+
+- **Step 1 — Define the first-flip event contract:** the primitive physical
+  observable and trusted reference.
+- **Step 2 — Generate a first-flip-time map:** the authoritative persisted
+  event-time data product, including dimensionless scaling and censoring.
+- **Step 3 — Derive binary flip-threshold maps:** timescale and threshold views
+  derived from authoritative first-flip data where the chosen horizon is
+  supported; no dynamics rerun.
+- **Step 4 — Finite-time stretching as a function of observation window:** a
+  separate tangent-space sensitivity observable and authoritative field series.
+- **Step 5 — Compare physical-event geometry with sensitivity geometry:** a
+  comparative pedagogical analysis of distinct authoritative fields, not a
+  conflation of event time and instability.
+- **Step 6 — Compound-model comparison:** a model-specific first-flip contract
+  and validation step before any simple-model implementation or conclusion is
+  claimed to transfer.
+
+## Guarded first-flip routes
+
+The first-flip consumer retains three scientifically equivalent but
+operationally distinct implementations. The independent Python `solve_ivp`
+route is the trusted oracle. Compiled-RHS + `solve_ivp` preserves that event
+solver while accelerating the physical RHS. For the exact validated standard
+equal-link/unit-parameter, zero-velocity, T=5 definition on a supported build,
+the native DOP853 event loop is the guarded production default. Native
+unavailability or accepted numerical rejection recovers through compiled-RHS
+`solve_ivp`, then trusted Python where required; programming errors still
+propagate.
+
+Accepted routes and prior attempts have distinct provenance. Because route and
+build identity are part of the static field definition, native, compiled, and
+trusted fields do not silently resume one another. This performance hierarchy
+does not change the four signed event surfaces, lifted-angle convention,
+censoring, diagnostics, or authoritative scalar contract described in the
+[science document](science/first_flip_time.md).
 
 ## Guarded S1 Lyapunov route
 
