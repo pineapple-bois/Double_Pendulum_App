@@ -46,10 +46,12 @@ def _task(theta1: float = -2.6179938779914944, theta2: float = -2.61799387799149
 
 
 def test_native_dispatch_and_exact_ineligible_route() -> None:
-    native = first_flip_evaluator_binding(FirstFlipFieldSpec())
+    native = first_flip_evaluator_binding(FirstFlipFieldSpec(), enable_native_candidate=True)
+    default = first_flip_evaluator_binding(FirstFlipFieldSpec())
     compiled = first_flip_evaluator_binding(FirstFlipFieldSpec(), force_compiled=True)
     trusted = first_flip_evaluator_binding(FirstFlipFieldSpec(observation_horizon_seconds=2.0))
     assert native.execution_routes == (FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
+    assert default.execution_routes == (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
     assert compiled.execution_routes == (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
     assert trusted.execution_routes == (FIRST_FLIP_REFERENCE_EVALUATOR,)
 
@@ -90,7 +92,7 @@ def test_native_initialization_failure_recovers_to_compiled(monkeypatch: pytest.
 
 def test_unsupported_native_and_double_initialization_failure_fail_closed(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(field_adapter, "first_flip_native_support", lambda: {"supported": False, "reason": "fixture"})
-    assert first_flip_evaluator_binding(FirstFlipFieldSpec()).execution_routes[0] == FIRST_FLIP_COMPILED_EVALUATOR
+    assert first_flip_evaluator_binding(FirstFlipFieldSpec(), enable_native_candidate=True).execution_routes[0] == FIRST_FLIP_COMPILED_EVALUATOR
     monkeypatch.setattr(field_adapter, "first_flip_native_support", lambda: {"supported": True, "reason": "fixture"})
     monkeypatch.setattr(field_adapter, "initialize_native_first_flip", lambda _p: (_ for _ in ()).throw(FirstFlipNativeUnavailableError("native unavailable")))
     monkeypatch.setattr(field_adapter, "first_flip_compiled_support", lambda: type("Support", (), {"supported": False})())
@@ -145,8 +147,8 @@ def test_saved_37_cases_pass_production_native_gates() -> None:
 
 def test_native_spawn_resume_and_cross_definition_rejection(tmp_path: Path) -> None:
     native_path = tmp_path / "native.h5"
-    created = run_periodic_first_flip_field(native_path, 2, mode="create")
-    resumed = run_periodic_first_flip_field(native_path, 2, mode="resume")
+    created = run_periodic_first_flip_field(native_path, 2, mode="create", enable_native_candidate=True)
+    resumed = run_periodic_first_flip_field(native_path, 2, mode="resume", enable_native_candidate=True)
     snapshot = read_authoritative_field(native_path)
     assert created.all_workers_stopped and resumed.evaluated_cells == 0
     assert set(np.unique(snapshot.execution_route)) == {3}
@@ -160,9 +162,9 @@ def test_native_spawn_resume_and_cross_definition_rejection(tmp_path: Path) -> N
     run_periodic_first_flip_field(compiled_path, 2, mode="create", force_compiled=True)
     run_periodic_first_flip_field(trusted_path, 2, mode="create", force_trusted=True)
     with pytest.raises(IntegrityError):
-        run_periodic_first_flip_field(compiled_path, 2, mode="resume")
+        run_periodic_first_flip_field(compiled_path, 2, mode="resume", enable_native_candidate=True)
     with pytest.raises(IntegrityError):
-        run_periodic_first_flip_field(trusted_path, 2, mode="resume")
+        run_periodic_first_flip_field(trusted_path, 2, mode="resume", enable_native_candidate=True)
 
 
 def test_native_provenance_records_corrected_dense_source() -> None:

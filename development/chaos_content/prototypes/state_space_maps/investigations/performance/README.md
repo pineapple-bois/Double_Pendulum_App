@@ -26,8 +26,12 @@ recommends one narrow compiled solver/event-loop prototype. The subsequent
 [native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) passed
 all scientific gates. The subsequent
 [production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md)
-preserves those gates; final readiness is pending completion of the broader
-affected regression run recorded in its report.
+preserved those gates. The subsequent
+[bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md)
+measured a strong `5.123×` median whole-field speedup, but rejected default
+promotion because 62 cells per field required max-step recovery and the maximum
+native/compiled event-time difference exceeded the existing gate. The compiled
+RHS + `solve_ivp` route remains the operational default.
 
 ## Investigation sequence
 
@@ -44,7 +48,8 @@ First-flip lineage: [feasibility](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md
 [promotion](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) →
 [post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) →
 [native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) →
-[production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md).
+[production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md) →
+[bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md).
 
 ## Directory guide
 

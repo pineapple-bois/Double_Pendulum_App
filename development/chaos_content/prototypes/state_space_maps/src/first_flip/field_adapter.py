@@ -568,6 +568,7 @@ def first_flip_evaluator_binding(
     *,
     force_trusted: bool = False,
     force_compiled: bool = False,
+    enable_native_candidate: bool = False,
 ) -> EvaluatorBinding:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
@@ -584,7 +585,10 @@ def first_flip_evaluator_binding(
         ).eligible
     )
     native_selected = (
-        compiled_selected and not force_compiled and first_flip_native_support()["supported"]
+        compiled_selected
+        and enable_native_candidate
+        and not force_compiled
+        and first_flip_native_support()["supported"]
     )
     artifact = prepare_first_flip_native_artifact_for_workers() if native_selected else None
     return EvaluatorBinding(
@@ -620,6 +624,7 @@ def periodic_first_flip_field_definition(
     *,
     force_trusted: bool = False,
     force_compiled: bool = False,
+    enable_native_candidate: bool = False,
 ) -> FieldDefinition:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
@@ -636,7 +641,12 @@ def periodic_first_flip_field_definition(
             angular_increment_limit=fixed_spec.maximum_accepted_angular_increment,
         ).eligible
     )
-    native_selected = compiled_selected and not force_compiled and first_flip_native_support()["supported"]
+    native_selected = (
+        compiled_selected
+        and enable_native_candidate
+        and not force_compiled
+        and first_flip_native_support()["supported"]
+    )
     evaluator_provenance = (
         {
             "policy": "native_first_flip_with_compiled_and_trusted_recovery",
@@ -738,14 +748,24 @@ def run_periodic_first_flip_field(
     progress_callback: ProgressCallback | None = None,
     force_trusted: bool = False,
     force_compiled: bool = False,
+    enable_native_candidate: bool = False,
 ) -> FieldRunSummary:
     fixed_spec = spec or FirstFlipFieldSpec()
     return run_scalar_field(
         output_path,
         periodic_first_flip_field_definition(
-            samples_per_axis, fixed_spec, force_trusted=force_trusted, force_compiled=force_compiled
+            samples_per_axis,
+            fixed_spec,
+            force_trusted=force_trusted,
+            force_compiled=force_compiled,
+            enable_native_candidate=enable_native_candidate,
         ),
-        first_flip_evaluator_binding(fixed_spec, force_trusted=force_trusted, force_compiled=force_compiled),
+        first_flip_evaluator_binding(
+            fixed_spec,
+            force_trusted=force_trusted,
+            force_compiled=force_compiled,
+            enable_native_candidate=enable_native_candidate,
+        ),
         execution=execution,
         mode=mode,
         progress_callback=progress_callback,

@@ -7,6 +7,10 @@ the complete affected regression matrix are green. This is readiness for the
 separate bounded field-level acceptance task, not final performance acceptance.
 No repeated 64×64 A/B was run here.
 
+Subsequent result: the separate bounded field validation is recorded in
+`FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md`. It did not accept the candidate
+as the default because the no-fallback and event-time agreement gates failed.
+
 ## Architecture
 
 The exact validated first-flip event loop now lives under `src/first_flip/native/`.
