@@ -6,7 +6,7 @@ import json
 import math
 import platform
 import subprocess
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Sequence
 
@@ -36,12 +36,22 @@ from .reference import (
     gravity_timescale,
     initialize_reference_dynamics,
 )
+from .compiled import (
+    FIRST_FLIP_COMPILED_EVALUATOR,
+    FirstFlipCompiledUnavailableError,
+    first_flip_compiled_eligibility,
+    first_flip_compiled_provenance,
+    first_flip_compiled_support,
+    first_flip_time_compiled,
+    initialize_compiled_rhs,
+)
 
 
 FIRST_FLIP_REFERENCE_EVALUATOR = "solve_ivp_first_flip_reference"
 FIRST_FLIP_ROUTE_VOCABULARY = (
     (0, "not_yet_computed"),
     (1, FIRST_FLIP_REFERENCE_EVALUATOR),
+    (2, FIRST_FLIP_COMPILED_EVALUATOR),
 )
 
 # These are Experiment 020's evidence-derived numerical gates.  They are not
@@ -157,6 +167,8 @@ class FirstFlipSpotValidation:
 
 
 _WORKER_SPEC: FirstFlipFieldSpec | None = None
+_WORKER_COMPILED = False
+_WORKER_COMPILED_FAILURE: FirstFlipCompiledUnavailableError | None = None
 
 
 def initial_state_for_cell(task: ScalarCellTask) -> EulerLagrangeState:
@@ -170,9 +182,29 @@ def initial_state_for_cell(task: ScalarCellTask) -> EulerLagrangeState:
     )
 
 
-def initialize_first_flip_field_worker(spec: FirstFlipFieldSpec) -> None:
-    global _WORKER_SPEC
+def initialize_first_flip_field_worker(
+    spec: FirstFlipFieldSpec, force_trusted: bool = False
+) -> None:
+    global _WORKER_SPEC, _WORKER_COMPILED, _WORKER_COMPILED_FAILURE
     _WORKER_SPEC = spec
+    assert spec.solver is not None
+    eligible = first_flip_compiled_eligibility(
+        spec.parameters,
+        spec.solver,
+        spec.observation_horizon_seconds,
+        energy_drift_limit=spec.energy_drift_limit,
+        event_residual_limit=spec.event_surface_residual_limit,
+        angular_increment_limit=spec.maximum_accepted_angular_increment,
+    ).eligible
+    _WORKER_COMPILED = False
+    _WORKER_COMPILED_FAILURE = None
+    if not force_trusted and eligible and first_flip_compiled_support().supported:
+        try:
+            initialize_compiled_rhs(spec.parameters)
+            _WORKER_COMPILED = True
+            return
+        except FirstFlipCompiledUnavailableError as error:
+            _WORKER_COMPILED_FAILURE = error
     initialize_reference_dynamics(spec.parameters)
 
 
@@ -214,6 +246,9 @@ def _diagnostics(result: FirstFlipResult, outcome: str) -> FirstFlipFieldDiagnos
 def adapt_first_flip_result(
     result: FirstFlipResult,
     spec: FirstFlipFieldSpec,
+    *,
+    evaluator: str = FIRST_FLIP_REFERENCE_EVALUATOR,
+    implementation_provenance: dict[str, object] | None = None,
 ) -> ScalarEvaluation[FirstFlipFieldDiagnostics]:
     """Convert a physical result into the authoritative capped scalar contract."""
 
@@ -229,7 +264,8 @@ def adapt_first_flip_result(
             value=None,
             diagnostics=_diagnostics(result, "solver_failure"),
             elapsed_seconds=result.wall_seconds,
-            evaluator=FIRST_FLIP_REFERENCE_EVALUATOR,
+            evaluator=evaluator,
+            implementation_provenance=implementation_provenance or {},
             error_type="FirstFlipSolverFailure",
             error_message=result.solver_message,
         )
@@ -256,7 +292,8 @@ def adapt_first_flip_result(
             value=None,
             diagnostics=_diagnostics(result, "numerically_invalid"),
             elapsed_seconds=result.wall_seconds,
-            evaluator=FIRST_FLIP_REFERENCE_EVALUATOR,
+            evaluator=evaluator,
+            implementation_provenance=implementation_provenance or {},
             validity_issues=tuple(dict.fromkeys(issues)),
         )
 
@@ -280,7 +317,8 @@ def adapt_first_flip_result(
             value=None,
             diagnostics=_diagnostics(result, "unexpected_status"),
             elapsed_seconds=result.wall_seconds,
-            evaluator=FIRST_FLIP_REFERENCE_EVALUATOR,
+            evaluator=evaluator,
+            implementation_provenance=implementation_provenance or {},
             validity_issues=("unexpected_first_flip_status",),
         )
 
@@ -289,7 +327,8 @@ def adapt_first_flip_result(
         value=float(value),
         diagnostics=_diagnostics(result, outcome),
         elapsed_seconds=result.wall_seconds,
-        evaluator=FIRST_FLIP_REFERENCE_EVALUATOR,
+        evaluator=evaluator,
+        implementation_provenance=implementation_provenance or {},
     )
 
 
@@ -299,13 +338,56 @@ def evaluate_first_flip_field_cell(
     if _WORKER_SPEC is None:
         raise RuntimeError("First-flip field worker was not initialized.")
     assert _WORKER_SPEC.solver is not None
+    initial_state = initial_state_for_cell(task)
+    if _WORKER_COMPILED:
+        candidate_result = first_flip_time_compiled(
+            initial_state,
+            parameters=_WORKER_SPEC.parameters,
+            solver_spec=_WORKER_SPEC.solver,
+            observation_horizon=_WORKER_SPEC.observation_horizon_seconds,
+        )
+        candidate = adapt_first_flip_result(
+            candidate_result,
+            _WORKER_SPEC,
+            evaluator=FIRST_FLIP_COMPILED_EVALUATOR,
+            implementation_provenance=first_flip_compiled_provenance(),
+        )
+        if candidate.status is EvaluationStatus.COMPLETED_VALID:
+            return candidate
+        trusted_result = first_flip_time(
+            initial_state,
+            parameters=_WORKER_SPEC.parameters,
+            solver_spec=_WORKER_SPEC.solver,
+            observation_horizon=_WORKER_SPEC.observation_horizon_seconds,
+        )
+        trusted = adapt_first_flip_result(trusted_result, _WORKER_SPEC)
+        return replace(
+            trusted,
+            attempted_evaluators=(FIRST_FLIP_COMPILED_EVALUATOR,),
+            recovery_reason="compiled_first_flip_numerical_rejection",
+            attempt_provenance={
+                FIRST_FLIP_COMPILED_EVALUATOR: candidate.implementation_provenance
+            },
+        )
     result = first_flip_time(
-        initial_state_for_cell(task),
+        initial_state,
         parameters=_WORKER_SPEC.parameters,
         solver_spec=_WORKER_SPEC.solver,
         observation_horizon=_WORKER_SPEC.observation_horizon_seconds,
     )
-    return adapt_first_flip_result(result, _WORKER_SPEC)
+    trusted = adapt_first_flip_result(result, _WORKER_SPEC)
+    if _WORKER_COMPILED_FAILURE is None:
+        return trusted
+    return replace(
+        trusted,
+        attempted_evaluators=(FIRST_FLIP_COMPILED_EVALUATOR,),
+        recovery_reason="compiled_first_flip_initialization_unavailable",
+        attempt_provenance={
+            FIRST_FLIP_COMPILED_EVALUATOR: first_flip_compiled_provenance(
+                _WORKER_COMPILED_FAILURE
+            )
+        },
+    )
 
 
 def summarize_first_flip_tile(
@@ -366,14 +448,33 @@ def summarize_first_flip_tile(
 
 def first_flip_evaluator_binding(
     spec: FirstFlipFieldSpec | None = None,
+    *,
+    force_trusted: bool = False,
 ) -> EvaluatorBinding:
     fixed_spec = spec or FirstFlipFieldSpec()
+    assert fixed_spec.solver is not None
+    selected = (
+        not force_trusted
+        and first_flip_compiled_support().supported
+        and first_flip_compiled_eligibility(
+            fixed_spec.parameters,
+            fixed_spec.solver,
+            fixed_spec.observation_horizon_seconds,
+            energy_drift_limit=fixed_spec.energy_drift_limit,
+            event_residual_limit=fixed_spec.event_surface_residual_limit,
+            angular_increment_limit=fixed_spec.maximum_accepted_angular_increment,
+        ).eligible
+    )
     return EvaluatorBinding(
-        name="physical_first_flip_reference",
+        name=("compiled_first_flip_with_trusted_recovery" if selected else "physical_first_flip_reference"),
         initialize_worker=initialize_first_flip_field_worker,
-        initializer_arguments=(fixed_spec,),
+        initializer_arguments=(fixed_spec, not selected),
         evaluate_cell=evaluate_first_flip_field_cell,
-        execution_routes=(FIRST_FLIP_REFERENCE_EVALUATOR,),
+        execution_routes=(
+            (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
+            if selected
+            else (FIRST_FLIP_REFERENCE_EVALUATOR,)
+        ),
         summarize_tile=summarize_first_flip_tile,
     )
 
@@ -393,10 +494,49 @@ def _git_head() -> str:
 def periodic_first_flip_field_definition(
     samples_per_axis: int,
     spec: FirstFlipFieldSpec | None = None,
+    *,
+    force_trusted: bool = False,
 ) -> FieldDefinition:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
     domain = PeriodicAngularDomain.square(samples_per_axis)
+    selected = (
+        not force_trusted
+        and first_flip_compiled_support().supported
+        and first_flip_compiled_eligibility(
+            fixed_spec.parameters,
+            fixed_spec.solver,
+            fixed_spec.observation_horizon_seconds,
+            energy_drift_limit=fixed_spec.energy_drift_limit,
+            event_residual_limit=fixed_spec.event_surface_residual_limit,
+            angular_increment_limit=fixed_spec.maximum_accepted_angular_increment,
+        ).eligible
+    )
+    evaluator_provenance = (
+        {
+            "policy": "compiled_first_flip_with_trusted_recovery",
+            "route": FIRST_FLIP_COMPILED_EVALUATOR,
+            "trusted_route": FIRST_FLIP_REFERENCE_EVALUATOR,
+            "compiled": first_flip_compiled_provenance(),
+            "reference_experiment": "development/chaos_content/experiments/physical_observables/020_first_flip_event_contract",
+            "physical_flow": "compiled four-state Euler-Lagrange RHS",
+            "event_surfaces": ["arm1-", "arm1+", "arm2-", "arm2+"],
+            "terminal": True,
+            "crossing_direction": 1,
+            "angles": "continuous_lifted_absolute_link_orientations",
+        }
+        if selected
+        else {
+            "policy": "experiment_020_reference_promotion",
+            "route": FIRST_FLIP_REFERENCE_EVALUATOR,
+            "reference_experiment": "development/chaos_content/experiments/physical_observables/020_first_flip_event_contract",
+            "physical_flow": "EulerLagrangeDynamics.flow",
+            "event_surfaces": ["arm1-", "arm1+", "arm2-", "arm2+"],
+            "terminal": True,
+            "crossing_direction": 1,
+            "angles": "continuous_lifted_absolute_link_orientations",
+        }
+    )
     return FieldDefinition(
         theta1_axis=tuple(float(value) for value in domain.theta1_axis_radians),
         theta2_axis=tuple(float(value) for value in domain.theta2_axis_radians),
@@ -429,19 +569,7 @@ def periodic_first_flip_field_definition(
             "maximum_accepted_angular_increment": fixed_spec.maximum_accepted_angular_increment,
             "solver": asdict(fixed_spec.solver),
         },
-        evaluator_provenance={
-            "policy": "experiment_020_reference_promotion",
-            "route": FIRST_FLIP_REFERENCE_EVALUATOR,
-            "reference_experiment": (
-                "development/chaos_content/experiments/physical_observables/"
-                "020_first_flip_event_contract"
-            ),
-            "physical_flow": "EulerLagrangeDynamics.flow",
-            "event_surfaces": ["arm1-", "arm1+", "arm2-", "arm2+"],
-            "terminal": True,
-            "crossing_direction": 1,
-            "angles": "continuous_lifted_absolute_link_orientations",
-        },
+        evaluator_provenance=evaluator_provenance,
         software_provenance={
             "prototype": "state_space_maps",
             "python": platform.python_version(),
@@ -452,7 +580,11 @@ def periodic_first_flip_field_definition(
             "platform": platform.platform(),
             "git_head": _git_head(),
         },
-        route_vocabulary=FIRST_FLIP_ROUTE_VOCABULARY,
+        route_vocabulary=(
+            FIRST_FLIP_ROUTE_VOCABULARY
+            if selected
+            else FIRST_FLIP_ROUTE_VOCABULARY[:2]
+        ),
     )
 
 
@@ -464,12 +596,15 @@ def run_periodic_first_flip_field(
     spec: FirstFlipFieldSpec | None = None,
     execution: ProcessExecutionSpec | None = None,
     progress_callback: ProgressCallback | None = None,
+    force_trusted: bool = False,
 ) -> FieldRunSummary:
     fixed_spec = spec or FirstFlipFieldSpec()
     return run_scalar_field(
         output_path,
-        periodic_first_flip_field_definition(samples_per_axis, fixed_spec),
-        first_flip_evaluator_binding(fixed_spec),
+        periodic_first_flip_field_definition(
+            samples_per_axis, fixed_spec, force_trusted=force_trusted
+        ),
+        first_flip_evaluator_binding(fixed_spec, force_trusted=force_trusted),
         execution=execution,
         mode=mode,
         progress_callback=progress_callback,

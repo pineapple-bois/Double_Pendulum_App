@@ -26,9 +26,11 @@ from .reference import (
     first_flip_time,
     gravity_timescale,
 )
+from .compiled import FIRST_FLIP_COMPILED_EVALUATOR
 
 __all__ = [
     "FIRST_FLIP_REFERENCE_EVALUATOR",
+    "FIRST_FLIP_COMPILED_EVALUATOR",
     "FIRST_FLIP_ROUTE_VOCABULARY",
     "CappedFirstFlipFieldSummary",
     "FirstFlipFieldDiagnostics",

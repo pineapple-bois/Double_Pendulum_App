@@ -15,11 +15,11 @@ The next engineering step is to reassess S1 initialization amortisation before
 starting fallback optimization; the artifact mechanism is retained because it
 is correct, fail-closed, and materially reduces repeated initialization.
 
-For first flip, the bounded
-[compiled-RHS feasibility study](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md)
-found clean Experiment 020 agreement and estimates a 1.80× 512² end-to-end
-speedup. It recommends a separate promotion task; no compiled first-flip route
-has been promoted here.
+For first flip, the validated compiled four-state RHS is now the guarded default
+for the standard T=5 unit-parameter field. The
+[promotion report](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) records clean
+scientific/operational validation and a **2.170× median 64² end-to-end speedup**;
+unsupported and ineligible definitions retain the trusted Python RHS.
 
 ## Investigation sequence
 
@@ -31,13 +31,17 @@ has been promoted here.
 6. [Post-promotion diagnosis](reports/S1_POST_PROMOTION_PERFORMANCE.md)
 7. [Build-once/load-many implementation and acceptance](reports/S1_BUILD_ONCE_LOAD_MANY.md)
 
+First-flip lineage: [feasibility](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md)
+→ [pre-promotion review](reports/FIRST_FLIP_PRE_PROMOTION_REVIEW.md) →
+[promotion](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md).
+
 ## Directory guide
 
 - `reports/`: current field benchmark and latest performance conclusions.
 - `tools/`: reusable current benchmark and diagnostic commands:
   `benchmark_s1_artifact_reuse.py`, `benchmark_s1_field_level.py`,
   `probe_s1_remaining_costs.py`, `analyze_persisted_timings.py`, and bounded
-  first-flip compiled-RHS feasibility tooling.
+  first-flip compiled-RHS feasibility and promotion tooling.
 - `tests/`: focused checks for current investigation-only prototypes.
 - `s1_history/`: the S1 profile, prototype, validation harness, focused tests,
   and licensed prototype-native sources.
