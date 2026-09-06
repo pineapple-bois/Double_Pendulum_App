@@ -80,10 +80,10 @@ non-authoritative NaN values. Censoring is therefore never represented as an
 error or NaN. This exact cap contract supports lossless later derivation of
 
 $$
-\mathbf{1}[\tau_{\mathrm{flip}}<H]
+\mathbb{1}\!\left[\tau_{\mathrm{flip}} < H\right]
 $$
 
-for $0<H\leq T_{\max}$ on valid cells, and arbitrary logarithmic or categorical
+for $0 < H\leq T_{\max}$ on valid cells, and arbitrary logarithmic or categorical
 views within the same horizon, without reintegration. It does not distinguish an
 inclusive root numerically coincident with the cap; Experiment 020 explicitly
 recommended assigning numerical equality to the censored class. An explicit
