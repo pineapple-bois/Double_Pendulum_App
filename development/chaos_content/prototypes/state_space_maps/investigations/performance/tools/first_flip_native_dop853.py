@@ -18,6 +18,7 @@ import numpy as np
 from numba import carray, cfunc, types
 
 from ....src.first_flip.compiled import compiled_physical_rhs
+from ....src.first_flip.native_artifacts import FIRST_FLIP_NATIVE_LOOP_SOURCE
 from ....src.first_flip.reference import (
     EVENT_IDENTITIES,
     EventAttribution,
@@ -45,8 +46,7 @@ from ....src.lyapunov.s1_artifacts import (
 
 
 PROTOTYPE_IDENTITY = "investigation_native_dop853_first_flip_v1"
-NATIVE_DIRECTORY = Path(__file__).with_name("first_flip_native")
-LOOP_SOURCE = NATIVE_DIRECTORY / "first_flip_loop.c"
+LOOP_SOURCE = FIRST_FLIP_NATIVE_LOOP_SOURCE
 LICENSE_SOURCE = S1_NATIVE_DIRECTORY / "LICENSE_DOP"
 NATIVE_STATS_SIZE = 15
 _DENSE_COUNTER_DEFECT = "                nfcn += 3;"

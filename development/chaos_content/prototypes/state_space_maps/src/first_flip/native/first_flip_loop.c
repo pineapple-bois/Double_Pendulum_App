@@ -1,8 +1,8 @@
-/* Investigation-only first-flip event driver around the vendored S1 DOP853.
+/* Production-candidate first-flip event driver around the vendored S1 DOP853.
  *
  * The build places a corrected temporary copy of the existing dop.c first on
- * the include path.  Including it here keeps its private dense interpolant
- * coefficients in this translation unit without changing production sources.
+ * the include path. Including it here keeps its private dense interpolant
+ * coefficients in this translation unit without changing the S1 sources.
  */
 #include "dop.c"
 

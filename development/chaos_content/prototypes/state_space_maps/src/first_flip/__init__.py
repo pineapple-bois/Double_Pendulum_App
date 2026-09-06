@@ -27,10 +27,13 @@ from .reference import (
     gravity_timescale,
 )
 from .compiled import FIRST_FLIP_COMPILED_EVALUATOR
+from .native_artifacts import FIRST_FLIP_NATIVE_EVALUATOR
+from .native_runtime import first_flip_time_native
 
 __all__ = [
     "FIRST_FLIP_REFERENCE_EVALUATOR",
     "FIRST_FLIP_COMPILED_EVALUATOR",
+    "FIRST_FLIP_NATIVE_EVALUATOR",
     "FIRST_FLIP_ROUTE_VOCABULARY",
     "CappedFirstFlipFieldSummary",
     "FirstFlipFieldDiagnostics",
@@ -51,5 +54,6 @@ __all__ = [
     "FirstFlipStatus",
     "default_solver_spec",
     "first_flip_time",
+    "first_flip_time_native",
     "gravity_timescale",
 ]

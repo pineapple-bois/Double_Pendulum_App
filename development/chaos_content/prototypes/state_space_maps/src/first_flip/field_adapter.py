@@ -45,6 +45,20 @@ from .compiled import (
     first_flip_time_compiled,
     initialize_compiled_rhs,
 )
+from .native_artifacts import (
+    FIRST_FLIP_NATIVE_EVALUATOR,
+    FirstFlipNativeArtifact,
+    FirstFlipNativeUnavailableError,
+    first_flip_native_support,
+    prepare_first_flip_native_artifact_for_workers,
+)
+from .native_runtime import (
+    FirstFlipNativeNumericalError,
+    configure_first_flip_native_artifact,
+    first_flip_native_provenance,
+    first_flip_time_native,
+    initialize_native_first_flip,
+)
 
 
 FIRST_FLIP_REFERENCE_EVALUATOR = "solve_ivp_first_flip_reference"
@@ -52,6 +66,7 @@ FIRST_FLIP_ROUTE_VOCABULARY = (
     (0, "not_yet_computed"),
     (1, FIRST_FLIP_REFERENCE_EVALUATOR),
     (2, FIRST_FLIP_COMPILED_EVALUATOR),
+    (3, FIRST_FLIP_NATIVE_EVALUATOR),
 )
 
 # These are Experiment 020's evidence-derived numerical gates.  They are not
@@ -167,8 +182,9 @@ class FirstFlipSpotValidation:
 
 
 _WORKER_SPEC: FirstFlipFieldSpec | None = None
-_WORKER_COMPILED = False
+_WORKER_ROUTE = FIRST_FLIP_REFERENCE_EVALUATOR
 _WORKER_COMPILED_FAILURE: FirstFlipCompiledUnavailableError | None = None
+_WORKER_NATIVE_FAILURE: BaseException | None = None
 
 
 def initial_state_for_cell(task: ScalarCellTask) -> EulerLagrangeState:
@@ -183,9 +199,12 @@ def initial_state_for_cell(task: ScalarCellTask) -> EulerLagrangeState:
 
 
 def initialize_first_flip_field_worker(
-    spec: FirstFlipFieldSpec, force_trusted: bool = False
+    spec: FirstFlipFieldSpec,
+    force_trusted: bool = False,
+    force_compiled: bool = False,
+    native_artifact: FirstFlipNativeArtifact | None = None,
 ) -> None:
-    global _WORKER_SPEC, _WORKER_COMPILED, _WORKER_COMPILED_FAILURE
+    global _WORKER_SPEC, _WORKER_ROUTE, _WORKER_COMPILED_FAILURE, _WORKER_NATIVE_FAILURE
     _WORKER_SPEC = spec
     assert spec.solver is not None
     eligible = first_flip_compiled_eligibility(
@@ -196,12 +215,28 @@ def initialize_first_flip_field_worker(
         event_residual_limit=spec.event_surface_residual_limit,
         angular_increment_limit=spec.maximum_accepted_angular_increment,
     ).eligible
-    _WORKER_COMPILED = False
+    _WORKER_ROUTE = FIRST_FLIP_REFERENCE_EVALUATOR
     _WORKER_COMPILED_FAILURE = None
-    if not force_trusted and eligible and first_flip_compiled_support().supported:
+    _WORKER_NATIVE_FAILURE = None
+    if force_trusted or not eligible:
+        initialize_reference_dynamics(spec.parameters)
+        return
+    if not force_compiled and first_flip_native_support()["supported"]:
+        try:
+            configure_first_flip_native_artifact(native_artifact)
+            initialize_native_first_flip(spec.parameters)
+            _WORKER_ROUTE = FIRST_FLIP_NATIVE_EVALUATOR
+            try:
+                initialize_compiled_rhs(spec.parameters)
+            except FirstFlipCompiledUnavailableError as error:
+                _WORKER_COMPILED_FAILURE = error
+            return
+        except FirstFlipNativeUnavailableError as error:
+            _WORKER_NATIVE_FAILURE = error
+    if first_flip_compiled_support().supported:
         try:
             initialize_compiled_rhs(spec.parameters)
-            _WORKER_COMPILED = True
+            _WORKER_ROUTE = FIRST_FLIP_COMPILED_EVALUATOR
             return
         except FirstFlipCompiledUnavailableError as error:
             _WORKER_COMPILED_FAILURE = error
@@ -339,7 +374,69 @@ def evaluate_first_flip_field_cell(
         raise RuntimeError("First-flip field worker was not initialized.")
     assert _WORKER_SPEC.solver is not None
     initial_state = initial_state_for_cell(task)
-    if _WORKER_COMPILED:
+    if _WORKER_ROUTE == FIRST_FLIP_NATIVE_EVALUATOR:
+        try:
+            native_result = first_flip_time_native(
+                initial_state,
+                parameters=_WORKER_SPEC.parameters,
+                solver_spec=_WORKER_SPEC.solver,
+                observation_horizon=_WORKER_SPEC.observation_horizon_seconds,
+            )
+        except FirstFlipNativeNumericalError as error:
+            native_candidate = None
+            native_failure: BaseException | None = error
+        else:
+            native_candidate = adapt_first_flip_result(
+                native_result,
+                _WORKER_SPEC,
+                evaluator=FIRST_FLIP_NATIVE_EVALUATOR,
+                implementation_provenance=first_flip_native_provenance(),
+            )
+            if native_candidate.status is EvaluationStatus.COMPLETED_VALID:
+                return native_candidate
+            native_failure = None
+        if _WORKER_COMPILED_FAILURE is None:
+            compiled_result = first_flip_time_compiled(
+                initial_state, _WORKER_SPEC.parameters, _WORKER_SPEC.solver,
+                _WORKER_SPEC.observation_horizon_seconds,
+            )
+            compiled_candidate = adapt_first_flip_result(
+                compiled_result, _WORKER_SPEC,
+                evaluator=FIRST_FLIP_COMPILED_EVALUATOR,
+                implementation_provenance=first_flip_compiled_provenance(),
+            )
+            if compiled_candidate.status is EvaluationStatus.COMPLETED_VALID:
+                return replace(
+                    compiled_candidate,
+                    attempted_evaluators=(FIRST_FLIP_NATIVE_EVALUATOR,),
+                    recovery_reason="native_first_flip_numerical_rejection",
+                    attempt_provenance={FIRST_FLIP_NATIVE_EVALUATOR: (
+                        first_flip_native_provenance(native_failure)
+                        if native_candidate is None else native_candidate.implementation_provenance
+                    )},
+                )
+        trusted_result = first_flip_time(
+            initial_state, _WORKER_SPEC.parameters, _WORKER_SPEC.solver,
+            _WORKER_SPEC.observation_horizon_seconds,
+        )
+        trusted = adapt_first_flip_result(trusted_result, _WORKER_SPEC)
+        attempts = (FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR)
+        return replace(
+            trusted,
+            attempted_evaluators=attempts,
+            recovery_reason="native_and_compiled_first_flip_recovery",
+            attempt_provenance={
+                FIRST_FLIP_NATIVE_EVALUATOR: (
+                    first_flip_native_provenance(native_failure)
+                    if native_candidate is None else native_candidate.implementation_provenance
+                ),
+                FIRST_FLIP_COMPILED_EVALUATOR: (
+                    first_flip_compiled_provenance(_WORKER_COMPILED_FAILURE)
+                    if _WORKER_COMPILED_FAILURE else compiled_candidate.implementation_provenance
+                ),
+            },
+        )
+    if _WORKER_ROUTE == FIRST_FLIP_COMPILED_EVALUATOR:
         candidate_result = first_flip_time_compiled(
             initial_state,
             parameters=_WORKER_SPEC.parameters,
@@ -353,7 +450,16 @@ def evaluate_first_flip_field_cell(
             implementation_provenance=first_flip_compiled_provenance(),
         )
         if candidate.status is EvaluationStatus.COMPLETED_VALID:
-            return candidate
+            if _WORKER_NATIVE_FAILURE is None:
+                return candidate
+            return replace(
+                candidate,
+                attempted_evaluators=(FIRST_FLIP_NATIVE_EVALUATOR,),
+                recovery_reason="native_first_flip_initialization_unavailable",
+                attempt_provenance={
+                    FIRST_FLIP_NATIVE_EVALUATOR: first_flip_native_provenance(_WORKER_NATIVE_FAILURE)
+                },
+            )
         trusted_result = first_flip_time(
             initial_state,
             parameters=_WORKER_SPEC.parameters,
@@ -363,10 +469,11 @@ def evaluate_first_flip_field_cell(
         trusted = adapt_first_flip_result(trusted_result, _WORKER_SPEC)
         return replace(
             trusted,
-            attempted_evaluators=(FIRST_FLIP_COMPILED_EVALUATOR,),
-            recovery_reason="compiled_first_flip_numerical_rejection",
+            attempted_evaluators=((FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR) if _WORKER_NATIVE_FAILURE else (FIRST_FLIP_COMPILED_EVALUATOR,)),
+            recovery_reason=("native_initialization_unavailable_and_compiled_numerical_rejection" if _WORKER_NATIVE_FAILURE else "compiled_first_flip_numerical_rejection"),
             attempt_provenance={
-                FIRST_FLIP_COMPILED_EVALUATOR: candidate.implementation_provenance
+                **({FIRST_FLIP_NATIVE_EVALUATOR: first_flip_native_provenance(_WORKER_NATIVE_FAILURE)} if _WORKER_NATIVE_FAILURE else {}),
+                FIRST_FLIP_COMPILED_EVALUATOR: candidate.implementation_provenance,
             },
         )
     result = first_flip_time(
@@ -376,8 +483,18 @@ def evaluate_first_flip_field_cell(
         observation_horizon=_WORKER_SPEC.observation_horizon_seconds,
     )
     trusted = adapt_first_flip_result(result, _WORKER_SPEC)
-    if _WORKER_COMPILED_FAILURE is None:
+    if _WORKER_COMPILED_FAILURE is None and _WORKER_NATIVE_FAILURE is None:
         return trusted
+    if _WORKER_NATIVE_FAILURE is not None:
+        return replace(
+            trusted,
+            attempted_evaluators=(FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR),
+            recovery_reason="native_and_compiled_first_flip_initialization_unavailable",
+            attempt_provenance={
+                FIRST_FLIP_NATIVE_EVALUATOR: first_flip_native_provenance(_WORKER_NATIVE_FAILURE),
+                FIRST_FLIP_COMPILED_EVALUATOR: first_flip_compiled_provenance(_WORKER_COMPILED_FAILURE),
+            },
+        )
     return replace(
         trusted,
         attempted_evaluators=(FIRST_FLIP_COMPILED_EVALUATOR,),
@@ -450,10 +567,11 @@ def first_flip_evaluator_binding(
     spec: FirstFlipFieldSpec | None = None,
     *,
     force_trusted: bool = False,
+    force_compiled: bool = False,
 ) -> EvaluatorBinding:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
-    selected = (
+    compiled_selected = (
         not force_trusted
         and first_flip_compiled_support().supported
         and first_flip_compiled_eligibility(
@@ -465,14 +583,19 @@ def first_flip_evaluator_binding(
             angular_increment_limit=fixed_spec.maximum_accepted_angular_increment,
         ).eligible
     )
+    native_selected = (
+        compiled_selected and not force_compiled and first_flip_native_support()["supported"]
+    )
+    artifact = prepare_first_flip_native_artifact_for_workers() if native_selected else None
     return EvaluatorBinding(
-        name=("compiled_first_flip_with_trusted_recovery" if selected else "physical_first_flip_reference"),
+        name=("native_first_flip_with_compiled_and_trusted_recovery" if native_selected else ("compiled_first_flip_with_trusted_recovery" if compiled_selected else "physical_first_flip_reference")),
         initialize_worker=initialize_first_flip_field_worker,
-        initializer_arguments=(fixed_spec, not selected),
+        initializer_arguments=(fixed_spec, not compiled_selected, force_compiled, artifact),
         evaluate_cell=evaluate_first_flip_field_cell,
         execution_routes=(
-            (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
-            if selected
+            (FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
+            if native_selected else (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
+            if compiled_selected
             else (FIRST_FLIP_REFERENCE_EVALUATOR,)
         ),
         summarize_tile=summarize_first_flip_tile,
@@ -496,11 +619,12 @@ def periodic_first_flip_field_definition(
     spec: FirstFlipFieldSpec | None = None,
     *,
     force_trusted: bool = False,
+    force_compiled: bool = False,
 ) -> FieldDefinition:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
     domain = PeriodicAngularDomain.square(samples_per_axis)
-    selected = (
+    compiled_selected = (
         not force_trusted
         and first_flip_compiled_support().supported
         and first_flip_compiled_eligibility(
@@ -512,7 +636,22 @@ def periodic_first_flip_field_definition(
             angular_increment_limit=fixed_spec.maximum_accepted_angular_increment,
         ).eligible
     )
+    native_selected = compiled_selected and not force_compiled and first_flip_native_support()["supported"]
     evaluator_provenance = (
+        {
+            "policy": "native_first_flip_with_compiled_and_trusted_recovery",
+            "route": FIRST_FLIP_NATIVE_EVALUATOR,
+            "compiled_recovery_route": FIRST_FLIP_COMPILED_EVALUATOR,
+            "trusted_route": FIRST_FLIP_REFERENCE_EVALUATOR,
+            "native": first_flip_native_provenance(),
+            "compiled": first_flip_compiled_provenance(),
+            "reference_experiment": "development/chaos_content/experiments/physical_observables/020_first_flip_event_contract",
+            "physical_flow": "compiled four-state Euler-Lagrange RHS",
+            "event_surfaces": ["arm1-", "arm1+", "arm2-", "arm2+"],
+            "terminal": True, "crossing_direction": 1,
+            "angles": "continuous_lifted_absolute_link_orientations",
+        }
+        if native_selected else
         {
             "policy": "compiled_first_flip_with_trusted_recovery",
             "route": FIRST_FLIP_COMPILED_EVALUATOR,
@@ -525,7 +664,7 @@ def periodic_first_flip_field_definition(
             "crossing_direction": 1,
             "angles": "continuous_lifted_absolute_link_orientations",
         }
-        if selected
+        if compiled_selected
         else {
             "policy": "experiment_020_reference_promotion",
             "route": FIRST_FLIP_REFERENCE_EVALUATOR,
@@ -582,7 +721,8 @@ def periodic_first_flip_field_definition(
         },
         route_vocabulary=(
             FIRST_FLIP_ROUTE_VOCABULARY
-            if selected
+            if native_selected else FIRST_FLIP_ROUTE_VOCABULARY[:3]
+            if compiled_selected
             else FIRST_FLIP_ROUTE_VOCABULARY[:2]
         ),
     )
@@ -597,14 +737,15 @@ def run_periodic_first_flip_field(
     execution: ProcessExecutionSpec | None = None,
     progress_callback: ProgressCallback | None = None,
     force_trusted: bool = False,
+    force_compiled: bool = False,
 ) -> FieldRunSummary:
     fixed_spec = spec or FirstFlipFieldSpec()
     return run_scalar_field(
         output_path,
         periodic_first_flip_field_definition(
-            samples_per_axis, fixed_spec, force_trusted=force_trusted
+            samples_per_axis, fixed_spec, force_trusted=force_trusted, force_compiled=force_compiled
         ),
-        first_flip_evaluator_binding(fixed_spec, force_trusted=force_trusted),
+        first_flip_evaluator_binding(fixed_spec, force_trusted=force_trusted, force_compiled=force_compiled),
         execution=execution,
         mode=mode,
         progress_callback=progress_callback,

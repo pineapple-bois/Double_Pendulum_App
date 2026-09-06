@@ -48,13 +48,13 @@ def _task(theta1: float, theta2: float) -> ScalarCellTask:
 
 
 def test_supported_compiled_and_ineligible_trusted_dispatch() -> None:
-    compiled = first_flip_evaluator_binding(FirstFlipFieldSpec())
+    compiled = first_flip_evaluator_binding(FirstFlipFieldSpec(), force_compiled=True)
     trusted = first_flip_evaluator_binding(
         FirstFlipFieldSpec(observation_horizon_seconds=2.0)
     )
     assert compiled.execution_routes[0] == FIRST_FLIP_COMPILED_EVALUATOR
     assert trusted.execution_routes == (FIRST_FLIP_REFERENCE_EVALUATOR,)
-    assert periodic_first_flip_field_definition(4).evaluator_provenance["route"] == FIRST_FLIP_COMPILED_EVALUATOR
+    assert periodic_first_flip_field_definition(4, force_compiled=True).evaluator_provenance["route"] == FIRST_FLIP_COMPILED_EVALUATOR
     assert periodic_first_flip_field_definition(
         4, FirstFlipFieldSpec(observation_horizon_seconds=2.0)
     ).evaluator_provenance["route"] == FIRST_FLIP_REFERENCE_EVALUATOR
@@ -68,9 +68,9 @@ def test_unsupported_build_selects_trusted_dispatch(
         "first_flip_compiled_support",
         lambda: SimpleNamespace(supported=False, reason="unsupported fixture"),
     )
-    binding = first_flip_evaluator_binding(FirstFlipFieldSpec())
+    binding = first_flip_evaluator_binding(FirstFlipFieldSpec(), force_compiled=True)
     assert binding.execution_routes == (FIRST_FLIP_REFERENCE_EVALUATOR,)
-    assert periodic_first_flip_field_definition(4).evaluator_provenance["route"] == FIRST_FLIP_REFERENCE_EVALUATOR
+    assert periodic_first_flip_field_definition(4, force_compiled=True).evaluator_provenance["route"] == FIRST_FLIP_REFERENCE_EVALUATOR
 
 
 def test_compiled_initialization_is_cached() -> None:
@@ -90,7 +90,7 @@ def test_initialization_unavailability_recovers_to_trusted(
 
     monkeypatch.setattr(field_adapter, "initialize_compiled_rhs", unavailable)
     spec = FirstFlipFieldSpec()
-    initialize_first_flip_field_worker(spec)
+    initialize_first_flip_field_worker(spec, force_compiled=True)
     result = field_adapter.evaluate_first_flip_field_cell(
         _task(float(np.deg2rad(-150.0)), float(np.deg2rad(-150.0)))
     )
@@ -108,7 +108,7 @@ def test_compiled_numerical_rejection_replays_trusted_result(
     rejected = replace(
         first_flip_time(state), maximum_normalized_energy_drift=1.0
     )
-    initialize_first_flip_field_worker(spec)
+    initialize_first_flip_field_worker(spec, force_compiled=True)
     monkeypatch.setattr(
         field_adapter, "first_flip_time_compiled", lambda *args, **kwargs: rejected
     )
@@ -125,7 +125,7 @@ def test_unexpected_compiled_programming_error_propagates(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     spec = FirstFlipFieldSpec()
-    initialize_first_flip_field_worker(spec)
+    initialize_first_flip_field_worker(spec, force_compiled=True)
     monkeypatch.setattr(
         field_adapter,
         "first_flip_time_compiled",
@@ -180,8 +180,8 @@ def test_spawn_persistence_resume_and_cross_definition_rejection(tmp_path: Path)
     compiled_path = tmp_path / "compiled.h5"
     trusted_path = tmp_path / "trusted.h5"
     spec = FirstFlipFieldSpec()
-    created = run_periodic_first_flip_field(compiled_path, 2, mode="create", spec=spec)
-    resumed = run_periodic_first_flip_field(compiled_path, 2, mode="resume", spec=spec)
+    created = run_periodic_first_flip_field(compiled_path, 2, mode="create", spec=spec, force_compiled=True)
+    resumed = run_periodic_first_flip_field(compiled_path, 2, mode="resume", spec=spec, force_compiled=True)
     snapshot = read_authoritative_field(compiled_path)
     assert created.all_workers_stopped
     assert resumed.evaluated_cells == 0
@@ -195,4 +195,4 @@ def test_spawn_persistence_resume_and_cross_definition_rejection(tmp_path: Path)
         trusted_path, 2, mode="create", spec=spec, force_trusted=True
     )
     with pytest.raises(IntegrityError):
-        run_periodic_first_flip_field(trusted_path, 2, mode="resume", spec=spec)
+        run_periodic_first_flip_field(trusted_path, 2, mode="resume", spec=spec, force_compiled=True)

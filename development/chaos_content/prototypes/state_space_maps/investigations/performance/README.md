@@ -24,7 +24,10 @@ unsupported and ineligible definitions retain the trusted Python RHS. The
 remaining cost concentrated in Python DOP853 stepping/event detection and
 recommends one narrow compiled solver/event-loop prototype. The subsequent
 [native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) passed
-all scientific gates and supports a later guarded production-promotion task.
+all scientific gates. The subsequent
+[production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md)
+preserves those gates; final readiness is pending completion of the broader
+affected regression run recorded in its report.
 
 ## Investigation sequence
 
@@ -40,7 +43,8 @@ First-flip lineage: [feasibility](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md
 → [pre-promotion review](reports/FIRST_FLIP_PRE_PROMOTION_REVIEW.md) →
 [promotion](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) →
 [post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) →
-[native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md).
+[native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) →
+[production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md).
 
 ## Directory guide
 
