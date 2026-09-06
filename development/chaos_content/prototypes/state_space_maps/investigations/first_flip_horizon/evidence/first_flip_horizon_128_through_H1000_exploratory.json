@@ -1,0 +1,1333 @@
+{
+  "artifacts": {
+    "arrays_path": "evidence/first_flip_horizon_128.npz",
+    "arrays_sha256": "c4c98e5ea9e46f8e3ca0e972c57eeb4cf037c355008cd614e51c50e242d2767a",
+    "render_path": "evidence/first_flip_horizon_128.png",
+    "render_sha256": "c258d61f7b068e6daf742a3189621e629e64fa3b0c9350b147ff9b8ae97eea87"
+  },
+  "energy_accessibility": {
+    "A_joules": 19.62,
+    "B_joules": 9.81,
+    "arm1_winding_necessary_barrier_joules": 9.81,
+    "arm2_winding_necessary_barrier_joules": -9.81,
+    "either_flip_necessary_barrier_joules": -9.81,
+    "energy_inaccessible_count": 5023,
+    "energy_inaccessible_fraction": 0.30657958984375,
+    "logical_status": "necessary for a flip, not sufficient; strict failure is sufficient for no flip",
+    "potential": "V=-A*cos(theta1)-B*cos(theta2)",
+    "zero_velocity_inaccessible_rule": "E0 < either_flip barrier (strict)"
+  },
+  "environment": {
+    "maximum_cells_per_pool": 2048,
+    "platform": "macOS-15.7.9-arm64-arm-64bit",
+    "process_start_method": "spawn",
+    "python": "3.12.3",
+    "workers": 4
+  },
+  "generated_at_utc": "2026-09-06T19:50:05.720116+00:00",
+  "grid": {
+    "cell_count": 16384,
+    "periodic_interval": "[-pi, pi)",
+    "samples_per_axis": 128,
+    "stored_orientation": "[theta2_index, theta1_index]",
+    "zero_initial_angular_velocities": true
+  },
+  "horizons": [
+    {
+      "candidate_logarithmic_bins": {
+        "tau_hat_100_to_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_10_to_100": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_1_to_10": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_ge_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_lt_1": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        }
+      },
+      "diagnostics": {
+        "fallback_count": 0,
+        "maximum_accepted_angular_increment": 0.03561852436215052,
+        "maximum_normalized_energy_drift": 1.0140263303406118e-14,
+        "maximum_solver_step_seconds": 0.009977357137720355,
+        "maximum_triggering_surface_residual": 0.0,
+        "route_counts": {
+          "investigation_native_dop853_first_flip_v2_long_horizon": 16384
+        },
+        "summed_rhs_evaluations": 8143373
+      },
+      "dimensionless_horizon": 1.0,
+      "energy_relationship": {
+        "censored_energy_inaccessible_count": 5023,
+        "censored_energy_permitted_count": 11361,
+        "fraction_of_censored_energy_inaccessible": 0.30657958984375,
+        "observed_energy_inaccessible_count": 0
+      },
+      "observed_tau_hat_distribution": {
+        "maximum": null,
+        "median": null,
+        "minimum": null,
+        "q25": null,
+        "q75": null,
+        "q90": null,
+        "q99": null
+      },
+      "outcomes": {
+        "censored_count": 16384,
+        "censored_fraction": 1.0,
+        "error_count": 0,
+        "error_fraction": 0.0,
+        "invalid_count": 0,
+        "invalid_fraction": 0.0,
+        "newly_observed_count": 0,
+        "newly_observed_fraction": 0.0,
+        "observed_count": 0,
+        "observed_fraction": 0.0
+      },
+      "physical_horizon_seconds": 0.3192754284070505,
+      "timings": {
+        "all_workers_stopped": true,
+        "error_message_count": 0,
+        "evaluation_cells_per_second": 1441.3900880006718,
+        "evaluation_seconds": 11.36680495890323,
+        "pool_count": 8,
+        "recycling_events": 7,
+        "setup_seconds": 0.008507665013894439,
+        "shutdown_seconds": 3.2548877930967137,
+        "summed_cell_wall_seconds": 1.0613204080145806,
+        "wall_cells_per_second": 1118.527091520485,
+        "wall_seconds": 14.64783475000877
+      }
+    },
+    {
+      "candidate_logarithmic_bins": {
+        "tau_hat_100_to_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_10_to_100": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_1_to_10": {
+          "count": 4748,
+          "fraction_of_grid": 0.289794921875,
+          "fraction_of_observed": 1.0
+        },
+        "tau_hat_ge_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_lt_1": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        }
+      },
+      "diagnostics": {
+        "fallback_count": 0,
+        "maximum_accepted_angular_increment": 0.1353531449524433,
+        "maximum_normalized_energy_drift": 8.251056952490661e-10,
+        "maximum_solver_step_seconds": 0.00997735713772041,
+        "maximum_triggering_surface_residual": 1.4210854715202004e-14,
+        "route_counts": {
+          "investigation_native_dop853_first_flip_v2_long_horizon": 16384
+        },
+        "summed_rhs_evaluations": 70502332
+      },
+      "dimensionless_horizon": 10.0,
+      "energy_relationship": {
+        "censored_energy_inaccessible_count": 5023,
+        "censored_energy_permitted_count": 6613,
+        "fraction_of_censored_energy_inaccessible": 0.43167755242351324,
+        "observed_energy_inaccessible_count": 0
+      },
+      "observed_tau_hat_distribution": {
+        "maximum": 9.99943192456771,
+        "median": 5.920799832507252,
+        "minimum": 3.526807689127149,
+        "q25": 4.906476872649838,
+        "q75": 7.398520341924764,
+        "q90": 8.952446494147635,
+        "q99": 9.919410889296346
+      },
+      "outcomes": {
+        "censored_count": 11636,
+        "censored_fraction": 0.710205078125,
+        "error_count": 0,
+        "error_fraction": 0.0,
+        "invalid_count": 0,
+        "invalid_fraction": 0.0,
+        "newly_observed_count": 4748,
+        "newly_observed_fraction": 0.289794921875,
+        "observed_count": 4748,
+        "observed_fraction": 0.289794921875
+      },
+      "physical_horizon_seconds": 3.1927542840705048,
+      "timings": {
+        "all_workers_stopped": true,
+        "error_message_count": 0,
+        "evaluation_cells_per_second": 1350.2133072640077,
+        "evaluation_seconds": 12.134378999122418,
+        "pool_count": 8,
+        "recycling_events": 7,
+        "setup_seconds": 0.001396375009790063,
+        "shutdown_seconds": 3.208017957978882,
+        "summed_cell_wall_seconds": 6.123417223338038,
+        "wall_cells_per_second": 1066.4277792034507,
+        "wall_seconds": 15.363440750050358
+      }
+    },
+    {
+      "candidate_logarithmic_bins": {
+        "tau_hat_100_to_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_10_to_100": {
+          "count": 2192,
+          "fraction_of_grid": 0.1337890625,
+          "fraction_of_observed": 0.315850144092219
+        },
+        "tau_hat_1_to_10": {
+          "count": 4748,
+          "fraction_of_grid": 0.289794921875,
+          "fraction_of_observed": 0.684149855907781
+        },
+        "tau_hat_ge_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_lt_1": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        }
+      },
+      "diagnostics": {
+        "fallback_count": 0,
+        "maximum_accepted_angular_increment": 0.1353531449524433,
+        "maximum_normalized_energy_drift": 8.251056952490661e-10,
+        "maximum_solver_step_seconds": 0.00997735713772041,
+        "maximum_triggering_surface_residual": 2.5757174171303632e-14,
+        "route_counts": {
+          "investigation_native_dop853_first_flip_v2_long_horizon": 16384
+        },
+        "summed_rhs_evaluations": 98913645
+      },
+      "dimensionless_horizon": 15.660459763365825,
+      "energy_relationship": {
+        "censored_energy_inaccessible_count": 5023,
+        "censored_energy_permitted_count": 4421,
+        "fraction_of_censored_energy_inaccessible": 0.5318720880982635,
+        "observed_energy_inaccessible_count": 0
+      },
+      "observed_tau_hat_distribution": {
+        "maximum": 15.659607743834693,
+        "median": 7.264127608353874,
+        "minimum": 3.526807689127149,
+        "q25": 5.381739437373866,
+        "q75": 10.715750979456795,
+        "q90": 13.626598635747522,
+        "q99": 15.494557641508827
+      },
+      "outcomes": {
+        "censored_count": 9444,
+        "censored_fraction": 0.576416015625,
+        "error_count": 0,
+        "error_fraction": 0.0,
+        "invalid_count": 0,
+        "invalid_fraction": 0.0,
+        "newly_observed_count": 2192,
+        "newly_observed_fraction": 0.1337890625,
+        "observed_count": 6940,
+        "observed_fraction": 0.423583984375
+      },
+      "physical_horizon_seconds": 5.0,
+      "timings": {
+        "all_workers_stopped": true,
+        "error_message_count": 0,
+        "evaluation_cells_per_second": 1293.5435055064333,
+        "evaluation_seconds": 12.665982960956171,
+        "pool_count": 8,
+        "recycling_events": 7,
+        "setup_seconds": 0.00135254196356982,
+        "shutdown_seconds": 3.2289735832018778,
+        "summed_cell_wall_seconds": 8.820056039141491,
+        "wall_cells_per_second": 1029.4857919862507,
+        "wall_seconds": 15.914741249987856
+      }
+    },
+    {
+      "candidate_logarithmic_bins": {
+        "tau_hat_100_to_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_10_to_100": {
+          "count": 5609,
+          "fraction_of_grid": 0.34234619140625,
+          "fraction_of_observed": 0.5415660905667664
+        },
+        "tau_hat_1_to_10": {
+          "count": 4748,
+          "fraction_of_grid": 0.289794921875,
+          "fraction_of_observed": 0.4584339094332336
+        },
+        "tau_hat_ge_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_lt_1": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        }
+      },
+      "diagnostics": {
+        "fallback_count": 0,
+        "maximum_accepted_angular_increment": 0.1353531449524433,
+        "maximum_normalized_energy_drift": 8.251056952490661e-10,
+        "maximum_solver_step_seconds": 0.009977357137721299,
+        "maximum_triggering_surface_residual": 9.059419880941277e-14,
+        "route_counts": {
+          "investigation_native_dop853_first_flip_v2_long_horizon": 16384
+        },
+        "summed_rhs_evaluations": 373687717
+      },
+      "dimensionless_horizon": 100.0,
+      "energy_relationship": {
+        "censored_energy_inaccessible_count": 5023,
+        "censored_energy_permitted_count": 1004,
+        "fraction_of_censored_energy_inaccessible": 0.8334162933466069,
+        "observed_energy_inaccessible_count": 0
+      },
+      "observed_tau_hat_distribution": {
+        "maximum": 99.93719245473623,
+        "median": 10.691328675504254,
+        "minimum": 3.526807689127149,
+        "q25": 6.13137364250885,
+        "q75": 20.424459569668173,
+        "q90": 36.60292041730128,
+        "q99": 87.59822226258464
+      },
+      "outcomes": {
+        "censored_count": 6027,
+        "censored_fraction": 0.36785888671875,
+        "error_count": 0,
+        "error_fraction": 0.0,
+        "invalid_count": 0,
+        "invalid_fraction": 0.0,
+        "newly_observed_count": 3417,
+        "newly_observed_fraction": 0.20855712890625,
+        "observed_count": 10357,
+        "observed_fraction": 0.63214111328125
+      },
+      "physical_horizon_seconds": 31.927542840705048,
+      "timings": {
+        "all_workers_stopped": true,
+        "error_message_count": 0,
+        "evaluation_cells_per_second": 853.4147318521511,
+        "evaluation_seconds": 19.198168708011508,
+        "pool_count": 8,
+        "recycling_events": 7,
+        "setup_seconds": 0.0014528360916301608,
+        "shutdown_seconds": 3.247116376995109,
+        "summed_cell_wall_seconds": 34.17210136959329,
+        "wall_cells_per_second": 729.2050210459652,
+        "wall_seconds": 22.468303874949925
+      }
+    },
+    {
+      "candidate_logarithmic_bins": {
+        "tau_hat_100_to_1000": {
+          "count": 663,
+          "fraction_of_grid": 0.04046630859375,
+          "fraction_of_observed": 0.060163339382940106
+        },
+        "tau_hat_10_to_100": {
+          "count": 5609,
+          "fraction_of_grid": 0.34234619140625,
+          "fraction_of_observed": 0.508983666061706
+        },
+        "tau_hat_1_to_10": {
+          "count": 4748,
+          "fraction_of_grid": 0.289794921875,
+          "fraction_of_observed": 0.4308529945553539
+        },
+        "tau_hat_ge_1000": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        },
+        "tau_hat_lt_1": {
+          "count": 0,
+          "fraction_of_grid": 0.0,
+          "fraction_of_observed": 0.0
+        }
+      },
+      "diagnostics": {
+        "fallback_count": 0,
+        "maximum_accepted_angular_increment": 0.1353531449524433,
+        "maximum_normalized_energy_drift": 4.452211348489184e-09,
+        "maximum_solver_step_seconds": 0.009977357137728404,
+        "maximum_triggering_surface_residual": 5.915268275202834e-13,
+        "route_counts": {
+          "investigation_native_dop853_first_flip_v2_long_horizon": 16384
+        },
+        "summed_rhs_evaluations": 2745663899
+      },
+      "dimensionless_horizon": 1000.0,
+      "energy_relationship": {
+        "censored_energy_inaccessible_count": 5023,
+        "censored_energy_permitted_count": 341,
+        "fraction_of_censored_energy_inaccessible": 0.9364280387770321,
+        "observed_energy_inaccessible_count": 0
+      },
+      "observed_tau_hat_distribution": {
+        "maximum": 981.0352907004255,
+        "median": 11.388822194914493,
+        "minimum": 3.526807689127149,
+        "q25": 6.289240758355974,
+        "q75": 23.798246633707134,
+        "q90": 57.72190655421226,
+        "q99": 420.6584148365487
+      },
+      "outcomes": {
+        "censored_count": 5364,
+        "censored_fraction": 0.327392578125,
+        "error_count": 0,
+        "error_fraction": 0.0,
+        "invalid_count": 0,
+        "invalid_fraction": 0.0,
+        "newly_observed_count": 663,
+        "newly_observed_fraction": 0.04046630859375,
+        "observed_count": 11020,
+        "observed_fraction": 0.672607421875
+      },
+      "physical_horizon_seconds": 319.27542840705047,
+      "timings": {
+        "all_workers_stopped": true,
+        "error_message_count": 0,
+        "evaluation_cells_per_second": 227.28569141276844,
+        "evaluation_seconds": 72.08548808400519,
+        "pool_count": 8,
+        "recycling_events": 7,
+        "setup_seconds": 0.0014095839578658342,
+        "shutdown_seconds": 2.957999375765212,
+        "summed_cell_wall_seconds": 245.8408698522253,
+        "wall_cells_per_second": 218.2747284594531,
+        "wall_seconds": 75.06136929197237
+      }
+    }
+  ],
+  "investigation": "first_flip_horizon_and_energy_accessibility",
+  "native_vs_trusted_preflight": {
+    "accepted": true,
+    "case_count": 12,
+    "cases": [
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "downward_equilibrium",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 0.0,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 0.3192754284070505,
+        "theta1_radians": 0.0,
+        "theta2_radians": 0.0,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 0.0,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "known_arm1_event",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 3.6215226083593284e-16,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 0.3192754284070505,
+        "theta1_radians": -2.6179938779914944,
+        "theta2_radians": -2.6179938779914944,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 3.6215226083593284e-16,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "known_arm2_event",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 1.2071742027864427e-16,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 0.3192754284070505,
+        "theta1_radians": 3.12413936106985,
+        "theta2_radians": 3.12413936106985,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 1.2071742027864427e-16,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "known_delayed_event",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 1.2071742027864427e-16,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 0.3192754284070505,
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -0.2416609733530609,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 1.2071742027864427e-16,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "downward_equilibrium",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 0.0,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": 0.0,
+        "theta2_radians": 0.0,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 0.0,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 1.9539925233402755e-14,
+        "event_time_difference_seconds": 4.440892098500626e-15,
+        "name": "known_arm1_event",
+        "native_event_identity": "arm1+",
+        "native_maximum_normalized_energy_drift": 5.535497306877233e-12,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": -2.6179938779914944,
+        "theta2_radians": -2.6179938779914944,
+        "trusted_event_identity": "arm1+",
+        "trusted_maximum_normalized_energy_drift": 5.53489371977584e-12,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 1.0835776720341528e-13,
+        "event_time_difference_seconds": 1.687538997430238e-14,
+        "name": "known_arm2_event",
+        "native_event_identity": "arm2+",
+        "native_maximum_normalized_energy_drift": 8.623593778509288e-11,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": 3.12413936106985,
+        "theta2_radians": 3.12413936106985,
+        "trusted_event_identity": "arm2+",
+        "trusted_maximum_normalized_energy_drift": 8.624197365610681e-11,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "known_delayed_event",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 7.279695025515253e-11,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -0.2416609733530609,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 7.279586379837002e-11,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "downward_equilibrium",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 0.0,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": 0.0,
+        "theta2_radians": 0.0,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 0.0,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 1.9539925233402755e-14,
+        "event_time_difference_seconds": 4.440892098500626e-15,
+        "name": "known_arm1_event",
+        "native_event_identity": "arm1+",
+        "native_maximum_normalized_energy_drift": 5.535497306877233e-12,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": -2.6179938779914944,
+        "theta2_radians": -2.6179938779914944,
+        "trusted_event_identity": "arm1+",
+        "trusted_maximum_normalized_energy_drift": 5.53489371977584e-12,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 1.0835776720341528e-13,
+        "event_time_difference_seconds": 1.687538997430238e-14,
+        "name": "known_arm2_event",
+        "native_event_identity": "arm2+",
+        "native_maximum_normalized_energy_drift": 8.623593778509288e-11,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": 3.12413936106985,
+        "theta2_radians": 3.12413936106985,
+        "trusted_event_identity": "arm2+",
+        "trusted_maximum_normalized_energy_drift": 8.624197365610681e-11,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 5.440092820663267e-13,
+        "event_time_difference_seconds": 2.3092638912203256e-14,
+        "name": "known_delayed_event",
+        "native_event_identity": "arm2-",
+        "native_maximum_normalized_energy_drift": 7.279695025515253e-11,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -0.2416609733530609,
+        "trusted_event_identity": "arm2-",
+        "trusted_maximum_normalized_energy_drift": 7.279586379837002e-11,
+        "trusted_status": "event_observed"
+      }
+    ]
+  },
+  "native_vs_trusted_representative": {
+    "accepted": true,
+    "case_count": 14,
+    "cases": [
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H1_energy_inaccessible_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 6.035871013932214e-17,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 0.3192754284070505,
+        "theta1_radians": 0.0,
+        "theta2_radians": -3.0925052683774528,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 1.2071742027864427e-16,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H1_energy_permitted_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 6.035871013932214e-16,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 0.3192754284070505,
+        "theta1_radians": -1.5707963267948966,
+        "theta2_radians": -0.04908738521234035,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 7.243045216718657e-16,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 6.217248937900877e-15,
+        "event_time_difference_seconds": 2.6645352591003757e-15,
+        "name": "H10_observed_median",
+        "native_event_identity": "arm1+",
+        "native_maximum_normalized_energy_drift": 2.1565503186968267e-10,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": -2.3071071049800045,
+        "theta2_radians": 1.5707963267948966,
+        "trusted_event_identity": "arm1+",
+        "trusted_maximum_normalized_energy_drift": 2.1565702370711726e-10,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H10_energy_inaccessible_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 6.4146822787666e-12,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": 0.0,
+        "theta2_radians": -3.0925052683774528,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 6.414078691665206e-12,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 10.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H10_energy_permitted_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 8.143820499224858e-11,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 3.1927542840705048,
+        "theta1_radians": -2.945243112740431,
+        "theta2_radians": 0.0,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 8.14397743187122e-11,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 15.660459763365825,
+        "event_state_maximum_component_difference": 3.140598892059643e-12,
+        "event_time_difference_seconds": 1.4432899320127035e-13,
+        "name": "H15.6605_observed_median",
+        "native_event_identity": "arm1-",
+        "native_maximum_normalized_energy_drift": 2.1729135650155968e-15,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 5.0,
+        "theta1_radians": 2.7488935718910685,
+        "theta2_radians": -3.141592653589793,
+        "trusted_event_identity": "arm1-",
+        "trusted_maximum_normalized_energy_drift": 3.983674869195261e-15,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 15.660459763365825,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H15.6605_energy_inaccessible_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 6.4146822787666e-12,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 5.0,
+        "theta1_radians": 0.0,
+        "theta2_radians": -3.0925052683774528,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 6.414078691665206e-12,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 15.660459763365825,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H15.6605_energy_permitted_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 6.287234862307421e-11,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 5.0,
+        "theta1_radians": 2.994330497952771,
+        "theta2_radians": -0.04908738521234035,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 6.287301256888574e-11,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 100.0,
+        "event_state_maximum_component_difference": 7.249756350802272e-14,
+        "event_time_difference_seconds": 1.9984014443252818e-14,
+        "name": "H100_observed_median",
+        "native_event_identity": "arm2+",
+        "native_maximum_normalized_energy_drift": 1.0274470895400901e-10,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 31.927542840705048,
+        "theta1_radians": -1.8653206380689396,
+        "theta2_radians": 1.178097245096172,
+        "trusted_event_identity": "arm2+",
+        "trusted_maximum_normalized_energy_drift": 1.0274638390821538e-10,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 100.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H100_energy_inaccessible_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 1.3027341126790176e-11,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 31.927542840705048,
+        "theta1_radians": 0.0,
+        "theta2_radians": -3.0925052683774528,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 1.3028065431311847e-11,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 100.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H100_energy_permitted_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 8.612735246555224e-11,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 31.927542840705048,
+        "theta1_radians": 2.84706834231575,
+        "theta2_radians": -0.09817477042468115,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 8.612837856362461e-11,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 2.495781359357352e-13,
+        "event_time_difference_seconds": 7.105427357601002e-15,
+        "name": "H1000_observed_median",
+        "native_event_identity": "arm2+",
+        "native_maximum_normalized_energy_drift": 6.743528603347654e-11,
+        "native_status": "event_observed",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": 2.208932334555323,
+        "theta2_radians": -1.423534171157875,
+        "trusted_event_identity": "arm2+",
+        "trusted_maximum_normalized_energy_drift": 6.743661392509961e-11,
+        "trusted_status": "event_observed"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H1000_energy_inaccessible_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 1.299316602510929e-10,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": 0.0,
+        "theta2_radians": -3.0925052683774528,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 7.470175042972926e-11,
+        "trusted_status": "right_censored"
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "censored_endpoint": true,
+          "classification": true,
+          "event_state": true,
+          "event_time": true,
+          "max_step": true,
+          "native_angular_increment": true,
+          "native_energy": true,
+          "native_event_residual": true,
+          "trusted_angular_increment": true,
+          "trusted_energy": true,
+          "trusted_event_residual": true,
+          "unique_attribution": true
+        },
+        "dimensionless_horizon": 1000.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "H1000_energy_permitted_censored",
+        "native_event_identity": null,
+        "native_maximum_normalized_energy_drift": 2.1609933233501821e-10,
+        "native_status": "right_censored",
+        "physical_horizon_seconds": 319.27542840705047,
+        "theta1_radians": 1.5707963267948966,
+        "theta2_radians": -0.04908738521234035,
+        "trusted_event_identity": null,
+        "trusted_maximum_normalized_energy_drift": 2.5176879496153177e-10,
+        "trusted_status": "right_censored"
+      }
+    ],
+    "maximum_event_state_component_difference": 3.140598892059643e-12,
+    "maximum_event_time_difference_seconds": 1.4432899320127035e-13
+  },
+  "physical_and_numerical_contract": {
+    "censoring": "no event strictly before the finite horizon",
+    "event": "first |theta_i(t)-theta_i(0)| = 2*pi; lifted absolute angles",
+    "gravity_timescale_seconds": 0.3192754284070505,
+    "native_artifact_identity": {
+      "adaptive_controller": {
+        "maximum_factor": 10.0,
+        "minimum_factor": 0.2,
+        "safety_factor": 0.9
+      },
+      "artifact_implementation_sha256": "251c15a322a1b7d7ea1921c69c54709ee7c5e6da5275c9eb72b0c8403e189a3d",
+      "compiler": "Apple clang version 17.0.0 (clang-1700.6.4.2)",
+      "compiler_flags": [
+        "-O2",
+        "-ffp-contract=on",
+        "-fPIC",
+        "-shared"
+      ],
+      "compiler_path": "/usr/bin/clang",
+      "compiler_target": "Target: arm64-apple-darwin24.6.0",
+      "corrected_dop_sha256": "f013d13d46f84b5b18ff7c1e64169bdce442afdd642f2fedae1c63a187c3d337",
+      "dop_source": "SciPy 1.18.0 dop.c/dop.h",
+      "expected_vendored_dop_source_sha256": {
+        "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+        "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+        "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944"
+      },
+      "implementation": "first_flip_native_dop853_event_loop_v2",
+      "llvm": "22.1.0",
+      "llvmlite": "0.49.0",
+      "machine": "arm64",
+      "macos": "15.7.9",
+      "native_loop_source_sha256": "7d55721cb3bf7385f85c798a30fa1ba4894db5bc0b31471aced9a43b6ad892c8",
+      "numba": "0.67.0",
+      "numpy": "2.5.2",
+      "physical_rhs_implementation_sha256": "164a06b06df6176bf115d14e75f63c10ee04ad043240315b44c502afa33ee989",
+      "platform": "macOS-15.7.9-arm64-arm-64bit",
+      "python": "3.12.3",
+      "python_cache_tag": "cpython-312",
+      "python_implementation": "CPython",
+      "python_soabi": "cpython-312-darwin",
+      "route": "native_dop853_first_flip_v2",
+      "runtime_implementation_sha256": "b057943963dd0743886a2986406947a33b2095aec5a0c09eb1498ee21d80b16d",
+      "schema_version": 2,
+      "scipy": "1.18.0",
+      "source_corrections": {
+        "dense_counter": "nfcn += 3; -> *nfcn += 3;",
+        "rejection_factor": "facc1/safe -> fac11/safe",
+        "terminal_horizon": "1.01*h look-ahead -> strict x+h clamp"
+      },
+      "system": "Darwin",
+      "vendored_dop_source_sha256": {
+        "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+        "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+        "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944"
+      }
+    },
+    "parameters": {
+      "gravity": 9.81,
+      "length1": 1.0,
+      "length2": 1.0,
+      "mass1": 1.0,
+      "mass2": 1.0
+    },
+    "production_eligibility_changed": false,
+    "production_non_t5_rejection_verified": true,
+    "route": "investigation_native_dop853_first_flip_v2_long_horizon",
+    "scientific_gates": {
+      "censored_endpoint_allowance_seconds": 2e-14,
+      "event_state_component_difference": 5e-07,
+      "event_time_difference_seconds": 5e-08,
+      "maximum_accepted_angular_increment_strict": 0.5,
+      "maximum_event_surface_residual": 1e-10,
+      "maximum_normalized_energy_drift": 5e-09,
+      "maximum_step_allowance_seconds": 2e-14
+    },
+    "solver": {
+      "atol": 1e-11,
+      "max_step": 0.009977357137720327,
+      "method": "DOP853",
+      "rtol": 1e-09
+    }
+  },
+  "runtime_scaling": {
+    "maximum_horizon_hat": 1000.0,
+    "maximum_horizon_relative_wall_cost_vs_t5": 4.716468091621008,
+    "maximum_horizon_wall_seconds": 75.06136929197237,
+    "t5_dimensionless_horizon": 15.660459763365825,
+    "t5_wall_seconds": 15.914741249987856
+  },
+  "schema_version": 1
+}

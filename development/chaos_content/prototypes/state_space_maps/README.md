@@ -59,6 +59,9 @@ artifact without rerunning dynamics.
 - [First-flip teaching progression](docs/pedagogy/first_flip.md) separates the
   physical event, timescale, threshold sequence, and later sensitivity
   comparison into learner-facing questions.
+- [First-flip horizon and energy-accessibility investigation](investigations/first_flip_horizon/)
+  derives the rigorous zero-velocity mask and recommends the next bounded
+  production horizon from a 128×128 survival study.
 - [Sensitivity to Lyapunov storyboard](docs/pedagogy/sensitivity_to_lyapunov.md)
   presents the teaching progression from nearby trajectories to renormalised
   finite-time stretching.
