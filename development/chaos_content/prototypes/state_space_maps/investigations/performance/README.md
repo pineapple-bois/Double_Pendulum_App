@@ -22,7 +22,9 @@ scientific/operational validation and a **2.170× median 64² end-to-end speedup
 unsupported and ineligible definitions retain the trusted Python RHS. The
 [post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) finds the
 remaining cost concentrated in Python DOP853 stepping/event detection and
-recommends one narrow compiled solver/event-loop prototype.
+recommends one narrow compiled solver/event-loop prototype. The subsequent
+[native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md) passed
+all scientific gates and supports a later guarded production-promotion task.
 
 ## Investigation sequence
 
@@ -37,7 +39,8 @@ recommends one narrow compiled solver/event-loop prototype.
 First-flip lineage: [feasibility](reports/FIRST_FLIP_COMPILED_RHS_FEASIBILITY.md)
 → [pre-promotion review](reports/FIRST_FLIP_PRE_PROMOTION_REVIEW.md) →
 [promotion](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) →
-[post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md).
+[post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) →
+[native DOP853 prototype](reports/FIRST_FLIP_NATIVE_DOP853_PROTOTYPE.md).
 
 ## Directory guide
 

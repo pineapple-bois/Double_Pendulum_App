@@ -1,0 +1,3721 @@
+{
+  "cold_initialization_seconds": 0.9112068749964237,
+  "contract": {
+    "angular_increment_strict_upper_bound": 0.5,
+    "energy_difference_gate": 5e-09,
+    "energy_gate": 5e-09,
+    "event_residual_gate": 1e-10,
+    "event_state_gate": 5e-07,
+    "event_time_gate_seconds": 5e-08,
+    "field_spec": {
+      "energy_drift_limit": 5e-09,
+      "event_surface_residual_limit": 1e-10,
+      "maximum_accepted_angular_increment": 0.5,
+      "observation_horizon_seconds": 5.0,
+      "parameters": {
+        "gravity": 9.81,
+        "length1": 1.0,
+        "length2": 1.0,
+        "mass1": 1.0,
+        "mass2": 1.0
+      },
+      "solver": {
+        "atol": 1e-11,
+        "max_step": 0.009977357137720327,
+        "method": "DOP853",
+        "rtol": 1e-09
+      }
+    }
+  },
+  "decision": {
+    "boundary_gate_passed": true,
+    "decision": "PROMOTE NATIVE FIRST-FLIP DOP853 NEXT",
+    "promotion_recommended": true,
+    "scientific_gate_passed": true,
+    "whole_field_gate_passed": true
+  },
+  "environment": {
+    "git_head": "9036ff4b401b8e60d8318ddb00832307c0ca9cb1",
+    "git_status_short_before_artifact": "?? development/chaos_content/prototypes/state_space_maps/investigations/performance/tests/test_first_flip_native_dop853.py\n?? development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/benchmark_first_flip_native_dop853.py\n?? development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/first_flip_native/\n?? development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/first_flip_native_dop853.py",
+    "numba": "0.67.0",
+    "numpy": "2.5.2",
+    "platform": "macOS-15.7.9-arm64-arm-64bit",
+    "python": "3.12.3",
+    "scipy": "1.18.0"
+  },
+  "inputs": {
+    "case_count": 37,
+    "case_evidence": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/first_flip_compiled_rhs_feasibility.json",
+    "case_evidence_sha256": "2b626a2df2966c0715b1664e3cb517420d41c54638c503eeb00df671c93bd678",
+    "censored_fraction": 0.57470703125,
+    "observed_fraction": 0.42529296875,
+    "profile_evidence": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/first_flip_post_promotion_profile.json",
+    "profile_evidence_sha256": "7e44002c838597276fcb6a76517c5ec43053410024beeee4a9bc18036a69ce95",
+    "promotion_evidence": "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/evidence/current/first_flip_compiled_promotion_64.json",
+    "promotion_evidence_sha256": "9e5267f9b1727542a9a9037a792c54efca3c19751f3deb7137cab4baf3676298",
+    "repetitions": 7,
+    "timing_case_count": 32
+  },
+  "prototype_identity": "investigation_native_dop853_first_flip_v1",
+  "purpose": "investigation-only native DOP853 first-flip prototype",
+  "scientific_validation": {
+    "accepted": true,
+    "cases": [
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2477,
+        "energy_diagnostic_difference": 2.969648538854644e-13,
+        "event_state_maximum_component_difference": 4.1815439999481896e-12,
+        "event_time_difference_seconds": 5.542233338928781e-13,
+        "name": "experiment_020_arm1_positive",
+        "native_accepted_steps": 207,
+        "native_identity": "arm1+",
+        "native_maximum_accepted_angular_increment": 0.11351462333982115,
+        "native_maximum_normalized_energy_drift": 5.8318585736613044e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 2,
+        "native_rhs_evaluations": 3129,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "experiment_020",
+        "surface_residual_maximum_difference": 1.4166445794216997e-12,
+        "theta1_radians": -2.6179938779914944,
+        "theta2_radians": -2.6179938779914944,
+        "triggering_residual": 0.0,
+        "trusted_identity": "arm1+",
+        "trusted_maximum_accepted_angular_increment": 0.11342408248406172,
+        "trusted_maximum_normalized_energy_drift": 5.53489371977584e-12,
+        "trusted_rhs_evaluations": 2477,
+        "trusted_status": "event_observed",
+        "weighting_sample": false
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2477,
+        "energy_diagnostic_difference": 2.969648538854644e-13,
+        "event_state_maximum_component_difference": 4.1815439999481896e-12,
+        "event_time_difference_seconds": 5.542233338928781e-13,
+        "name": "experiment_020_arm1_negative",
+        "native_accepted_steps": 207,
+        "native_identity": "arm1-",
+        "native_maximum_accepted_angular_increment": 0.11351462333982115,
+        "native_maximum_normalized_energy_drift": 5.8318585736613044e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 2,
+        "native_rhs_evaluations": 3129,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "experiment_020",
+        "surface_residual_maximum_difference": 1.4166445794216997e-12,
+        "theta1_radians": 2.6179938779914944,
+        "theta2_radians": 2.6179938779914944,
+        "triggering_residual": 0.0,
+        "trusted_identity": "arm1-",
+        "trusted_maximum_accepted_angular_increment": 0.11342408248406172,
+        "trusted_maximum_normalized_energy_drift": 5.53489371977584e-12,
+        "trusted_rhs_evaluations": 2477,
+        "trusted_status": "event_observed",
+        "weighting_sample": false
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2969,
+        "energy_diagnostic_difference": 3.817410766245484e-11,
+        "event_state_maximum_component_difference": 4.0792036415382427e-11,
+        "event_time_difference_seconds": 1.0231815394945443e-12,
+        "name": "experiment_020_arm2_positive",
+        "native_accepted_steps": 247,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.10496810833283554,
+        "native_maximum_normalized_energy_drift": 1.2441608131856165e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 3,
+        "native_rhs_evaluations": 3740,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "experiment_020",
+        "surface_residual_maximum_difference": 1.4725998198628076e-11,
+        "theta1_radians": 3.12413936106985,
+        "theta2_radians": 3.12413936106985,
+        "triggering_residual": 2.6645352591003757e-15,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.1049681083328391,
+        "trusted_maximum_normalized_energy_drift": 8.624197365610681e-11,
+        "trusted_rhs_evaluations": 2969,
+        "trusted_status": "event_observed",
+        "weighting_sample": false
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2969,
+        "energy_diagnostic_difference": 3.817410766245484e-11,
+        "event_state_maximum_component_difference": 4.0792036415382427e-11,
+        "event_time_difference_seconds": 1.0231815394945443e-12,
+        "name": "experiment_020_arm2_negative",
+        "native_accepted_steps": 247,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.10496810833283554,
+        "native_maximum_normalized_energy_drift": 1.2441608131856165e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 3,
+        "native_rhs_evaluations": 3740,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "experiment_020",
+        "surface_residual_maximum_difference": 1.4725998198628076e-11,
+        "theta1_radians": -3.12413936106985,
+        "theta2_radians": -3.12413936106985,
+        "triggering_residual": 2.6645352591003757e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.1049681083328391,
+        "trusted_maximum_normalized_energy_drift": 8.624197365610681e-11,
+        "trusted_rhs_evaluations": 2969,
+        "trusted_status": "event_observed",
+        "weighting_sample": false
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 5873,
+        "energy_diagnostic_difference": 2.8333102843919486e-11,
+        "event_state_maximum_component_difference": 5.96659771590069e-09,
+        "event_time_difference_seconds": 6.66950938921218e-10,
+        "name": "experiment_020_near_horizon",
+        "native_accepted_steps": 487,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.10173974783001771,
+        "native_maximum_normalized_energy_drift": 4.4462760954450535e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 3,
+        "native_rhs_evaluations": 7340,
+        "native_root_iterations": 41,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "experiment_020",
+        "surface_residual_maximum_difference": 6.175948641384821e-10,
+        "theta1_radians": -3.141592653589793,
+        "theta2_radians": -0.2416609733530609,
+        "triggering_residual": 3.552713678800501e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.10184301199836998,
+        "trusted_maximum_normalized_energy_drift": 7.279586379837002e-11,
+        "trusted_rhs_evaluations": 5873,
+        "trusted_status": "event_observed",
+        "weighting_sample": false
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 1481,
+        "energy_diagnostic_difference": 1.9121201771488735e-11,
+        "event_state_maximum_component_difference": 5.422009508038172e-10,
+        "event_time_difference_seconds": 1.5699885835829264e-11,
+        "name": "field_observed_q0.0312",
+        "native_accepted_steps": 126,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.10522698981630363,
+        "native_maximum_normalized_energy_drift": 5.968533327933033e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 2,
+        "native_rhs_evaluations": 1914,
+        "native_root_iterations": 43,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 2.580691216280684e-11,
+        "theta1_radians": 1.2885438618239382,
+        "theta2_radians": -2.8716120349219203,
+        "triggering_residual": 3.552713678800501e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.11365855851462925,
+        "trusted_maximum_normalized_energy_drift": 7.880653505081906e-11,
+        "trusted_rhs_evaluations": 1481,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 1613,
+        "energy_diagnostic_difference": 5.468242614104491e-12,
+        "event_state_maximum_component_difference": 1.1265743893318358e-10,
+        "event_time_difference_seconds": 4.8185899714781044e-12,
+        "name": "field_observed_q0.0938",
+        "native_accepted_steps": 134,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.10306122819019237,
+        "native_maximum_normalized_energy_drift": 2.4582065533278705e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 2012,
+        "native_root_iterations": 43,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 7.210232411125617e-12,
+        "theta1_radians": -0.8958447801252145,
+        "theta2_radians": 3.055689729468197,
+        "triggering_residual": 0.0,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.10284597405623774,
+        "trusted_maximum_normalized_energy_drift": 3.0050308147383196e-11,
+        "trusted_rhs_evaluations": 1613,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 1925,
+        "energy_diagnostic_difference": 2.97445309218174e-11,
+        "event_state_maximum_component_difference": 2.1740818867410638e-10,
+        "event_time_difference_seconds": 5.234035427292838e-12,
+        "name": "field_observed_q0.1562",
+        "native_accepted_steps": 160,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.09460233638512161,
+        "native_maximum_normalized_energy_drift": 9.083973804225954e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 2,
+        "native_rhs_evaluations": 2424,
+        "native_root_iterations": 43,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 1.0257394933432806e-10,
+        "theta1_radians": -1.8775924843720249,
+        "theta2_radians": 1.9512235621905356,
+        "triggering_residual": 1.7763568394002505e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.09144515070980319,
+        "trusted_maximum_normalized_energy_drift": 6.109520712044214e-11,
+        "trusted_rhs_evaluations": 1925,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2009,
+        "energy_diagnostic_difference": 8.96725213055853e-12,
+        "event_state_maximum_component_difference": 1.2257295178841332e-10,
+        "event_time_difference_seconds": 5.404343639270337e-12,
+        "name": "field_observed_q0.2188",
+        "native_accepted_steps": 167,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.094176999252443,
+        "native_maximum_normalized_energy_drift": 8.162795768724908e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 2507,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 6.221689829999377e-11,
+        "theta1_radians": 1.5953400194010667,
+        "theta2_radians": -1.6689710972195777,
+        "triggering_residual": 1.7763568394002505e-15,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.09433915643806362,
+        "trusted_maximum_normalized_energy_drift": 7.266070555669055e-11,
+        "trusted_rhs_evaluations": 2009,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2141,
+        "energy_diagnostic_difference": 1.7884285814281137e-12,
+        "event_state_maximum_component_difference": 2.5720314766886077e-10,
+        "event_time_difference_seconds": 2.2265522758857514e-11,
+        "name": "field_observed_q0.2812",
+        "native_accepted_steps": 179,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.08880472451920324,
+        "native_maximum_normalized_energy_drift": 3.9274386589584545e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 2687,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 3.743583221194058e-11,
+        "theta1_radians": -1.337631247036279,
+        "theta2_radians": 1.7426021750380887,
+        "triggering_residual": 2.6645352591003757e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.08892334095427279,
+        "trusted_maximum_normalized_energy_drift": 3.748595800815643e-11,
+        "trusted_rhs_evaluations": 2141,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2297,
+        "energy_diagnostic_difference": 1.2436308637105939e-12,
+        "event_state_maximum_component_difference": 7.318590178329032e-13,
+        "event_time_difference_seconds": 8.659739592076221e-14,
+        "name": "field_observed_q0.3438",
+        "native_accepted_steps": 191,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.0904100671330097,
+        "native_maximum_normalized_energy_drift": 1.0552634011077968e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 2867,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 1.1546319456101628e-13,
+        "theta1_radians": 2.6016314162540475,
+        "theta2_radians": 0.8467573949128737,
+        "triggering_residual": 3.552713678800501e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.09041659508347388,
+        "trusted_maximum_normalized_energy_drift": 9.309003147367374e-12,
+        "trusted_rhs_evaluations": 2297,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2477,
+        "energy_diagnostic_difference": 3.911244417028108e-14,
+        "event_state_maximum_component_difference": 1.3909984275528586e-12,
+        "event_time_difference_seconds": 1.8918200339612667e-13,
+        "name": "field_observed_q0.4062",
+        "native_accepted_steps": 207,
+        "native_identity": "arm1-",
+        "native_maximum_accepted_angular_increment": 0.11329257415355387,
+        "native_maximum_normalized_energy_drift": 5.410916929149672e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 1,
+        "native_rhs_evaluations": 3118,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 4.263256414560601e-13,
+        "theta1_radians": 2.613903262557132,
+        "theta2_radians": 2.613903262557132,
+        "triggering_residual": 2.6645352591003757e-15,
+        "trusted_identity": "arm1-",
+        "trusted_maximum_accepted_angular_increment": 0.11329257415357585,
+        "trusted_maximum_normalized_energy_drift": 5.450029373319953e-12,
+        "trusted_rhs_evaluations": 2477,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 2681,
+        "energy_diagnostic_difference": 2.414348405574103e-16,
+        "event_state_maximum_component_difference": 2.3064883336587627e-14,
+        "event_time_difference_seconds": 9.769962616701378e-15,
+        "name": "field_observed_q0.4688",
+        "native_accepted_steps": 223,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.1058724277849592,
+        "native_maximum_normalized_energy_drift": 1.5947978393011694e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 3347,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 1.7763568394002505e-15,
+        "theta1_radians": 2.7857091108003242,
+        "theta2_radians": 2.442097414313941,
+        "triggering_residual": 8.881784197001252e-16,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.10587242778486927,
+        "trusted_maximum_normalized_energy_drift": 1.5950392741417268e-12,
+        "trusted_rhs_evaluations": 2681,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 3005,
+        "energy_diagnostic_difference": 1.3852981886914948e-10,
+        "event_state_maximum_component_difference": 6.223892512480234e-10,
+        "event_time_difference_seconds": 1.7922552331128827e-11,
+        "name": "field_observed_q0.5312",
+        "native_accepted_steps": 255,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.10891757142449787,
+        "native_maximum_normalized_energy_drift": 2.1559304347436958e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 6,
+        "native_rhs_evaluations": 3893,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 4.5858428165956866e-11,
+        "theta1_radians": -2.6261751088602177,
+        "theta2_radians": 1.4235341711578746,
+        "triggering_residual": 0.0,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.10404466574108806,
+        "trusted_maximum_normalized_energy_drift": 7.70632246052201e-11,
+        "trusted_rhs_evaluations": 3005,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 3293,
+        "energy_diagnostic_difference": 6.639458115293442e-16,
+        "event_state_maximum_component_difference": 1.687538997430238e-14,
+        "event_time_difference_seconds": 1.3322676295501878e-14,
+        "name": "field_observed_q0.5938",
+        "native_accepted_steps": 274,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.08517181448647926,
+        "native_maximum_normalized_energy_drift": 3.384602599320461e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 4112,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 3.552713678800501e-15,
+        "theta1_radians": -2.736621725587984,
+        "theta2_radians": 0.7363107781851079,
+        "triggering_residual": 8.881784197001252e-16,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.08517181448645106,
+        "trusted_maximum_normalized_energy_drift": 3.384668993901614e-11,
+        "trusted_rhs_evaluations": 3293,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 3857,
+        "energy_diagnostic_difference": 1.8748139673795146e-11,
+        "event_state_maximum_component_difference": 2.2304702529396536e-10,
+        "event_time_difference_seconds": 1.7640555682874037e-11,
+        "name": "field_observed_q0.6562",
+        "native_accepted_steps": 319,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.12155300678055267,
+        "native_maximum_normalized_energy_drift": 2.2882952753179252e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 4,
+        "native_rhs_evaluations": 4831,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 4.390710017787569e-11,
+        "theta1_radians": 2.172116795646068,
+        "theta2_radians": -2.748893571891069,
+        "triggering_residual": 3.552713678800501e-15,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.11730236769828029,
+        "trusted_maximum_normalized_energy_drift": 2.1008138785799737e-10,
+        "trusted_rhs_evaluations": 3857,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 4025,
+        "energy_diagnostic_difference": 3.619929138411649e-11,
+        "event_state_maximum_component_difference": 4.5438763862648557e-10,
+        "event_time_difference_seconds": 6.740163982499325e-11,
+        "name": "field_observed_q0.7188",
+        "native_accepted_steps": 338,
+        "native_identity": "arm1-",
+        "native_maximum_accepted_angular_increment": 0.08956991982880425,
+        "native_maximum_normalized_energy_drift": 1.7180587756250848e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 2,
+        "native_rhs_evaluations": 5094,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 9.755574126302236e-11,
+        "theta1_radians": -2.000310947402876,
+        "theta2_radians": 2.4298255680108554,
+        "triggering_residual": 2.6645352591003757e-15,
+        "trusted_identity": "arm1-",
+        "trusted_maximum_accepted_angular_increment": 0.08962454093870767,
+        "trusted_maximum_normalized_energy_drift": 1.3560658617839199e-10,
+        "trusted_rhs_evaluations": 4025,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 4445,
+        "energy_diagnostic_difference": 1.5167866207945013e-10,
+        "event_state_maximum_component_difference": 6.977529665164184e-10,
+        "event_time_difference_seconds": 3.148503679994974e-11,
+        "name": "field_observed_q0.7812",
+        "native_accepted_steps": 370,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.12142339598095131,
+        "native_maximum_normalized_energy_drift": 2.514179297794919e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 5,
+        "native_rhs_evaluations": 5607,
+        "native_root_iterations": 42,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 8.15525424968655e-12,
+        "theta1_radians": 2.380738182798515,
+        "theta2_radians": 2.024854640009046,
+        "triggering_residual": 3.552713678800501e-15,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.12142339598096012,
+        "trusted_maximum_normalized_energy_drift": 9.973926770004176e-11,
+        "trusted_rhs_evaluations": 4445,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 4841,
+        "energy_diagnostic_difference": 5.432283912459942e-16,
+        "event_state_maximum_component_difference": 3.8902214782865485e-13,
+        "event_time_difference_seconds": 1.0658141036401503e-14,
+        "name": "field_observed_q0.8438",
+        "native_accepted_steps": 403,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.1007389580407253,
+        "native_maximum_normalized_energy_drift": 1.0470165905414612e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 6047,
+        "native_root_iterations": 41,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 1.8207657603852567e-13,
+        "theta1_radians": -2.405281875404685,
+        "theta2_radians": 1.055378782065321,
+        "triggering_residual": 1.0658141036401503e-14,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.10073895804057331,
+        "trusted_maximum_normalized_energy_drift": 1.0470220228253737e-10,
+        "trusted_rhs_evaluations": 4841,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 5357,
+        "energy_diagnostic_difference": 1.207174202768876e-16,
+        "event_state_maximum_component_difference": 5.446825213084594e-10,
+        "event_time_difference_seconds": 8.909317728011956e-12,
+        "name": "field_observed_q0.9062",
+        "native_accepted_steps": 449,
+        "native_identity": "arm2-",
+        "native_maximum_accepted_angular_increment": 0.10168452407640771,
+        "native_maximum_normalized_energy_drift": 1.292068125010298e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 5,
+        "native_rhs_evaluations": 6792,
+        "native_root_iterations": 41,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 9.113243493175105e-11,
+        "theta1_radians": -3.0802334220743677,
+        "theta2_radians": -0.25770877236478773,
+        "triggering_residual": 8.881784197001252e-15,
+        "trusted_identity": "arm2-",
+        "trusted_maximum_accepted_angular_increment": 0.10553068432453472,
+        "trusted_maximum_normalized_energy_drift": 1.2920693321845007e-10,
+        "trusted_rhs_evaluations": 5357,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 5789,
+        "energy_diagnostic_difference": 2.6747962398240565e-13,
+        "event_state_maximum_component_difference": 5.6288307348495437e-14,
+        "event_time_difference_seconds": 3.019806626980426e-14,
+        "name": "field_observed_q0.9688",
+        "native_accepted_steps": 482,
+        "native_identity": "arm2+",
+        "native_maximum_accepted_angular_increment": 0.0940784100401948,
+        "native_maximum_normalized_energy_drift": 9.812092996378625e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7232,
+        "native_root_iterations": 41,
+        "native_status": "event_observed",
+        "native_terminal_candidate_count": 1,
+        "outcome": "observed",
+        "source": "authoritative_512_observed_time_quantile",
+        "surface_residual_maximum_difference": 4.440892098500626e-14,
+        "theta1_radians": 1.0799224746714913,
+        "theta2_radians": -2.36846633649543,
+        "triggering_residual": 7.105427357601002e-15,
+        "trusted_identity": "arm2+",
+        "trusted_maximum_accepted_angular_increment": 0.09397273132640271,
+        "trusted_maximum_normalized_energy_drift": 1.0079572620361031e-11,
+        "trusted_rhs_evaluations": 5789,
+        "trusted_status": "event_observed",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 3.82545960024256e-13,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.0312",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.1001525714833032,
+        "native_maximum_normalized_energy_drift": 4.190758058844508e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -1.1903690913992575,
+        "theta2_radians": -2.7979809571034093,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.10016506650209633,
+        "trusted_maximum_normalized_energy_drift": 3.808212098820252e-12,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 1.2071742027866475e-15,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.0938",
+        "native_accepted_steps": 502,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.08199629480094017,
+        "native_maximum_normalized_energy_drift": 1.2370879795314908e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7532,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 0.8713010875190443,
+        "theta2_radians": -2.294835258676919,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.08199629480093984,
+        "trusted_maximum_normalized_energy_drift": 1.2369672621112121e-11,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 1.4244655592879936e-14,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.1562",
+        "native_accepted_steps": 502,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.0744823067342647,
+        "native_maximum_normalized_energy_drift": 2.195246287767146e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7532,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 0.4172427743048943,
+        "theta2_radians": -1.9144080232812801,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.07448469080727577,
+        "trusted_maximum_normalized_energy_drift": 2.181001632174266e-12,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 1.810761304179665e-15,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.2188",
+        "native_accepted_steps": 502,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.0728996318881964,
+        "native_maximum_normalized_energy_drift": 1.5934699476781044e-14,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7532,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -2.0125827937059615,
+        "theta2_radians": -1.533980787885641,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.07289963188819698,
+        "trusted_maximum_normalized_energy_drift": 1.774546078096071e-14,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 1.207174202786443e-16,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.2812",
+        "native_accepted_steps": 502,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.04264279144235819,
+        "native_maximum_normalized_energy_drift": 8.450219419505099e-16,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7532,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -0.5154175447295755,
+        "theta2_radians": -1.214912784005428,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.0426427914423585,
+        "trusted_maximum_normalized_energy_drift": 9.657393622291542e-16,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6038,
+        "energy_diagnostic_difference": 7.243045216718648e-16,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.3438",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.04315235723407754,
+        "native_maximum_normalized_energy_drift": 1.9797656925697662e-14,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 0.36815538909255396,
+        "theta2_radians": -0.8835729338221294,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.043157060122298294,
+        "trusted_maximum_normalized_energy_drift": 2.0521961447369527e-14,
+        "trusted_rhs_evaluations": 6038,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 0.0,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.4062",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.024590216025880893,
+        "native_maximum_normalized_energy_drift": 2.4143484055728854e-16,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 0.15953400194010658,
+        "theta2_radians": -0.5154175447295755,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.02459201093618759,
+        "trusted_maximum_normalized_energy_drift": 2.4143484055728854e-16,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6038,
+        "energy_diagnostic_difference": 1.207174202786444e-16,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.4688",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.04386838729524842,
+        "native_maximum_normalized_energy_drift": 2.655783246130174e-15,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -0.8222137023067035,
+        "theta2_radians": -0.1472621556370215,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.04386252584559215,
+        "trusted_maximum_normalized_energy_drift": 2.5350658258515295e-15,
+        "trusted_rhs_evaluations": 6038,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 2.2984596821053866e-13,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.5312",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.0764173190118424,
+        "native_maximum_normalized_energy_drift": 2.706363845226926e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -1.3499030933393643,
+        "theta2_radians": 0.1472621556370215,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.07633387654873819,
+        "trusted_maximum_normalized_energy_drift": 2.9362098134374646e-12,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6038,
+        "energy_diagnostic_difference": 1.2675329129257634e-15,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.5938",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.062121685358714214,
+        "native_maximum_normalized_energy_drift": 2.0823754998066138e-14,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 1.2394564766115979,
+        "theta2_radians": 0.5031456984264904,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.06209664052813772,
+        "trusted_maximum_normalized_energy_drift": 2.20912879109919e-14,
+        "trusted_rhs_evaluations": 6038,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6038,
+        "energy_diagnostic_difference": 5.660515285253277e-15,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.6562",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.08034322593979787,
+        "native_maximum_normalized_energy_drift": 2.759128675146845e-13,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 1.877592484372025,
+        "theta2_radians": 0.8713010875190443,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.08033697319527788,
+        "trusted_maximum_normalized_energy_drift": 2.8157338279993776e-13,
+        "trusted_rhs_evaluations": 6038,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6098,
+        "energy_diagnostic_difference": 2.1115378106104274e-11,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.7188",
+        "native_accepted_steps": 509,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.09180133729370722,
+        "native_maximum_normalized_energy_drift": 1.5527628263859428e-10,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 4,
+        "native_rhs_evaluations": 7681,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -2.086213871524472,
+        "theta2_radians": 1.2149127840054277,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.0913432875069219,
+        "trusted_maximum_normalized_energy_drift": 1.3416090453249e-10,
+        "trusted_rhs_evaluations": 6098,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 2.5350658258515205e-15,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.7812",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.059982429010307314,
+        "native_maximum_normalized_energy_drift": 1.4908601404412567e-13,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": -0.15953400194010658,
+        "theta2_radians": 1.5339807878856409,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.06000253367973121,
+        "trusted_maximum_normalized_energy_drift": 1.4655094821827415e-13,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6026,
+        "energy_diagnostic_difference": 1.6900438839010137e-15,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.8438",
+        "native_accepted_steps": 502,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.0772374101062098,
+        "native_maximum_normalized_energy_drift": 8.478889806821277e-14,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7532,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 1.2394564766115979,
+        "theta2_radians": 1.9021361769781953,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.0772354332231379,
+        "trusted_maximum_normalized_energy_drift": 8.647894195211379e-14,
+        "trusted_rhs_evaluations": 6026,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6038,
+        "energy_diagnostic_difference": 5.374943137906635e-13,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.9062",
+        "native_accepted_steps": 503,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.08136329471029921,
+        "native_maximum_normalized_energy_drift": 3.4583730148527404e-12,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 0,
+        "native_rhs_evaluations": 7547,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 0.36815538909255396,
+        "theta2_radians": 2.2825634123738343,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.08140573894148379,
+        "trusted_maximum_normalized_energy_drift": 2.920878701062077e-12,
+        "trusted_rhs_evaluations": 6038,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      },
+      {
+        "accepted": true,
+        "checks": {
+          "adapter_completed_valid": true,
+          "angular_increment": true,
+          "attribution": true,
+          "censored_endpoint": true,
+          "classification": true,
+          "energy": true,
+          "event_counts": true,
+          "event_state": true,
+          "event_time": true,
+          "triggering_event_residual": true
+        },
+        "compiled_rhs_evaluations": 6050,
+        "energy_diagnostic_difference": 3.9842784562966555e-12,
+        "event_state_maximum_component_difference": 0.0,
+        "event_time_difference_seconds": 0.0,
+        "name": "field_censored_spatial_q0.9688",
+        "native_accepted_steps": 504,
+        "native_identity": null,
+        "native_maximum_accepted_angular_increment": 0.10772230849348913,
+        "native_maximum_normalized_energy_drift": 2.178768359899111e-11,
+        "native_maximum_solver_step_seconds": 0.00997735713772041,
+        "native_rejected_steps": 1,
+        "native_rhs_evaluations": 7573,
+        "native_root_iterations": 0,
+        "native_status": "right_censored",
+        "native_terminal_candidate_count": 0,
+        "outcome": "censored",
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "surface_residual_maximum_difference": 0.0,
+        "theta1_radians": 1.4358060174609601,
+        "theta2_radians": 2.7857091108003242,
+        "triggering_residual": 0.0,
+        "trusted_identity": null,
+        "trusted_maximum_accepted_angular_increment": 0.10778081805727696,
+        "trusted_maximum_normalized_energy_drift": 2.5771962055287767e-11,
+        "trusted_rhs_evaluations": 6050,
+        "trusted_status": "right_censored",
+        "weighting_sample": true
+      }
+    ],
+    "maximum_energy_diagnostic_difference": 1.5167866207945013e-10,
+    "maximum_event_state_component_difference": 5.96659771590069e-09,
+    "maximum_event_time_difference_seconds": 6.66950938921218e-10,
+    "maximum_native_accepted_angular_increment": 0.12155300678055267,
+    "maximum_native_normalized_energy_drift": 2.514179297794919e-10,
+    "maximum_native_solver_step_seconds": 0.00997735713772041,
+    "maximum_surface_residual_difference": 6.175948641384821e-10,
+    "maximum_triggering_residual": 1.0658141036401503e-14
+  },
+  "source_identity": {
+    "compiler_flags": [
+      "-O2",
+      "-ffp-contract=on",
+      "-fPIC",
+      "-shared"
+    ],
+    "dense_counter_correction": "nfcn += 3; -> *nfcn += 3;",
+    "expected_s1_source_sha256": {
+      "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+      "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+      "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944"
+    },
+    "loop_source_sha256": "7b8593f7a6de6839cd02d7eb25aebd85f4a6c05cb94d677b69a663586c828fff",
+    "native_library_sha256": "98af4beda0af6c45016a865291cedb99523fdc642f8fad94993c1f57b85b5764",
+    "patched_dop_sha256": "e41acf1847a651d93efdc16af84c441c6894a4de436768ae649075d5f029045d",
+    "prototype": "investigation_native_dop853_first_flip_v1",
+    "vendored_source_sha256": {
+      "LICENSE_DOP": "ed9bf58c6d74d3fad9d92d1d67d9bff8141d8ab60de784516b0711364fd43357",
+      "dop.c": "14b9fdce5f18e6ad01eb814ec7965cc51804ba49b359d4bd6cf72a958239d213",
+      "dop.h": "72549b5250fbfde34026b2bf1a8e65cbfdf1854dee35971a6922bfcbb9740944"
+    }
+  },
+  "source_sha256": {
+    "/Users/Ian/Documents/Study/ComputerScience/Maxima/MS327/Python/Double_Pendulum_App/development/chaos_content/prototypes/state_space_maps/investigations/performance/tools/benchmark_first_flip_native_dop853.py": "a997d466f30104cc1bf0244d7e1bb98482556db08a768113c0a78a554e5f2089"
+  },
+  "timestamp_utc": "2026-09-06T10:49:02.545166+00:00",
+  "timings": {
+    "boundary_acceleration_gate": 2.565,
+    "cases": [
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.005897833034396172,
+          "native": 0.00022012495901435614,
+          "trusted": 0.012260250048711896
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.005897833034396172,
+            0.005896916030906141,
+            0.005894875037483871,
+            0.005909124971367419,
+            0.005898792063817382,
+            0.005907417042180896,
+            0.005893624969758093
+          ],
+          "native": [
+            0.00022012495901435614,
+            0.00022191600874066353,
+            0.0002211249666288495,
+            0.00021908304188400507,
+            0.00022112508304417133,
+            0.00021954206749796867,
+            0.00021841702982783318
+          ],
+          "trusted": [
+            0.012452500057406723,
+            0.012248291983269155,
+            0.012260250048711896,
+            0.01232562493532896,
+            0.012250999920070171,
+            0.012277540983632207,
+            0.012245958088897169
+          ]
+        },
+        "name": "field_observed_q0.0312",
+        "native_loop_median_seconds": 0.000163292046636343,
+        "native_loop_seconds": [
+          0.00016316701658070087,
+          0.00016554200556129217,
+          0.00016437494195997715,
+          0.00016216596122831106,
+          0.00016316701658070087,
+          0.000163292046636343,
+          0.00016354199033230543
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 1481,
+          "native": 1914,
+          "trusted": 1481
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 26.793113606038315,
+        "speedup_native_over_trusted": 55.69677379434427,
+        "theta1_radians": 1.2885438618239382,
+        "theta2_radians": -2.8716120349219203,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.006464459002017975,
+          "native": 0.00023566698655486107,
+          "trusted": 0.01333341607823968
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.006409584078937769,
+            0.006416166084818542,
+            0.00679583300370723,
+            0.006464459002017975,
+            0.006475249887444079,
+            0.006394499912858009,
+            0.00650104193482548
+          ],
+          "native": [
+            0.0002270829863846302,
+            0.00023566698655486107,
+            0.0002495419466868043,
+            0.00023970904294401407,
+            0.00024687498807907104,
+            0.0002346669789403677,
+            0.00023195799440145493
+          ],
+          "trusted": [
+            0.013301833998411894,
+            0.013421291951090097,
+            0.013615333009511232,
+            0.013698499999009073,
+            0.013296291930601,
+            0.01333341607823968,
+            0.013314042007550597
+          ]
+        },
+        "name": "field_observed_q0.0938",
+        "native_loop_median_seconds": 0.0001782500185072422,
+        "native_loop_seconds": [
+          0.00017058395314961672,
+          0.00017874990589916706,
+          0.00018433399964123964,
+          0.0001782500185072422,
+          0.00018116692081093788,
+          0.00017574999947100878,
+          0.00017500005196779966
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 1613,
+          "native": 2012,
+          "trusted": 1613
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 27.43048186986135,
+        "speedup_native_over_trusted": 56.57736059325299,
+        "theta1_radians": -0.8958447801252145,
+        "theta2_radians": 3.055689729468197,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.0079603330232203,
+          "native": 0.00030512502416968346,
+          "trusted": 0.01649833400733769
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.0079603330232203,
+            0.008437291020527482,
+            0.007925375015474856,
+            0.008104625041596591,
+            0.007937083020806313,
+            0.007879666984081268,
+            0.007970417034812272
+          ],
+          "native": [
+            0.0002961249556392431,
+            0.0003405410097911954,
+            0.00030945800244808197,
+            0.00030512502416968346,
+            0.0003066249191761017,
+            0.00030029204208403826,
+            0.00030158308800309896
+          ],
+          "trusted": [
+            0.016494458075612783,
+            0.01735183398704976,
+            0.01677829201798886,
+            0.01649833400733769,
+            0.016656082938425243,
+            0.016468500019982457,
+            0.016451625037007034
+          ]
+        },
+        "name": "field_observed_q0.1562",
+        "native_loop_median_seconds": 0.00023212493397295475,
+        "native_loop_seconds": [
+          0.00022895797155797482,
+          0.0002354579046368599,
+          0.0002351250732317567,
+          0.00023212493397295475,
+          0.0002329160925000906,
+          0.00022995809558779,
+          0.00023091689217835665
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 1925,
+          "native": 2424,
+          "trusted": 1925
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 26.088758353669053,
+        "speedup_native_over_trusted": 54.0707339630157,
+        "theta1_radians": -1.8775924843720249,
+        "theta2_radians": 1.9512235621905356,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.008068500086665154,
+          "native": 0.00027908303309231997,
+          "trusted": 0.016797667020000517
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.007929792045615613,
+            0.008120291051454842,
+            0.008129667025059462,
+            0.007963832933455706,
+            0.008123667095787823,
+            0.00798450002912432,
+            0.008068500086665154
+          ],
+          "native": [
+            0.0002772920997813344,
+            0.00027908303309231997,
+            0.00027679104823619127,
+            0.0002827499993145466,
+            0.0002799159847199917,
+            0.00028079201001673937,
+            0.0002760420320555568
+          ],
+          "trusted": [
+            0.016804125043563545,
+            0.016920582973398268,
+            0.016785250045359135,
+            0.016874416964128613,
+            0.01674841600470245,
+            0.01678949990309775,
+            0.016797667020000517
+          ]
+        },
+        "name": "field_observed_q0.2188",
+        "native_loop_median_seconds": 0.00021858292166143656,
+        "native_loop_seconds": [
+          0.00021654192823916674,
+          0.00021945894695818424,
+          0.00021858292166143656,
+          0.00021850003395229578,
+          0.00022083299700170755,
+          0.00022312498185783625,
+          0.00021845800802111626
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 2009,
+          "native": 2507,
+          "trusted": 2009
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 28.910751030845052,
+        "speedup_native_over_trusted": 60.18877906649342,
+        "theta1_radians": 1.5953400194010667,
+        "theta2_radians": -1.6689710972195777,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.008565666968934238,
+          "native": 0.0002889579627662897,
+          "trusted": 0.017898958991281688
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.00854525004979223,
+            0.008562666946090758,
+            0.008565666968934238,
+            0.0085505829192698,
+            0.008626999915577471,
+            0.00858970801346004,
+            0.00858095905277878
+          ],
+          "native": [
+            0.00028600008226931095,
+            0.0002889579627662897,
+            0.00028920790646225214,
+            0.00028812489472329617,
+            0.0002894580829888582,
+            0.000293959048576653,
+            0.0002876250073313713
+          ],
+          "trusted": [
+            0.017854166915640235,
+            0.01790829107630998,
+            0.01784804102499038,
+            0.017898958991281688,
+            0.017924083047546446,
+            0.017875791992992163,
+            0.01790333294775337
+          ]
+        },
+        "name": "field_observed_q0.2812",
+        "native_loop_median_seconds": 0.00023216695990413427,
+        "native_loop_seconds": [
+          0.0002317910548299551,
+          0.00023216695990413427,
+          0.0002321670763194561,
+          0.0002319159684702754,
+          0.00023200002033263445,
+          0.00023708294611424208,
+          0.00023224996402859688
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 2141,
+          "native": 2687,
+          "trusted": 2141
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 29.643297893341607,
+        "speedup_native_over_trusted": 61.9431242521544,
+        "theta1_radians": -1.337631247036279,
+        "theta2_radians": 1.7426021750380887,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.00921399996150285,
+          "native": 0.0003083340125158429,
+          "trusted": 0.01919108396396041
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.009182499954476953,
+            0.009184750029817224,
+            0.009333458030596375,
+            0.009225666057318449,
+            0.00921399996150285,
+            0.009218915947712958,
+            0.00916649994906038
+          ],
+          "native": [
+            0.00030250009149312973,
+            0.00031033309642225504,
+            0.0003067499492317438,
+            0.0003083340125158429,
+            0.00031512498389929533,
+            0.00030583294574171305,
+            0.0003084170166403055
+          ],
+          "trusted": [
+            0.01919108396396041,
+            0.01917495799716562,
+            0.01919616700615734,
+            0.019220457994379103,
+            0.01917441701516509,
+            0.019209666992537677,
+            0.01916491601150483
+          ]
+        },
+        "name": "field_observed_q0.3438",
+        "native_loop_median_seconds": 0.0002511250786483288,
+        "native_loop_seconds": [
+          0.0002501250710338354,
+          0.00025283300783485174,
+          0.0002507920144125819,
+          0.0002521249698475003,
+          0.0002556249964982271,
+          0.00025058293249458075,
+          0.0002511250786483288
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 2297,
+          "native": 2867,
+          "trusted": 2297
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 29.883177293096765,
+        "speedup_native_over_trusted": 62.2412162945349,
+        "theta1_radians": 2.6016314162540475,
+        "theta2_radians": 0.8467573949128737,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.009714749990962446,
+          "native": 0.000320291961543262,
+          "trusted": 0.020286000100895762
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.009895249968394637,
+            0.009789249976165593,
+            0.010019459063187242,
+            0.009710791986435652,
+            0.00970841699745506,
+            0.009714749990962446,
+            0.009672457934357226
+          ],
+          "native": [
+            0.0003229159628972411,
+            0.000320291961543262,
+            0.0003405000315979123,
+            0.0003201250219717622,
+            0.0003183750668540597,
+            0.0003208749694749713,
+            0.0003190420102328062
+          ],
+          "trusted": [
+            0.0206450829282403,
+            0.020716625032946467,
+            0.020295666996389627,
+            0.0202780410181731,
+            0.020286000100895762,
+            0.020281791919842362,
+            0.020270709064789116
+          ]
+        },
+        "name": "field_observed_q0.4062",
+        "native_loop_median_seconds": 0.0002632499672472477,
+        "native_loop_seconds": [
+          0.0002658329904079437,
+          0.0002620000159367919,
+          0.0002744169905781746,
+          0.0002620420418679714,
+          0.0002615000121295452,
+          0.0002632499672472477,
+          0.00026333308778703213
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 2477,
+          "native": 3118,
+          "trusted": 2477
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 30.330920401979146,
+        "speedup_native_over_trusted": 63.33596385982269,
+        "theta1_radians": 2.613903262557132,
+        "theta2_radians": 2.613903262557132,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.010491749970242381,
+          "native": 0.00033712503500282764,
+          "trusted": 0.02191441599279642
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.010491749970242381,
+            0.01051125000230968,
+            0.010641582892276347,
+            0.010518167051486671,
+            0.01048620801884681,
+            0.010481790988706052,
+            0.010474374983459711
+          ],
+          "native": [
+            0.00033841701224446297,
+            0.00033833400812000036,
+            0.0003387079341337085,
+            0.00033475004602223635,
+            0.00033712503500282764,
+            0.0003359579714015126,
+            0.0003354590153321624
+          ],
+          "trusted": [
+            0.021951791015453637,
+            0.02194854198023677,
+            0.02191441599279642,
+            0.021908583003096282,
+            0.02189129206817597,
+            0.021871917066164315,
+            0.02192383399233222
+          ]
+        },
+        "name": "field_observed_q0.4688",
+        "native_loop_median_seconds": 0.0002823329996317625,
+        "native_loop_seconds": [
+          0.0002827090211212635,
+          0.00028237502556294203,
+          0.00028279097750782967,
+          0.0002794169122353196,
+          0.0002823329996317625,
+          0.0002794578904286027,
+          0.00027941702865064144
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 2681,
+          "native": 3347,
+          "trusted": 2681
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 31.121242509190637,
+        "speedup_native_over_trusted": 65.0038226695701,
+        "theta1_radians": 2.7857091108003242,
+        "theta2_radians": 2.442097414313941,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.012229457963258028,
+          "native": 0.0004325000336393714,
+          "trusted": 0.025756917078979313
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.012561292038299143,
+            0.012469499954022467,
+            0.01221029192674905,
+            0.012406375026330352,
+            0.012205916922539473,
+            0.012229457963258028,
+            0.01221300009638071
+          ],
+          "native": [
+            0.000434375018812716,
+            0.00042516703251749277,
+            0.0004455000162124634,
+            0.0004205419681966305,
+            0.0004325000336393714,
+            0.0004152910551056266,
+            0.0004327079514041543
+          ],
+          "trusted": [
+            0.025929916999302804,
+            0.02607899997383356,
+            0.025756917078979313,
+            0.025526416953653097,
+            0.02551716601010412,
+            0.025827832985669374,
+            0.025628542061895132
+          ]
+        },
+        "name": "field_observed_q0.5312",
+        "native_loop_median_seconds": 0.00035912508610635996,
+        "native_loop_seconds": [
+          0.00036241591442376375,
+          0.0003584160003811121,
+          0.00037100003100931644,
+          0.0003530830144882202,
+          0.00035912508610635996,
+          0.0003462090389803052,
+          0.000360167003236711
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 3005,
+          "native": 3893,
+          "trusted": 3005
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 28.27620118396392,
+        "speedup_native_over_trusted": 59.553560868520144,
+        "theta1_radians": -2.6261751088602177,
+        "theta2_radians": 1.4235341711578746,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.013507875031791627,
+          "native": 0.0004508339334279299,
+          "trusted": 0.028137417044490576
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.013326041982509196,
+            0.01349512510932982,
+            0.013507875031791627,
+            0.013381291995756328,
+            0.013682833989150822,
+            0.013740207999944687,
+            0.014019707916304469
+          ],
+          "native": [
+            0.00041879096534103155,
+            0.0004206669982522726,
+            0.0004508339334279299,
+            0.0004433749709278345,
+            0.000454624998383224,
+            0.00048037501983344555,
+            0.00046070897951722145
+          ],
+          "trusted": [
+            0.02789441600907594,
+            0.02783558308146894,
+            0.028137417044490576,
+            0.02803337504155934,
+            0.02821979089640081,
+            0.02887787506915629,
+            0.029104041983373463
+          ]
+        },
+        "name": "field_observed_q0.5938",
+        "native_loop_median_seconds": 0.0003767079906538129,
+        "native_loop_seconds": [
+          0.0003607909893617034,
+          0.00036137504503130913,
+          0.0003767079906538129,
+          0.0003756668884307146,
+          0.00037891604006290436,
+          0.0003975830040872097,
+          0.0003868750063702464
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 3293,
+          "native": 4112,
+          "trusted": 3293
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 29.961974976204825,
+        "speedup_native_over_trusted": 62.41193255030039,
+        "theta1_radians": -2.736621725587984,
+        "theta2_radians": 0.7363107781851079,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.014992582960985601,
+          "native": 0.0004646249581128359,
+          "trusted": 0.0314688750077039
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.015011708019301295,
+            0.014938084059394896,
+            0.014967499999329448,
+            0.014992582960985601,
+            0.015000791987404227,
+            0.014941625064238906,
+            0.01499791699461639
+          ],
+          "native": [
+            0.000464291893877089,
+            0.0004741669399663806,
+            0.0004700419958680868,
+            0.00046366697642952204,
+            0.0004652909701690078,
+            0.0004646249581128359,
+            0.0004598750965669751
+          ],
+          "trusted": [
+            0.0316154999891296,
+            0.031482874997891486,
+            0.031446709064766765,
+            0.0314688750077039,
+            0.031446625012904406,
+            0.03148183296434581,
+            0.03136637492571026
+          ]
+        },
+        "name": "field_observed_q0.6562",
+        "native_loop_median_seconds": 0.00040858297143131495,
+        "native_loop_seconds": [
+          0.0004087090492248535,
+          0.0004172909539192915,
+          0.0004106250125914812,
+          0.00040687492582947016,
+          0.00040858297143131495,
+          0.00040833395905792713,
+          0.0004039170453324914
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 3857,
+          "native": 4831,
+          "trusted": 3857
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 32.26813949444489,
+        "speedup_native_over_trusted": 67.72962678440871,
+        "theta1_radians": 2.172116795646068,
+        "theta2_radians": -2.748893571891069,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.01571479206904769,
+          "native": 0.000487250043079257,
+          "trusted": 0.032831584103405476
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.015675207949243486,
+            0.015661166980862617,
+            0.01569045800715685,
+            0.015818833955563605,
+            0.01571479206904769,
+            0.01573158404789865,
+            0.01588837499730289
+          ],
+          "native": [
+            0.0004790000384673476,
+            0.0004881670465692878,
+            0.00048562500160187483,
+            0.000487250043079257,
+            0.0005125829484313726,
+            0.00048537494149059057,
+            0.0004902500659227371
+          ],
+          "trusted": [
+            0.03280983306467533,
+            0.03283333301078528,
+            0.03284008300397545,
+            0.032810332952067256,
+            0.03279683296568692,
+            0.032831584103405476,
+            0.03289670904632658
+          ]
+        },
+        "name": "field_observed_q0.7188",
+        "native_loop_median_seconds": 0.0004306250484660268,
+        "native_loop_seconds": [
+          0.00042720907367765903,
+          0.0004317921120673418,
+          0.0004306250484660268,
+          0.00043054099660366774,
+          0.0004557500360533595,
+          0.00042966706678271294,
+          0.000434999936260283
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 4025,
+          "native": 5094,
+          "trusted": 4025
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 32.25200755188336,
+        "speedup_native_over_trusted": 67.38138778997507,
+        "theta1_radians": -2.000310947402876,
+        "theta2_radians": 2.4298255680108554,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.017311083036474884,
+          "native": 0.0005217079306021333,
+          "trusted": 0.036182374926283956
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.017173375003039837,
+            0.01758799992967397,
+            0.017795374966226518,
+            0.017288583097979426,
+            0.017239458044059575,
+            0.017311083036474884,
+            0.017312000039964914
+          ],
+          "native": [
+            0.0005165839102119207,
+            0.0005381250521168113,
+            0.0005407920107245445,
+            0.0005225000204518437,
+            0.0005192919634282589,
+            0.0005217079306021333,
+            0.0005196249112486839
+          ],
+          "trusted": [
+            0.036109665990807116,
+            0.036829874967224896,
+            0.036308208014816046,
+            0.036182374926283956,
+            0.036114417016506195,
+            0.03614637500140816,
+            0.036404291982762516
+          ]
+        },
+        "name": "field_observed_q0.7812",
+        "native_loop_median_seconds": 0.0004636660451069474,
+        "native_loop_seconds": [
+          0.00046074995771050453,
+          0.00047112489119172096,
+          0.0004729590145871043,
+          0.0004636660451069474,
+          0.00046137499157339334,
+          0.00046449992805719376,
+          0.00046200002543628216
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 4445,
+          "native": 5607,
+          "trusted": 4445
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 33.18156006655901,
+        "speedup_native_over_trusted": 69.35369927101507,
+        "theta1_radians": 2.380738182798515,
+        "theta2_radians": 2.024854640009046,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.01887695793993771,
+          "native": 0.0005590829532593489,
+          "trusted": 0.03948612499516457
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.01887695793993771,
+            0.018866457976400852,
+            0.01892079203389585,
+            0.018888458027504385,
+            0.018819541903212667,
+            0.018848584033548832,
+            0.018884000019170344
+          ],
+          "native": [
+            0.0005610829684883356,
+            0.0005590829532593489,
+            0.0005571659421548247,
+            0.0005595000693574548,
+            0.0005559159908443689,
+            0.0005606249906122684,
+            0.0005572079680860043
+          ],
+          "trusted": [
+            0.0395571660483256,
+            0.03948612499516457,
+            0.03948454197961837,
+            0.03951358294580132,
+            0.03946258302312344,
+            0.03950033395085484,
+            0.03943158301990479
+          ]
+        },
+        "name": "field_observed_q0.8438",
+        "native_loop_median_seconds": 0.0005022919503971934,
+        "native_loop_seconds": [
+          0.0005048750899732113,
+          0.0005022919503971934,
+          0.000501333037391305,
+          0.0005032920744270086,
+          0.0005004999693483114,
+          0.000504540977999568,
+          0.0005010840250179172
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 4841,
+          "native": 6047,
+          "trusted": 4841
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 33.7641450698659,
+        "speedup_native_over_trusted": 70.6265944346324,
+        "theta1_radians": -2.405281875404685,
+        "theta2_radians": 1.055378782065321,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02077545807696879,
+          "native": 0.0006402500439435244,
+          "trusted": 0.043669709004461765
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.02116812497843057,
+            0.021268749958835542,
+            0.02080895798280835,
+            0.02077545807696879,
+            0.020695290993899107,
+            0.020761166932061315,
+            0.020772250019945204
+          ],
+          "native": [
+            0.000642749946564436,
+            0.0006489160005003214,
+            0.0006402500439435244,
+            0.0006457499694079161,
+            0.0006276670610532165,
+            0.0006195420864969492,
+            0.0006237500347197056
+          ],
+          "trusted": [
+            0.044401166029274464,
+            0.04457320901565254,
+            0.04451662499923259,
+            0.04363687499426305,
+            0.043539458070881665,
+            0.04361670895013958,
+            0.043669709004461765
+          ]
+        },
+        "name": "field_observed_q0.9062",
+        "native_loop_median_seconds": 0.0005710839759558439,
+        "native_loop_seconds": [
+          0.0005710839759558439,
+          0.0005819159559905529,
+          0.0005784169770777225,
+          0.0005784580716863275,
+          0.0005677080480381846,
+          0.0005632080137729645,
+          0.0005659579765051603
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 5357,
+          "native": 6792,
+          "trusted": 5357
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 32.448975636152184,
+        "speedup_native_over_trusted": 68.20727217054875,
+        "theta1_radians": -3.0802334220743677,
+        "theta2_radians": -0.25770877236478773,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.022546291002072394,
+          "native": 0.0006551670376211405,
+          "trusted": 0.04723170795477927
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.022475624922662973,
+            0.022764458088204265,
+            0.022546291002072394,
+            0.022557707969099283,
+            0.022695249994285405,
+            0.02241404098458588,
+            0.02243812510278076
+          ],
+          "native": [
+            0.0006517920410260558,
+            0.0006622499786317348,
+            0.0006650829454883933,
+            0.0006525419885292649,
+            0.0006495419656857848,
+            0.0006551670376211405,
+            0.0006584579823538661
+          ],
+          "trusted": [
+            0.04735725000500679,
+            0.04726241703610867,
+            0.04718074994161725,
+            0.04715395800303668,
+            0.04723170795477927,
+            0.04707716696429998,
+            0.047463790979236364
+          ]
+        },
+        "name": "field_observed_q0.9688",
+        "native_loop_median_seconds": 0.0005970000056549907,
+        "native_loop_seconds": [
+          0.0005942910211160779,
+          0.0005988749908283353,
+          0.0006017909618094563,
+          0.0005949999904260039,
+          0.0005939159309491515,
+          0.0005970000056549907,
+          0.0006020829314365983
+        ],
+        "outcome": "observed",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 5789,
+          "native": 7232,
+          "trusted": 5789
+        },
+        "source": "authoritative_512_observed_time_quantile",
+        "speedup_native_over_compiled": 34.413042334877204,
+        "speedup_native_over_trusted": 72.09109317567906,
+        "theta1_radians": 1.0799224746714913,
+        "theta2_radians": -2.36846633649543,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023235499975271523,
+          "native": 0.0006605419330298901,
+          "trusted": 0.04905537504237145
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.02321841602679342,
+            0.023242125054821372,
+            0.023219209047965705,
+            0.023265625000931323,
+            0.023214500048197806,
+            0.023235499975271523,
+            0.02328141697216779
+          ],
+          "native": [
+            0.0006524999625980854,
+            0.0006622080691158772,
+            0.0006767500890418887,
+            0.0006605419330298901,
+            0.0006793750217184424,
+            0.0006545829819515347,
+            0.0006589590338990092
+          ],
+          "trusted": [
+            0.04905000003054738,
+            0.049369583022780716,
+            0.0491798339644447,
+            0.049079291988164186,
+            0.04905537504237145,
+            0.0490109579404816,
+            0.04893808299675584
+          ]
+        },
+        "name": "field_censored_spatial_q0.0312",
+        "native_loop_median_seconds": 0.0006262920796871185,
+        "native_loop_seconds": [
+          0.0006206670077517629,
+          0.0006262920796871185,
+          0.0006382080027833581,
+          0.000626542023383081,
+          0.000645332969725132,
+          0.0006207909900695086,
+          0.0006257499335333705
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7547,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 35.176419260304705,
+        "speedup_native_over_trusted": 74.26534575534913,
+        "theta1_radians": -1.1903690913992575,
+        "theta2_radians": -2.7979809571034093,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023283374961465597,
+          "native": 0.0006547080120071769,
+          "trusted": 0.0490786669543013
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023283374961465597,
+            0.023226457997225225,
+            0.023264042101800442,
+            0.02325399999972433,
+            0.02334929199423641,
+            0.023733000038191676,
+            0.023863457958213985
+          ],
+          "native": [
+            0.0006443749880418181,
+            0.0006568341050297022,
+            0.0006547080120071769,
+            0.0006509160157293081,
+            0.0006520410533994436,
+            0.0006553340936079621,
+            0.0006719589000567794
+          ],
+          "trusted": [
+            0.04898274992592633,
+            0.04905395791865885,
+            0.04897512495517731,
+            0.0490786669543013,
+            0.04935633298009634,
+            0.04917675000615418,
+            0.05006137501914054
+          ]
+        },
+        "name": "field_censored_spatial_q0.0938",
+        "native_loop_median_seconds": 0.000621084007434547,
+        "native_loop_seconds": [
+          0.000613250071182847,
+          0.0006224160315468907,
+          0.000621084007434547,
+          0.0006170000415295362,
+          0.0006178750190883875,
+          0.0006218329071998596,
+          0.0006322920089587569
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7532,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 35.56299072938543,
+        "speedup_native_over_trusted": 74.96267962849262,
+        "theta1_radians": 0.8713010875190443,
+        "theta2_radians": -2.294835258676919,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023709959001280367,
+          "native": 0.0006575420266017318,
+          "trusted": 0.049822499975562096
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.024340500007383525,
+            0.023804333060979843,
+            0.023709959001280367,
+            0.023720334051176906,
+            0.023443875019438565,
+            0.023410541005432606,
+            0.02339195809327066
+          ],
+          "native": [
+            0.0006953750271350145,
+            0.0006766249425709248,
+            0.0006575420266017318,
+            0.0006589589174836874,
+            0.0006573330610990524,
+            0.0006527500227093697,
+            0.0006451250519603491
+          ],
+          "trusted": [
+            0.049970332998782396,
+            0.050580249982886016,
+            0.04996312502771616,
+            0.049822499975562096,
+            0.04941120801959187,
+            0.049047417007386684,
+            0.048974832985550165
+          ]
+        },
+        "name": "field_censored_spatial_q0.1562",
+        "native_loop_median_seconds": 0.0006220419891178608,
+        "native_loop_seconds": [
+          0.000647583045065403,
+          0.000632417039014399,
+          0.0006206670077517629,
+          0.0006228749407455325,
+          0.0006220419891178608,
+          0.0006119579775258899,
+          0.0006076670251786709
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7532,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 36.05846933285271,
+        "speedup_native_over_trusted": 75.77082218311075,
+        "theta1_radians": 0.4172427743048943,
+        "theta2_radians": -1.9144080232812801,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02338104206137359,
+          "native": 0.0006372909992933273,
+          "trusted": 0.04902504198253155
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.02342366601806134,
+            0.02336291701067239,
+            0.023669208982028067,
+            0.023427375010214746,
+            0.02338104206137359,
+            0.023309375043027103,
+            0.02331512502860278
+          ],
+          "native": [
+            0.0006428749766200781,
+            0.0006372909992933273,
+            0.0006333329947665334,
+            0.0006323750130832195,
+            0.0006407910259440541,
+            0.0006581670604646206,
+            0.0006340839900076389
+          ],
+          "trusted": [
+            0.04903125006239861,
+            0.04913991701323539,
+            0.04901270801201463,
+            0.048934917082078755,
+            0.0492792499717325,
+            0.04902504198253155,
+            0.048985666944645345
+          ]
+        },
+        "name": "field_censored_spatial_q0.2188",
+        "native_loop_median_seconds": 0.000601625069975853,
+        "native_loop_seconds": [
+          0.0006079159211367369,
+          0.000601625069975853,
+          0.000598000013269484,
+          0.0005979160778224468,
+          0.0006061670137569308,
+          0.0006152499699965119,
+          0.0005985409952700138
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7532,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 36.688172416211934,
+        "speedup_native_over_trusted": 76.92724679446899,
+        "theta1_radians": -2.0125827937059615,
+        "theta2_radians": -1.533980787885641,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023246249998919666,
+          "native": 0.0006054999539628625,
+          "trusted": 0.048873124993406236
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023246000055223703,
+            0.0232865420402959,
+            0.023231040919199586,
+            0.023309541982598603,
+            0.023286124924197793,
+            0.023246249998919666,
+            0.023227417026646435
+          ],
+          "native": [
+            0.0006054999539628625,
+            0.0006096670404076576,
+            0.0006047089118510485,
+            0.0006052079843357205,
+            0.0006085420027375221,
+            0.0006091250106692314,
+            0.0006049999501556158
+          ],
+          "trusted": [
+            0.0489984160521999,
+            0.048932458041235805,
+            0.048873124993406236,
+            0.04887112497817725,
+            0.048854124965146184,
+            0.04893924994394183,
+            0.048820249969139695
+          ]
+        },
+        "name": "field_censored_spatial_q0.2812",
+        "native_loop_median_seconds": 0.0005709999240934849,
+        "native_loop_seconds": [
+          0.0005709999240934849,
+          0.0005754579324275255,
+          0.0005702079506590962,
+          0.0005705839721485972,
+          0.0005740419728681445,
+          0.0005756660830229521,
+          0.0005707079544663429
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7532,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 38.39182785527584,
+        "speedup_native_over_trusted": 80.71532404510108,
+        "theta1_radians": -0.5154175447295755,
+        "theta2_radians": -1.214912784005428,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023844624985940754,
+          "native": 0.0006388749461621046,
+          "trusted": 0.04984025005251169
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023310374934226274,
+            0.023316249949857593,
+            0.02335995901376009,
+            0.023844624985940754,
+            0.023879292071796954,
+            0.023849124903790653,
+            0.02387195802293718
+          ],
+          "native": [
+            0.0006257499335333705,
+            0.0006277919746935368,
+            0.0006271669408306479,
+            0.0006592089775949717,
+            0.0006500829476863146,
+            0.0006410839268937707,
+            0.0006388749461621046
+          ],
+          "trusted": [
+            0.04901674995198846,
+            0.04898712504655123,
+            0.04936933401040733,
+            0.04984025005251169,
+            0.050008708029054105,
+            0.049848750000819564,
+            0.05247583403252065
+          ]
+        },
+        "name": "field_censored_spatial_q0.3438",
+        "native_loop_median_seconds": 0.0006033750250935555,
+        "native_loop_seconds": [
+          0.0005913750501349568,
+          0.0005940829869359732,
+          0.0005923749413341284,
+          0.0006156249437481165,
+          0.0006135000148788095,
+          0.0006048750365152955,
+          0.0006033750250935555
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6038,
+          "native": 7547,
+          "trusted": 6038
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 37.322836228250765,
+        "speedup_native_over_trusted": 78.01252866764555,
+        "theta1_radians": 0.36815538909255396,
+        "theta2_radians": -0.8835729338221294,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023895291960798204,
+          "native": 0.0006638329941779375,
+          "trusted": 0.0500537499319762
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.02379570808261633,
+            0.023761332966387272,
+            0.023895291960798204,
+            0.024734791019000113,
+            0.025455249939113855,
+            0.023932999931275845,
+            0.023753875051625073
+          ],
+          "native": [
+            0.000625082990154624,
+            0.0006309580057859421,
+            0.0006638329941779375,
+            0.0006654589669778943,
+            0.0006509589729830623,
+            0.0006721250247210264,
+            0.0006691670278087258
+          ],
+          "trusted": [
+            0.0500537499319762,
+            0.04994783294387162,
+            0.04980183392763138,
+            0.05149012501351535,
+            0.05684904207009822,
+            0.05537125002592802,
+            0.04930900002364069
+          ]
+        },
+        "name": "field_censored_spatial_q0.4062",
+        "native_loop_median_seconds": 0.0006158329779282212,
+        "native_loop_seconds": [
+          0.0005906670121476054,
+          0.00059441605117172,
+          0.0006170830456539989,
+          0.0006158329779282212,
+          0.0006004580063745379,
+          0.0006239170907065272,
+          0.0006159159820526838
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7547,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 35.99593899424827,
+        "speedup_native_over_trusted": 75.40111800854464,
+        "theta1_radians": 0.15953400194010658,
+        "theta2_radians": -0.5154175447295755,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02347437501884997,
+          "native": 0.0006261250237002969,
+          "trusted": 0.04910412500612438
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.02385979099199176,
+            0.02339054096955806,
+            0.02347437501884997,
+            0.023458749987185,
+            0.024431874975562096,
+            0.02347620890941471,
+            0.02341879194136709
+          ],
+          "native": [
+            0.0006204999517649412,
+            0.0006443338934332132,
+            0.000621875049546361,
+            0.0006274580955505371,
+            0.0006451659137383103,
+            0.0006257910281419754,
+            0.0006261250237002969
+          ],
+          "trusted": [
+            0.04909012501593679,
+            0.04908195894677192,
+            0.0491800419986248,
+            0.04897991695906967,
+            0.049253333010710776,
+            0.04910412500612438,
+            0.04921537498012185
+          ]
+        },
+        "name": "field_censored_spatial_q0.4688",
+        "native_loop_median_seconds": 0.0005898330127820373,
+        "native_loop_seconds": [
+          0.0005871249595656991,
+          0.0006043750327080488,
+          0.0005862909602001309,
+          0.000592790893279016,
+          0.0005994579987600446,
+          0.0005898330127820373,
+          0.0005898330127820373
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6038,
+          "native": 7547,
+          "trusted": 6038
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 37.49151388347368,
+        "speedup_native_over_trusted": 78.42543125960212,
+        "theta1_radians": -0.8222137023067035,
+        "theta2_radians": -0.1472621556370215,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02343041601125151,
+          "native": 0.0006559579633176327,
+          "trusted": 0.04938787501305342
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023459000047296286,
+            0.023402666905894876,
+            0.023389208014123142,
+            0.02343041601125151,
+            0.02385474997572601,
+            0.023839790956117213,
+            0.023424874991178513
+          ],
+          "native": [
+            0.000646832981146872,
+            0.0006452499656006694,
+            0.000653333030641079,
+            0.0006559579633176327,
+            0.000671125017106533,
+            0.0006648339331150055,
+            0.0006559590110555291
+          ],
+          "trusted": [
+            0.04903799993917346,
+            0.0491103749955073,
+            0.04938787501305342,
+            0.04974500008393079,
+            0.05001000000629574,
+            0.0500519999768585,
+            0.04907199996523559
+          ]
+        },
+        "name": "field_censored_spatial_q0.5312",
+        "native_loop_median_seconds": 0.0006181669887155294,
+        "native_loop_seconds": [
+          0.0006110829999670386,
+          0.0006110420217737556,
+          0.0006181669887155294,
+          0.0006201249780133367,
+          0.0006246670382097363,
+          0.0006256659980863333,
+          0.0006170000415295362
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7547,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 35.719386487432374,
+        "speedup_native_over_trusted": 75.29121952154496,
+        "theta1_radians": -1.3499030933393643,
+        "theta2_radians": 0.1472621556370215,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02340158401057124,
+          "native": 0.0006295409984886646,
+          "trusted": 0.04920074995607138
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.02340950001962483,
+            0.02337783295661211,
+            0.02337479207199067,
+            0.02338554197922349,
+            0.02340158401057124,
+            0.023416540934704244,
+            0.024191334028728306
+          ],
+          "native": [
+            0.0006277499487623572,
+            0.0006389169720932841,
+            0.0006259999936446548,
+            0.0006289160810410976,
+            0.0006295409984886646,
+            0.0006304580019786954,
+            0.0007454169681295753
+          ],
+          "trusted": [
+            0.049148958059959114,
+            0.049214125028811395,
+            0.04913387494161725,
+            0.049217874999158084,
+            0.04912325006444007,
+            0.04920074995607138,
+            0.05042587500065565
+          ]
+        },
+        "name": "field_censored_spatial_q0.5938",
+        "native_loop_median_seconds": 0.0005947499303147197,
+        "native_loop_seconds": [
+          0.0005934160435572267,
+          0.00060374999884516,
+          0.0005915830843150616,
+          0.0005943330470472574,
+          0.0005947499303147197,
+          0.0005958749679848552,
+          0.0006458340212702751
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6038,
+          "native": 7547,
+          "trusted": 6038
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 37.17245432267523,
+        "speedup_native_over_trusted": 78.15336900088688,
+        "theta1_radians": 1.2394564766115979,
+        "theta2_radians": 0.5031456984264904,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023819666006602347,
+          "native": 0.0006599170155823231,
+          "trusted": 0.050088583026081324
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023833708022721112,
+            0.023819666006602347,
+            0.02381937496829778,
+            0.02384841605089605,
+            0.023788916994817555,
+            0.023901208071038127,
+            0.023797292029485106
+          ],
+          "native": [
+            0.0006605000235140324,
+            0.0006616660393774509,
+            0.0006582090863958001,
+            0.0006603749934583902,
+            0.0006599170155823231,
+            0.0006580830086022615,
+            0.0006563749630004168
+          ],
+          "trusted": [
+            0.050327417091466486,
+            0.05013283295556903,
+            0.0500433329725638,
+            0.050088583026081324,
+            0.050086333067156374,
+            0.05013950006105006,
+            0.05005349998828024
+          ]
+        },
+        "name": "field_censored_spatial_q0.6562",
+        "native_loop_median_seconds": 0.0006229589926078916,
+        "native_loop_seconds": [
+          0.0006245840340852737,
+          0.0006235000910237432,
+          0.0006228339625522494,
+          0.000623999978415668,
+          0.0006229589926078916,
+          0.0006224579410627484,
+          0.0006212909938767552
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6038,
+          "native": 7547,
+          "trusted": 6038
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 36.094941400447794,
+        "speedup_native_over_trusted": 75.90133583975286,
+        "theta1_radians": 1.877592484372025,
+        "theta2_radians": 0.8713010875190443,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02396416710689664,
+          "native": 0.0006822911091148853,
+          "trusted": 0.05046175001189113
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023647416033782065,
+            0.02396416710689664,
+            0.023966957931406796,
+            0.023988084052689373,
+            0.02426629199180752,
+            0.02384679194074124,
+            0.023625041940249503
+          ],
+          "native": [
+            0.0006703750696033239,
+            0.0007046249229460955,
+            0.0006822911091148853,
+            0.0006823340663686395,
+            0.0006820419803261757,
+            0.0006939579034224153,
+            0.0006712089525535703
+          ],
+          "trusted": [
+            0.05037824995815754,
+            0.0505033329827711,
+            0.05046175001189113,
+            0.050474375020712614,
+            0.050506166997365654,
+            0.04983679193537682,
+            0.04953141696751118
+          ]
+        },
+        "name": "field_censored_spatial_q0.7188",
+        "native_loop_median_seconds": 0.0006463329773396254,
+        "native_loop_seconds": [
+          0.0006354580400511622,
+          0.0006624170346185565,
+          0.0006453751120716333,
+          0.0006463329773396254,
+          0.000647124950774014,
+          0.0006519169546663761,
+          0.0006344170542433858
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6098,
+          "native": 7681,
+          "trusted": 6098
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 35.123082782046794,
+        "speedup_native_over_trusted": 73.9592665619717,
+        "theta1_radians": -2.086213871524472,
+        "theta2_radians": 1.2149127840054277,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.02420795790385455,
+          "native": 0.0006932909600436687,
+          "trusted": 0.050755291944369674
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023683957988396287,
+            0.023516582907177508,
+            0.024550957954488695,
+            0.02441179205197841,
+            0.02425608306657523,
+            0.02420795790385455,
+            0.02417499991133809
+          ],
+          "native": [
+            0.000631208997219801,
+            0.0006695829797536135,
+            0.0006938750157132745,
+            0.0006932909600436687,
+            0.0006965419743210077,
+            0.000664666062220931,
+            0.0006956669967621565
+          ],
+          "trusted": [
+            0.04894470900762826,
+            0.04992570891045034,
+            0.05097825010307133,
+            0.05182770802639425,
+            0.050755291944369674,
+            0.050865332945249975,
+            0.05064920790027827
+          ]
+        },
+        "name": "field_censored_spatial_q0.7812",
+        "native_loop_median_seconds": 0.0006429590284824371,
+        "native_loop_seconds": [
+          0.0005992080550640821,
+          0.0006212919251993299,
+          0.0006431660149246454,
+          0.0006429590284824371,
+          0.0006455000257119536,
+          0.0006253750761970878,
+          0.0006470840889960527
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7547,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 34.91745789145981,
+        "speedup_native_over_trusted": 73.20922220184829,
+        "theta1_radians": -0.15953400194010658,
+        "theta2_radians": 1.5339807878856409,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.024219625047408044,
+          "native": 0.0006559169851243496,
+          "trusted": 0.049692792003042996
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.024325500009581447,
+            0.024611165979877114,
+            0.024517624988220632,
+            0.024219625047408044,
+            0.0234195840312168,
+            0.023316166014410555,
+            0.023336624959483743
+          ],
+          "native": [
+            0.0006559169851243496,
+            0.0007317910203710198,
+            0.0007229999173432589,
+            0.0006694579496979713,
+            0.0006425840547308326,
+            0.0006384580628946424,
+            0.0006381249986588955
+          ],
+          "trusted": [
+            0.050796041963621974,
+            0.05125820799730718,
+            0.052153791999444366,
+            0.049692792003042996,
+            0.04893754201475531,
+            0.04894020804204047,
+            0.04891500005032867
+          ]
+        },
+        "name": "field_censored_spatial_q0.8438",
+        "native_loop_median_seconds": 0.0006200839998200536,
+        "native_loop_seconds": [
+          0.0006200839998200536,
+          0.0006742090918123722,
+          0.0006584160728380084,
+          0.000620500068180263,
+          0.0006039580330252647,
+          0.0006027090130373836,
+          0.0006023329915478826
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6026,
+          "native": 7532,
+          "trusted": 6026
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 36.924832862525214,
+        "speedup_native_over_trusted": 75.76079462803082,
+        "theta1_radians": 1.2394564766115979,
+        "theta2_radians": 1.9021361769781953,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023376750061288476,
+          "native": 0.0006415829993784428,
+          "trusted": 0.049106999998912215
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023311791010200977,
+            0.023376750061288476,
+            0.023288041003979743,
+            0.0232397080399096,
+            0.02389549999497831,
+            0.02383587509393692,
+            0.023849167046137154
+          ],
+          "native": [
+            0.0006405829917639494,
+            0.0006392080103978515,
+            0.0006415829993784428,
+            0.0006426670588552952,
+            0.0006379999686032534,
+            0.0006756670773029327,
+            0.0006566669326275587
+          ],
+          "trusted": [
+            0.04895574995316565,
+            0.04910000006202608,
+            0.049106999998912215,
+            0.04910587496124208,
+            0.04960100003518164,
+            0.05005941598210484,
+            0.05000766599550843
+          ]
+        },
+        "name": "field_censored_spatial_q0.9062",
+        "native_loop_median_seconds": 0.0006062500178813934,
+        "native_loop_seconds": [
+          0.0006058340659365058,
+          0.0006047919159755111,
+          0.0006062500178813934,
+          0.0006084589986130595,
+          0.0006037090206518769,
+          0.0006325830472633243,
+          0.0006185839883983135
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6038,
+          "native": 7547,
+          "trusted": 6038
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 36.43604971443378,
+        "speedup_native_over_trusted": 76.54036975182701,
+        "theta1_radians": 0.36815538909255396,
+        "theta2_radians": 2.2825634123738343,
+        "weighting_sample": true
+      },
+      {
+        "evaluator_median_seconds": {
+          "compiled": 0.023901249980553985,
+          "native": 0.0006644580280408263,
+          "trusted": 0.05009050003718585
+        },
+        "evaluator_seconds": {
+          "compiled": [
+            0.023991249967366457,
+            0.024303207988850772,
+            0.023901249980553985,
+            0.023958834004588425,
+            0.023538707988336682,
+            0.02347754209768027,
+            0.0234737079590559
+          ],
+          "native": [
+            0.0006707500433549285,
+            0.0006849589990451932,
+            0.0006644580280408263,
+            0.0006614580051973462,
+            0.0006812919164076447,
+            0.0006584579823538661,
+            0.0006523339543491602
+          ],
+          "trusted": [
+            0.05014808301348239,
+            0.05027520901057869,
+            0.05009050003718585,
+            0.050123624969273806,
+            0.04916383302770555,
+            0.049260291969403625,
+            0.04926825000438839
+          ]
+        },
+        "name": "field_censored_spatial_q0.9688",
+        "native_loop_median_seconds": 0.0006279580993577838,
+        "native_loop_seconds": [
+          0.0006342920241877437,
+          0.0006429170025512576,
+          0.0006279580993577838,
+          0.0006261250237002969,
+          0.0006329580210149288,
+          0.0006204170640558004,
+          0.0006172499852254987
+        ],
+        "outcome": "censored",
+        "repetitions": 7,
+        "rhs_evaluations": {
+          "compiled": 6050,
+          "native": 7573,
+          "trusted": 6050
+        },
+        "source": "authoritative_512_censored_flat_index_quantile",
+        "speedup_native_over_compiled": 35.971045531690706,
+        "speedup_native_over_trusted": 75.3854990433017,
+        "theta1_radians": 1.4358060174609601,
+        "theta2_radians": 2.7857091108003242,
+        "weighting_sample": true
+      }
+    ],
+    "groups": {
+      "censored": {
+        "case_count": 16,
+        "evaluator_seconds": {
+          "compiled": {
+            "maximum": 0.024219625047408044,
+            "mean": 0.023649489630770404,
+            "median": 0.023592167010065168,
+            "minimum": 0.023235499975271523
+          },
+          "native": {
+            "maximum": 0.0006932909600436687,
+            "mean": 0.0006517107467516325,
+            "median": 0.0006559374742209911,
+            "minimum": 0.0006054999539628625
+          },
+          "trusted": {
+            "maximum": 0.050755291944369674,
+            "mean": 0.049602335995587055,
+            "median": 0.04954033350804821,
+            "minimum": 0.048873124993406236
+          }
+        },
+        "native_loop_seconds": {
+          "maximum": 0.0006463329773396254,
+          "mean": 0.000614409007539507,
+          "median": 0.0006191254942677915,
+          "minimum": 0.0005709999240934849
+        },
+        "rhs_evaluations": {
+          "compiled": {
+            "maximum": 6098.0,
+            "mean": 6035.75,
+            "median": 6026.0,
+            "minimum": 6026.0
+          },
+          "native": {
+            "maximum": 7681.0,
+            "mean": 7552.3125,
+            "median": 7547.0,
+            "minimum": 7532.0
+          },
+          "trusted": {
+            "maximum": 6098.0,
+            "mean": 6035.75,
+            "median": 6026.0,
+            "minimum": 6026.0
+          }
+        },
+        "speedup_native_over_compiled": {
+          "maximum": 38.39182785527584,
+          "mean": 36.31546373079469,
+          "median": 36.07670536665025,
+          "minimum": 34.91745789145981
+        },
+        "speedup_native_over_trusted": {
+          "maximum": 80.71532404510108,
+          "mean": 76.16759830571745,
+          "median": 75.7658084055708,
+          "minimum": 73.20922220184829
+        }
+      },
+      "observed": {
+        "case_count": 16,
+        "evaluator_seconds": {
+          "compiled": {
+            "maximum": 0.022546291002072394,
+            "mean": 0.01264573688240489,
+            "median": 0.011360603966750205,
+            "minimum": 0.005897833034396172
+          },
+          "native": {
+            "maximum": 0.0006551670376211405,
+            "mean": 0.0004066328692715615,
+            "median": 0.0003848125343210995,
+            "minimum": 0.00022012495901435614
+          },
+          "trusted": {
+            "maximum": 0.04723170795477927,
+            "mean": 0.026434052269905806,
+            "median": 0.023835666535887867,
+            "minimum": 0.012260250048711896
+          }
+        },
+        "native_loop_seconds": {
+          "maximum": 0.0005970000056549907,
+          "mean": 0.00034563799999887124,
+          "median": 0.00032072904286906123,
+          "minimum": 0.000163292046636343
+        },
+        "rhs_evaluations": {
+          "compiled": {
+            "maximum": 5789.0,
+            "mean": 3202.25,
+            "median": 2843.0,
+            "minimum": 1481.0
+          },
+          "native": {
+            "maximum": 7232.0,
+            "mean": 4030.25,
+            "median": 3620.0,
+            "minimum": 1914.0
+          },
+          "trusted": {
+            "maximum": 5789.0,
+            "mean": 3202.25,
+            "median": 2843.0,
+            "minimum": 1481.0
+          }
+        },
+        "speedup_native_over_compiled": {
+          "maximum": 34.413042334877204,
+          "mean": 30.422986829498324,
+          "median": 30.146447689091985,
+          "minimum": 26.088758353669053
+        },
+        "speedup_native_over_trusted": {
+          "maximum": 72.09109317567906,
+          "mean": 63.52580884614175,
+          "median": 62.87394820506154,
+          "minimum": 54.0707339630157
+        }
+      }
+    },
+    "native_boundary_acceleration_conservative": 31.530602088954875,
+    "performed": true,
+    "weighted_evaluator_seconds": {
+      "compiled": 0.018969670957027063,
+      "native": 0.0005474808486631844,
+      "native_loop": 0.0005001025878286214,
+      "trusted": 0.039749027829049766
+    }
+  },
+  "whole_field_projection": {
+    "baseline_64_evaluation_seconds": 25.694216410513036,
+    "baseline_64_total_seconds": 29.552804582985118,
+    "fixed_evaluation_residual_seconds": 6.074645649063314,
+    "projected_additional_whole_field_speedup": 2.81620117737368,
+    "projected_native_cell_compute_seconds": 0.5606203890311008,
+    "projected_native_evaluation_seconds": 6.635266038094414,
+    "projected_native_total_seconds": 10.493854210566496
+  }
+}
