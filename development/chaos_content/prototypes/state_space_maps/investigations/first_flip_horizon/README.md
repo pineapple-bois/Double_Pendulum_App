@@ -47,3 +47,6 @@ The late $\widehat T=1000$ case fails the existing event-time, event-state, and
 attribution equivalence gates. Its aggregate population is not accepted as an
 authoritative field result.
 
+The bounded [logarithmic-class convergence follow-up](../first_flip_log_class_convergence/)
+tests whether the coarser learner-facing observable survives trusted-policy
+refinement through $\widehat H=10000$.

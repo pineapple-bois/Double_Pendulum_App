@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "source": {
+    "artifact": "../first_flip_horizon/evidence/first_flip_horizon_128_through_H1000_exploratory.npz",
+    "sha256": "c4c98e5ea9e46f8e3ca0e972c57eeb4cf037c355008cd614e51c50e242d2767a",
+    "grid": "128x128 half-open periodic [-pi, pi)^2, zero initial velocities"
+  },
+  "selection_contract": [
+    "Four Experiment-020 early-flip controls cover both arms, both signs, and reflection symmetry.",
+    "Grid cells nearest selected native first-flip times probe both sides of decade boundaries and the interiors of the 10-100 and 100-1000 decades.",
+    "Four energy-accessible cells censored through H=1000 represent one long-lived region in each open angle quadrant.",
+    "Four cells straddle the strict E=-g energy-accessibility boundary without treating equality as inaccessible.",
+    "The known H=1000 native/reference disagreement and its exact grid reflection are retained explicitly.",
+    "Two energy-inaccessible controls include the stable equilibrium and a non-equilibrium oscillatory state."
+  ],
+  "cases": [
+    {"name": "early_arm1_positive", "group": "early_control", "theta1_radians": -2.6179938779914944, "theta2_radians": -2.6179938779914944, "source_index_theta2_theta1": null, "selection": "Experiment-020 arm1+ control"},
+    {"name": "early_arm1_negative", "group": "early_control", "theta1_radians": 2.6179938779914944, "theta2_radians": 2.6179938779914944, "source_index_theta2_theta1": null, "selection": "reflection-paired Experiment-020 arm1- control"},
+    {"name": "early_arm2_positive", "group": "early_control", "theta1_radians": 3.12413936106985, "theta2_radians": 3.12413936106985, "source_index_theta2_theta1": null, "selection": "Experiment-020 arm2+ control"},
+    {"name": "early_arm2_negative", "group": "early_control", "theta1_radians": -3.12413936106985, "theta2_radians": -3.12413936106985, "source_index_theta2_theta1": null, "selection": "reflection-paired Experiment-020 arm2- control"},
+
+    {"name": "decade_10_below", "group": "decade_boundary", "theta1_radians": 2.0125827937059615, "theta2_radians": -0.24543692606170264, "source_index_theta2_theta1": [59, 105], "selection": "closest saved native event to H=10 from below"},
+    {"name": "decade_10_above", "group": "decade_boundary", "theta1_radians": 2.552544031041707, "theta2_radians": -0.8344855486097886, "source_index_theta2_theta1": [47, 116], "selection": "closest saved native event to H=10 from above"},
+    {"name": "decade_10_100_mid30", "group": "decade_interior", "theta1_radians": 1.325359400733194, "theta2_radians": 2.258019719767664, "source_index_theta2_theta1": [110, 91], "selection": "saved native event nearest H=30"},
+    {"name": "decade_10_100_mid60", "group": "decade_interior", "theta1_radians": 0.6381360077604268, "theta2_radians": -2.356194490192345, "source_index_theta2_theta1": [16, 77], "selection": "saved native event nearest H=60"},
+    {"name": "decade_100_below", "group": "decade_boundary", "theta1_radians": -1.1780972450961724, "theta2_radians": -1.8653206380689396, "source_index_theta2_theta1": [26, 40], "selection": "latest saved event below H=100"},
+    {"name": "decade_100_below_reflected", "group": "decade_boundary", "theta1_radians": 1.1780972450961724, "theta2_radians": 1.8653206380689396, "source_index_theta2_theta1": [102, 88], "selection": "exact periodic-grid reflection of latest event below H=100"},
+    {"name": "decade_100_above", "group": "decade_boundary", "theta1_radians": -1.227184630308513, "theta2_radians": -1.7671458676442586, "source_index_theta2_theta1": [28, 39], "selection": "earliest saved event above H=100"},
+    {"name": "decade_100_1000_mid150", "group": "decade_interior", "theta1_radians": 0.4417864669110645, "theta2_radians": -2.748893571891069, "source_index_theta2_theta1": [8, 73], "selection": "saved native event nearest H=150"},
+    {"name": "decade_100_1000_mid300", "group": "decade_interior", "theta1_radians": -0.3436116964863838, "theta2_radians": -2.8961557275280905, "source_index_theta2_theta1": [5, 57], "selection": "saved native event nearest H=300"},
+    {"name": "decade_100_1000_mid700", "group": "decade_interior", "theta1_radians": -2.1598449493429825, "theta2_radians": -1.5707963267948966, "source_index_theta2_theta1": [32, 20], "selection": "saved native event nearest H=700"},
+    {"name": "known_h1000_disagreement", "group": "known_disagreement", "theta1_radians": 1.325359400733194, "theta2_radians": -1.0799224746714913, "source_index_theta2_theta1": [42, 91], "selection": "known native/reference late-event discrepancy and signed-attribution reversal"},
+    {"name": "known_h1000_disagreement_reflected", "group": "known_disagreement", "theta1_radians": -1.325359400733194, "theta2_radians": 1.0799224746714913, "source_index_theta2_theta1": [86, 37], "selection": "exact periodic-grid reflection of known disagreement"},
+
+    {"name": "h1000_survivor_quadrant_pp", "group": "long_lived_region", "theta1_radians": 1.5217089415825562, "theta2_radians": 1.3744467859455343, "source_index_theta2_theta1": [92, 95], "selection": "closest saved energy-accessible H=1000 survivor to positive-positive quadrant survivor centroid"},
+    {"name": "h1000_survivor_quadrant_np", "group": "long_lived_region", "theta1_radians": -0.8344855486097886, "theta2_radians": 1.9634954084936211, "source_index_theta2_theta1": [104, 47], "selection": "closest saved energy-accessible H=1000 survivor to negative-positive quadrant survivor centroid"},
+    {"name": "h1000_survivor_quadrant_nn", "group": "long_lived_region", "theta1_radians": -1.4726215563702154, "theta2_radians": -1.3744467859455345, "source_index_theta2_theta1": [36, 34], "selection": "closest saved energy-accessible H=1000 survivor to negative-negative quadrant survivor centroid"},
+    {"name": "h1000_survivor_quadrant_pn", "group": "long_lived_region", "theta1_radians": 0.7363107781851079, "theta2_radians": -2.110757564130642, "source_index_theta2_theta1": [21, 79], "selection": "closest saved energy-accessible H=1000 survivor to positive-negative quadrant survivor centroid"},
+
+    {"name": "energy_boundary_accessible_event", "group": "energy_boundary", "theta1_radians": -1.4726215563702154, "theta2_radians": -0.6381360077604268, "source_index_theta2_theta1": [51, 34], "selection": "closest non-axis grid cell above E=-g; saved event at H approximately 732"},
+    {"name": "energy_boundary_accessible_survivor", "group": "energy_boundary", "theta1_radians": -1.4726215563702154, "theta2_radians": 0.6381360077604268, "source_index_theta2_theta1": [77, 34], "selection": "symmetry-related closest non-axis grid cell above E=-g; censored at H=1000"},
+    {"name": "energy_boundary_inaccessible", "group": "energy_boundary", "theta1_radians": -1.325359400733194, "theta2_radians": -1.030835089459151, "source_index_theta2_theta1": [43, 37], "selection": "closest selected non-axis grid cell strictly below E=-g"},
+    {"name": "energy_boundary_inaccessible_reflected", "group": "energy_boundary", "theta1_radians": 1.325359400733194, "theta2_radians": 1.030835089459151, "source_index_theta2_theta1": [85, 91], "selection": "exact periodic-grid reflection of closest selected inaccessible boundary cell"},
+
+    {"name": "energy_inaccessible_equilibrium", "group": "energy_inaccessible_control", "theta1_radians": 0.0, "theta2_radians": 0.0, "source_index_theta2_theta1": [64, 64], "selection": "stable downward equilibrium and rigorous energy-inaccessible control"},
+    {"name": "energy_inaccessible_oscillation", "group": "energy_inaccessible_control", "theta1_radians": 0.5, "theta2_radians": -0.5, "source_index_theta2_theta1": null, "selection": "non-equilibrium low-energy rigorous non-flipping control"}
+  ]
+}

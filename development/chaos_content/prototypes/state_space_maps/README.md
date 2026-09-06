@@ -62,6 +62,9 @@ artifact without rerunning dynamics.
 - [First-flip horizon and energy-accessibility investigation](investigations/first_flip_horizon/)
   derives the rigorous zero-velocity mask and recommends the next bounded
   production horizon from a 128×128 survival study.
+- [First-flip logarithmic-class convergence investigation](investigations/first_flip_log_class_convergence/)
+  tests exact-time, decade, horizon-outcome, arm, and signed-surface agreement
+  across three trusted policies through dimensionless horizon 10000.
 - [Sensitivity to Lyapunov storyboard](docs/pedagogy/sensitivity_to_lyapunov.md)
   presents the teaching progression from nearby trajectories to renormalised
   finite-time stretching.
