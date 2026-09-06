@@ -94,7 +94,7 @@ def build_figure(snapshot: FieldSnapshot) -> Figure:
     image = axis.imshow(
         visible,
         origin="lower",
-        interpolation="nearest",
+        interpolation="none",
         extent=(-np.pi, np.pi, -np.pi, np.pi),
         aspect="equal",
         cmap=FIELD_COLORMAP,
@@ -163,7 +163,7 @@ def render_persisted_field(dataset_path: Path) -> dict[str, object]:
     figure = build_figure(snapshot)
     try:
         figure.savefig(png_path, dpi=600)
-        figure.savefig(pdf_path)
+        figure.savefig(pdf_path, dpi=600)
     finally:
         plt.close(figure)
 
