@@ -51,9 +51,11 @@ def test_native_dispatch_and_exact_ineligible_route() -> None:
     compiled = first_flip_evaluator_binding(FirstFlipFieldSpec(), force_compiled=True)
     trusted = first_flip_evaluator_binding(FirstFlipFieldSpec(observation_horizon_seconds=2.0))
     assert native.execution_routes == (FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
-    assert default.execution_routes == (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
+    assert default.execution_routes == (FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
     assert compiled.execution_routes == (FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
     assert trusted.execution_routes == (FIRST_FLIP_REFERENCE_EVALUATOR,)
+    assert native.initializer_arguments[2] is False
+    assert compiled.initializer_arguments[2] is True
 
 
 def test_native_artifact_cold_then_cache_hit(tmp_path: Path) -> None:
@@ -147,8 +149,8 @@ def test_saved_37_cases_pass_production_native_gates() -> None:
 
 def test_native_spawn_resume_and_cross_definition_rejection(tmp_path: Path) -> None:
     native_path = tmp_path / "native.h5"
-    created = run_periodic_first_flip_field(native_path, 2, mode="create", enable_native_candidate=True)
-    resumed = run_periodic_first_flip_field(native_path, 2, mode="resume", enable_native_candidate=True)
+    created = run_periodic_first_flip_field(native_path, 2, mode="create")
+    resumed = run_periodic_first_flip_field(native_path, 2, mode="resume")
     snapshot = read_authoritative_field(native_path)
     assert created.all_workers_stopped and resumed.evaluated_cells == 0
     assert set(np.unique(snapshot.execution_route)) == {3}
@@ -170,5 +172,14 @@ def test_native_spawn_resume_and_cross_definition_rejection(tmp_path: Path) -> N
 def test_native_provenance_records_corrected_dense_source() -> None:
     provenance = first_flip_native_provenance()
     identity = provenance["artifact"]["identity"]
-    assert identity["dense_counter_correction"] == "nfcn += 3; -> *nfcn += 3;"
+    assert identity["source_corrections"] == {
+        "dense_counter": "nfcn += 3; -> *nfcn += 3;",
+        "terminal_horizon": "1.01*h look-ahead -> strict x+h clamp",
+        "rejection_factor": "facc1/safe -> fac11/safe",
+    }
+    assert identity["adaptive_controller"] == {
+        "safety_factor": 0.9,
+        "minimum_factor": 0.2,
+        "maximum_factor": 10.0,
+    }
     assert identity["corrected_dop_sha256"] != identity["vendored_dop_source_sha256"]["dop.c"]

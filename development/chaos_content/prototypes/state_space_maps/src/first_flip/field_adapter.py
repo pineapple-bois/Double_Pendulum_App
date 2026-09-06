@@ -568,7 +568,7 @@ def first_flip_evaluator_binding(
     *,
     force_trusted: bool = False,
     force_compiled: bool = False,
-    enable_native_candidate: bool = False,
+    enable_native_candidate: bool = True,
 ) -> EvaluatorBinding:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
@@ -594,7 +594,7 @@ def first_flip_evaluator_binding(
     return EvaluatorBinding(
         name=("native_first_flip_with_compiled_and_trusted_recovery" if native_selected else ("compiled_first_flip_with_trusted_recovery" if compiled_selected else "physical_first_flip_reference")),
         initialize_worker=initialize_first_flip_field_worker,
-        initializer_arguments=(fixed_spec, not compiled_selected, force_compiled, artifact),
+        initializer_arguments=(fixed_spec, not compiled_selected, not native_selected, artifact),
         evaluate_cell=evaluate_first_flip_field_cell,
         execution_routes=(
             (FIRST_FLIP_NATIVE_EVALUATOR, FIRST_FLIP_COMPILED_EVALUATOR, FIRST_FLIP_REFERENCE_EVALUATOR)
@@ -624,7 +624,7 @@ def periodic_first_flip_field_definition(
     *,
     force_trusted: bool = False,
     force_compiled: bool = False,
-    enable_native_candidate: bool = False,
+    enable_native_candidate: bool = True,
 ) -> FieldDefinition:
     fixed_spec = spec or FirstFlipFieldSpec()
     assert fixed_spec.solver is not None
@@ -748,7 +748,7 @@ def run_periodic_first_flip_field(
     progress_callback: ProgressCallback | None = None,
     force_trusted: bool = False,
     force_compiled: bool = False,
-    enable_native_candidate: bool = False,
+    enable_native_candidate: bool = True,
 ) -> FieldRunSummary:
     fixed_spec = spec or FirstFlipFieldSpec()
     return run_scalar_field(

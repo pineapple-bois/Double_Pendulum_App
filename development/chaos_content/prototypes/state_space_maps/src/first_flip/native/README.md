@@ -4,7 +4,9 @@
 event driver. It is built against the vendored SciPy DOP853 sources in
 `src/lyapunov/s1_native/` and retains their `LICENSE_DOP` license.
 
-Dense output needs the reviewed `nfcn += 3` to `*nfcn += 3` correction. The
-first-flip artifact builder applies that single correction to a private staged
-copy of `dop.c`; it never edits the S1 source. Both original and corrected
-digests are part of the artifact identity.
+The first-flip artifact builder applies four reviewed equivalence corrections
+to its private build inputs: the dense-output `nfcn += 3` pointer correction,
+strict terminal-horizon clamping, the `fac11 / safe` rejection factor, and
+SciPy-equivalent controller bounds of 0.2 / 10. It never edits the S1 source.
+The original and corrected source digests, correction set, and controller
+settings are part of the artifact identity.

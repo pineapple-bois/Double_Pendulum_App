@@ -25,7 +25,6 @@ from ....src.first_flip.native_artifacts import (
     FIRST_FLIP_NATIVE_LOOP_SOURCE,
     S1_BUILD_FLAGS,
     S1_NATIVE_DIRECTORY,
-    _corrected_dop_source,
 )
 from ....src.first_flip.native_runtime import _native_rhs_callback
 from ....src.first_flip.reference import EVENT_IDENTITIES, _event_functions, first_flip_time
@@ -40,6 +39,16 @@ _HAIRER_LAST_STEP = "if ((*x + (1.01 * h) - *xend) * posneg > 0.0)"
 _STRICT_LAST_STEP = "if ((*x + h - *xend) * posneg >= 0.0)"
 _REJECTION_DEFECT = "hnew = h / fmin(facc1, facc1 / safe);"
 _REJECTION_CORRECTION = "hnew = h / fmin(facc1, fac11 / safe);"
+_DENSE_COUNTER_DEFECT = "                nfcn += 3;"
+_DENSE_COUNTER_CORRECTION = "                *nfcn += 3;"
+
+
+def _investigation_baseline_dop_source() -> str:
+    """Reconstruct the then-current candidate without depending on production v2."""
+    source = (S1_NATIVE_DIRECTORY / "dop.c").read_text()
+    if source.count(_DENSE_COUNTER_DEFECT) != 1:
+        raise RuntimeError("reviewed dense-counter defect not found")
+    return source.replace(_DENSE_COUNTER_DEFECT, _DENSE_COUNTER_CORRECTION)
 
 
 def _instrumented_loop_source() -> str:
@@ -86,7 +95,7 @@ class NativeVariant:
         label = "fixed-equivalent" if rejection_fix and scipy_controller else "fixed-original" if rejection_fix else "scipy-equivalent" if scipy_controller else "strict" if strict_final_step else "baseline"
         self.directory = root / label
         self.directory.mkdir()
-        dop = _corrected_dop_source()
+        dop = _investigation_baseline_dop_source()
         if strict_final_step:
             if dop.count(_HAIRER_LAST_STEP) != 1:
                 raise RuntimeError("reviewed Hairer final-step condition not found")

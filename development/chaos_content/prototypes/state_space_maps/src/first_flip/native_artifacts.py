@@ -44,17 +44,21 @@ except ImportError:  # pragma: no cover - candidate is fail-closed on Darwin.
     fcntl = None
 
 
-FIRST_FLIP_NATIVE_EVALUATOR = "native_dop853_first_flip_v1"
-FIRST_FLIP_NATIVE_IMPLEMENTATION = "first_flip_native_dop853_event_loop_v1"
-FIRST_FLIP_NATIVE_ARTIFACT_SCHEMA = 1
+FIRST_FLIP_NATIVE_EVALUATOR = "native_dop853_first_flip_v2"
+FIRST_FLIP_NATIVE_IMPLEMENTATION = "first_flip_native_dop853_event_loop_v2"
+FIRST_FLIP_NATIVE_ARTIFACT_SCHEMA = 2
 FIRST_FLIP_NATIVE_CACHE_ENVIRONMENT = "STATE_SPACE_MAPS_FIRST_FLIP_NATIVE_CACHE"
 FIRST_FLIP_NATIVE_LIBRARY = "first_flip_native.so"
 FIRST_FLIP_NATIVE_MANIFEST = "manifest.json"
 FIRST_FLIP_NATIVE_DIRECTORY = Path(__file__).with_name("native")
 FIRST_FLIP_NATIVE_LOOP_SOURCE = FIRST_FLIP_NATIVE_DIRECTORY / "first_flip_loop.c"
-FIRST_FLIP_NATIVE_LOOP_SHA256 = "e43c6d7d382a1fb01fdfd39c1e027dbc1a238a38b6022a8a8b4079f62e59d95d"
+FIRST_FLIP_NATIVE_LOOP_SHA256 = "7d55721cb3bf7385f85c798a30fa1ba4894db5bc0b31471aced9a43b6ad892c8"
 _DENSE_COUNTER_DEFECT = "                nfcn += 3;"
 _DENSE_COUNTER_CORRECTION = "                *nfcn += 3;"
+_HORIZON_FOLDING_BEHAVIOR = "        if ((*x + (1.01 * h) - *xend) * posneg > 0.0) {"
+_STRICT_HORIZON_CLAMP = "        if ((*x + h - *xend) * posneg >= 0.0) {"
+_REJECTION_FACTOR_DEFECT = "            hnew = h / fmin(facc1, facc1 / safe);"
+_REJECTION_FACTOR_CORRECTION = "            hnew = h / fmin(facc1, fac11 / safe);"
 
 
 class FirstFlipNativeUnavailableError(RuntimeError):
@@ -79,11 +83,18 @@ def _sha256(path: Path) -> str:
 
 def _corrected_dop_source() -> str:
     source = (S1_NATIVE_DIRECTORY / "dop.c").read_text()
-    if source.count(_DENSE_COUNTER_DEFECT) != 1:
-        raise FirstFlipNativeUnavailableError(
-            "vendored DOP853 dense-counter source does not match the reviewed input"
-        )
-    return source.replace(_DENSE_COUNTER_DEFECT, _DENSE_COUNTER_CORRECTION)
+    replacements = (
+        (_DENSE_COUNTER_DEFECT, _DENSE_COUNTER_CORRECTION, "dense-counter"),
+        (_HORIZON_FOLDING_BEHAVIOR, _STRICT_HORIZON_CLAMP, "terminal-horizon clamp"),
+        (_REJECTION_FACTOR_DEFECT, _REJECTION_FACTOR_CORRECTION, "rejection factor"),
+    )
+    for original, corrected, label in replacements:
+        if source.count(original) != 1:
+            raise FirstFlipNativeUnavailableError(
+                f"vendored DOP853 {label} source does not match the reviewed input"
+            )
+        source = source.replace(original, corrected)
+    return source
 
 
 def corrected_dop_sha256() -> str:
@@ -122,7 +133,16 @@ def first_flip_native_artifact_identity() -> dict[str, object]:
             name: S1_SOURCE_SHA256[name]
             for name in ("dop.c", "dop.h", "LICENSE_DOP")
         },
-        "dense_counter_correction": "nfcn += 3; -> *nfcn += 3;",
+        "source_corrections": {
+            "dense_counter": "nfcn += 3; -> *nfcn += 3;",
+            "terminal_horizon": "1.01*h look-ahead -> strict x+h clamp",
+            "rejection_factor": "facc1/safe -> fac11/safe",
+        },
+        "adaptive_controller": {
+            "safety_factor": 0.9,
+            "minimum_factor": 0.2,
+            "maximum_factor": 10.0,
+        },
         "corrected_dop_sha256": corrected_dop_sha256(),
         "native_loop_source_sha256": _sha256(FIRST_FLIP_NATIVE_LOOP_SOURCE),
         "artifact_implementation_sha256": _sha256(Path(__file__)),

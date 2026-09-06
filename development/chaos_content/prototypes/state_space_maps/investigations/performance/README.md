@@ -15,11 +15,12 @@ The next engineering step is to reassess S1 initialization amortisation before
 starting fallback optimization; the artifact mechanism is retained because it
 is correct, fail-closed, and materially reduces repeated initialization.
 
-For first flip, the validated compiled four-state RHS is now the guarded default
-for the standard T=5 unit-parameter field. The
+For first flip, corrected native DOP853 is now the guarded default for the
+standard T=5 unit-parameter, zero-velocity field. The
 [promotion report](reports/FIRST_FLIP_COMPILED_RHS_PROMOTION.md) records clean
 scientific/operational validation and a **2.170× median 64² end-to-end speedup**;
-unsupported and ineligible definitions retain the trusted Python RHS. The
+the compiled route remains the first recovery path and unsupported/ineligible
+definitions retain the existing non-native routes. The
 [post-promotion profile](reports/FIRST_FLIP_POST_PROMOTION_PROFILE.md) finds the
 remaining cost concentrated in Python DOP853 stepping/event detection and
 recommends one narrow compiled solver/event-loop prototype. The subsequent
@@ -27,17 +28,18 @@ recommends one narrow compiled solver/event-loop prototype. The subsequent
 all scientific gates. The
 [production promotion candidate](reports/FIRST_FLIP_NATIVE_DOP853_PROMOTION_CANDIDATE.md)
 preserved those gates. The
-[bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md)
-measured a strong `5.123×` median whole-field speedup, but rejected default
-promotion because 62 cells per field required max-step recovery and the maximum
-native/compiled event-time difference exceeded the existing gate. The compiled
-RHS + `solve_ivp` route remains the operational default. The focused
+[original bounded field validation](reports/FIRST_FLIP_NATIVE_DOP853_FIELD_VALIDATION.md)
+measured a strong `5.123×` median whole-field speedup, but initially rejected
+default promotion because 62 cells per field required max-step recovery and the
+maximum native/compiled event-time difference exceeded the existing gate. The focused
 [equivalence investigation](reports/FIRST_FLIP_NATIVE_DOP853_EQUIVALENCE_INVESTIGATION.md)
-then isolated two bounded first-flip build corrections: strict terminal-step
+then isolated three bounded first-flip build corrections: strict terminal-step
 clamping plus the DOP853 rejection-factor typo, with SciPy-equivalent controller
-bounds. A temporary corrected build removed all 62 violations and reduced the
-full-grid maximum event-time difference to `7.722e-12 s`; implementation and
-full validation remain a separate next task.
+bounds. The production v2 build implemented those corrections; the corrected
+three-pair validation recorded zero fallback across all native fields, a
+`7.722e-12 s` maximum event-time difference, and **5.803× median whole-field
+speedup**, passing promotion. The field-validation report preserves both the
+failed v1 result and the accepted corrected-build result.
 
 ## Investigation sequence
 

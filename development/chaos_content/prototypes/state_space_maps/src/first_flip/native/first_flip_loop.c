@@ -245,8 +245,8 @@ int first_flip_loop(
     int code = 0;
     double time = 0.0;
     work[1] = 0.9;
-    work[2] = 0.3;
-    work[3] = 6.0;
+    work[2] = 0.2;
+    work[3] = 10.0;
     work[5] = maxstep;
     iwork[0] = 100000;
     iwork[4] = STATE_SIZE;
